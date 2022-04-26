@@ -1,7 +1,7 @@
 version: '2.1'
 
 services:
-  spring-boot-template:
+  ts-translation-service:
     build:
       context: .
       args:
