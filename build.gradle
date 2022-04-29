@@ -1,5 +1,6 @@
 plugins {
   id 'application'
+  id 'idea'
   id 'checkstyle'
   id 'pmd'
   id 'jacoco'
@@ -38,13 +39,14 @@ sourceSets {
     resources.srcDir file('src/integrationTest/resources')
   }
 
-  smokeTest {
-    java {
-      compileClasspath += main.output
-      runtimeClasspath += main.output
-      srcDir file('src/smokeTest/java')
+  idea {
+    module {
+      // config to allow Intellij to mark test source and resource files correctly to help linting tools
+      testSourceDirs += project.sourceSets.functionalTest.java.srcDirs
+      testSourceDirs += project.sourceSets.integrationTest.java.srcDirs
+      testResourceDirs += project.sourceSets.functionalTest.resources.srcDirs
+      testResourceDirs += project.sourceSets.integrationTest.resources.srcDirs
     }
-    resources.srcDir file('src/smokeTest/resources')
   }
 }
 
@@ -55,8 +57,6 @@ configurations {
   integrationTestImplementation.extendsFrom testImplementation
   integrationTestRuntimeOnly.extendsFrom runtimeOnly
 
-  smokeTestImplementation.extendsFrom testImplementation
-  smokeTestRuntimeOnly.extendsFrom runtimeOnly
 }
 
 tasks.withType(JavaCompile) {
@@ -95,12 +95,6 @@ task integration(type: Test) {
   failFast = true
 }
 
-task smoke(type: Test) {
-  description = "Runs Smoke Tests"
-  testClassesDirs = sourceSets.smokeTest.output.classesDirs
-  classpath = sourceSets.smokeTest.runtimeClasspath
-}
-
 checkstyle {
   maxWarnings = 0
   toolVersion = '9.2.1'
@@ -109,7 +103,7 @@ checkstyle {
 
 pmd {
   toolVersion = "6.41.0"
-  sourceSets = [sourceSets.main, sourceSets.test, sourceSets.functionalTest, sourceSets.integrationTest, sourceSets.smokeTest]
+  sourceSets = [sourceSets.main, sourceSets.test, sourceSets.functionalTest, sourceSets.integrationTest]
   reportsDir = file("$project.buildDir/reports/pmd")
   // https://github.com/pmd/pmd/issues/876
   ruleSets = []
@@ -165,7 +159,7 @@ dependencyCheck {
     "pmd",
     "integrationTest",
     "functionalTest",
-    "smokeTest",
+//    "smokeTest",
     "contractTestRuntimeClasspath",
     "contractTestCompileClasspath"
   ]
@@ -177,6 +171,15 @@ repositories {
   maven { url 'https://jitpack.io' }
 }
 
+jacocoTestReport {
+  executionData(test, integration)
+  reports {
+    xml.enabled = true
+    csv.enabled = false
+    xml.destination file("${buildDir}/reports/jacoco/test/jacocoTestReport.xml")
+  }
+}
+
 ext {
   log4JVersion = "2.17.0"
 }
@@ -186,6 +189,7 @@ dependencies {
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-aop'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-json'
+  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa'
 
   implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.6.7'
 
@@ -204,6 +208,7 @@ dependencies {
     exclude group: 'junit', module: 'junit'
     exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
   }
+  testImplementation group: 'com.github.hmcts', name: 'befta-fw', version: '8.7.1'
 }
 
 mainClassName = 'uk.gov.hmcts.reform.translate.Application'
@@ -217,7 +222,7 @@ bootJar {
 }
 
 // Gradle 7.x issue, workaround from: https://github.com/gradle/gradle/issues/17236#issuecomment-894768083
-rootProject.tasks.named("processSmokeTestResources") {
+rootProject.tasks.named("processFunctionalTestResources") {
   duplicatesStrategy = 'include'
 }
 
