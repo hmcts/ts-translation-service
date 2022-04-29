@@ -16,9 +16,74 @@ version = '0.0.1'
 
 java {
   toolchain {
-    languageVersion = JavaLanguageVersion.of(11)
+    languageVersion = JavaLanguageVersion.of(17)
   }
 }
+
+def versions = [
+        junit           : '5.7.2',
+        junitPlatform   : '1.7.2',
+        jsr310          : '2.13.2',
+        lombok          : '1.18.16',
+        reformLogging   : '5.1.7',
+        springBoot      : springBoot.class.package.implementationVersion,
+        springCloud     : '2021.0.2',
+        springfoxSwagger: '3.0.0',
+        serviceAuthVersion: '4.0.3'
+]
+
+ext['spring-framework.version'] = '5.3.18'
+ext['log4j2.version'] = '2.17.1'
+ext['jackson.version'] = '2.13.2'
+
+
+ext.libraries = [
+        junit5: [
+                "org.junit.jupiter:junit-jupiter-api:${versions.junit}",
+                "org.junit.jupiter:junit-jupiter-engine:${versions.junit}",
+                "org.junit.jupiter:junit-jupiter-params:${versions.junit}",
+                "org.junit.platform:junit-platform-commons:${versions.junitPlatform}",
+                "org.junit.platform:junit-platform-engine:${versions.junitPlatform}"
+        ]
+]
+
+dependencyCheck {
+  suppressionFile = 'config/owasp/suppressions.xml'
+}
+
+dependencies {
+  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web'
+  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
+  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-aop'
+  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-json'
+  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa'
+
+  implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.6.7'
+
+  implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: '6.0.1'
+
+  // temporary work around for dependency check
+  implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.2.2'
+  implementation group: 'com.fasterxml.jackson', name: 'jackson-bom', version: '2.13.2.20220328', ext: 'pom'
+
+  implementation group: 'org.apache.logging.log4j', name: 'log4j-api'
+  implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j'
+
+  testImplementation(platform('org.junit:junit-bom:5.8.2'))
+  testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+  testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', {
+    exclude group: 'junit', module: 'junit'
+    exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+  }
+  testImplementation group: 'com.github.hmcts', name: 'befta-fw', version: '8.7.1'
+
+//  compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-jaxb-annotations', version: '2.13.2'
+//  compile 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.2.2'
+//  compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.13.2'
+
+}
+
+
 
 sourceSets {
   functionalTest {
@@ -178,37 +243,6 @@ jacocoTestReport {
     csv.enabled = false
     xml.destination file("${buildDir}/reports/jacoco/test/jacocoTestReport.xml")
   }
-}
-
-ext {
-  log4JVersion = "2.17.0"
-}
-
-dependencies {
-  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web'
-  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
-  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-aop'
-  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-json'
-  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa'
-
-  implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.6.7'
-
-  implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: '6.0.1'
-
-  // temporary work around for dependency check
-  implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.2.2'
-  implementation group: 'com.fasterxml.jackson', name: 'jackson-bom', version: '2.13.2.20220328', ext: 'pom'
-
-  implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: log4JVersion
-  implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: log4JVersion
-
-  testImplementation(platform('org.junit:junit-bom:5.8.2'))
-  testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
-  testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', {
-    exclude group: 'junit', module: 'junit'
-    exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
-  }
-  testImplementation group: 'com.github.hmcts', name: 'befta-fw', version: '8.7.1'
 }
 
 mainClassName = 'uk.gov.hmcts.reform.translate.Application'

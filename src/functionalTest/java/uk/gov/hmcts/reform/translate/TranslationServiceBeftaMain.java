@@ -2,7 +2,7 @@ package uk.gov.hmcts.reform.translate;
 
 import uk.gov.hmcts.befta.BeftaMain;
 
-public class TranslationServiceBeftaMain {
+public final class TranslationServiceBeftaMain {
 
     private TranslationServiceBeftaMain() {
         // Hide Utility Class Constructor :
