@@ -77,10 +77,8 @@ dependencies {
   }
   testImplementation group: 'com.github.hmcts', name: 'befta-fw', version: '8.7.1'
 
-//  compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-jaxb-annotations', version: '2.13.2'
-//  compile 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.2.2'
-//  compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.13.2'
-
+  implementation group: 'org.flywaydb', name: 'flyway-core', version: '7.7.0'
+  implementation group: 'org.postgresql', name: 'postgresql', version: '42.3.4'
 }
 
 

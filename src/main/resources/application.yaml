@@ -22,9 +22,9 @@ spring:
     name: Translation Service
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}${DB_OPTIONS:}
-    username: ${DB_USER_NAME}
-    password: ${DB_PASSWORD}
+    url: jdbc:postgresql://${TS_TRANSLATION_SERVICE_DB_HOST:localhost}:${TS_TRANSLATION_SERVICE_DB_PORT:6432}/${TS_TRANSLATION_SERVICE_DB_NAME:ts_translation_service}${TS_TRANSLATION_SERVICE_DB_OPTIONS:}
+    username: ${TS_TRANSLATION_SERVICE_DB_USERNAME:postgres}
+    password: ${TS_TRANSLATION_SERVICE_DB_PASSWORD:postgres}
     properties:
       charSet: UTF-8
     hikari:
@@ -41,6 +41,9 @@ spring:
           lob:
 #            # silence the 'wall-of-text' - unnecessary exception throw about blob types
             non_contextual_creation: true
+  flyway:
+    out-of-order: true
+    ignore-missing-migrations: true
 
 azure:
   application-insights:
