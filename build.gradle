@@ -24,12 +24,13 @@ def versions = [
         junit           : '5.7.2',
         junitPlatform   : '1.7.2',
         jsr310          : '2.13.2',
-        lombok          : '1.18.16',
+        lombok          : '1.18.24',
         reformLogging   : '5.1.7',
         springBoot      : springBoot.class.package.implementationVersion,
         springCloud     : '2021.0.2',
         springfoxSwagger: '3.0.0',
-        serviceAuthVersion: '4.0.3'
+        serviceAuthVersion: '4.0.3',
+        testcontainers  : '1.15.2'
 ]
 
 ext['spring-framework.version'] = '5.3.18'
@@ -75,10 +76,18 @@ dependencies {
     exclude group: 'junit', module: 'junit'
     exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
   }
-  testImplementation group: 'com.github.hmcts', name: 'befta-fw', version: '8.7.1'
+
+  testImplementation group: 'com.github.hmcts', name: 'befta-fw', version: '8.7.1', {
+    exclude group: 'org.springframework.cloud', module: 'spring-cloud-starter-openfeign'
+  }
 
   implementation group: 'org.flywaydb', name: 'flyway-core', version: '7.7.0'
   implementation group: 'org.postgresql', name: 'postgresql', version: '42.3.4'
+
+  annotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
+  implementation group: 'org.projectlombok', name: 'lombok', version: versions.lombok
+
+  testImplementation group: 'org.testcontainers', name: 'postgresql', version: versions.testcontainers
 }
 
 
@@ -258,6 +267,9 @@ rootProject.tasks.named("processFunctionalTestResources") {
   duplicatesStrategy = 'include'
 }
 
+rootProject.tasks.named("processIntegrationTestResources") {
+  duplicatesStrategy = 'include'
+}
 wrapper {
     distributionType = Wrapper.DistributionType.ALL
 }
