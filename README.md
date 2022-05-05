@@ -1,14 +1,12 @@
 # ts-translation-service
 
 ## Getting Started
-This is the Translation Microservice template.
+This is the Translation Microservice.
 
 ### Prerequisites
 
 - [JDK 17](https://java.com)
 - [Docker](https://www.docker.com)
-
-[![Build Status](https://travis-ci.org/hmcts/ts-translation-service.svg?branch=master)](https://travis-ci.org/hmcts/ts-translation-service)
 
 ## Building and deploying the application
 
