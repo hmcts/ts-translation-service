@@ -39,7 +39,7 @@ spring:
       hibernate:
         jdbc:
           lob:
-#            # silence the 'wall-of-text' - unnecessary exception throw about blob types
+            # silence the 'wall-of-text' - unnecessary exception throw about blob types
             non_contextual_creation: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
