@@ -30,7 +30,7 @@ class TranslationUploadRepositoryIT {
 
     @Sql(scripts = DELETE_TRANSLATION_TABLES_SCRIPT)
     @Test
-    void testSaveDictionaryAndTranslationUpload() {
+    void testSaveTranslationUpload() {
         final var now = LocalDateTime.now();
         final var translationUploadEntity = new TranslationUploadEntity();
         translationUploadEntity.setUploaded(now);
@@ -43,7 +43,7 @@ class TranslationUploadRepositoryIT {
 
     @Sql(scripts = {DELETE_TRANSLATION_TABLES_SCRIPT, GET_TRANSLATION_TABLES_SCRIPT})
     @Test
-    void testFindDictionaryAndTranslationUploadNoTranslationPhrase() {
+    void testFindTranslationUploadById() {
         final var optionalTranslationUploadEntity = translationUploadRepository.findById(1);
         assertTrue(optionalTranslationUploadEntity.isPresent());
 
@@ -55,7 +55,6 @@ class TranslationUploadRepositoryIT {
             () -> assertEquals("IdamUser1", translationUploadEntity.getUserId())
         );
     }
-
 
     @Sql(scripts = {DELETE_TRANSLATION_TABLES_SCRIPT, GET_TRANSLATION_TABLES_SCRIPT})
     @Test

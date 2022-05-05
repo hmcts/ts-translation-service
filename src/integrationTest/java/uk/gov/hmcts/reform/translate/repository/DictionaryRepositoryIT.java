@@ -59,7 +59,6 @@ class DictionaryRepositoryIT {
         );
     }
 
-
     @Sql(scripts = {DELETE_TRANSLATION_TABLES_SCRIPT, GET_TRANSLATION_TABLES_SCRIPT})
     @Test
     void testFindDictionaryAndTranslationUploadNoTranslationPhrase() {
