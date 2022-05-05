@@ -20,4 +20,4 @@ java:
           alias: TS_TRANSLATION_SERVICE_DB_NAME
 
   environment:
-    TS_TRANSACTION_SERVICE_DB_OPTIONS: "?stringtype=unspecified&gssEncMode=disable"
+    TS_TRANSLATION_SERVICE_DB_OPTIONS: "?stringtype=unspecified&gssEncMode=disable"
