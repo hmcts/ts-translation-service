@@ -11,7 +11,7 @@ Feature: F-000: Healthcheck Operation
   Scenario: must return a successful response from the Healthcheck Operation
 
     When a request is prepared with appropriate values
-    And it is submitted to call the [Healthcheck] operation of [HMC CFT Hearing Service]
+    And it is submitted to call the [Healthcheck] operation of [Translation Service]
 
     Then a positive response is received
     And the response [has the 200 OK code]
