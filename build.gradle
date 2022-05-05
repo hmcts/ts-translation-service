@@ -14,6 +14,10 @@ plugins {
 group = 'uk.gov.hmcts.reform'
 version = '0.0.1'
 
+ext {
+  set('springCloudVersion', "2021.0.2")
+}
+
 java {
   toolchain {
     languageVersion = JavaLanguageVersion.of(17)
@@ -21,21 +25,11 @@ java {
 }
 
 def versions = [
-        junit           : '5.7.2',
-        junitPlatform   : '1.7.2',
-        jsr310          : '2.13.2',
-        lombok          : '1.18.16',
-        reformLogging   : '5.1.7',
         springBoot      : springBoot.class.package.implementationVersion,
-        springCloud     : '2021.0.2',
-        springfoxSwagger: '3.0.0',
-        serviceAuthVersion: '4.0.3'
+        testcontainers  : '1.15.2'
 ]
 
-ext['spring-framework.version'] = '5.3.18'
-ext['log4j2.version'] = '2.17.1'
-ext['jackson.version'] = '2.13.2'
-
+ext['spring-framework.version'] = '5.3.19'
 
 ext.libraries = [
         junit5: [
@@ -46,44 +40,6 @@ ext.libraries = [
                 "org.junit.platform:junit-platform-engine:${versions.junitPlatform}"
         ]
 ]
-
-dependencyCheck {
-  suppressionFile = 'config/owasp/suppressions.xml'
-}
-
-dependencies {
-  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web'
-  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
-  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-aop'
-  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-json'
-  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa'
-
-  implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.6.7'
-
-  implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: '6.0.1'
-
-  // temporary work around for dependency check
-  implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.2.2'
-  implementation group: 'com.fasterxml.jackson', name: 'jackson-bom', version: '2.13.2.20220328', ext: 'pom'
-
-  implementation group: 'org.apache.logging.log4j', name: 'log4j-api'
-  implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j'
-
-  testImplementation(platform('org.junit:junit-bom:5.8.2'))
-  testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
-  testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', {
-    exclude group: 'junit', module: 'junit'
-    exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
-  }
-  testImplementation group: 'com.github.hmcts', name: 'befta-fw', version: '8.7.1'
-
-//  compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-jaxb-annotations', version: '2.13.2'
-//  compile 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.2.2'
-//  compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.13.2'
-
-}
-
-
 
 sourceSets {
   functionalTest {
@@ -184,6 +140,49 @@ jacocoTestReport {
   }
 }
 
+dependencyCheck {
+  suppressionFile = 'config/owasp/suppressions.xml'
+}
+
+dependencies {
+  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web'
+  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
+  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-aop'
+  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-json'
+  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa'
+  implementation group: 'org.springframework.cloud', name: 'spring-cloud-config-server'
+  implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-config'
+
+  implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.6.7'
+
+  implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: '6.0.1'
+
+  // temporary work around for dependency check
+  implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.2.2'
+  implementation group: 'com.fasterxml.jackson', name: 'jackson-bom', version: '2.13.2.20220328', ext: 'pom'
+
+  implementation group: 'org.apache.logging.log4j', name: 'log4j-api'
+  implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j'
+
+  testImplementation(platform('org.junit:junit-bom:5.8.2'))
+  testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+  testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', {
+    exclude group: 'junit', module: 'junit'
+    exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+  }
+  testImplementation group: 'com.github.hmcts', name: 'befta-fw', version: '8.7.1'
+  integrationTestImplementation group: 'org.testcontainers', name: 'postgresql', version: versions.testcontainers
+
+  runtimeOnly 'org.postgresql:postgresql'
+//  implementation group: 'org.postgresql', name: 'postgresql', version: '42.2.19'
+}
+
+dependencyManagement {
+  imports {
+    mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+  }
+}
+
 project.tasks['sonarqube'].dependsOn jacocoTestReport
 project.tasks['check'].dependsOn integration
 
@@ -224,7 +223,6 @@ dependencyCheck {
     "pmd",
     "integrationTest",
     "functionalTest",
-//    "smokeTest",
     "contractTestRuntimeClasspath",
     "contractTestCompileClasspath"
   ]
@@ -239,9 +237,9 @@ repositories {
 jacocoTestReport {
   executionData(test, integration)
   reports {
-    xml.enabled = true
-    csv.enabled = false
-    xml.destination file("${buildDir}/reports/jacoco/test/jacocoTestReport.xml")
+    xml.getRequired().set(true)
+    csv.getRequired().set(false)
+    xml.getOutputLocation().set(file("${buildDir}/reports/jacoco/test/jacocoTestReport.xml"))
   }
 }
 
