@@ -8,7 +8,7 @@
     <cpe>cpe:/a:pivotal_software:spring_security</cpe>
     <cve>CVE-2018-1258</cve>
   </suppress>
-  <suppress>
+  <suppress until="2022-05-25">
     <notes><![CDATA[
         CVE is a json vulnerability for Node projects. False positive reported at https://github.com/jeremylong/DependencyCheck/issues/2794
     ]]></notes>

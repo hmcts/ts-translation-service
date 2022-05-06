@@ -1,4 +1,4 @@
-version: '2.1'
+version: '2.4'
 
 services:
   ts-translation-service:
@@ -8,19 +8,30 @@ services:
         - http_proxy
         - https_proxy
         - no_proxy
-    image: hmctspublic.azurecr.io/spring-boot/template
+    image: hmctspublic.azurecr.io/ts/translation-service:latest
+    container_name: translation-service
     environment:
-      # these environment variables are used by java-logging library
-      - ROOT_APPENDER
-      - JSON_CONSOLE_PRETTY_PRINT
-      - ROOT_LOGGING_LEVEL
-      - REFORM_SERVICE_TYPE
-      - REFORM_SERVICE_NAME
-      - REFORM_TEAM
-      - REFORM_ENVIRONMENT
-      - LOGBACK_DATE_FORMAT
-      - LOGBACK_REQUIRE_THREAD
-      - LOGBACK_REQUIRE_ALERT_LEVEL=false
-      - LOGBACK_REQUIRE_ERROR_CODE=false
+      TS_TRANSLATION_SERVICE_DB_HOST: ts-db
+      TS_TRANSLATION_SERVICE_DB_PORT: 5432
+      TS_TRANSLATION_SERVICE_DB_NAME: ${TS_TRANSLATION_SERVICE_DB_NAME}
+      TS_TRANSLATION_SERVICE_DB_USERNAME: ${TS_TRANSLATION_SERVICE_DB_USERNAME}
+      TS_TRANSLATION_SERVICE_DB_PASSWORD: ${TS_TRANSLATION_SERVICE_DB_PASSWORD}
     ports:
-      - $SERVER_PORT:$SERVER_PORT
+      - "4650:4650"
+    depends_on:
+      - ts-db
+
+  ts-db:
+    image: postgres:11.11
+    restart: always
+    environment:
+      - POSTGRES_DB=${TS_TRANSLATION_SERVICE_DB_NAME}
+      - POSTGRES_USER=${TS_TRANSLATION_SERVICE_DB_USERNAME}
+      - POSTGRES_PASSWORD=${TS_TRANSLATION_SERVICE_DB_PASSWORD}
+    ports:
+      - 6969:5432
+    volumes:
+      - ts-database-data:/var/lib/postgresql/data
+
+volumes:
+  ts-database-data:

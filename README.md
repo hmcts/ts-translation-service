@@ -1,12 +1,12 @@
 # ts-translation-service
 
-[![Build Status](https://travis-ci.org/hmcts/ts-translation-service.svg?branch=master)](https://travis-ci.org/hmcts/ts-translation-service)
+## Getting Started
+This is the Translation Microservice.
 
-## Notes
+### Prerequisites
 
-Since Spring Boot 2.1 bean overriding is disabled. If you want to enable it you will need to set `spring.main.allow-bean-definition-overriding` to `true`.
-
-JUnit 5 is now enabled by default in the project. Please refrain from using JUnit4 and use the next generation
+- [JDK 17](https://java.com)
+- [Docker](https://www.docker.com)
 
 ## Building and deploying the application
 
@@ -54,7 +54,7 @@ In order to test if the application is up, you can call its health endpoint:
 You should get a response similar to this:
 
 ```
-  {"status":"UP","diskSpace":{"status":"UP","total":249644974080,"free":137188298752,"threshold":10485760}}
+  {"status":"UP","components":{"diskSpace":{"status":"UP","details":{"total":67371577344,"free":42536177664,"threshold":10485760,"exists":true}},"ping":{"status":"UP"}}}
 ```
 
 ### Alternative script to run application
