@@ -3,9 +3,8 @@ package uk.gov.hmcts.reform.translate.repository;
 import org.assertj.core.util.Streams;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
+import uk.gov.hmcts.reform.translate.BaseTest;
 import uk.gov.hmcts.reform.translate.data.TranslationUploadEntity;
 
 import java.time.LocalDateTime;
@@ -16,15 +15,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest
 @SuppressWarnings("PMD.JUnitAssertionsShouldIncludeMessage")
-@ActiveProfiles("itest")
-class TranslationUploadRepositoryIT {
+class TranslationUploadRepositoryIT extends BaseTest {
     private static final String IDAM_USER_ID = UUID.randomUUID().toString();
-    private static final String GET_TRANSLATION_TABLES_SCRIPT =
-        "classpath:sql/get-Dictionary_And_TranslationUploads.sql";
-    private static final String DELETE_TRANSLATION_TABLES_SCRIPT =
-        "classpath:sql/delete-Dictionary_And_TranslationUploads.sql";
+
     @Autowired
     TranslationUploadRepository translationUploadRepository;
 

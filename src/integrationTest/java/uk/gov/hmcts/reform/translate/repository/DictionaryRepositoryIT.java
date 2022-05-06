@@ -3,9 +3,8 @@ package uk.gov.hmcts.reform.translate.repository;
 import org.assertj.core.util.Streams;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
+import uk.gov.hmcts.reform.translate.BaseTest;
 import uk.gov.hmcts.reform.translate.data.DictionaryEntity;
 import uk.gov.hmcts.reform.translate.data.TranslationUploadEntity;
 
@@ -18,21 +17,14 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest
 @SuppressWarnings("PMD.JUnitAssertionsShouldIncludeMessage")
-@ActiveProfiles("itest")
-class DictionaryRepositoryIT {
+class DictionaryRepositoryIT extends BaseTest {
     @Autowired
     DictionaryRepository dictionaryRepository;
 
     private static final String ENGLISH_PHRASE = "English phrase";
     private static final String TRANSLATION_PHRASE = "Welsh translation phrase";
     private static final String IDAM_USER_ID = UUID.randomUUID().toString();
-
-    private static final String GET_TRANSLATION_TABLES_SCRIPT =
-        "classpath:sql/get-Dictionary_And_TranslationUploads.sql";
-    private static final String DELETE_TRANSLATION_TABLES_SCRIPT =
-        "classpath:sql/delete-Dictionary_And_TranslationUploads.sql";
 
     @Sql(scripts = DELETE_TRANSLATION_TABLES_SCRIPT)
     @Test
