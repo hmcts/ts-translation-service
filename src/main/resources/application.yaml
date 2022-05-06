@@ -22,7 +22,7 @@ spring:
     name: Translation Service
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://${TS_TRANSLATION_SERVICE_DB_HOST}:${TS_TRANSLATION_SERVICE_DB_PORT}/${TS_TRANSLATION_SERVICE_DB_NAME}${TS_TRANSLATION_SERVICE_DB_OPTIONS:}
+    url: jdbc:postgresql://${TS_TRANSLATION_SERVICE_DB_HOST}:${TS_TRANSLATION_SERVICE_DB_PORT}/${TS_TRANSLATION_SERVICE_DB_NAME}${TS_TRANSLATION_SERVICE_DB_OPTIONS}
     username: ${TS_TRANSLATION_SERVICE_DB_USER_NAME}
     password: ${TS_TRANSLATION_SERVICE_DB_PASSWORD}
     properties:
