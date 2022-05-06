@@ -25,16 +25,9 @@ java {
 }
 
 def versions = [
-        junit           : '5.7.2',
-        junitPlatform   : '1.7.2',
-        jsr310          : '2.13.2',
-        lombok          : '1.18.24',
-        reformLogging   : '5.1.7',
         springBoot      : springBoot.class.package.implementationVersion,
-        springCloud     : '2021.0.2',
-        springfoxSwagger: '3.0.0',
-        serviceAuthVersion: '4.0.3',
-        testcontainers  : '1.15.2'
+        testcontainers  : '1.15.2',
+        lombok          : '1.18.24'
 ]
 
 ext.libraries = [
