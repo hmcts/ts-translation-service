@@ -9,6 +9,7 @@ plugins {
   id 'org.owasp.dependencycheck' version '6.5.3'
   id 'com.github.ben-manes.versions' version '0.42.0'
   id 'org.sonarqube' version '3.3'
+  id 'com.github.spacialcircumstances.gradle-cucumber-reporting' version '0.1.23'
 }
 
 group = 'uk.gov.hmcts.reform'
@@ -27,7 +28,9 @@ java {
 def versions = [
         springBoot      : springBoot.class.package.implementationVersion,
         testcontainers  : '1.15.2',
-        lombok          : '1.18.24'
+        lombok          : '1.18.24',
+        junit           : '5.8.2',
+        junitPlatform   : '1.7.2'
 ]
 
 ext.libraries = [
@@ -96,6 +99,7 @@ tasks.withType(Test) {
 }
 
 test {
+  generateCucumberReports.enabled = false
   failFast = true
 }
 
@@ -104,6 +108,40 @@ task functional(type: Test) {
   group = "Verification"
   testClassesDirs = sourceSets.functionalTest.output.classesDirs
   classpath = sourceSets.functionalTest.runtimeClasspath
+
+  generateCucumberReports.enabled = false
+
+  doLast {
+    generateCucumberReports.enabled = true
+
+    javaexec {
+      environment "OAUTH2_CLIENT_SECRET", "DUMMY"
+      main = "uk.gov.hmcts.reform.translate.TranslationServiceBeftaMain"
+      classpath += sourceSets.functionalTest.runtimeClasspath + sourceSets.main.output + sourceSets.test.output
+      args = [
+        '--strict',
+        '--threads', '10',
+        '--plugin', "json:${rootDir}/target/cucumber.json",
+        '--plugin', "junit:${buildDir}/test-results/functional/cucumber.xml",
+        '--tags', 'not @Ignore',
+        '--glue', 'uk.gov.hmcts.befta.player', 'src/functionalTest/resources/features'
+      ]
+      // '--add-opens=...' added to suppress 'WARNING: An illegal reflective access operation has occurred' in uk.gov.hmcts.befta.util.CucumberStepAnnotationUtils
+      jvmArgs = [ '--add-opens=java.base/java.lang.reflect=ALL-UNNAMED' ]
+    }
+  }
+
+  finalizedBy {
+    generateCucumberReports {
+      doLast{
+        delete "${rootDir}/BEFTA Report for Functional Tests/"
+        new File("${rootDir}/BEFTA Report for Functional Tests").mkdirs()
+        file("${rootDir}/target/cucumber/cucumber-html-reports").renameTo(file("${rootDir}/BEFTA Report for Functional Tests"))
+        logger.quiet("Functional test report moved to ---> file://${rootDir}/BEFTA%20Report%20for%20Functional%20Tests/overview-features.html")
+      }
+    }
+  }
+  outputs.upToDateWhen { false }
 }
 
 task integration(type: Test) {
@@ -128,6 +166,19 @@ pmd {
   ruleSets = []
   ruleSetFiles = files("config/pmd/ruleset.xml")
 }
+
+cucumberReports {
+  outputDir = file("${rootDir}/target/cucumber")
+  reports = files("${rootDir}/target/cucumber.json")
+}
+
+task customCleanBeftaReports(type:Delete) {
+  delete "${rootDir}/BEFTA Report for Smoke Tests/"
+  delete "${rootDir}/BEFTA Report for Functional Tests/"
+  delete "${rootDir}/target/cucumber"
+  delete "${rootDir}/target/cucumber.json"
+}
+tasks.clean.dependsOn(tasks.customCleanBeftaReports)
 
 jacocoTestReport {
   executionData(test, integration)
@@ -164,8 +215,6 @@ dependencies {
     exclude group: 'junit', module: 'junit'
     exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
   }
-  testImplementation group: 'com.github.hmcts', name: 'befta-fw', version: '8.7.1'
-
   implementation group: 'org.flywaydb', name: 'flyway-core', version: '7.7.0'
   implementation group: 'org.postgresql', name: 'postgresql', version: '42.3.4'
 
@@ -173,6 +222,16 @@ dependencies {
   implementation group: 'org.projectlombok', name: 'lombok', version: versions.lombok
 
   integrationTestImplementation group: 'org.testcontainers', name: 'postgresql', version: versions.testcontainers
+
+  functionalTestImplementation sourceSets.main.runtimeClasspath
+  functionalTestImplementation sourceSets.test.runtimeClasspath
+  functionalTestImplementation group: 'com.github.hmcts', name: 'befta-fw', version: '8.7.1'
+  functionalTestImplementation libraries.junit5
+
+  functionalTestImplementation group: 'commons-lang', name: 'commons-lang', version: '2.6'
+  functionalTestImplementation (group: 'com.github.hmcts', name: 'ccd-test-definitions', version: '7.17.0') {
+    exclude group: 'com.github.hmcts.befta-fw', module: 'befta-fw'
+  }
 }
 
 dependencyManagement {
