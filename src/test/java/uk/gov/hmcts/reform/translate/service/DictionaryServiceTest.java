@@ -1,6 +1,5 @@
 package uk.gov.hmcts.reform.translate.service;
 
-import groovy.lang.IntRange;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -12,6 +11,7 @@ import uk.gov.hmcts.reform.translate.repository.DictionaryRepository;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
@@ -33,7 +33,7 @@ class DictionaryServiceTest {
     void shouldReturnDictionaryContents() {
         Map<String, String> expectedMapKeysAndValues = new HashMap<>();
 
-        new IntRange(1, 3).forEach(i -> expectedMapKeysAndValues.put("english" + i, "translated" + i));
+        IntStream.of(1, 3).forEach(i -> expectedMapKeysAndValues.put("english" + i, "translated" + i));
 
         var dictionaryEntities = expectedMapKeysAndValues.entrySet().stream()
             .map(es -> createDictionaryEntity(
