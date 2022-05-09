@@ -26,18 +26,16 @@ public class DictionaryService {
 
         final var spliterator = dictionaryEntities.spliterator();
 
-        Map<String, String> returnValue = Collections.emptyMap();
-
         if (dictionaryEntities.spliterator() != null) {
             Stream<DictionaryEntity> stream = StreamSupport.stream(spliterator, false);
 
-            returnValue = stream.collect(Collectors.toMap(
+            return stream.collect(Collectors.toMap(
                     DictionaryEntity::getEnglishPhrase,
                     dictionaryEntity ->
                         dictionaryEntity.getTranslationPhrase() == null ? "" : dictionaryEntity.getTranslationPhrase()
                 ));
         }
 
-        return returnValue;
+        return Collections.emptyMap();
     }
 }

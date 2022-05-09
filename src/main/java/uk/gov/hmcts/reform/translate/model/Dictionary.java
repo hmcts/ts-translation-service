@@ -7,6 +7,6 @@ import java.util.Map;
 
 @AllArgsConstructor
 @Data
-public class GetDictionaryResponse {
+public class Dictionary {
     private Map<String, String> translations;
 }
