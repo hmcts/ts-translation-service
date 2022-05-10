@@ -110,6 +110,7 @@ task smoke(type: JavaExec) {
   generateCucumberReports.enabled = false
   environment "OAUTH2_CLIENT_SECRET", "DUMMY"
   environment "S2S_URL_BASE", "DUMMY"
+  environment "IDAM_API_URL_BASE", "DUMMY"
   main = "uk.gov.hmcts.reform.translate.TranslationServiceBeftaMain"
   classpath += sourceSets.functionalTest.runtimeClasspath + sourceSets.main.output + sourceSets.test.output
   args = [
@@ -146,6 +147,7 @@ task functional(type: JavaExec) {
   generateCucumberReports.enabled = false
   environment "OAUTH2_CLIENT_SECRET", "DUMMY"
   environment "S2S_URL_BASE", "DUMMY"
+  environment "IDAM_API_URL_BASE", "DUMMY"
   main = "uk.gov.hmcts.reform.translate.TranslationServiceBeftaMain"
   classpath += sourceSets.functionalTest.runtimeClasspath + sourceSets.main.output + sourceSets.test.output
   args = [
