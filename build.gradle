@@ -31,7 +31,8 @@ def versions = [
         lombok          : '1.18.24',
         junit           : '5.8.2',
         junitPlatform   : '1.7.2',
-        serviceAuthVersion: '4.0.3'
+        serviceAuthVersion: '4.0.3',
+        idamClientVersion : '2.0.1'
 ]
 
 ext.libraries = [
@@ -206,6 +207,7 @@ cucumberReports {
 }
 
 task customCleanBeftaReports(type:Delete) {
+  delete "${rootDir}/BEFTA Report for Smoke Tests/"
   delete "${rootDir}/BEFTA Report for Functional Tests/"
   delete "${rootDir}/target/cucumber"
   delete "${rootDir}/target/cucumber.json"
@@ -265,7 +267,7 @@ dependencies {
     exclude group: 'com.github.hmcts.befta-fw', module: 'befta-fw'
   }
   implementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: versions.serviceAuthVersion
-  implementation group: 'com.github.hmcts', name: 'idam-java-client', version: '2.0.1'
+  implementation group: 'com.github.hmcts', name: 'idam-java-client', version: versions.idamClientVersion
   implementation group: 'org.springframework.security', name: 'spring-security-web'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-oauth2-client'
 

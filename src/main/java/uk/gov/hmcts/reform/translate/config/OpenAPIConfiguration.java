@@ -1,7 +1,5 @@
 package uk.gov.hmcts.reform.translate.config;
 
-//import io.swagger.v3.oas.annotations.Parameter;
-
 import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;

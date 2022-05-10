@@ -11,9 +11,6 @@ import org.springframework.web.context.ContextCleanupListener;
 @Configuration
 public class TestIdamConfiguration extends ContextCleanupListener {
 
-    //    @Value("${spring.security.oauth2.client.provider.oidc.issuer-uri}")
-    //    private String issuerUri;
-
     @Bean
     // Overriding as OAuth2ClientRegistrationRepositoryConfiguration loading before wire-mock mappings
     // for /o/.well-known/openid-configuration
