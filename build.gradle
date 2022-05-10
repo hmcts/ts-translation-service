@@ -25,10 +25,6 @@ java {
   }
 }
 
-tasks.withType(JavaExec).configureEach {
-    javaLauncher.set(javaToolchains.launcherFor(java.toolchain))
-}
-
 def versions = [
         springBoot      : springBoot.class.package.implementationVersion,
         testcontainers  : '1.15.2',
@@ -107,34 +103,27 @@ test {
   failFast = true
 }
 
-task smoke(type: Test) {
+task smoke(type: JavaExec) {
   description = "Runs smoke tests"
   group = "Verification"
-  testClassesDirs = sourceSets.functionalTest.output.classesDirs
-  classpath = sourceSets.functionalTest.runtimeClasspath
 
   generateCucumberReports.enabled = false
-
-  doLast {
-    generateCucumberReports.enabled = true
-    javaexec {
-      environment "OAUTH2_CLIENT_SECRET", "DUMMY"
-      main = "uk.gov.hmcts.reform.translate.TranslationServiceBeftaMain"
-      classpath += sourceSets.functionalTest.runtimeClasspath + sourceSets.main.output + sourceSets.test.output
-      args = [
-        '--strict',
-        '--threads', '10',
-        '--plugin', "json:${rootDir}/target/cucumber.json",
-        '--plugin', "junit:${buildDir}/test-results/functional/cucumber.xml",
-        '--tags', '@Smoke and not @Ignore',
-        '--glue', 'uk.gov.hmcts.befta.player', 'src/functionalTest/resources/features'
-      ]
-      // '--add-opens=...' added to suppress 'WARNING: An illegal reflective access operation has occurred' in uk.gov.hmcts.befta.util.CucumberStepAnnotationUtils
-      jvmArgs = [ '--add-opens=java.base/java.lang.reflect=ALL-UNNAMED' ]
-    }
-  }
+  environment "OAUTH2_CLIENT_SECRET", "DUMMY"
+  main = "uk.gov.hmcts.reform.translate.TranslationServiceBeftaMain"
+  classpath += sourceSets.functionalTest.runtimeClasspath + sourceSets.main.output + sourceSets.test.output
+  args = [
+    '--strict',
+    '--threads', '10',
+    '--plugin', "json:${rootDir}/target/cucumber.json",
+    '--plugin', "junit:${buildDir}/test-results/functional/cucumber.xml",
+    '--tags', '@Smoke and not @Ignore',
+    '--glue', 'uk.gov.hmcts.befta.player', 'src/functionalTest/resources/features'
+  ]
+  // '--add-opens=...' added to suppress 'WARNING: An illegal reflective access operation has occurred' in uk.gov.hmcts.befta.util.CucumberStepAnnotationUtils
+  jvmArgs = [ '--add-opens=java.base/java.lang.reflect=ALL-UNNAMED' ]
 
   finalizedBy {
+    generateCucumberReports.enabled = true
     generateCucumberReports {
       doLast{
         delete "${rootDir}/BEFTA Report for Smoke Tests/"
@@ -149,35 +138,27 @@ task smoke(type: Test) {
   outputs.upToDateWhen { false }
 }
 
-task functional(type: Test) {
+task functional(type: JavaExec) {
   description = "Runs functional tests"
   group = "Verification"
-  testClassesDirs = sourceSets.functionalTest.output.classesDirs
-  classpath = sourceSets.functionalTest.runtimeClasspath
 
   generateCucumberReports.enabled = false
-
-  doLast {
-    generateCucumberReports.enabled = true
-
-    javaexec {
-      environment "OAUTH2_CLIENT_SECRET", "DUMMY"
-      main = "uk.gov.hmcts.reform.translate.TranslationServiceBeftaMain"
-      classpath += sourceSets.functionalTest.runtimeClasspath + sourceSets.main.output + sourceSets.test.output
-      args = [
-        '--strict',
-        '--threads', '10',
-        '--plugin', "json:${rootDir}/target/cucumber.json",
-        '--plugin', "junit:${buildDir}/test-results/functional/cucumber.xml",
-        '--tags', 'not @Ignore',
-        '--glue', 'uk.gov.hmcts.befta.player', 'src/functionalTest/resources/features'
-      ]
-      // '--add-opens=...' added to suppress 'WARNING: An illegal reflective access operation has occurred' in uk.gov.hmcts.befta.util.CucumberStepAnnotationUtils
-      jvmArgs = [ '--add-opens=java.base/java.lang.reflect=ALL-UNNAMED' ]
-    }
-  }
+  environment "OAUTH2_CLIENT_SECRET", "DUMMY"
+  main = "uk.gov.hmcts.reform.translate.TranslationServiceBeftaMain"
+  classpath += sourceSets.functionalTest.runtimeClasspath + sourceSets.main.output + sourceSets.test.output
+  args = [
+    '--strict',
+    '--threads', '10',
+    '--plugin', "json:${rootDir}/target/cucumber.json",
+    '--plugin', "junit:${buildDir}/test-results/functional/cucumber.xml",
+    '--tags', 'not @Ignore',
+    '--glue', 'uk.gov.hmcts.befta.player', 'src/functionalTest/resources/features'
+  ]
+  // '--add-opens=...' added to suppress 'WARNING: An illegal reflective access operation has occurred' in uk.gov.hmcts.befta.util.CucumberStepAnnotationUtils
+  jvmArgs = [ '--add-opens=java.base/java.lang.reflect=ALL-UNNAMED' ]
 
   finalizedBy {
+    generateCucumberReports.enabled = true
     generateCucumberReports {
       doLast{
         delete "${rootDir}/BEFTA Report for Functional Tests/"
@@ -187,6 +168,7 @@ task functional(type: Test) {
       }
     }
   }
+
   outputs.upToDateWhen { false }
 }
 
