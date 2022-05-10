@@ -8,15 +8,15 @@ java:
       secrets:
         - name: AppInsightsInstrumentationKey
           alias: azure.application-insights.instrumentation-key
-        - name: ts-translation-service-POSTGRES-USER
+        - name: translation-service-POSTGRES-USER
           alias: TS_TRANSLATION_SERVICE_DB_USERNAME
-        - name: ts-translation-service-POSTGRES-PASS
+        - name: translation-service-POSTGRES-PASS
           alias: TS_TRANSLATION_SERVICE_DB_PASSWORD
-        - name: ts-translation-service-POSTGRES-HOST
+        - name: translation-service-POSTGRES-HOST
           alias: TS_TRANSLATION_SERVICE_DB_HOST
-        - name: ts-translation-service-POSTGRES-PORT
+        - name: translation-service-POSTGRES-PORT
           alias: TS_TRANSLATION_SERVICE_DB_PORT
-        - name: ts-translation-service-POSTGRES-DATABASE
+        - name: translation-service-POSTGRES-DATABASE
           alias: TS_TRANSLATION_SERVICE_DB_NAME
 
   environment:
