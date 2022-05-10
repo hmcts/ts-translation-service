@@ -25,6 +25,10 @@ java {
   }
 }
 
+tasks.withType(JavaExec).configureEach {
+    javaLauncher.set(javaToolchains.launcherFor(java.toolchain))
+}
+
 def versions = [
         springBoot      : springBoot.class.package.implementationVersion,
         testcontainers  : '1.15.2',
