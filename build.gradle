@@ -30,7 +30,8 @@ def versions = [
         testcontainers  : '1.15.2',
         lombok          : '1.18.24',
         junit           : '5.8.2',
-        junitPlatform   : '1.7.2'
+        junitPlatform   : '1.7.2',
+        serviceAuthVersion: '4.0.3'
 ]
 
 ext.libraries = [
@@ -61,15 +62,15 @@ sourceSets {
     }
     resources.srcDir file('src/integrationTest/resources')
   }
+}
 
-  idea {
-    module {
-      // config to allow Intellij to mark test source and resource files correctly to help linting tools
-      testSourceDirs += project.sourceSets.functionalTest.java.srcDirs
-      testSourceDirs += project.sourceSets.integrationTest.java.srcDirs
-      testResourceDirs += project.sourceSets.functionalTest.resources.srcDirs
-      testResourceDirs += project.sourceSets.integrationTest.resources.srcDirs
-    }
+idea {
+  module {
+    // config to allow Intellij to mark test source and resource files correctly to help linting tools
+    testSourceDirs += project.sourceSets.functionalTest.java.srcDirs
+    testSourceDirs += project.sourceSets.integrationTest.java.srcDirs
+    testResourceDirs += project.sourceSets.functionalTest.resources.srcDirs
+    testResourceDirs += project.sourceSets.integrationTest.resources.srcDirs
   }
 }
 
@@ -205,7 +206,6 @@ cucumberReports {
 }
 
 task customCleanBeftaReports(type:Delete) {
-  delete "${rootDir}/BEFTA Report for Smoke Tests/"
   delete "${rootDir}/BEFTA Report for Functional Tests/"
   delete "${rootDir}/target/cucumber"
   delete "${rootDir}/target/cucumber.json"
@@ -264,6 +264,15 @@ dependencies {
   functionalTestImplementation (group: 'com.github.hmcts', name: 'ccd-test-definitions', version: '7.17.0') {
     exclude group: 'com.github.hmcts.befta-fw', module: 'befta-fw'
   }
+  implementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: versions.serviceAuthVersion
+  implementation group: 'com.github.hmcts', name: 'idam-java-client', version: '2.0.1'
+  implementation group: 'org.springframework.security', name: 'spring-security-web'
+  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-oauth2-client'
+
+  implementation group: 'org.springframework.security', name: 'spring-security-oauth2-jose'
+  implementation group: 'org.springframework.security', name: 'spring-security-config'
+  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-oauth2-resource-server'
+  implementation group: 'javax.inject', name: 'javax.inject', version: '1'
 }
 
 dependencyManagement {
