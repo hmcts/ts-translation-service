@@ -10,11 +10,21 @@ import uk.gov.hmcts.reform.translate.repository.DictionaryRepository;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.IntStream;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 @ExtendWith(MockitoExtension.class)
 @SuppressWarnings({"PMD.UseConcurrentHashMap", "PMD.JUnitAssertionsShouldIncludeMessage"})
@@ -28,6 +38,8 @@ class DictionaryServiceTest {
 
     @InjectMocks
     DictionaryService dictionaryService;
+
+    private final String THE_QUICK_FOX_PHRASE = "the quick fox";
 
     @Test
     void shouldReturnDictionaryContents() {
@@ -61,6 +73,108 @@ class DictionaryServiceTest {
     void shouldReturnEmptyDictionaryContents() {
         given(dictionaryRepository.findAll()).willReturn(repositoryResults);
         assertTrue(dictionaryService.getDictionaryContents().isEmpty());
+    }
+
+    @Test
+    void testShouldTranslatePhrase() {
+        final DictionaryEntity dictionaryEntity = createDictionaryEntity(THE_QUICK_FOX_PHRASE, "translated");
+        doReturn(Optional.of(dictionaryEntity)).when(dictionaryRepository).findByEnglishPhrase(anyString());
+
+        final String translation = dictionaryService.getTranslation(THE_QUICK_FOX_PHRASE);
+
+        assertThat(translation)
+            .isNotNull()
+            .isEqualTo("translated");
+
+        verify(dictionaryRepository).findByEnglishPhrase(eq(THE_QUICK_FOX_PHRASE));
+        verifyNoMoreInteractions(dictionaryRepository);
+    }
+
+    @Test
+    void testShouldTranslatePhraseWhenTranslatedPhraseIsNull() {
+        final DictionaryEntity dictionaryEntity = createDictionaryEntity(THE_QUICK_FOX_PHRASE, null);
+        doReturn(Optional.of(dictionaryEntity)).when(dictionaryRepository).findByEnglishPhrase(anyString());
+
+        final String translation = dictionaryService.getTranslation(THE_QUICK_FOX_PHRASE);
+
+        assertThat(translation)
+            .isNotNull()
+            .isEqualTo(THE_QUICK_FOX_PHRASE);
+
+        verify(dictionaryRepository).findByEnglishPhrase(eq(THE_QUICK_FOX_PHRASE));
+        verifyNoMoreInteractions(dictionaryRepository);
+    }
+
+    @Test
+    void testShouldTranslatePhraseWhenEnglishPhraseIsNotInDictionary() {
+        final DictionaryEntity dictionaryEntity = createDictionaryEntity(THE_QUICK_FOX_PHRASE, null);
+        doReturn(Optional.empty()).when(dictionaryRepository).findByEnglishPhrase(anyString());
+        doReturn(dictionaryEntity).when(dictionaryRepository).save(dictionaryEntity);
+
+        final String translation = dictionaryService.getTranslation(THE_QUICK_FOX_PHRASE);
+
+        assertThat(translation)
+            .isNotNull()
+            .isEqualTo(THE_QUICK_FOX_PHRASE);
+
+        verify(dictionaryRepository).save(any());
+        verify(dictionaryRepository).findByEnglishPhrase(eq(THE_QUICK_FOX_PHRASE));
+    }
+
+    @Test
+    void testShouldReturnTranslations() {
+        // GIVEN
+        final Map<String, String> expectedTranslations =
+            Map.of("English phrase", "Translated English phrase",
+                   "English phrase with no translation", "English phrase with no translation",
+                   "English phrase not in dictionary", "English phrase not in dictionary");
+
+        final DictionaryEntity entity1 = createDictionaryEntity("English phrase", "Translated English phrase");
+        final DictionaryEntity entity2 = createDictionaryEntity("English phrase with no translation", null);
+        final DictionaryEntity entity3 = createDictionaryEntity("English phrase not in dictionary", null);
+
+        doReturn(Optional.of(entity1)).when(dictionaryRepository).findByEnglishPhrase(eq("English phrase"));
+        doReturn(Optional.of(entity2)).when(dictionaryRepository)
+            .findByEnglishPhrase(eq("English phrase with no translation"));
+        doReturn(Optional.empty()).when(dictionaryRepository).findByEnglishPhrase(eq("English phrase not in dictionary"));
+        doReturn(entity3).when(dictionaryRepository).save(eq(entity3));
+
+        final List<String> translationRequestPhrases = List.of(
+            "English phrase",
+            "English phrase with no translation",
+            "English phrase not in dictionary"
+        );
+
+        // WHEN
+        final Map<String, String> actualTranslations = dictionaryService.getTranslations(translationRequestPhrases);
+
+        // THEN
+        assertThat(actualTranslations)
+            .isNotEmpty()
+            .containsAllEntriesOf(expectedTranslations);
+
+        verify(dictionaryRepository).findByEnglishPhrase(eq("English phrase"));
+        verify(dictionaryRepository).findByEnglishPhrase(eq("English phrase with no translation"));
+        verify(dictionaryRepository).findByEnglishPhrase(eq("English phrase not in dictionary"));
+        verify(dictionaryRepository).save(eq(entity3));
+    }
+
+    @Test
+    @SuppressWarnings("ConstantConditions")
+    void testShouldRaiseExceptionWhenInputPhraseIsNull() {
+        final Throwable thrown = catchThrowable(() -> dictionaryService.getTranslation(null));
+
+        assertThat(thrown)
+            .isInstanceOf(NullPointerException.class);
+    }
+
+    @Test
+    @SuppressWarnings("ConstantConditions")
+    void testShouldRaiseExceptionWhenInputPhrasesIsNull() {
+        final Throwable thrown = catchThrowable(() -> dictionaryService.getTranslations(null));
+
+        assertThat(thrown)
+            .isInstanceOf(NullPointerException.class);
     }
 }
 
