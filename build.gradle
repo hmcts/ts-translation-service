@@ -277,6 +277,9 @@ dependencies {
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-oauth2-resource-server'
 
   implementation "com.github.ben-manes.caffeine:caffeine:2.7.0"
+  implementation group: 'com.github.tomakehurst', name: 'wiremock', version: '2.27.2'
+  implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-contract-stub-runner', version: '3.1.0'
+
 }
 
 dependencyManagement {
