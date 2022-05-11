@@ -4,8 +4,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.cloud.contract.wiremock.WireMockConfigurationCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,8 +23,8 @@ import static org.mockito.Mockito.when;
     Application.class,
     TestIdamConfiguration.class
 })
-@AutoConfigureMockMvc(addFilters = false)
 @ActiveProfiles("itest")
+@AutoConfigureWireMock(port = 0, stubs = "classpath:/wiremock-stubs")
 @SuppressWarnings("HideUtilityClassConstructor")
 public class BaseTest {
 
