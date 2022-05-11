@@ -16,7 +16,7 @@ public class SecurityUtils {
             .name("PEPE")
             .givenName("givenName")
             .uid("11111111")
-            .roles(Arrays.asList("ROLE"))
+            .roles(Arrays.asList("ROLE", "manage-translations"))
             .sub("sub")
             .build();
         return userInfo;
