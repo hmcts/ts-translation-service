@@ -51,10 +51,10 @@ class DictionaryServiceTest {
     }
 
     private DictionaryEntity createDictionaryEntity(String phrase, String translationPhrase) {
-        return DictionaryEntity.builder()
-            .englishPhrase(phrase)
-            .translationPhrase(translationPhrase)
-            .build();
+        final var dictionaryEntity = new DictionaryEntity();
+        dictionaryEntity.setEnglishPhrase(phrase);
+        dictionaryEntity.setEnglishPhrase(translationPhrase);
+        return dictionaryEntity;
     }
 
     @Test
