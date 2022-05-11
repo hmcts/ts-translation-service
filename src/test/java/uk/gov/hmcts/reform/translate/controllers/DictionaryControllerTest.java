@@ -11,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -20,6 +21,8 @@ import uk.gov.hmcts.reform.translate.config.SecurityConfiguration;
 import uk.gov.hmcts.reform.translate.model.Dictionary;
 import uk.gov.hmcts.reform.translate.model.TranslationsRequest;
 import uk.gov.hmcts.reform.translate.security.JwtGrantedAuthoritiesConverter;
+import uk.gov.hmcts.reform.translate.model.TranslationsRequest;
+import uk.gov.hmcts.reform.translate.model.TranslationsResponse;
 import uk.gov.hmcts.reform.translate.service.DictionaryService;
 
 import java.util.HashMap;
@@ -81,12 +84,10 @@ class DictionaryControllerTest {
             final Dictionary dictionary = dictionaryController.getTranslation(translationRequest);
 
             assertThat(dictionary)
-                .isNotNull()
                 .isNotNull();
             verify(dictionaryService).getTranslations(anyList());
         }
     }
-
 
     @Nested
     @DisplayName("putDictionary")
