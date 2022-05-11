@@ -24,15 +24,15 @@ public class DictionaryMapper {
     }
 
     public DictionaryEntity modelToEntity(final Map.Entry<String, String> currentPhrase) {
-        val dictionaryEntity = new DictionaryEntity();
-        dictionaryEntity.setEnglishPhrase(currentPhrase.getKey());
-        dictionaryEntity.setTranslationPhrase(currentPhrase.getValue());
-        return dictionaryEntity;
+        return DictionaryEntity.builder()
+            .englishPhrase(currentPhrase.getKey())
+            .translationPhrase(currentPhrase.getValue())
+            .build();
     }
 
     public DictionaryEntity modelToEntityWithoutTranslationPhrase(final Map.Entry<String, String> currentPhrase) {
-        val dictionaryEntity = new DictionaryEntity();
-        dictionaryEntity.setEnglishPhrase(currentPhrase.getKey());
-        return dictionaryEntity;
+        return DictionaryEntity.builder()
+            .englishPhrase(currentPhrase.getKey())
+            .build();
     }
 }

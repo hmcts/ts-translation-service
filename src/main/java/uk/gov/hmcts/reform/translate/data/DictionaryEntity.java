@@ -1,5 +1,6 @@
 package uk.gov.hmcts.reform.translate.data;
 
+import lombok.Builder;
 import lombok.Data;
 
 import javax.persistence.CascadeType;
@@ -15,6 +16,7 @@ import javax.persistence.Table;
 @Table(name = "dictionary")
 @Entity
 @Data
+@Builder
 public class DictionaryEntity {
 
     @Id
