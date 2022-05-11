@@ -231,6 +231,10 @@ dependencies {
 
   implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.6.7'
 
+  configurations.all {
+    exclude group: 'com.vaadin.external.google', module: 'android-json'
+  }
+
   implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: '6.0.1'
 
   implementation group: 'org.apache.logging.log4j', name: 'log4j-api'
