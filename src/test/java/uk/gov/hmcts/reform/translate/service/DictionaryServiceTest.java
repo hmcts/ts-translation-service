@@ -284,17 +284,6 @@ class DictionaryServiceTest {
         }
     }
 
-    @Test
-    void shouldThrowExceptionWhenReturningDictionaryContentsUsingIncorrectRole() {
-        given(securityUtils.hasRole(any())).willReturn(false);
-        RoleMissingException roleMissingException = assertThrows(
-            RoleMissingException.class,
-            () -> dictionaryService.getDictionaryContents()
-        );
-        assertEquals(String.format(RoleMissingException.ERROR_MESSAGE, DictionaryService.MANAGE_TRANSLATIONS_ROLE),
-                     roleMissingException.getMessage());
-    }
-
     @Nested
     @DisplayName("PutDictionary")
     class PutDictionary {
