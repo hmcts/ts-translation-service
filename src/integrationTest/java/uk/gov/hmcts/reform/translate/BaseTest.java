@@ -1,14 +1,13 @@
 package uk.gov.hmcts.reform.translate;
 
 import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.Authentication;
 import org.springframework.test.context.ActiveProfiles;
 import uk.gov.hmcts.reform.translate.config.TestIdamConfiguration;
 import uk.gov.hmcts.reform.translate.security.SecurityUtils;
-
-import javax.inject.Inject;
 
 @SpringBootTest(classes = {
     Application.class,
@@ -19,7 +18,7 @@ import javax.inject.Inject;
 @SuppressWarnings("HideUtilityClassConstructor")
 public class BaseTest {
 
-    @Inject
+    @Autowired
     protected SecurityUtils securityUtils;
 
     @Mock

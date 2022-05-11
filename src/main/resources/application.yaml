@@ -18,6 +18,10 @@ springdoc:
 spring:
   main:
     allow-bean-definition-overriding: true
+  cache:
+    cache-names: userInfoCache
+    caffeine:
+      spec: expireAfterWrite=1800s
   config:
     import: "optional:configtree:/mnt/secrets/ts/"
   application:
