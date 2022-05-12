@@ -109,6 +109,12 @@ task smoke(type: JavaExec) {
   description = "Runs smoke tests"
   group = "Verification"
 
+  new File("$buildDir/test-results/test").mkdirs()
+  copy {
+    from "src/functional/resources/DummyTest.xml"
+    into "$buildDir/test-results/test"
+  }
+
   generateCucumberReports.enabled = false
   environment "OAUTH2_CLIENT_ID", "DUMMY"
   environment "OAUTH2_CLIENT_SECRET", "DUMMY"
