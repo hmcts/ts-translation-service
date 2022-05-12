@@ -300,6 +300,9 @@ sonarqube {
     property "sonar.projectName", "Reform :: ts-translation-service"
     property "sonar.projectKey", "uk.gov.hmcts.reform:ts-translation-service"
     property "sonar.coverage.jacoco.xmlReportPaths", "${jacocoTestReport.reports.xml.destination.path}"
+    property "sonar.exclusions",
+      "src/main/java/uk/gov/hmcts/reform/translate/Application.java," +
+      "src/main/java/uk/gov/hmcts/reform/translate/config/SecurityConfiguration.java"
   }
 }
 
