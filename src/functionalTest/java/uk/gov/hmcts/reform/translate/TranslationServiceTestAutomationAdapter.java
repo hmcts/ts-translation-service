@@ -43,6 +43,11 @@ public class TranslationServiceTestAutomationAdapter extends DefaultTestAutomati
             public boolean isTestDataLoadedForCurrentRound() {
                 return false;
             }
+
+            @Override
+            public void loadDataIfNotLoadedVeryRecently() {
+
+            }
         };
     }
 }
