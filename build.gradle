@@ -110,7 +110,9 @@ task smoke(type: JavaExec) {
   group = "Verification"
 
   generateCucumberReports.enabled = false
+  environment "OAUTH2_CLIENT_ID", "DUMMY"
   environment "OAUTH2_CLIENT_SECRET", "DUMMY"
+  environment "OAUTH2_REDIRECT_URI", "DUMMY"
   environment "S2S_URL_BASE", "DUMMY"
   environment "IDAM_API_URL_BASE", "DUMMY"
   main = "uk.gov.hmcts.reform.translate.TranslationServiceBeftaMain"
@@ -147,7 +149,9 @@ task functional(type: JavaExec) {
   group = "Verification"
 
   generateCucumberReports.enabled = false
+  environment "OAUTH2_CLIENT_ID", "DUMMY"
   environment "OAUTH2_CLIENT_SECRET", "DUMMY"
+  environment "OAUTH2_REDIRECT_URI", "DUMMY"
   environment "S2S_URL_BASE", "DUMMY"
   environment "IDAM_API_URL_BASE", "DUMMY"
   main = "uk.gov.hmcts.reform.translate.TranslationServiceBeftaMain"
