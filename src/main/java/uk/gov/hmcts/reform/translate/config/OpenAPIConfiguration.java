@@ -3,7 +3,6 @@ package uk.gov.hmcts.reform.translate.config;
 import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
-import io.swagger.v3.oas.models.info.License;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -13,13 +12,12 @@ public class OpenAPIConfiguration {
     @Bean
     public OpenAPI openAPI() {
         return new OpenAPI()
-            .info(new Info().title("rpe demo")
-                      .description("rpe demo")
-                      .version("v0.0.1")
-                      .license(new License().name("MIT").url("https://opensource.org/licenses/MIT")))
+            .info(new Info().title("Welsh Language Translation Service")
+                      .description("Welsh Language Translation Service")
+                      .version("v0.0.1"))
             .externalDocs(new ExternalDocumentation()
                               .description("README")
-                              .url("https://github.com/hmcts/spring-boot-template"));
+                              .url("https://github.com/hmcts/ts-translation-service"));
     }
 
 }

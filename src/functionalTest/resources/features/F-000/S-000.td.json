@@ -25,6 +25,12 @@
     "body": {
       "status": "UP",
       "components" : {
+        "clientConfigServer": {
+          "status": "UNKNOWN",
+          "details": {
+            "error": "no property sources located"
+          }
+        },
         "db" : {
           "status" : "UP",
           "details" : {
@@ -54,11 +60,11 @@
         "livenessState" : {
           "status" : "UP"
         },
-        "readinessState" : {
-          "status" : "UP"
-        },
         "ping": {
           "status": "UP"
+        },
+        "readinessState" : {
+          "status" : "UP"
         },
         "refreshScope": {
           "status": "UP"
