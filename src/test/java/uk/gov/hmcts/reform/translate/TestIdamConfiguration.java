@@ -1,4 +1,4 @@
-package uk.gov.hmcts.reform.translate.config;
+package uk.gov.hmcts.reform.translate;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

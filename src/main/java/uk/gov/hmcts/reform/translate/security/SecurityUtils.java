@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 public class SecurityUtils {
     public static final String SERVICE_AUTHORIZATION = "ServiceAuthorization";
 
-    private static final String BEARER = "Bearer ";
+    public static final String BEARER = "Bearer ";
 
     private final AuthTokenGenerator authTokenGenerator;
     private final IdamRepository idamRepository;

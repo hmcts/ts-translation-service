@@ -19,6 +19,14 @@ ext {
   set('springCloudVersion', "2021.0.2")
 }
 
+configurations {
+  functionalTestImplementation.extendsFrom testImplementation
+  functionalTestRuntimeOnly.extendsFrom runtimeOnly
+
+  integrationTestImplementation.extendsFrom testImplementation
+  integrationTestRuntimeOnly.extendsFrom runtimeOnly
+}
+
 java {
   toolchain {
     languageVersion = JavaLanguageVersion.of(17)
@@ -73,14 +81,6 @@ idea {
     testResourceDirs += project.sourceSets.functionalTest.resources.srcDirs
     testResourceDirs += project.sourceSets.integrationTest.resources.srcDirs
   }
-}
-
-configurations {
-  functionalTestImplementation.extendsFrom testImplementation
-  functionalTestRuntimeOnly.extendsFrom runtimeOnly
-
-  integrationTestImplementation.extendsFrom testImplementation
-  integrationTestRuntimeOnly.extendsFrom runtimeOnly
 }
 
 tasks.withType(JavaCompile) {
@@ -252,11 +252,28 @@ dependencies {
   }
   implementation group: 'org.flywaydb', name: 'flyway-core', version: '7.7.0'
   implementation group: 'org.postgresql', name: 'postgresql', version: '42.3.4'
+  implementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: versions.serviceAuthVersion
+  implementation group: 'com.github.hmcts', name: 'idam-java-client', version: versions.idamClientVersion
+  implementation group: 'org.springframework.security', name: 'spring-security-web'
+  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-oauth2-client'
+
+  implementation group: 'org.springframework.security', name: 'spring-security-oauth2-jose'
+  implementation group: 'org.springframework.security', name: 'spring-security-config'
+  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-oauth2-resource-server'
 
   annotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
   implementation group: 'org.projectlombok', name: 'lombok', version: versions.lombok
 
+
+  integrationTestImplementation sourceSets.main.runtimeClasspath
+  integrationTestImplementation sourceSets.test.runtimeClasspath
   integrationTestImplementation group: 'org.testcontainers', name: 'postgresql', version: versions.testcontainers
+  integrationTestImplementation "com.github.ben-manes.caffeine:caffeine:2.7.0"
+  integrationTestImplementation group: 'com.github.tomakehurst', name: 'wiremock', version: '2.27.2'
+  integrationTestImplementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-contract-stub-runner', version: '3.1.0'
+  integrationTestImplementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
+  testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
+  integrationTestAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
 
   functionalTestImplementation sourceSets.main.runtimeClasspath
   functionalTestImplementation sourceSets.test.runtimeClasspath
@@ -267,19 +284,6 @@ dependencies {
   functionalTestImplementation (group: 'com.github.hmcts', name: 'ccd-test-definitions', version: '7.17.0') {
     exclude group: 'com.github.hmcts.befta-fw', module: 'befta-fw'
   }
-  implementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: versions.serviceAuthVersion
-  implementation group: 'com.github.hmcts', name: 'idam-java-client', version: versions.idamClientVersion
-  implementation group: 'org.springframework.security', name: 'spring-security-web'
-  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-oauth2-client'
-
-  implementation group: 'org.springframework.security', name: 'spring-security-oauth2-jose'
-  implementation group: 'org.springframework.security', name: 'spring-security-config'
-  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-oauth2-resource-server'
-
-  implementation "com.github.ben-manes.caffeine:caffeine:2.7.0"
-  implementation group: 'com.github.tomakehurst', name: 'wiremock', version: '2.27.2'
-  implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-contract-stub-runner', version: '3.1.0'
-
 }
 
 dependencyManagement {
@@ -366,6 +370,7 @@ rootProject.tasks.named("processFunctionalTestResources") {
 rootProject.tasks.named("processIntegrationTestResources") {
   duplicatesStrategy = 'include'
 }
+
 wrapper {
     distributionType = Wrapper.DistributionType.ALL
 }

@@ -6,15 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
-import org.springframework.cloud.contract.wiremock.WireMockConfigurationCustomizer;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.test.context.ActiveProfiles;
-import uk.gov.hmcts.reform.translate.config.TestIdamConfiguration;
 import uk.gov.hmcts.reform.translate.security.SecurityUtils;
 
 import static org.mockito.Mockito.when;
@@ -50,18 +46,11 @@ public class BaseTest {
         SecurityContextHolder.setContext(new SecurityContextImpl(authentication));
     }
 
-    @Configuration
-    static class WireMockTestConfiguration {
-        @Bean
-        public WireMockConfigurationCustomizer wireMockConfigurationCustomizer() {
-            return config -> config.extensions(new WiremockFixtures.ConnectionClosedTransformer());
-        }
-    }
-
     private Jwt dummyJwt() {
         return Jwt.withTokenValue("a dummy jwt token")
             .claim("aClaim", "aClaim")
             .header("aHeader", "aHeader")
             .build();
     }
+
 }
