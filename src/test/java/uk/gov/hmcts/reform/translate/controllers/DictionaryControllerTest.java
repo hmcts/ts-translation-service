@@ -1,7 +1,5 @@
 package uk.gov.hmcts.reform.translate.controllers;
 
-import groovy.lang.IntRange;
-import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -19,12 +17,13 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import uk.gov.hmcts.reform.translate.TestIdamConfiguration;
 import uk.gov.hmcts.reform.translate.config.SecurityConfiguration;
-import uk.gov.hmcts.reform.translate.security.JwtGrantedAuthoritiesConverter;
 import uk.gov.hmcts.reform.translate.model.DictionaryRequest;
+import uk.gov.hmcts.reform.translate.security.JwtGrantedAuthoritiesConverter;
 import uk.gov.hmcts.reform.translate.service.DictionaryService;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -77,7 +76,7 @@ class DictionaryControllerTest {
 
         private DictionaryRequest getDictionaryRequest(int from, int to) {
             final Map<String, String> expectedMapKeysAndValues = new HashMap<>();
-            new IntRange(from, to).forEach(i -> expectedMapKeysAndValues.put("english_" + i, "translated_" + i));
+            IntStream.range(from, to).forEach(i -> expectedMapKeysAndValues.put("english_" + i, "translated_" + i));
             return new DictionaryRequest(expectedMapKeysAndValues);
         }
     }

@@ -1,24 +1,23 @@
 package uk.gov.hmcts.reform.translate.service;
 
-import groovy.lang.IntRange;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 import uk.gov.hmcts.reform.translate.data.DictionaryEntity;
 import uk.gov.hmcts.reform.translate.helper.DictionaryMapper;
 import uk.gov.hmcts.reform.translate.model.DictionaryRequest;
 import uk.gov.hmcts.reform.translate.repository.DictionaryRepository;
 import uk.gov.hmcts.reform.translate.security.SecurityUtils;
-import uk.gov.hmcts.reform.translate.security.UserInfo;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.IntStream;
 import java.util.Optional;
+import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -195,7 +194,7 @@ class DictionaryServiceTest {
 
     private DictionaryRequest getDictionaryRequest(int from, int to) {
         final Map<String, String> expectedMapKeysAndValues = new HashMap<>();
-        new IntRange(from, to).forEach(i -> expectedMapKeysAndValues.put("english_" + i, "translated_" + i));
+        IntStream.range(from, to).forEach(i -> expectedMapKeysAndValues.put("english_" + i, "translated_" + i));
         return new DictionaryRequest(expectedMapKeysAndValues);
     }
 
