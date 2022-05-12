@@ -264,7 +264,6 @@ dependencies {
   annotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
   implementation group: 'org.projectlombok', name: 'lombok', version: versions.lombok
 
-
   integrationTestImplementation sourceSets.main.runtimeClasspath
   integrationTestImplementation sourceSets.test.runtimeClasspath
   integrationTestImplementation group: 'org.testcontainers', name: 'postgresql', version: versions.testcontainers
