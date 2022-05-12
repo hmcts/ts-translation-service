@@ -16,6 +16,12 @@ springdoc:
 
 #If you use a database then uncomment below lines and update db properties accordingly
 spring:
+  main:
+    allow-bean-definition-overriding: true
+  cache:
+    cache-names: userInfoCache
+    caffeine:
+      spec: expireAfterWrite=1800s
   config:
     import: "optional:configtree:/mnt/secrets/ts/"
   application:
@@ -45,7 +51,33 @@ spring:
   flyway:
     out-of-order: true
     ignore-missing-migrations: true
-
+  security:
+    oauth2:
+      client:
+        provider:
+          oidc:
+            issuer-uri: ${IDAM_OIDC_URL:http://localhost:5000}/o
+        registration:
+          oidc:
+            client-id: internal
+            client-secret: internal
 azure:
   application-insights:
     instrumentation-key: ${ts.AppInsightsInstrumentationKey:00000000-0000-0000-0000-000000000000}
+
+idam:
+  api:
+    url: ${IDAM_API_URL:http://localhost:5000}
+  s2s-auth:
+    microservice: ts_translation_service
+    totp_secret: ${IDAM_KEY_TS_TRANSLATION_SERVICE:AAAAAAAAAAAAAAAA}
+    url: ${S2S_URL:http://localhost:4502}
+  s2s-authorised:
+    services: ${TS_TRANSLATION_SERVICE_S2S_AUTHORISED_SERVICES:xui_webapp,ccd_admin}
+  client:
+    id: ts_translation_service
+    secret: ${TS_TRANSLATION_SERVICE_IDAM_CLIENT_SECRET:AAAAAAAAAAAAAAAA}
+    redirect_uri: http://localhost:4561/oauth2redirect
+
+oidc:
+  issuer: ${OIDC_ISSUER:http://fr-am:8080/openam/oauth2/hmcts}

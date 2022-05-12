@@ -2,3 +2,15 @@ spring:
   datasource:
     driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
     url: jdbc:tc:postgresql:11:///databasename?stringtype=unspecified
+  security:
+    oauth2:
+      client:
+        provider:
+          oidc:
+            issuer-uri: http://localhost:${wiremock.server.port:5000}/o
+
+idam:
+  api:
+    url: http://localhost:${wiremock.server.port:5000}
+  s2s-auth:
+    url: http://localhost:${wiremock.server.port:5000}/s2s
