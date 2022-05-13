@@ -7,15 +7,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import uk.gov.hmcts.reform.translate.model.Dictionary;
 import uk.gov.hmcts.reform.translate.model.TranslationsRequest;
 import uk.gov.hmcts.reform.translate.model.TranslationsResponse;
-import uk.gov.hmcts.reform.translate.model.Dictionary;
 import uk.gov.hmcts.reform.translate.service.DictionaryService;
 
 import java.util.Map;
