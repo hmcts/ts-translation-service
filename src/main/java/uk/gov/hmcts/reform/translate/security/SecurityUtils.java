@@ -78,9 +78,8 @@ public class SecurityUtils {
             .collect(Collectors.joining(","));
     }
 
-    public boolean hasManageTranslationsRole(List<String> roles) {
-        String manageTranslationsRole = "manage-translations";
-        return roles.contains(manageTranslationsRole);
+    public boolean hasManageTranslationsRole(List<String> roles, String role) {
+        return roles.contains(role);
     }
 }
 

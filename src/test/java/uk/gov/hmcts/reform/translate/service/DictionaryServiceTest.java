@@ -24,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -132,62 +133,62 @@ class DictionaryServiceTest {
 
     @Test
     void shouldPutANewDictionaryForUserWithManageTranslationsRole() {
-        final DictionaryRequest dictionaryRequest = getDictionaryRequest(1, 3);
+        final DictionaryRequest dictionaryRequest = getDictionaryRequest(1, 4);
         given(securityUtils.getUserInfo()).willReturn(getUserInfoWithManageTranslationsRole());
-        given(securityUtils.hasManageTranslationsRole(anyList())).willReturn(true);
+        given(securityUtils.hasManageTranslationsRole(anyList(),anyString())).willReturn(true);
         dictionaryService.putDictionary(dictionaryRequest);
 
         verify(dictionaryRepository, times(3)).findByEnglishPhrase(any());
-        verify(securityUtils, times(3)).hasManageTranslationsRole(any());
+        verify(securityUtils, times(3)).hasManageTranslationsRole(any(),anyString());
         verify(dictionaryMapper, times(3)).modelToEntityWithTranslationUploadEntity(any(), any());
         verify(dictionaryRepository, times(3)).save(any());
     }
 
     @Test
     void shouldPutANewDictionaryForUserWithoutManageTranslationsRole() {
-        final DictionaryRequest dictionaryRequest = getDictionaryRequest(1, 3);
+        final DictionaryRequest dictionaryRequest = getDictionaryRequest(1, 4);
         given(securityUtils.getUserInfo()).willReturn(getUserInfoWithManageTranslationsRole());
-        given(securityUtils.hasManageTranslationsRole(anyList())).willReturn(false);
+        given(securityUtils.hasManageTranslationsRole(anyList(),anyString())).willReturn(false);
         dictionaryService.putDictionary(dictionaryRequest);
 
         verify(dictionaryRepository, times(3)).findByEnglishPhrase(any());
-        verify(securityUtils, times(3)).hasManageTranslationsRole(any());
+        verify(securityUtils, times(3)).hasManageTranslationsRole(any(),anyString());
         verify(dictionaryMapper, times(3)).modelToEntityWithoutTranslationPhrase(any());
         verify(dictionaryRepository, times(3)).save(any());
     }
 
     @Test
     void shouldUpdateADictionaryForUserWithManageTranslationsRole() {
-        final DictionaryRequest dictionaryRequest = getDictionaryRequest(1, 1);
+        final DictionaryRequest dictionaryRequest = getDictionaryRequest(1, 2);
         final DictionaryEntity dictionaryEntity =
             createDictionaryEntity("english_1", "translated_1");
 
         given(dictionaryRepository.findByEnglishPhrase(any())).willReturn(Optional.of(dictionaryEntity));
 
         given(securityUtils.getUserInfo()).willReturn(getUserInfoWithManageTranslationsRole());
-        given(securityUtils.hasManageTranslationsRole(anyList())).willReturn(true);
+        given(securityUtils.hasManageTranslationsRole(anyList(),anyString())).willReturn(true);
         dictionaryService.putDictionary(dictionaryRequest);
 
         verify(dictionaryRepository, times(1)).findByEnglishPhrase(any());
-        verify(securityUtils, times(1)).hasManageTranslationsRole(any());
+        verify(securityUtils, times(1)).hasManageTranslationsRole(any(),anyString());
         verify(dictionaryRepository, times(1)).save(any());
     }
 
 
     @Test
     void shouldUpdateADictionaryForUserWithoutManageTranslationsRole() {
-        final DictionaryRequest dictionaryRequest = getDictionaryRequest(1, 1);
+        final DictionaryRequest dictionaryRequest = getDictionaryRequest(1, 2);
         final DictionaryEntity dictionaryEntity =
             createDictionaryEntity("english_1", "translated_1");
 
         given(dictionaryRepository.findByEnglishPhrase(any())).willReturn(Optional.of(dictionaryEntity));
 
         given(securityUtils.getUserInfo()).willReturn(getUserInfoWithManageTranslationsRole());
-        given(securityUtils.hasManageTranslationsRole(anyList())).willReturn(false);
+        given(securityUtils.hasManageTranslationsRole(anyList(),anyString())).willReturn(false);
         dictionaryService.putDictionary(dictionaryRequest);
 
         verify(dictionaryRepository, times(1)).findByEnglishPhrase(any());
-        verify(securityUtils, times(1)).hasManageTranslationsRole(any());
+        verify(securityUtils, times(1)).hasManageTranslationsRole(any(),anyString());
         verify(dictionaryRepository, times(0)).save(any());
     }
 

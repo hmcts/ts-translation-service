@@ -24,6 +24,7 @@ public class DictionaryService {
     private final DictionaryRepository dictionaryRepository;
     private final DictionaryMapper dictionaryMapper;
     private final SecurityUtils securityUtils;
+    private static final String MANAGE_TRANSLATIONS_ROLE = "manage-translations";
 
     @Autowired
     public DictionaryService(DictionaryRepository dictionaryRepository, DictionaryMapper dictionaryMapper,
@@ -91,6 +92,6 @@ public class DictionaryService {
     }
 
     private boolean isCurrentRole(UserInfo currentUser) {
-        return securityUtils.hasManageTranslationsRole(currentUser.getRoles());
+        return securityUtils.hasManageTranslationsRole(currentUser.getRoles(), MANAGE_TRANSLATIONS_ROLE);
     }
 }
