@@ -120,7 +120,7 @@ class DictionaryServiceTest {
     private DictionaryEntity createDictionaryEntity(String phrase, String translationPhrase) {
         final var dictionaryEntity = new DictionaryEntity();
         dictionaryEntity.setEnglishPhrase(phrase);
-        dictionaryEntity.setEnglishPhrase(translationPhrase);
+        dictionaryEntity.setTranslationPhrase(translationPhrase);
         return dictionaryEntity;
     }
 
