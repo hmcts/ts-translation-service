@@ -29,7 +29,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 @ExtendWith(MockitoExtension.class)
-@SuppressWarnings({"PMD.UseConcurrentHashMap", "PMD.JUnitAssertionsShouldIncludeMessage"})
+@SuppressWarnings({"PMD.UseConcurrentHashMap", "PMD.JUnitAssertionsShouldIncludeMessage", "PMD.TooManyMethods"})
 class DictionaryServiceTest {
 
     @Mock
@@ -41,7 +41,7 @@ class DictionaryServiceTest {
     @InjectMocks
     DictionaryService dictionaryService;
 
-    private final String THE_QUICK_FOX_PHRASE = "the quick fox";
+    private static final String THE_QUICK_FOX_PHRASE = "the quick fox";
 
     @Test
     void shouldReturnDictionaryContents() {
@@ -173,25 +173,31 @@ class DictionaryServiceTest {
     @Test
     void testShouldReturnTranslations() {
         // GIVEN
+        final String englishPhrase = "English phrase";
+        final String englishPhraseWithNoTranslation = "English phrase with no translation";
+        final String englishPhraseNotInDictionary = "English phrase not in dictionary";
+
         final Map<String, String> expectedTranslations =
-            Map.of("English phrase", "Translated English phrase",
-                   "English phrase with no translation", "English phrase with no translation",
-                   "English phrase not in dictionary", "English phrase not in dictionary");
+            Map.of(englishPhrase, "Translated English phrase",
+                   englishPhraseWithNoTranslation, englishPhraseWithNoTranslation,
+                   englishPhraseNotInDictionary, englishPhraseNotInDictionary
+            );
 
-        final DictionaryEntity entity1 = createDictionaryEntity("English phrase", "Translated English phrase");
-        final DictionaryEntity entity2 = createDictionaryEntity("English phrase with no translation", null);
-        final DictionaryEntity entity3 = createDictionaryEntity("English phrase not in dictionary", null);
+        final DictionaryEntity entity1 = createDictionaryEntity(englishPhrase, "Translated English phrase");
+        final DictionaryEntity entity2 = createDictionaryEntity(englishPhraseWithNoTranslation, null);
+        final DictionaryEntity entity3 = createDictionaryEntity(englishPhraseNotInDictionary, null);
 
-        doReturn(Optional.of(entity1)).when(dictionaryRepository).findByEnglishPhrase(eq("English phrase"));
+        doReturn(Optional.of(entity1)).when(dictionaryRepository).findByEnglishPhrase(eq(englishPhrase));
         doReturn(Optional.of(entity2)).when(dictionaryRepository)
-            .findByEnglishPhrase(eq("English phrase with no translation"));
-        doReturn(Optional.empty()).when(dictionaryRepository).findByEnglishPhrase(eq("English phrase not in dictionary"));
+            .findByEnglishPhrase(eq(englishPhraseWithNoTranslation));
+        doReturn(Optional.empty()).when(dictionaryRepository)
+            .findByEnglishPhrase(eq(englishPhraseNotInDictionary));
         doReturn(entity3).when(dictionaryRepository).save(eq(entity3));
 
         final List<String> translationRequestPhrases = List.of(
-            "English phrase",
-            "English phrase with no translation",
-            "English phrase not in dictionary"
+            englishPhrase,
+            englishPhraseWithNoTranslation,
+            englishPhraseNotInDictionary
         );
 
         // WHEN
@@ -202,9 +208,9 @@ class DictionaryServiceTest {
             .isNotEmpty()
             .containsAllEntriesOf(expectedTranslations);
 
-        verify(dictionaryRepository).findByEnglishPhrase(eq("English phrase"));
-        verify(dictionaryRepository).findByEnglishPhrase(eq("English phrase with no translation"));
-        verify(dictionaryRepository).findByEnglishPhrase(eq("English phrase not in dictionary"));
+        verify(dictionaryRepository).findByEnglishPhrase(eq(englishPhrase));
+        verify(dictionaryRepository).findByEnglishPhrase(eq(englishPhraseWithNoTranslation));
+        verify(dictionaryRepository).findByEnglishPhrase(eq(englishPhraseNotInDictionary));
         verify(dictionaryRepository).save(eq(entity3));
     }
 
