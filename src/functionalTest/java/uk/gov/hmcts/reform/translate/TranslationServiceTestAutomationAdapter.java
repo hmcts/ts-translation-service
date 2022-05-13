@@ -10,27 +10,6 @@ import java.util.concurrent.ExecutionException;
 
 public class TranslationServiceTestAutomationAdapter extends DefaultTestAutomationAdapter {
 
-
-    @Override
-    public String getNewS2SToken() {
-        return null;
-    }
-
-    @Override
-    public String getNewS2SToken(String clientId) {
-        return null;
-    }
-
-    @Override
-    public void authenticate(UserData user, String preferredTokenClientId) throws ExecutionException {
-
-    }
-
-    @Override
-    public Object calculateCustomValue(BackEndFunctionalTestScenarioContext scenarioContext, Object key) {
-        return null;
-    }
-
     @Override
     public BeftaTestDataLoader getDataLoader() {
         return new DefaultBeftaTestDataLoader() {
