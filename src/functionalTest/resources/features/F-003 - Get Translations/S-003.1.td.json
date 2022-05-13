@@ -5,6 +5,8 @@
   "operationName": "translate",
   "method": "POST",
   "uri": "/translation/cy",
+  "s2sClientId": "xui_webapp",
+  "userTokenClientId": "xuiwebapp",
 
   "specs": [
     "an active solicitor profile",
@@ -19,11 +21,10 @@
   },
 
   "request": {
+    "_extends_": "Common_Request",
+
     "headers": {
-      "Accept": "application/json",
-      "Content-Type": "application/json",
-      "Authorization": "[[DEFAULT_AUTO_VALUE]]",
-      "ServiceAuthorization": "[[DEFAULT_AUTO_VALUE]]"
+      "Accept": "application/json"
     },
     "body": {
       "phrases": ["An English Phrase"]
