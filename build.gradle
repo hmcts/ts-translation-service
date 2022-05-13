@@ -223,9 +223,14 @@ dependencies {
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-aop'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-json'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa'
+  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-oauth2-client'
+  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-cache'
+  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-oauth2-resource-server'
   implementation group: 'org.springframework.cloud', name: 'spring-cloud-config-server'
   implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-config'
-  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-cache'
+  implementation group: 'org.springframework.security', name: 'spring-security-web'
+  implementation group: 'org.springframework.security', name: 'spring-security-oauth2-jose'
+  implementation group: 'org.springframework.security', name: 'spring-security-config'
 
   implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.6.7'
 
@@ -237,6 +242,13 @@ dependencies {
 
   implementation group: 'org.apache.logging.log4j', name: 'log4j-api'
   implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j'
+  implementation group: 'org.flywaydb', name: 'flyway-core', version: '7.7.0'
+  implementation group: 'org.postgresql', name: 'postgresql', version: '42.3.4'
+  implementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: versions.serviceAuthVersion
+  implementation group: 'com.github.hmcts', name: 'idam-java-client', version: versions.idamClientVersion
+
+  annotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
+  implementation group: 'org.projectlombok', name: 'lombok', version: versions.lombok
 
   testImplementation(platform('org.junit:junit-bom:5.8.2'))
   testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
@@ -244,20 +256,6 @@ dependencies {
     exclude group: 'junit', module: 'junit'
     exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
   }
-  implementation group: 'org.flywaydb', name: 'flyway-core', version: '7.7.0'
-  implementation group: 'org.postgresql', name: 'postgresql', version: '42.3.4'
-  implementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: versions.serviceAuthVersion
-  implementation group: 'com.github.hmcts', name: 'idam-java-client', version: versions.idamClientVersion
-  implementation group: 'org.springframework.security', name: 'spring-security-web'
-  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-oauth2-client'
-
-  implementation group: 'org.springframework.security', name: 'spring-security-oauth2-jose'
-  implementation group: 'org.springframework.security', name: 'spring-security-config'
-  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-oauth2-resource-server'
-
-  annotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
-  implementation group: 'org.projectlombok', name: 'lombok', version: versions.lombok
-
 
   integrationTestImplementation sourceSets.main.runtimeClasspath
   integrationTestImplementation sourceSets.test.runtimeClasspath
