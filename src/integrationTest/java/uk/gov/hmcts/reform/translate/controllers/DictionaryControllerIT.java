@@ -23,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc(addFilters = false)
-@SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
+@SuppressWarnings({"PMD.JUnitTestsShouldIncludeAssert", "PMD.JUnitAssertionsShouldIncludeMessage"})
 public class DictionaryControllerIT extends BaseTest {
 
     @Autowired
@@ -71,8 +71,8 @@ public class DictionaryControllerIT extends BaseTest {
 
             assertTrue(nestedServletException.getCause() instanceof IllegalStateException);
             assertTrue(nestedServletException.getCause().getMessage().contains("Duplicate key English Phrase 1"));
-
         }
+
         @Test
         void shouldReturn4030WhenUserDoesNotHaveManageTranslationsRole() throws Exception {
             stubUserInfo("unknown-role");

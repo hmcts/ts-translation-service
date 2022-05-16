@@ -26,7 +26,7 @@ import static org.mockito.Mockito.when;
 })
 @ActiveProfiles("itest")
 @AutoConfigureWireMock(port = 0, stubs = "classpath:/wiremock-stubs")
-@SuppressWarnings("HideUtilityClassConstructor")
+@SuppressWarnings({"HideUtilityClassConstructor", "PMD.LawOfDemeter", "PMD.JUnitAssertionsShouldIncludeMessage"})
 public class BaseTest {
 
     @Value("${wiremock.server.port}")
@@ -62,16 +62,16 @@ public class BaseTest {
     }
 
     protected static void stubUserInfo(String roles) {
-        final var jsonBody = "{\n" +
-            "      \"sub\": \"user@hmcts.net\",\n" +
-            "      \"uid\": \"e8275d41-7f22-4ee7-8ed3-14644d6db096\",\n" +
-            "      \"roles\": [\n" +
-            "        \"" + roles + "\"\n" +
-            "      ],\n" +
-            "      \"name\": \"Test User\",\n" +
-            "      \"given_name\": \"Test\",\n" +
-            "      \"family_name\": \"User\"\n" +
-            "    }";
+        final var jsonBody = "{\n"
+            + "      \"sub\": \"user@hmcts.net\",\n"
+            + "      \"uid\": \"e8275d41-7f22-4ee7-8ed3-14644d6db096\",\n"
+            + "      \"roles\": [\n"
+            + "        \"" + roles + "\"\n"
+            + "      ],\n"
+            + "      \"name\": \"Test User\",\n"
+            + "      \"given_name\": \"Test\",\n"
+            + "      \"family_name\": \"User\"\n"
+            + "    }";
         stubFor(WireMock.get(urlEqualTo("/o/userinfo")).willReturn(
             aResponse().withStatus(HttpStatus.OK.value())
                 .withHeader("Content-Type", "application/json")
