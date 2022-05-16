@@ -12,7 +12,7 @@
       "sub": "user@hmcts.net",
       "uid": "e8275d41-7f22-4ee7-8ed3-14644d6db096",
       "roles": [
-        "caseworker-test"
+        "manage-translations"
       ],
       "name": "Test User",
       "given_name": "Test",

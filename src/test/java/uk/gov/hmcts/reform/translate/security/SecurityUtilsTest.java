@@ -20,6 +20,7 @@ import uk.gov.hmcts.reform.translate.security.idam.IdamRepository;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -28,6 +29,8 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
@@ -103,5 +106,19 @@ class SecurityUtilsTest {
     private void assertHeader(HttpHeaders headers, String name, String value) {
         assertThat(headers.get(name), hasSize(1));
         assertThat(headers.get(name).get(0), equalTo(value));
+    }
+
+    @Test
+    @DisplayName("Check role present")
+    void shouldReturnTrueWhenRolePresent() {
+        final var roles = List.of("myRole", "my2ndRole", "manage-translations", "manage-expectations");
+        assertTrue(securityUtils.hasRole("myRole", roles));
+    }
+
+    @Test
+    @DisplayName("Check manage-translations role not present")
+    void shouldReturnTrueWhenRoleNotPresent() {
+        final var roles = List.of("myRole", "manage-expectations");
+        assertFalse(securityUtils.hasRole("unknown-role", roles));
     }
 }

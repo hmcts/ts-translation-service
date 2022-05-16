@@ -12,6 +12,7 @@ import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 import uk.gov.hmcts.reform.translate.security.idam.IdamRepository;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -75,6 +76,10 @@ public class SecurityUtils {
         return authorities.stream()
             .map(GrantedAuthority::getAuthority)
             .collect(Collectors.joining(","));
+    }
+
+    public boolean hasRole(String roleToMatch, List<String> userRoles) {
+        return userRoles.stream().anyMatch(role -> role.equalsIgnoreCase(roleToMatch));
     }
 }
 
