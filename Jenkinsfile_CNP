@@ -18,7 +18,6 @@ def secrets = [
   'ccd-${env}': [
     secret('ccd-befta-caseworker-2-solicitor-2-pwd', 'CCD_BEFTA_CASEWORKER_2_SOLICITOR_2_PWD'),
     secret('ccd-api-gateway-oauth2-client-secret', 'CCD_API_GATEWAY_OAUTH2_CLIENT_SECRET'),
-
   ]
 ]
 
@@ -41,6 +40,9 @@ env.BEFTA_OAUTH2_CLIENT_ID_OF_XUIWEBAPP = "xuiwebapp"
 env.BEFTA_OAUTH2_REDIRECT_URI_OF_XUIWEBAPP = "https://www-ccd.aat.platform.hmcts.net/oauth2redirect"
 env.BEFTA_OAUTH2_ACCESS_TOKEN_TYPE_OF_XUIWEBAPP = "OIDC"
 env.BEFTA_OAUTH2_SCOPE_VARIABLES_OF_XUIWEBAPP = "profile openid roles manage-user create-user search-user"
+env.CCD_API_GATEWAY_OAUTH2_CLIENT_ID = "ccd_gateway"
+
+
 
 // temporary workaround for platform changes: turn BEFTA header checks to warning mode
 env.BEFTA_RESPONSE_HEADER_CHECK_POLICY="JUST_WARN"
