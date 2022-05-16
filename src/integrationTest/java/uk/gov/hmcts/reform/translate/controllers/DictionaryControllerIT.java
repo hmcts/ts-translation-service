@@ -8,6 +8,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.util.NestedServletException;
 import uk.gov.hmcts.reform.translate.BaseTest;
 
 import java.util.Collections;
@@ -15,6 +16,8 @@ import java.util.LinkedHashMap;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -54,6 +57,28 @@ public class DictionaryControllerIT extends BaseTest {
                                 .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().is(200))
                 .andExpect(jsonPath("$.translations", equalTo(expectedDictionary)))
+                .andReturn();
+        }
+
+        @Test
+        @Sql(scripts = {DELETE_TRANSLATION_TABLES_SCRIPT, GET_TRANSLATION_TABLES_DUPLICATE_ENGLISH_PHRASES_SCRIPT})
+        void shouldReturn500WhenDictionaryReturnsDuplicateEnglishPhrases() {
+            NestedServletException nestedServletException = assertThrows(
+                NestedServletException.class,
+                () -> mockMvc.perform(get(URL)
+                                          .contentType(MediaType.APPLICATION_JSON_VALUE))
+            );
+
+            assertTrue(nestedServletException.getCause() instanceof IllegalStateException);
+            assertTrue(nestedServletException.getCause().getMessage().contains("Duplicate key English Phrase 1"));
+
+        }
+        @Test
+        void shouldReturn4030WhenUserDoesNotHaveManageTranslationsRole() throws Exception {
+            stubUserInfo("unknown-role");
+            mockMvc.perform(get(URL)
+                                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().is(403))
                 .andReturn();
         }
     }

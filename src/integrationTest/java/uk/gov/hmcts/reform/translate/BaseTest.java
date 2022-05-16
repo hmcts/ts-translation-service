@@ -39,6 +39,9 @@ public class BaseTest {
     protected static final String DELETE_TRANSLATION_TABLES_SCRIPT =
         "classpath:sql/delete-Dictionary_And_TranslationUploads.sql";
 
+    protected static final String GET_TRANSLATION_TABLES_DUPLICATE_ENGLISH_PHRASES_SCRIPT =
+        "classpath:sql/get-Dictionary_WithDuplicateEnglishPhrases.sql";
+
     @BeforeEach
     void init() {
         Jwt jwt = dummyJwt();
