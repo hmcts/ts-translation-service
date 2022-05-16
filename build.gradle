@@ -164,7 +164,7 @@ dependencies {
     exclude group: 'junit', module: 'junit'
     exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
   }
-  testImplementation group: 'com.github.hmcts', name: 'befta-fw', version: '8.7.1'
+  testImplementation group: 'com.github.hmcts', name: 'befta-fw', version: '8.7.2-CCD-3086.6'
   integrationTestImplementation group: 'org.testcontainers', name: 'postgresql', version: versions.testcontainers
 
   runtimeOnly 'org.postgresql:postgresql'
