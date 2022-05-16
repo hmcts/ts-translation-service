@@ -48,6 +48,7 @@ env.BEFTA_RESPONSE_HEADER_CHECK_POLICY="JUST_WARN"
 def vaultOverrides = [
   'preview' : 'aat'
 ]
+
 withPipeline(type, product, component) {
   after('test') {
     builder.gradle('integration')
@@ -86,3 +87,9 @@ withPipeline(type, product, component) {
   }
 }
 
+/**
+ * Forces a recursive copy by always returning 0 regardless of errors
+ */
+def copyIgnore(filePath, destinationDir) {
+  steps.sh("cp -R '${filePath}' '${destinationDir}' || :")
+}
