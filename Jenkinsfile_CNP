@@ -1,6 +1,6 @@
-#!groovy
+#!groovy @Library("Infrastructure")
 
-@Library("Infrastructure")
+import uk.gov.hmcts.contino.GradleBuilder
 
 def type = "java"
 def product = "ts"
