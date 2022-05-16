@@ -18,6 +18,10 @@ def secrets = [
   'ccd-${env}': [
     secret('ccd-befta-caseworker-2-solicitor-2-pwd', 'CCD_BEFTA_CASEWORKER_2_SOLICITOR_2_PWD'),
     secret('ccd-api-gateway-oauth2-client-secret', 'CCD_API_GATEWAY_OAUTH2_CLIENT_SECRET'),
+  ],
+  's2s-${env}': [
+    secret('microservicekey-xui-webapp', 'BEFTA_S2S_CLIENT_SECRET'),
+    secret('microservicekey-xui-webapp', 'BEFTA_S2S_CLIENT_SECRET_OF_XUI_WEBAPP')
   ]
 ]
 
