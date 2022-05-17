@@ -81,6 +81,7 @@ class SecurityUtilsTest {
         UserInfo userInfo = UserInfo.builder()
             .uid(USER_ID)
             .sub("emailId@a.com")
+            .roles(List.of("myRole", "my2ndRole", "manage-translations", "manage-expectations"))
             .build();
         doReturn(userInfo).when(idamRepository).getUserInfo(USER_JWT);
     }
@@ -111,14 +112,12 @@ class SecurityUtilsTest {
     @Test
     @DisplayName("Check role present")
     void shouldReturnTrueWhenRolePresent() {
-        final var roles = List.of("myRole", "my2ndRole", "manage-translations", "manage-expectations");
-        assertTrue(securityUtils.hasRole("myRole", roles));
+        assertTrue(securityUtils.hasRole("myRole"));
     }
 
     @Test
     @DisplayName("Check manage-translations role not present")
     void shouldReturnTrueWhenRoleNotPresent() {
-        final var roles = List.of("myRole", "manage-expectations");
-        assertFalse(securityUtils.hasRole("unknown-role", roles));
+        assertFalse(securityUtils.hasRole("unknown-role"));
     }
 }

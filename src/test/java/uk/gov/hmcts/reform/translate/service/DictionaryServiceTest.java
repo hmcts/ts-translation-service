@@ -7,7 +7,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 import uk.gov.hmcts.reform.translate.data.DictionaryEntity;
 import uk.gov.hmcts.reform.translate.errorhandling.RoleMissingException;
 import uk.gov.hmcts.reform.translate.repository.DictionaryRepository;
@@ -43,8 +42,7 @@ class DictionaryServiceTest {
 
     @BeforeEach
     void setUp() {
-        given(securityUtils.getUserInfo()).willReturn(UserInfo.builder().build());
-        given(securityUtils.hasRole(any(), any())).willReturn(true);
+        given(securityUtils.hasRole(any())).willReturn(true);
     }
 
     @Test
@@ -131,13 +129,12 @@ class DictionaryServiceTest {
     @Test
     void shouldThrowExceptionWhenReturningDictionaryContentsNoUserInfoAvailable() {
         Mockito.reset(securityUtils);
-        given(securityUtils.getUserInfo()).willReturn(null);
         assertThrows(RoleMissingException.class, () -> dictionaryService.getDictionaryContents());
     }
 
     @Test
     void shouldThrowExceptionWhenReturningDictionaryContentsUsingIncorrectRole() {
-        given(securityUtils.hasRole(any(), any())).willReturn(false);
+        given(securityUtils.hasRole(any())).willReturn(false);
         RoleMissingException roleMissingException = assertThrows(
             RoleMissingException.class,
             () -> dictionaryService.getDictionaryContents()

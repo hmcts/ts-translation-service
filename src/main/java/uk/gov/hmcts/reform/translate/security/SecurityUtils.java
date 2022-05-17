@@ -12,7 +12,6 @@ import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 import uk.gov.hmcts.reform.translate.security.idam.IdamRepository;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -78,8 +77,9 @@ public class SecurityUtils {
             .collect(Collectors.joining(","));
     }
 
-    public boolean hasRole(String roleToMatch, List<String> userRoles) {
-        return userRoles.stream().anyMatch(role -> role.equalsIgnoreCase(roleToMatch));
+    public boolean hasRole(String roleToMatch) {
+        UserInfo userInfo = getUserInfo();
+        return userInfo != null && userInfo.getRoles().stream().anyMatch(role -> role.equalsIgnoreCase(roleToMatch));
     }
 }
 

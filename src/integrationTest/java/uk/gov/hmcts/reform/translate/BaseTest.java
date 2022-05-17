@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.http.HttpStatus;
@@ -26,6 +27,7 @@ import static org.mockito.Mockito.when;
 })
 @ActiveProfiles("itest")
 @AutoConfigureWireMock(port = 0, stubs = "classpath:/wiremock-stubs")
+@AutoConfigureMockMvc(addFilters = false)
 @SuppressWarnings({"HideUtilityClassConstructor", "PMD.LawOfDemeter", "PMD.JUnitAssertionsShouldIncludeMessage"})
 public class BaseTest {
 
