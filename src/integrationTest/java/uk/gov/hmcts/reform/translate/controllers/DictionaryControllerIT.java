@@ -109,4 +109,31 @@ public class DictionaryControllerIT extends BaseTest {
                 .andExpect(jsonPath("$.translations", equalTo(expectedTranslations)));
         }
     }
+
+    @Nested
+    class GetTranslations {
+        private static final String TRANSLATIONS_URL = "/translation/cy";
+
+        @Test
+        void shouldReturn400BadRequest() throws Exception {
+            mockMvc.perform(post(TRANSLATIONS_URL)
+                                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                                .accept(MediaType.APPLICATION_JSON_VALUE)
+                                .content("{}"))
+                .andExpect(status().isBadRequest());
+        }
+
+        @Test
+        @Sql(scripts = {DELETE_TRANSLATION_TABLES_SCRIPT, GET_TRANSLATION_TABLES_SCRIPT})
+        void shouldReturn200() throws Exception {
+            final Map<String, String> expectedTranslations = Map.of("English Phrase 2", "Translated Phrase 2");
+
+            mockMvc.perform(post(TRANSLATIONS_URL)
+                                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                                .accept(MediaType.APPLICATION_JSON_VALUE)
+                                .content("{\"phrases\": [\"English Phrase 2\"]}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.translations", equalTo(expectedTranslations)));
+        }
+    }
 }
