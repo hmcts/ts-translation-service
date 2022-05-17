@@ -28,7 +28,7 @@ spring:
     name: Translation Service
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://${TS_TRANSLATION_SERVICE_DB_HOST:localhost}:${TS_TRANSLATION_SERVICE_DB_PORT:5055}/${TS_TRANSLATION_SERVICE_DB_NAME:ts_translation_service}${TS_TRANSLATION_SERVICE_DB_OPTIONS:}
+    url: jdbc:postgresql://${TS_TRANSLATION_SERVICE_DB_HOST:localhost}:${TS_TRANSLATION_SERVICE_DB_PORT:6432}/${TS_TRANSLATION_SERVICE_DB_NAME:ts_translation_service}${TS_TRANSLATION_SERVICE_DB_OPTIONS:}
     username: ${TS_TRANSLATION_SERVICE_DB_USERNAME:postgres}
     password: ${TS_TRANSLATION_SERVICE_DB_PASSWORD:postgres}
     properties:
@@ -69,9 +69,15 @@ idam:
   api:
     url: ${IDAM_API_URL:http://localhost:5000}
   s2s-auth:
+    microservice: ts_translation_service
+    totp_secret: ${IDAM_KEY_TS_TRANSLATION_SERVICE:AAAAAAAAAAAAAAAA}
     url: ${S2S_URL:http://localhost:4502}
   s2s-authorised:
     services: ${TS_TRANSLATION_SERVICE_S2S_AUTHORISED_SERVICES:xui_webapp,ccd_admin}
+  client:
+    id: ts_translation_service
+    secret: ${TS_TRANSLATION_SERVICE_IDAM_CLIENT_SECRET:AAAAAAAAAAAAAAAA}
+    redirect_uri: http://localhost:4561/oauth2redirect
 
 oidc:
   issuer: ${OIDC_ISSUER:http://fr-am:8080/openam/oauth2/hmcts}
