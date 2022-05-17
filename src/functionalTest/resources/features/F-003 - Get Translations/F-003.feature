@@ -13,9 +13,19 @@ Feature: F-003: Get Translations
     Given a user with [an active solicitor profile],
     When a request is prepared with appropriate values
     And it is submitted to call the [translate] operation of [Translation Service]
-
     Then a positive response is received
-    And the response [has the 200 OK code]
+    And the response [has 200 OK code]
+    And the response has all other details as expected.
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  @S-003.4 #AC04
+  Scenario: Invalid request - Return 400 error
+    Given a user with [an active solicitor profile],
+    When a request is prepared with appropriate values
+    And the request [contains the mandatory elements but the format is not as expected]
+    And it is submitted to call the [translate] operation of [Translation Service]
+    Then a negative response is received
+    And the response [has 400 Bad Request code]
     And the response has all other details as expected.
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

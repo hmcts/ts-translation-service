@@ -1,6 +1,6 @@
 {
-  "_guid_": "S-003.1",
-  "title": "must return a successful response when translate operation is requested",
+  "_guid_": "S-003.4",
+  "title": "Invalid request - Return 400 error",
   "productName": "Translation Service",
   "operationName": "translate",
   "method": "POST",
@@ -10,7 +10,8 @@
 
   "specs": [
     "an active solicitor profile",
-    "has 200 OK code"
+    "contains the mandatory elements but the format is not as expected",
+    "has 400 Bad Request code"
   ],
 
   "users": {
@@ -27,21 +28,19 @@
       "Accept": "application/json"
     },
     "body": {
-      "phrases": ["An English Phrase"]
+      "phrases": {
+        "illegal_object": "Illegal Phrase"
+      }
     }
   },
 
-	"expectedResponse": {
-    "responseCode": 200,
-    "responseMessage": "OK",
-    "headers": {
+  "expectedResponse": {
+    "_extends_": "Common_400_Response",
+    "headers" : {
+      "Cache-Control": "[[ANYTHING_PRESENT]]",
+      "Content-Encoding": "[[ANYTHING_PRESENT]]",
       "Content-Length": "[[ANYTHING_PRESENT]]",
-      "Content-Type": "application/json",
-      "Date": "[[ANYTHING_PRESENT]]",
-      "Request-Context": "[[ANY_NULLABLE]]"
-    },
-    "body": {
-			"translations": {"An English Phrase": "An English Phrase"}
-		}
-	}
+      "Content-Type": "[[ANYTHING_PRESENT]]"
+    }
+  }
 }

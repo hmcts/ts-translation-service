@@ -1,6 +1,8 @@
 package uk.gov.hmcts.reform.translate.service;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -50,77 +52,111 @@ class DictionaryServiceTest {
 
     private static final String THE_QUICK_FOX_PHRASE = "the quick fox";
 
-    @BeforeEach
-    void setUp() {
-        given(securityUtils.hasRole(any())).willReturn(true);
-    }
+    @Nested
+    @DisplayName("getDictionary")
+    class GetDictionary {
 
-    @Test
-    void shouldReturnDictionaryContents() {
-        Map<String, String> expectedMapKeysAndValues = new HashMap<>();
+        @BeforeEach
+        void setUp() {
+            given(securityUtils.hasRole(any())).willReturn(true);
+        }
 
-        IntStream.range(1, 3).forEach(i -> expectedMapKeysAndValues.put("english" + i, "translated" + i));
+        @Test
+        void shouldReturnDictionaryContents() {
+            Map<String, String> expectedMapKeysAndValues = new HashMap<>();
 
-        var dictionaryEntities = expectedMapKeysAndValues.entrySet().stream()
-            .map(es -> createDictionaryEntity(
-                es.getKey(),
-                es.getValue()
-            ))
-            .toArray(DictionaryEntity[]::new);
+            IntStream.range(1, 3).forEach(i -> expectedMapKeysAndValues.put("english" + i, "translated" + i));
 
-        var spliterator = Arrays.spliterator(dictionaryEntities);
-        given(repositoryResults.spliterator()).willReturn(spliterator);
-        given(dictionaryRepository.findAll()).willReturn(repositoryResults);
+            var dictionaryEntities = expectedMapKeysAndValues.entrySet().stream()
+                .map(es -> createDictionaryEntity(
+                    es.getKey(),
+                    es.getValue()
+                ))
+                .toArray(DictionaryEntity[]::new);
 
-        assertTrue(dictionaryService.getDictionaryContents().entrySet()
-                       .containsAll(expectedMapKeysAndValues.entrySet()));
-    }
+            var spliterator = Arrays.spliterator(dictionaryEntities);
+            given(repositoryResults.spliterator()).willReturn(spliterator);
+            given(dictionaryRepository.findAll()).willReturn(repositoryResults);
 
-    @Test
-    void shouldReturnDictionaryContentsTranslationPhraseIsNull() {
-        Map<String, String> expectedMapKeysAndValues = new HashMap<>();
+            assertTrue(dictionaryService.getDictionaryContents().entrySet()
+                           .containsAll(expectedMapKeysAndValues.entrySet()));
+        }
 
-        IntStream.range(1, 3).forEach(i -> expectedMapKeysAndValues.put("english" + i, null));
+        @Test
+        void shouldReturnDictionaryContentsTranslationPhraseIsNull() {
+            Map<String, String> expectedMapKeysAndValues = new HashMap<>();
 
-        var dictionaryEntities = expectedMapKeysAndValues.entrySet().stream()
-            .map(es -> createDictionaryEntity(
-                es.getKey(),
-                es.getValue()
-            ))
-            .toArray(DictionaryEntity[]::new);
+            IntStream.range(1, 3).forEach(i -> expectedMapKeysAndValues.put("english" + i, null));
 
-        var spliterator = Arrays.spliterator(dictionaryEntities);
-        given(repositoryResults.spliterator()).willReturn(spliterator);
-        given(dictionaryRepository.findAll()).willReturn(repositoryResults);
+            var dictionaryEntities = expectedMapKeysAndValues.entrySet().stream()
+                .map(es -> createDictionaryEntity(
+                    es.getKey(),
+                    es.getValue()
+                ))
+                .toArray(DictionaryEntity[]::new);
 
-        Map<String, String> dictionaryContents = dictionaryService.getDictionaryContents();
-        assertTrue(dictionaryContents.keySet()
-                       .containsAll(expectedMapKeysAndValues.keySet()));
-        assertTrue(dictionaryContents.values()
-                       .containsAll(List.of("", "", "")));
-    }
+            var spliterator = Arrays.spliterator(dictionaryEntities);
+            given(repositoryResults.spliterator()).willReturn(spliterator);
+            given(dictionaryRepository.findAll()).willReturn(repositoryResults);
 
-    @Test
-    void shouldThrowExceptionWhenDictionaryContainsDuplicateEnglishPhrases() {
-        final var englishPhrase = "English phrase";
-        final var translatedPhrase = "Translated phrase";
+            Map<String, String> dictionaryContents = dictionaryService.getDictionaryContents();
+            assertTrue(dictionaryContents.keySet()
+                           .containsAll(expectedMapKeysAndValues.keySet()));
+            assertTrue(dictionaryContents.values()
+                           .containsAll(List.of("", "", "")));
+        }
 
-        DictionaryEntity[] dictionaryEntities = { createDictionaryEntity(englishPhrase, translatedPhrase),
-                                                  createDictionaryEntity(englishPhrase, translatedPhrase),
-                                                  createDictionaryEntity(englishPhrase, translatedPhrase)};
+        @Test
+        void shouldThrowExceptionWhenDictionaryContainsDuplicateEnglishPhrases() {
+            final var englishPhrase = "English phrase";
+            final var translatedPhrase = "Translated phrase";
 
-        var spliterator = Arrays.spliterator(dictionaryEntities);
-        given(repositoryResults.spliterator()).willReturn(spliterator);
-        given(dictionaryRepository.findAll()).willReturn(repositoryResults);
+            DictionaryEntity[] dictionaryEntities = {createDictionaryEntity(englishPhrase, translatedPhrase),
+                createDictionaryEntity(englishPhrase, translatedPhrase),
+                createDictionaryEntity(englishPhrase, translatedPhrase)};
 
-        IllegalStateException illegalStateException = assertThrows(
-            IllegalStateException.class,
-            () -> dictionaryService.getDictionaryContents()
-        );
+            var spliterator = Arrays.spliterator(dictionaryEntities);
+            given(repositoryResults.spliterator()).willReturn(spliterator);
+            given(dictionaryRepository.findAll()).willReturn(repositoryResults);
 
-        assertEquals(String.format("Duplicate key %s (attempted merging values %s and %s)",
-                                   englishPhrase, translatedPhrase, translatedPhrase),
-                     illegalStateException.getMessage());
+            IllegalStateException illegalStateException = assertThrows(
+                IllegalStateException.class,
+                () -> dictionaryService.getDictionaryContents()
+            );
+
+            assertEquals(
+                String.format("Duplicate key %s (attempted merging values %s and %s)",
+                              englishPhrase, translatedPhrase, translatedPhrase
+                ),
+                illegalStateException.getMessage()
+            );
+        }
+
+        @Test
+        void shouldReturnEmptyDictionaryContents() {
+            given(dictionaryRepository.findAll()).willReturn(repositoryResults);
+            assertTrue(dictionaryService.getDictionaryContents().isEmpty());
+        }
+
+        @Test
+        void shouldThrowExceptionWhenReturningDictionaryContentsNoUserInfoAvailable() {
+            Mockito.reset(securityUtils);
+            assertThrows(RoleMissingException.class, () -> dictionaryService.getDictionaryContents());
+        }
+
+        @Test
+        void shouldThrowExceptionWhenReturningDictionaryContentsUsingIncorrectRole() {
+            given(securityUtils.hasRole(any())).willReturn(false);
+            RoleMissingException roleMissingException = assertThrows(
+                RoleMissingException.class,
+                () -> dictionaryService.getDictionaryContents()
+            );
+            assertEquals(
+                String.format(RoleMissingException.ERROR_MESSAGE, DictionaryService.MANAGE_TRANSLATIONS_ROLE),
+                roleMissingException.getMessage()
+            );
+        }
+
     }
 
     private DictionaryEntity createDictionaryEntity(String phrase, String translationPhrase) {
@@ -130,135 +166,117 @@ class DictionaryServiceTest {
             .build();
     }
 
-    @Test
-    void shouldReturnEmptyDictionaryContents() {
-        given(dictionaryRepository.findAll()).willReturn(repositoryResults);
-        assertTrue(dictionaryService.getDictionaryContents().isEmpty());
-    }
+    @Nested
+    @DisplayName("GetTranslation")
+    class GetTranslations {
 
-    @Test
-    void testShouldTranslatePhrase() {
-        final DictionaryEntity dictionaryEntity = createDictionaryEntity(THE_QUICK_FOX_PHRASE, "translated");
-        doReturn(Optional.of(dictionaryEntity)).when(dictionaryRepository).findByEnglishPhrase(anyString());
+        @Test
+        void testShouldTranslatePhrase() {
+            final DictionaryEntity dictionaryEntity = createDictionaryEntity(THE_QUICK_FOX_PHRASE, "translated");
+            doReturn(Optional.of(dictionaryEntity)).when(dictionaryRepository).findByEnglishPhrase(anyString());
 
-        final String translation = dictionaryService.getTranslation(THE_QUICK_FOX_PHRASE);
+            final String translation = dictionaryService.getTranslation(THE_QUICK_FOX_PHRASE);
 
-        assertThat(translation)
-            .isNotNull()
-            .isEqualTo("translated");
+            assertThat(translation)
+                .isNotNull()
+                .isEqualTo("translated");
 
-        verify(dictionaryRepository).findByEnglishPhrase(eq(THE_QUICK_FOX_PHRASE));
-        verifyNoMoreInteractions(dictionaryRepository);
-    }
+            verify(dictionaryRepository).findByEnglishPhrase(eq(THE_QUICK_FOX_PHRASE));
+            verifyNoMoreInteractions(dictionaryRepository);
+        }
 
-    @Test
-    void testShouldTranslatePhraseWhenTranslatedPhraseIsNull() {
-        final DictionaryEntity dictionaryEntity = createDictionaryEntity(THE_QUICK_FOX_PHRASE, null);
-        doReturn(Optional.of(dictionaryEntity)).when(dictionaryRepository).findByEnglishPhrase(anyString());
+        @Test
+        void testShouldTranslatePhraseWhenTranslatedPhraseIsNull() {
+            final DictionaryEntity dictionaryEntity = createDictionaryEntity(THE_QUICK_FOX_PHRASE, null);
+            doReturn(Optional.of(dictionaryEntity)).when(dictionaryRepository).findByEnglishPhrase(anyString());
 
-        final String translation = dictionaryService.getTranslation(THE_QUICK_FOX_PHRASE);
+            final String translation = dictionaryService.getTranslation(THE_QUICK_FOX_PHRASE);
 
-        assertThat(translation)
-            .isNotNull()
-            .isEqualTo(THE_QUICK_FOX_PHRASE);
+            assertThat(translation)
+                .isNotNull()
+                .isEqualTo(THE_QUICK_FOX_PHRASE);
 
-        verify(dictionaryRepository).findByEnglishPhrase(eq(THE_QUICK_FOX_PHRASE));
-        verifyNoMoreInteractions(dictionaryRepository);
-    }
+            verify(dictionaryRepository).findByEnglishPhrase(eq(THE_QUICK_FOX_PHRASE));
+            verifyNoMoreInteractions(dictionaryRepository);
+        }
 
-    @Test
-    void testShouldTranslatePhraseWhenEnglishPhraseIsNotInDictionary() {
-        final DictionaryEntity dictionaryEntity = createDictionaryEntity(THE_QUICK_FOX_PHRASE, null);
-        doReturn(Optional.empty()).when(dictionaryRepository).findByEnglishPhrase(anyString());
-        doReturn(dictionaryEntity).when(dictionaryRepository).save(dictionaryEntity);
+        @Test
+        void testShouldTranslatePhraseWhenEnglishPhraseIsNotInDictionary() {
+            final DictionaryEntity dictionaryEntity = createDictionaryEntity(THE_QUICK_FOX_PHRASE, null);
+            doReturn(Optional.empty()).when(dictionaryRepository).findByEnglishPhrase(anyString());
+            doReturn(dictionaryEntity).when(dictionaryRepository).save(dictionaryEntity);
 
-        final String translation = dictionaryService.getTranslation(THE_QUICK_FOX_PHRASE);
+            final String translation = dictionaryService.getTranslation(THE_QUICK_FOX_PHRASE);
 
-        assertThat(translation)
-            .isNotNull()
-            .isEqualTo(THE_QUICK_FOX_PHRASE);
+            assertThat(translation)
+                .isNotNull()
+                .isEqualTo(THE_QUICK_FOX_PHRASE);
 
-        verify(dictionaryRepository).save(any());
-        verify(dictionaryRepository).findByEnglishPhrase(eq(THE_QUICK_FOX_PHRASE));
-    }
+            verify(dictionaryRepository).save(any());
+            verify(dictionaryRepository).findByEnglishPhrase(eq(THE_QUICK_FOX_PHRASE));
+        }
 
-    @Test
-    void testShouldReturnTranslations() {
-        // GIVEN
-        final String englishPhrase = "English phrase";
-        final String englishPhraseWithNoTranslation = "English phrase with no translation";
-        final String englishPhraseNotInDictionary = "English phrase not in dictionary";
+        @Test
+        void testShouldReturnTranslations() {
+            // GIVEN
+            final String englishPhrase = "English phrase";
+            final String englishPhraseWithNoTranslation = "English phrase with no translation";
+            final String englishPhraseNotInDictionary = "English phrase not in dictionary";
 
-        final Map<String, String> expectedTranslations =
-            Map.of(englishPhrase, "Translated English phrase",
-                   englishPhraseWithNoTranslation, englishPhraseWithNoTranslation,
-                   englishPhraseNotInDictionary, englishPhraseNotInDictionary
+            final Map<String, String> expectedTranslations =
+                Map.of(englishPhrase, "Translated English phrase",
+                       englishPhraseWithNoTranslation, englishPhraseWithNoTranslation,
+                       englishPhraseNotInDictionary, englishPhraseNotInDictionary
+                );
+
+            final DictionaryEntity entity1 = createDictionaryEntity(englishPhrase, "Translated English phrase");
+            final DictionaryEntity entity2 = createDictionaryEntity(englishPhraseWithNoTranslation, null);
+            final DictionaryEntity entity3 = createDictionaryEntity(englishPhraseNotInDictionary, null);
+
+            doReturn(Optional.of(entity1)).when(dictionaryRepository).findByEnglishPhrase(eq(englishPhrase));
+            doReturn(Optional.of(entity2)).when(dictionaryRepository)
+                .findByEnglishPhrase(eq(englishPhraseWithNoTranslation));
+            doReturn(Optional.empty()).when(dictionaryRepository)
+                .findByEnglishPhrase(eq(englishPhraseNotInDictionary));
+            doReturn(entity3).when(dictionaryRepository).save(eq(entity3));
+
+            final List<String> translationRequestPhrases = List.of(
+                englishPhrase,
+                englishPhraseWithNoTranslation,
+                englishPhraseNotInDictionary
             );
 
-        final DictionaryEntity entity1 = createDictionaryEntity(englishPhrase, "Translated English phrase");
-        final DictionaryEntity entity2 = createDictionaryEntity(englishPhraseWithNoTranslation, null);
-        final DictionaryEntity entity3 = createDictionaryEntity(englishPhraseNotInDictionary, null);
+            // WHEN
+            final Map<String, String> actualTranslations = dictionaryService.getTranslations(translationRequestPhrases);
 
-        doReturn(Optional.of(entity1)).when(dictionaryRepository).findByEnglishPhrase(eq(englishPhrase));
-        doReturn(Optional.of(entity2)).when(dictionaryRepository)
-            .findByEnglishPhrase(eq(englishPhraseWithNoTranslation));
-        doReturn(Optional.empty()).when(dictionaryRepository)
-            .findByEnglishPhrase(eq(englishPhraseNotInDictionary));
-        doReturn(entity3).when(dictionaryRepository).save(eq(entity3));
+            // THEN
+            assertThat(actualTranslations)
+                .isNotEmpty()
+                .containsAllEntriesOf(expectedTranslations);
 
-        final List<String> translationRequestPhrases = List.of(
-            englishPhrase,
-            englishPhraseWithNoTranslation,
-            englishPhraseNotInDictionary
-        );
+            verify(dictionaryRepository).findByEnglishPhrase(eq(englishPhrase));
+            verify(dictionaryRepository).findByEnglishPhrase(eq(englishPhraseWithNoTranslation));
+            verify(dictionaryRepository).findByEnglishPhrase(eq(englishPhraseNotInDictionary));
+            verify(dictionaryRepository).save(eq(entity3));
+        }
 
-        // WHEN
-        final Map<String, String> actualTranslations = dictionaryService.getTranslations(translationRequestPhrases);
+        @Test
+        @SuppressWarnings("ConstantConditions")
+        void testShouldRaiseExceptionWhenInputPhraseIsNull() {
+            final Throwable thrown = catchThrowable(() -> dictionaryService.getTranslation(null));
 
-        // THEN
-        assertThat(actualTranslations)
-            .isNotEmpty()
-            .containsAllEntriesOf(expectedTranslations);
+            assertThat(thrown)
+                .isInstanceOf(NullPointerException.class);
+        }
 
-        verify(dictionaryRepository).findByEnglishPhrase(eq(englishPhrase));
-        verify(dictionaryRepository).findByEnglishPhrase(eq(englishPhraseWithNoTranslation));
-        verify(dictionaryRepository).findByEnglishPhrase(eq(englishPhraseNotInDictionary));
-        verify(dictionaryRepository).save(eq(entity3));
-    }
+        @Test
+        @SuppressWarnings("ConstantConditions")
+        void testShouldRaiseExceptionWhenInputPhrasesIsNull() {
+            final Throwable thrown = catchThrowable(() -> dictionaryService.getTranslations(null));
 
-    @Test
-    @SuppressWarnings("ConstantConditions")
-    void testShouldRaiseExceptionWhenInputPhraseIsNull() {
-        final Throwable thrown = catchThrowable(() -> dictionaryService.getTranslation(null));
-
-        assertThat(thrown)
-            .isInstanceOf(NullPointerException.class);
-    }
-
-    @Test
-    @SuppressWarnings("ConstantConditions")
-    void testShouldRaiseExceptionWhenInputPhrasesIsNull() {
-        final Throwable thrown = catchThrowable(() -> dictionaryService.getTranslations(null));
-
-        assertThat(thrown)
-            .isInstanceOf(NullPointerException.class);
-    }
-
-    @Test
-    void shouldThrowExceptionWhenReturningDictionaryContentsNoUserInfoAvailable() {
-        Mockito.reset(securityUtils);
-        assertThrows(RoleMissingException.class, () -> dictionaryService.getDictionaryContents());
-    }
-
-    @Test
-    void shouldThrowExceptionWhenReturningDictionaryContentsUsingIncorrectRole() {
-        given(securityUtils.hasRole(any())).willReturn(false);
-        RoleMissingException roleMissingException = assertThrows(
-            RoleMissingException.class,
-            () -> dictionaryService.getDictionaryContents()
-        );
-        assertEquals(String.format(RoleMissingException.ERROR_MESSAGE, DictionaryService.MANAGE_TRANSLATIONS_ROLE),
-                     roleMissingException.getMessage());
+            assertThat(thrown)
+                .isInstanceOf(NullPointerException.class);
+        }
     }
 }
 
