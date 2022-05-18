@@ -16,5 +16,3 @@ java:
       resourceGroup: ts-shared
       secrets:
         - name: AppInsightsInstrumentationKey
-        - name: ts-translation-service-s2s-secret
-          alias: IDAM_KEY_TS_TRANSLATION_SERVICE
