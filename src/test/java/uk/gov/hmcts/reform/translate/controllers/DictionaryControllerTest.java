@@ -11,7 +11,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -20,7 +19,6 @@ import uk.gov.hmcts.reform.translate.TestIdamConfiguration;
 import uk.gov.hmcts.reform.translate.config.SecurityConfiguration;
 import uk.gov.hmcts.reform.translate.model.Dictionary;
 import uk.gov.hmcts.reform.translate.model.TranslationsRequest;
-import uk.gov.hmcts.reform.translate.model.TranslationsResponse;
 import uk.gov.hmcts.reform.translate.security.JwtGrantedAuthoritiesConverter;
 import uk.gov.hmcts.reform.translate.service.DictionaryService;
 
@@ -38,8 +36,8 @@ import static org.springframework.context.annotation.FilterType.ASSIGNABLE_TYPE;
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(controllers = DictionaryController.class,
-    excludeFilters = @ComponentScan.Filter(type = ASSIGNABLE_TYPE, classes =
-        {SecurityConfiguration.class, JwtGrantedAuthoritiesConverter.class}))
+    excludeFilters = @ComponentScan.Filter(type = ASSIGNABLE_TYPE,
+        classes = {SecurityConfiguration.class, JwtGrantedAuthoritiesConverter.class}))
 @AutoConfigureMockMvc(addFilters = false)
 @ImportAutoConfiguration(TestIdamConfiguration.class)
 class DictionaryControllerTest {
@@ -80,12 +78,11 @@ class DictionaryControllerTest {
                 .when(dictionaryService).getTranslations(anyList());
 
             final TranslationsRequest translationRequest = new TranslationsRequest(List.of("English phrase"));
-            final ResponseEntity<TranslationsResponse> responseEntity =
-                dictionaryController.getTranslation(translationRequest);
+            final Dictionary dictionary = dictionaryController.getTranslation(translationRequest);
 
-            assertThat(responseEntity)
+            assertThat(dictionary)
                 .isNotNull()
-                .satisfies(response -> assertThat(response.getBody()).isNotNull());
+                .isNotNull();
             verify(dictionaryService).getTranslations(anyList());
         }
     }

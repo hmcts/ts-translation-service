@@ -74,10 +74,6 @@ idam:
     url: ${S2S_URL:http://localhost:4502}
   s2s-authorised:
     services: ${TS_TRANSLATION_SERVICE_S2S_AUTHORISED_SERVICES:xui_webapp,ccd_admin}
-  client:
-    id: ts_translation_service
-    secret: ${TS_TRANSLATION_SERVICE_IDAM_CLIENT_SECRET:AAAAAAAAAAAAAAAA}
-    redirect_uri: http://localhost:4561/oauth2redirect
 
 oidc:
   issuer: ${OIDC_ISSUER:http://fr-am:8080/openam/oauth2/hmcts}
