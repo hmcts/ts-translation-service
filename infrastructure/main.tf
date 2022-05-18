@@ -107,5 +107,5 @@ data "azurerm_key_vault_secret" "ts_translation_service_s2s_key" {
 resource "azurerm_key_vault_secret" "ts_translation_service_s2s_secret" {
   name         = "ts-translation-service-s2s-secret"
   value        = data.azurerm_key_vault_secret.ts_translation_service_s2s_key.value
-  key_vault_id = module.vault.key_vault_id
+  key_vault_id = module.key-vault.key_vault_id
 }
