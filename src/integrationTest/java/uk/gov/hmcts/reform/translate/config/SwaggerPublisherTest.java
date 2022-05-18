@@ -6,8 +6,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import uk.gov.hmcts.reform.translate.BaseTest;
 
 import java.io.OutputStream;
 import java.nio.file.Files;
@@ -22,8 +24,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@AutoConfigureMockMvc
-class SwaggerPublisherTest {
+@AutoConfigureMockMvc(addFilters = false)
+@ActiveProfiles("itest")
+class SwaggerPublisherTest extends BaseTest {
 
     @Autowired
     private MockMvc mvc;

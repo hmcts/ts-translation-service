@@ -3,6 +3,7 @@
 !gradle/wrapper/gradle-wrapper.jar
 *.class
 bin/main/application.yaml
+target/
 
 ### STS ###
 .apt_generated
@@ -23,3 +24,6 @@ bin/main/application.yaml
 
 applicationinsights-agent-*.jar
 *.log
+
+/BEFTA Report for Smoke Tests/
+/BEFTA Report for Functional Tests/
