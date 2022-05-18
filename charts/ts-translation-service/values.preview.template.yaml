@@ -2,3 +2,8 @@ java:
   # Don't modify below here
   image: ${IMAGE_NAME}
   ingressHost: ${SERVICE_FQDN}
+  keyVaults:
+    ts:
+      secrets:
+        - name: ts-translation-service-s2s-secret
+          alias: IDAM_KEY_TS_TRANSLATION_SERVICE
