@@ -277,7 +277,7 @@ dependencies {
 
   functionalTestImplementation sourceSets.main.runtimeClasspath
   functionalTestImplementation sourceSets.test.runtimeClasspath
-  functionalTestImplementation group: 'com.github.hmcts', name: 'befta-fw', version: '8.7.1'
+  functionalTestImplementation group: 'com.github.hmcts', name: 'befta-fw', version: '8.7.2-CCD-3086.8'
   functionalTestImplementation libraries.junit5
 
   functionalTestImplementation group: 'commons-lang', name: 'commons-lang', version: '2.6'
