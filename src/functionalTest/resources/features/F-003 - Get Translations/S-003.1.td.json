@@ -5,8 +5,6 @@
   "operationName": "translate",
   "method": "POST",
   "uri": "/translation/cy",
-  "s2sClientId": "xui_webapp",
-  "userTokenClientId": "xuiwebapp",
 
   "specs": [
     "an active solicitor profile",
@@ -15,8 +13,7 @@
 
   "users": {
     "invokingUser": {
-      "username": "befta.caseworker.2.solicitor.2@gmail.com",
-      "password": "[[$CCD_CASEWORKER_AUTOTEST_PASSWORD]]"
+      "_extends_": "BeftaCaseworker2Solicitor2"
     }
   },
 
