@@ -25,7 +25,7 @@ module "key-vault" {
   create_managed_identity    = true
 }
 
-resource "azurerm_key_vault_secret" "AZURE_APPINSGHTS_KEY" {
+resource "azurerm_key_vault_secret" "AZURE_APPINSIGHTS_KEY" {
   name         = "AppInsightsInstrumentationKey"
   value        = azurerm_application_insights.appinsights.instrumentation_key
   key_vault_id = module.key-vault.key_vault_id
@@ -91,5 +91,21 @@ resource "azurerm_key_vault_secret" "POSTGRES-PORT" {
 resource "azurerm_key_vault_secret" "POSTGRES-DATABASE" {
   name         = "${var.component}-POSTGRES-DATABASE"
   value        = module.ts-translation-service-db.postgresql_database
+  key_vault_id = module.key-vault.key_vault_id
+}
+
+data "azurerm_key_vault" "s2s_vault" {
+  name                = "s2s-${var.env}"
+  resource_group_name = "rpe-service-auth-provider-${var.env}"
+}
+
+data "azurerm_key_vault_secret" "ts_translation_service_s2s_key" {
+  name         = "microservicekey-ts-translation-service"
+  key_vault_id = data.azurerm_key_vault.s2s_vault.id
+}
+
+resource "azurerm_key_vault_secret" "ts_translation_service_s2s_secret" {
+  name         = "ts-translation-service-s2s-secret"
+  value        = data.azurerm_key_vault_secret.ts_translation_service_s2s_key.value
   key_vault_id = module.key-vault.key_vault_id
 }

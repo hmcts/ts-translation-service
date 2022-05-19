@@ -1,0 +1,7 @@
+{
+  "_guid_": "F-001_Test_Base_Data",
+  "productName": "Translation Service",
+  "operationName": "GET dictionary",
+  "method": "GET",
+  "uri": "/dictionary"
+}
