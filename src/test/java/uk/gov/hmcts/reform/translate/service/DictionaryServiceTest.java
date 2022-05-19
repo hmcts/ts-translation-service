@@ -1,12 +1,15 @@
 package uk.gov.hmcts.reform.translate.service;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 import uk.gov.hmcts.reform.translate.data.DictionaryEntity;
+import uk.gov.hmcts.reform.translate.errorhandling.RoleMissingException;
 import uk.gov.hmcts.reform.translate.helper.DictionaryMapper;
 import uk.gov.hmcts.reform.translate.model.DictionaryRequest;
 import uk.gov.hmcts.reform.translate.repository.DictionaryRepository;
@@ -25,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -42,12 +46,16 @@ class DictionaryServiceTest {
     @Mock
     SecurityUtils securityUtils;
 
-
     @Mock
     Iterable<DictionaryEntity> repositoryResults;
 
     @InjectMocks
     DictionaryService dictionaryService;
+
+    @BeforeEach
+    void setUp() {
+        given(securityUtils.hasRole(any())).willReturn(true);
+    }
 
     @Test
     void shouldReturnDictionaryContents() {
@@ -210,6 +218,23 @@ class DictionaryServiceTest {
             .sub("sub")
             .build();
         return userInfo;
+    }
+
+    @Test
+    void shouldThrowExceptionWhenReturningDictionaryContentsNoUserInfoAvailable() {
+        Mockito.reset(securityUtils);
+        assertThrows(RoleMissingException.class, () -> dictionaryService.getDictionaryContents());
+    }
+
+    @Test
+    void shouldThrowExceptionWhenReturningDictionaryContentsUsingIncorrectRole() {
+        given(securityUtils.hasRole(any())).willReturn(false);
+        RoleMissingException roleMissingException = assertThrows(
+            RoleMissingException.class,
+            () -> dictionaryService.getDictionaryContents()
+        );
+        assertEquals(String.format(RoleMissingException.ERROR_MESSAGE, DictionaryService.MANAGE_TRANSLATIONS_ROLE),
+                     roleMissingException.getMessage());
     }
 }
 

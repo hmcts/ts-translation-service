@@ -8,6 +8,7 @@ import uk.gov.hmcts.reform.translate.data.DictionaryEntity;
 import uk.gov.hmcts.reform.translate.data.TranslationUploadEntity;
 import uk.gov.hmcts.reform.translate.helper.DictionaryMapper;
 import uk.gov.hmcts.reform.translate.model.DictionaryRequest;
+import uk.gov.hmcts.reform.translate.errorhandling.RoleMissingException;
 import uk.gov.hmcts.reform.translate.repository.DictionaryRepository;
 import uk.gov.hmcts.reform.translate.security.SecurityUtils;
 
@@ -21,10 +22,11 @@ import java.util.stream.StreamSupport;
 @Service
 public class DictionaryService {
 
+    protected static final String MANAGE_TRANSLATIONS_ROLE = "manage-translations";
+
     private final DictionaryRepository dictionaryRepository;
     private final DictionaryMapper dictionaryMapper;
     private final SecurityUtils securityUtils;
-    private static final String MANAGE_TRANSLATIONS_ROLE = "manage-translations";
 
     @Autowired
     public DictionaryService(DictionaryRepository dictionaryRepository, DictionaryMapper dictionaryMapper,
@@ -36,21 +38,26 @@ public class DictionaryService {
     }
 
     public Map<String, String> getDictionaryContents() {
-        final var dictionaryEntities = dictionaryRepository.findAll();
 
-        final var spliterator = dictionaryEntities.spliterator();
+        if (securityUtils.hasRole(MANAGE_TRANSLATIONS_ROLE)) {
+            final var dictionaryEntities = dictionaryRepository.findAll();
 
-        if (dictionaryEntities.spliterator() != null) {
-            Stream<DictionaryEntity> stream = StreamSupport.stream(spliterator, false);
+            final var spliterator = dictionaryEntities.spliterator();
 
-            return stream.collect(Collectors.toMap(
+            if (dictionaryEntities.spliterator() != null) {
+                Stream<DictionaryEntity> stream = StreamSupport.stream(spliterator, false);
+
+                return stream.collect(Collectors.toMap(
                     DictionaryEntity::getEnglishPhrase,
                     dictionaryEntity ->
                         dictionaryEntity.getTranslationPhrase() == null ? "" : dictionaryEntity.getTranslationPhrase()
                 ));
-        }
+            }
 
-        return Collections.emptyMap();
+            return Collections.emptyMap();
+        } else {
+            throw new RoleMissingException(MANAGE_TRANSLATIONS_ROLE);
+        }
     }
 
 
