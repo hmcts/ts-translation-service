@@ -35,7 +35,6 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 @DisplayName("SecurityUtils")
-@SuppressWarnings("PMD.JUnitAssertionsShouldIncludeMessage")
 class SecurityUtilsTest {
 
     private static final String SERVICE_JWT = "7gf364fg367f67";

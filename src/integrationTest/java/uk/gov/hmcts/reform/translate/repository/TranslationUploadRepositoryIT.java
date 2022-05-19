@@ -15,7 +15,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SuppressWarnings("PMD.JUnitAssertionsShouldIncludeMessage")
 class TranslationUploadRepositoryIT extends BaseTest {
     private static final String IDAM_USER_ID = UUID.randomUUID().toString();
 

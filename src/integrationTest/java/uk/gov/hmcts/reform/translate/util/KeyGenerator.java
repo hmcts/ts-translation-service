@@ -4,7 +4,6 @@ import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.gen.RSAKeyGenerator;
 
-@SuppressWarnings("PMD.NonThreadSafeSingleton")
 public final class KeyGenerator {
 
     private static RSAKey rsaJwk;
