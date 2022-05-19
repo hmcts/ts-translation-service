@@ -1,5 +1,6 @@
 #====================================
 @F-003
+@Ignore # To be done under WLTS-16
 Feature: F-003: Get Translations
 #====================================
 
