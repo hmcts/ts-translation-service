@@ -7,7 +7,7 @@ import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 import uk.gov.hmcts.reform.translate.data.DictionaryEntity;
 import uk.gov.hmcts.reform.translate.data.TranslationUploadEntity;
 import uk.gov.hmcts.reform.translate.helper.DictionaryMapper;
-import uk.gov.hmcts.reform.translate.model.DictionaryRequest;
+import uk.gov.hmcts.reform.translate.model.Dictionary;
 import uk.gov.hmcts.reform.translate.repository.DictionaryRepository;
 import uk.gov.hmcts.reform.translate.security.SecurityUtils;
 
@@ -54,7 +54,7 @@ public class DictionaryService {
     }
 
 
-    public void putDictionary(final DictionaryRequest dictionaryRequest) {
+    public void putDictionary(final Dictionary dictionaryRequest) {
 
         val currentUser = securityUtils.getUserInfo();
         dictionaryRequest.getTranslations().entrySet()

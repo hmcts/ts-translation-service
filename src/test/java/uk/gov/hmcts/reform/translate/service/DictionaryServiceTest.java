@@ -8,7 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 import uk.gov.hmcts.reform.translate.data.DictionaryEntity;
 import uk.gov.hmcts.reform.translate.helper.DictionaryMapper;
-import uk.gov.hmcts.reform.translate.model.DictionaryRequest;
+import uk.gov.hmcts.reform.translate.model.Dictionary;
 import uk.gov.hmcts.reform.translate.repository.DictionaryRepository;
 import uk.gov.hmcts.reform.translate.security.SecurityUtils;
 
@@ -133,7 +133,7 @@ class DictionaryServiceTest {
 
     @Test
     void shouldPutANewDictionaryForUserWithManageTranslationsRole() {
-        final DictionaryRequest dictionaryRequest = getDictionaryRequest(1, 4);
+        final Dictionary dictionaryRequest = getDictionaryRequest(1, 4);
         given(securityUtils.getUserInfo()).willReturn(getUserInfoWithManageTranslationsRole());
         given(securityUtils.hasManageTranslationsRole(anyList(),anyString())).willReturn(true);
         dictionaryService.putDictionary(dictionaryRequest);
@@ -146,7 +146,7 @@ class DictionaryServiceTest {
 
     @Test
     void shouldPutANewDictionaryForUserWithoutManageTranslationsRole() {
-        final DictionaryRequest dictionaryRequest = getDictionaryRequest(1, 4);
+        final Dictionary dictionaryRequest = getDictionaryRequest(1, 4);
         given(securityUtils.getUserInfo()).willReturn(getUserInfoWithManageTranslationsRole());
         given(securityUtils.hasManageTranslationsRole(anyList(),anyString())).willReturn(false);
         dictionaryService.putDictionary(dictionaryRequest);
@@ -159,7 +159,7 @@ class DictionaryServiceTest {
 
     @Test
     void shouldUpdateADictionaryForUserWithManageTranslationsRole() {
-        final DictionaryRequest dictionaryRequest = getDictionaryRequest(1, 2);
+        final Dictionary dictionaryRequest = getDictionaryRequest(1, 2);
         final DictionaryEntity dictionaryEntity =
             createDictionaryEntity("english_1", "translated_1");
 
@@ -177,7 +177,7 @@ class DictionaryServiceTest {
 
     @Test
     void shouldUpdateADictionaryForUserWithoutManageTranslationsRole() {
-        final DictionaryRequest dictionaryRequest = getDictionaryRequest(1, 2);
+        final Dictionary dictionaryRequest = getDictionaryRequest(1, 2);
         final DictionaryEntity dictionaryEntity =
             createDictionaryEntity("english_1", "translated_1");
 
@@ -193,10 +193,10 @@ class DictionaryServiceTest {
     }
 
 
-    private DictionaryRequest getDictionaryRequest(int from, int to) {
+    private Dictionary getDictionaryRequest(int from, int to) {
         final Map<String, String> expectedMapKeysAndValues = new HashMap<>();
         IntStream.range(from, to).forEach(i -> expectedMapKeysAndValues.put("english_" + i, "translated_" + i));
-        return new DictionaryRequest(expectedMapKeysAndValues);
+        return new Dictionary(expectedMapKeysAndValues);
     }
 
 

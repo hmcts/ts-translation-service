@@ -17,7 +17,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import uk.gov.hmcts.reform.translate.TestIdamConfiguration;
 import uk.gov.hmcts.reform.translate.config.SecurityConfiguration;
-import uk.gov.hmcts.reform.translate.model.DictionaryRequest;
+import uk.gov.hmcts.reform.translate.model.Dictionary;
 import uk.gov.hmcts.reform.translate.security.JwtGrantedAuthoritiesConverter;
 import uk.gov.hmcts.reform.translate.service.DictionaryService;
 
@@ -74,10 +74,10 @@ class DictionaryControllerTest {
             verify(dictionaryService, times(1)).putDictionary(getDictionaryRequest);
         }
 
-        private DictionaryRequest getDictionaryRequest(int from, int to) {
+        private Dictionary getDictionaryRequest(int from, int to) {
             final Map<String, String> expectedMapKeysAndValues = new HashMap<>();
             IntStream.range(from, to).forEach(i -> expectedMapKeysAndValues.put("english_" + i, "translated_" + i));
-            return new DictionaryRequest(expectedMapKeysAndValues);
+            return new Dictionary(expectedMapKeysAndValues);
         }
     }
 }
