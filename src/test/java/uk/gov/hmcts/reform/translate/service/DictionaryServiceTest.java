@@ -165,7 +165,7 @@ class DictionaryServiceTest {
             dictionaryService.putDictionary(dictionaryRequest);
 
             verify(dictionaryRepository, times(3)).findByEnglishPhrase(any());
-            verify(securityUtils, times(3)).hasRole(anyString());
+            verify(securityUtils, times(1)).hasRole(anyString());
             verify(dictionaryMapper, times(3)).modelToEntityWithTranslationUploadEntity(any(), any());
             verify(dictionaryRepository, times(3)).save(any());
         }
@@ -178,7 +178,7 @@ class DictionaryServiceTest {
             dictionaryService.putDictionary(dictionaryRequest);
 
             verify(dictionaryRepository, times(3)).findByEnglishPhrase(any());
-            verify(securityUtils, times(3)).hasRole(anyString());
+            verify(securityUtils, times(1)).hasRole(anyString());
             verify(dictionaryMapper, times(3)).modelToEntityWithoutTranslationPhrase(any());
             verify(dictionaryRepository, times(3)).save(any());
         }

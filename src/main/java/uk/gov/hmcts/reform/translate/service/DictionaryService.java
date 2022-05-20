@@ -3,7 +3,6 @@ package uk.gov.hmcts.reform.translate.service;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 import uk.gov.hmcts.reform.translate.data.DictionaryEntity;
 import uk.gov.hmcts.reform.translate.data.TranslationUploadEntity;
 import uk.gov.hmcts.reform.translate.errorhandling.RoleMissingException;
@@ -62,42 +61,44 @@ public class DictionaryService {
 
     public void putDictionary(final Dictionary dictionaryRequest) {
 
-        val currentUser = securityUtils.getUserInfo();
+        val isManageTranslationRole = securityUtils.hasRole(MANAGE_TRANSLATIONS_ROLE);
+        val currentUserId = securityUtils.getUserInfo().getUid();
         dictionaryRequest.getTranslations().entrySet()
             .stream()
-            .forEach(englishPhrase -> processEachPhrase(englishPhrase, currentUser));
+            .forEach(englishPhrase -> processEachPhrase(englishPhrase, currentUserId, isManageTranslationRole));
     }
 
-    private void processEachPhrase(Map.Entry<String, String> currentPhrase, UserInfo currentUser) {
+    private void processEachPhrase(Map.Entry<String, String> currentPhrase, String currentUserId,
+                                   boolean isManageTranslationRole) {
+
         val result = dictionaryRepository.findByEnglishPhrase(currentPhrase.getKey());
         if (result.isPresent()) {
-            updatePhrase(currentPhrase, currentUser, result.get());
+            updatePhrase(currentPhrase, currentUserId, result.get(), isManageTranslationRole);
         } else {
-            createNewPhrase(currentPhrase, currentUser);
+            createNewPhrase(currentPhrase, currentUserId, isManageTranslationRole);
         }
     }
 
-    private void createNewPhrase(Map.Entry<String, String> currentPhrase, UserInfo currentUser) {
+    private void createNewPhrase(Map.Entry<String, String> currentPhrase, String currentUserId,
+                                 boolean isManageTranslationRole) {
 
-        val newEntity = isCurrentRole()
-            ? dictionaryMapper.modelToEntityWithTranslationUploadEntity(currentPhrase, currentUser.getUid())
+        val newEntity = isManageTranslationRole
+            ? dictionaryMapper.modelToEntityWithTranslationUploadEntity(currentPhrase, currentUserId)
             : dictionaryMapper.modelToEntityWithoutTranslationPhrase(currentPhrase);
         dictionaryRepository.save(newEntity);
     }
 
     private void updatePhrase(Map.Entry<String, String> currentPhrase,
-                              UserInfo currentUser, DictionaryEntity dictionaryEntity) {
-        if (isCurrentRole()) {
+                              String currentUserId,
+                              DictionaryEntity dictionaryEntity, boolean isManageTranslationRole) {
+
+        if (isManageTranslationRole) {
             val translationUploadEntity = new TranslationUploadEntity();
-            translationUploadEntity.setUserId(currentUser.getUid());
+            translationUploadEntity.setUserId(currentUserId);
             translationUploadEntity.setUploaded(LocalDateTime.now());
             dictionaryEntity.setTranslationPhrase(currentPhrase.getValue());
             dictionaryEntity.setTranslationUpload(translationUploadEntity);
             dictionaryRepository.save(dictionaryEntity);
         }
-    }
-
-    private boolean isCurrentRole() {
-        return securityUtils.hasRole(MANAGE_TRANSLATIONS_ROLE);
     }
 }
