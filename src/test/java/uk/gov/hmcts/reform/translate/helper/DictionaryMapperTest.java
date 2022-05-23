@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisplayName("DictionaryMapperTest")
-public class DictionaryMapperTest {
+class DictionaryMapperTest {
 
     private static final String ENGLISH = "english";
     private static final String WELSH = "welsh";
@@ -24,8 +24,8 @@ public class DictionaryMapperTest {
             currentPhrase,
             "3333"
         );
-        assertEquals(dictionaryEntity.getEnglishPhrase(), ENGLISH);
-        assertEquals(dictionaryEntity.getTranslationPhrase(), WELSH);
+        assertEquals(ENGLISH, dictionaryEntity.getEnglishPhrase());
+        assertEquals(WELSH, dictionaryEntity.getTranslationPhrase());
         assertTrue(dictionaryEntity.getTranslationUpload() != null);
     }
 
@@ -34,9 +34,8 @@ public class DictionaryMapperTest {
         val dictionaryMapper = new DictionaryMapper();
         val currentPhrase = getCurrentPhrase();
         val dictionaryEntity = dictionaryMapper.modelToEntity(currentPhrase);
-
-        assertEquals(dictionaryEntity.getEnglishPhrase(), ENGLISH);
-        assertEquals(dictionaryEntity.getTranslationPhrase(), WELSH);
+        assertEquals(ENGLISH, dictionaryEntity.getEnglishPhrase());
+        assertEquals(WELSH, dictionaryEntity.getTranslationPhrase());
         assertTrue(dictionaryEntity.getTranslationUpload() == null);
     }
 
@@ -47,7 +46,7 @@ public class DictionaryMapperTest {
         val currentPhrase = getCurrentPhrase();
         val dictionaryEntity = dictionaryMapper.modelToEntityWithoutTranslationPhrase(currentPhrase);
         assertEquals(dictionaryEntity.getEnglishPhrase(), ENGLISH);
-        assertEquals(dictionaryEntity.getTranslationPhrase(), null);
+        assertEquals(null, dictionaryEntity.getTranslationPhrase());
         assertTrue(dictionaryEntity.getTranslationUpload() == null);
     }
 
