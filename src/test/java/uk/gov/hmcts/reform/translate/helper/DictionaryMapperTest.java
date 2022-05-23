@@ -45,7 +45,7 @@ class DictionaryMapperTest {
         val dictionaryMapper = new DictionaryMapper();
         val currentPhrase = getCurrentPhrase();
         val dictionaryEntity = dictionaryMapper.modelToEntityWithoutTranslationPhrase(currentPhrase);
-        assertEquals(dictionaryEntity.getEnglishPhrase(), ENGLISH);
+        assertEquals(ENGLISH, dictionaryEntity.getEnglishPhrase());
         assertEquals(null, dictionaryEntity.getTranslationPhrase());
         assertTrue(dictionaryEntity.getTranslationUpload() == null);
     }
