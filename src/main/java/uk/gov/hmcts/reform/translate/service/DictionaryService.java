@@ -65,11 +65,11 @@ public class DictionaryService {
         val currentUserId = securityUtils.getUserInfo().getUid();
         dictionaryRequest.getTranslations().entrySet()
             .stream()
-            .forEach(englishPhrase -> processEachPhrase(englishPhrase, currentUserId, isManageTranslationRole));
+            .forEach(phrase -> processPhrase(phrase, currentUserId, isManageTranslationRole));
     }
 
-    private void processEachPhrase(Map.Entry<String, String> currentPhrase, String currentUserId,
-                                   boolean isManageTranslationRole) {
+    private void processPhrase(Map.Entry<String, String> currentPhrase, String currentUserId,
+                               boolean isManageTranslationRole) {
 
         val result = dictionaryRepository.findByEnglishPhrase(currentPhrase.getKey());
         if (result.isPresent()) {
