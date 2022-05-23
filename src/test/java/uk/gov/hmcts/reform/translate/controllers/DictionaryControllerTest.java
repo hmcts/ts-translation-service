@@ -17,9 +17,15 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import uk.gov.hmcts.reform.translate.TestIdamConfiguration;
 import uk.gov.hmcts.reform.translate.config.SecurityConfiguration;
+import uk.gov.hmcts.reform.translate.model.Dictionary;
 import uk.gov.hmcts.reform.translate.security.JwtGrantedAuthoritiesConverter;
 import uk.gov.hmcts.reform.translate.service.DictionaryService;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.IntStream;
+
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.context.annotation.FilterType.ASSIGNABLE_TYPE;
 
@@ -53,6 +59,25 @@ class DictionaryControllerTest {
             DictionaryController dictionaryController = new DictionaryController(dictionaryService);
             dictionaryController.getDictionary();
             verify(dictionaryService).getDictionaryContents();
+        }
+    }
+
+
+    @Nested
+    @DisplayName("putDictionary")
+    class PutDictionary {
+        @Test
+        void shouldReturn200() {
+            final var dictionaryController = new DictionaryController(dictionaryService);
+            final var getDictionaryRequest = getDictionaryRequest(1, 2);
+            dictionaryController.putDictionary(getDictionaryRequest);
+            verify(dictionaryService, times(1)).putDictionary(getDictionaryRequest);
+        }
+
+        private Dictionary getDictionaryRequest(int from, int to) {
+            final Map<String, String> expectedMapKeysAndValues = new HashMap<>();
+            IntStream.range(from, to).forEach(i -> expectedMapKeysAndValues.put("english_" + i, "translated_" + i));
+            return new Dictionary(expectedMapKeysAndValues);
         }
     }
 }
