@@ -22,5 +22,8 @@
     <cve>CVE-2018-1258</cve>
     <cve>CVE-2016-1000027</cve>
     <cve>CVE-2022-29885</cve>
+    <cve>CVE-2022-29885</cve>
+    <cve>CVE-2022-22970</cve>
+    <cve>CVE-2022-22971</cve>
   </suppress>
 </suppressions>
