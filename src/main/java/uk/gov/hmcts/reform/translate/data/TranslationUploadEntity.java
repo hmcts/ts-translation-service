@@ -1,7 +1,6 @@
 package uk.gov.hmcts.reform.translate.data;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import javax.persistence.Column;
@@ -11,9 +10,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+
 @Table(name = "translation_upload")
 @Entity
-@NoArgsConstructor
 @Data
 public class TranslationUploadEntity {
     @Id
