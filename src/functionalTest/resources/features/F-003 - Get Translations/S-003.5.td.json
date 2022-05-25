@@ -1,5 +1,5 @@
 {
-  "_guid_": "S-003.4",
+  "_guid_": "S-003.5",
   "title": "Invalid request - Return 400 error",
   "productName": "Translation Service",
   "operationName": "translate",
