@@ -1,0 +1,7 @@
+{
+  "_guid_": "PutDictionaryOperation",
+  "productName": "Translation Service",
+  "operationName": "PUT dictionary",
+  "method": "PUT",
+  "uri": "/dictionary"
+}
