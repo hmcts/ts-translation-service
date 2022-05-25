@@ -1,0 +1,27 @@
+{
+  "_guid_": "Put_Dictionary_Entries",
+  "_extends_": "PutDictionaryOperation",
+  "specs": [
+    "to PUT translation phrases into the dictionary"
+  ],
+
+  "s2sClientId": "xui_webapp",
+
+  "users": {
+    "invokingUser": {
+      "username": "ts.service.translation1@gmail.com",
+      "password": "Pa55word11"
+    }
+  },
+
+  "request": {
+    "_extends_": "Common_Request",
+    "body": {
+      "_extends_": "Translations_Dictionary"
+    }
+  },
+
+  "expectedResponse": {
+    "_extends_": "Common_200_Response"
+  }
+}

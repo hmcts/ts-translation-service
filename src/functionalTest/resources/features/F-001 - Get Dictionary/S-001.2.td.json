@@ -7,6 +7,8 @@
     "has the 403 Forbidden status code"
   ],
 
+  "s2sClientId": "xui_webapp",
+
   "users": {
       "invokingUser": {
         "username": "befta.caseworker.2.solicitor.2@gmail.com",
