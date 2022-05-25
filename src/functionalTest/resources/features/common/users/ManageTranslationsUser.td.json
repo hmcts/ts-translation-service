@@ -1,0 +1,6 @@
+{
+  "_guid_": "ManageTranslationsUser",
+
+  "username": "ts.service.translation-manage@gmail.com",
+  "password": "[[$TS_SERVICE_TRANSLATION_USERS_PWD]]"
+}
