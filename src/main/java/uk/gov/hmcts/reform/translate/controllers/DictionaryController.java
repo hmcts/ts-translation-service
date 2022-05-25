@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.hmcts.reform.translate.model.Dictionary;
-import uk.gov.hmcts.reform.translate.model.DictionaryRequest;
 import uk.gov.hmcts.reform.translate.service.DictionaryService;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -40,15 +39,15 @@ public class DictionaryController {
 
 
     @PutMapping(consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.CREATED)
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Success"),
+        @ApiResponse(responseCode = "201", description = "Success"),
         @ApiResponse(responseCode = "400", description = "Bad Request"),
         @ApiResponse(responseCode = "401", description = "Unauthorised"),
         @ApiResponse(responseCode = "403", description = "Forbidden"),
         @ApiResponse(responseCode = "500", description = "Error occurred on the server")
     })
-    public void putDictionary(@RequestBody DictionaryRequest dictionaryRequest) {
+    public void putDictionary(@RequestBody Dictionary dictionaryRequest) {
         dictionaryService.putDictionary(dictionaryRequest);
     }
 }

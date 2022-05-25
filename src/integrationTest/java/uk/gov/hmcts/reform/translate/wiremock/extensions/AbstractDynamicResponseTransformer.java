@@ -10,7 +10,6 @@ import org.springframework.http.HttpStatus;
 /*
  * Customises the static stubbed response before sending it back to the client
  */
-@SuppressWarnings("PMD.LawOfDemeter")
 public abstract class AbstractDynamicResponseTransformer extends ResponseTransformer {
 
     @Override
