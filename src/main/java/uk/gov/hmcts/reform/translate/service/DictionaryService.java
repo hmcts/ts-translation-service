@@ -61,6 +61,27 @@ public class DictionaryService {
         }
     }
 
+    public Map<String, String> getTranslations(@NonNull final List<String> phrases) {
+        return phrases.stream()
+            .map(phrase -> {
+                final String translation = getTranslation(phrase);
+                return Map.of(phrase, translation);
+            })
+            .flatMap(m -> m.entrySet().stream())
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
+    String getTranslation(@NonNull final String englishPhrase) {
+        final DictionaryEntity entity = dictionaryRepository.findByEnglishPhrase(englishPhrase)
+            .orElseGet(() -> {
+                final DictionaryEntity dictionaryEntity = DictionaryEntity.builder()
+                    .englishPhrase(englishPhrase)
+                    .build();
+                return dictionaryRepository.save(dictionaryEntity);
+            });
+
+        return Optional.ofNullable(entity.getTranslationPhrase()).orElseGet(entity::getEnglishPhrase);
+    }
 
     public void putDictionary(final Dictionary dictionaryRequest) {
 
