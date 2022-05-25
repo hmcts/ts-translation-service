@@ -2,5 +2,5 @@
   "_guid_": "LoadTranslationsUser",
 
   "username": "ts.service.translation-load@gmail.com",
-  "password": "[[$TS-SERVICE-TRANSLATION-USERS-PWD]]"
+  "password": "[[$TS_SERVICE_TRANSLATION_USERS_PWD]]"
 }
