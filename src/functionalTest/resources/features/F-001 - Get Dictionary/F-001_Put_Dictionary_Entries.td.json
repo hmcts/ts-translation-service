@@ -1,5 +1,5 @@
 {
-  "_guid_": "Put_Dictionary_Entries",
+  "_guid_": "F-001_Put_Dictionary_Entries",
   "_extends_": "PutDictionaryOperation",
   "specs": [
     "to PUT translation phrases into the dictionary"
@@ -9,8 +9,7 @@
 
   "users": {
     "invokingUser": {
-      "username": "ts.service.translation1@gmail.com",
-      "password": "Pa55word11"
+      "_extends_": "ManageAndLoadTranslationsUser"
     }
   },
 

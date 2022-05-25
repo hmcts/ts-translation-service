@@ -11,8 +11,7 @@
 
   "users": {
     "invokingUser": {
-      "username": "ts.service.translation1@gmail.com",
-      "password": "Pa55word11"
+      "_extends_": "ManageTranslationsUser"
     }
   },
 
