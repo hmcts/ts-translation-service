@@ -37,6 +37,7 @@ import static org.mockito.Mockito.verify;
 @SuppressWarnings({"PMD.UseConcurrentHashMap", "PMD.JUnitAssertionsShouldIncludeMessage"})
 class DictionaryServiceTest {
 
+    private static final String CLIENTS2S_TOKEN = "clientS2SToken";
     @Mock
     DictionaryRepository dictionaryRepository;
 
@@ -162,7 +163,7 @@ class DictionaryServiceTest {
             final Dictionary dictionaryRequest = getDictionaryRequest(1, 4);
             given(securityUtils.getUserInfo()).willReturn(getUserInfoWithManageTranslationsRole());
             given(securityUtils.hasRole(anyString())).willReturn(true);
-            dictionaryService.putDictionary(dictionaryRequest);
+            dictionaryService.putDictionary(dictionaryRequest, CLIENTS2S_TOKEN);
 
             verify(dictionaryRepository, times(3)).findByEnglishPhrase(any());
             verify(securityUtils, times(1)).hasRole(anyString());
@@ -175,7 +176,7 @@ class DictionaryServiceTest {
             final Dictionary dictionaryRequest = getDictionaryRequest(1, 4);
             given(securityUtils.getUserInfo()).willReturn(getUserInfoWithManageTranslationsRole());
             given(securityUtils.hasRole(anyString())).willReturn(false);
-            dictionaryService.putDictionary(dictionaryRequest);
+            dictionaryService.putDictionary(dictionaryRequest, CLIENTS2S_TOKEN);
 
             verify(dictionaryRepository, times(3)).findByEnglishPhrase(any());
             verify(securityUtils, times(1)).hasRole(anyString());
@@ -193,7 +194,7 @@ class DictionaryServiceTest {
 
             given(securityUtils.getUserInfo()).willReturn(getUserInfoWithManageTranslationsRole());
             given(securityUtils.hasRole(anyString())).willReturn(true);
-            dictionaryService.putDictionary(dictionaryRequest);
+            dictionaryService.putDictionary(dictionaryRequest, CLIENTS2S_TOKEN);
 
             verify(dictionaryRepository, times(1)).findByEnglishPhrase(any());
             verify(securityUtils, times(1)).hasRole(anyString());
@@ -211,7 +212,7 @@ class DictionaryServiceTest {
 
             given(securityUtils.getUserInfo()).willReturn(getUserInfoWithManageTranslationsRole());
             given(securityUtils.hasRole(anyString())).willReturn(false);
-            dictionaryService.putDictionary(dictionaryRequest);
+            dictionaryService.putDictionary(dictionaryRequest, CLIENTS2S_TOKEN);
 
             verify(dictionaryRepository, times(1)).findByEnglishPhrase(any());
             verify(securityUtils, times(1)).hasRole(anyString());

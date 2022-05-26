@@ -73,7 +73,7 @@ idam:
     totp_secret: ${IDAM_KEY_TS_TRANSLATION_SERVICE:AAAAAAAAAAAAAAAA}
     url: ${S2S_URL:http://localhost:4502}
   s2s-authorised:
-    services: ${TS_TRANSLATION_SERVICE_S2S_AUTHORISED_SERVICES:xui_webapp,ccd_admin}
+    services: ${TS_TRANSLATION_SERVICE_S2S_AUTHORISED_SERVICES:xui_webapp,ccd_admin,ccd_definition}
   client:
     id: ts_translation_service
     secret: ${TS_TRANSLATION_SERVICE_IDAM_CLIENT_SECRET:AAAAAAAAAAAAAAAA}
@@ -81,3 +81,8 @@ idam:
 
 oidc:
   issuer: ${OIDC_ISSUER:http://fr-am:8080/openam/oauth2/hmcts}
+
+ccd:
+  s2s-authorised:
+    services:
+      translations: ccd_definition

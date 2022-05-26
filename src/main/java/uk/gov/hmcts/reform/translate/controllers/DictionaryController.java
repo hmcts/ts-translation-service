@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,6 +20,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RequestMapping("/dictionary")
 public class DictionaryController {
 
+    private static final String SERVICE_AUTHORIZATION = "ServiceAuthorization";
     private final DictionaryService dictionaryService;
 
     @Autowired
@@ -47,7 +49,9 @@ public class DictionaryController {
         @ApiResponse(responseCode = "403", description = "Forbidden"),
         @ApiResponse(responseCode = "500", description = "Error occurred on the server")
     })
-    public void putDictionary(@RequestBody Dictionary dictionaryRequest) {
-        dictionaryService.putDictionary(dictionaryRequest);
+    public void putDictionary(@RequestBody Dictionary dictionaryRequest,
+                              @RequestHeader(SERVICE_AUTHORIZATION) String clientS2SToken) {
+
+        dictionaryService.putDictionary(dictionaryRequest,clientS2SToken);
     }
 }
