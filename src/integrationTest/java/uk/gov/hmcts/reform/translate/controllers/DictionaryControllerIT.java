@@ -3,6 +3,9 @@ package uk.gov.hmcts.reform.translate.controllers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
@@ -10,10 +13,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.util.NestedServletException;
 import uk.gov.hmcts.reform.translate.BaseTest;
 
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import static java.util.Collections.emptyMap;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -39,7 +42,7 @@ public class DictionaryControllerIT extends BaseTest {
             mockMvc.perform(get(DICTIONARY_URL)
                                 .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().is(200))
-                .andExpect(jsonPath("$.translations", is(Collections.emptyMap())))
+                .andExpect(jsonPath("$.translations", is(emptyMap())))
                 .andReturn();
         }
 
@@ -86,18 +89,20 @@ public class DictionaryControllerIT extends BaseTest {
     class GetTranslations {
         private static final String TRANSLATIONS_URL = "/translation/cy";
 
-        @Test
-        void shouldReturn400BadRequest() throws Exception {
+        @ParameterizedTest
+        @EmptySource
+        @ValueSource(strings = {"{}", "{\"phrases\":[]}", "{\"phrases\":[\"\"]}", "{\"illegal\":[\"English Phrase\"]}"})
+        void shouldReturn400BadRequestWhenBadTranslationRequestIsSubmitted(final String input) throws Exception {
             mockMvc.perform(post(TRANSLATIONS_URL)
                                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                                 .accept(MediaType.APPLICATION_JSON_VALUE)
-                                .content("{}"))
+                                .content(input))
                 .andExpect(status().isBadRequest());
         }
 
         @Test
         @Sql(scripts = {DELETE_TRANSLATION_TABLES_SCRIPT, GET_TRANSLATION_TABLES_SCRIPT})
-        void shouldReturn200() throws Exception {
+        void shouldReturn200WhenLegalRequestIsSubmitted() throws Exception {
             final Map<String, String> expectedTranslations = Map.of("English Phrase 2", "Translated Phrase 2");
 
             mockMvc.perform(post(TRANSLATIONS_URL)
