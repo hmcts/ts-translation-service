@@ -18,6 +18,7 @@ def secrets = [
   'ccd-${env}': [
     secret('ccd-befta-caseworker-2-solicitor-2-pwd', 'CCD_BEFTA_CASEWORKER_2_SOLICITOR_2_PWD'),
     secret('ccd-api-gateway-oauth2-client-secret', 'CCD_API_GATEWAY_OAUTH2_CLIENT_SECRET'),
+    secret('ts-service-translation-users-pwd', 'TS_SERVICE_TRANSLATION_USERS_PWD'),
   ],
   's2s-${env}': [
     secret('microservicekey-xui-webapp', 'BEFTA_S2S_CLIENT_SECRET'),
@@ -60,7 +61,6 @@ withPipeline(type, product, component) {
     // hmcts/cnp-jenkins-library may fail to copy artifacts after checkstyle error so repeat command (see /src/uk/gov/hmcts/contino/GradleBuilder.groovy)
     steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/reports/checkstyle/*.html'
 
-    steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/reports/pmd/*.html'
   }
 
   // Check if the build should be wired to an environment higher than 'preview'.

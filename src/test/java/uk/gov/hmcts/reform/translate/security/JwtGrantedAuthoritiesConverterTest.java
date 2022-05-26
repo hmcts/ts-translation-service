@@ -21,7 +21,6 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@SuppressWarnings("PMD.JUnitAssertionsShouldIncludeMessage")
 class JwtGrantedAuthoritiesConverterTest {
 
     private static final String ACCESS_TOKEN = "access_token";

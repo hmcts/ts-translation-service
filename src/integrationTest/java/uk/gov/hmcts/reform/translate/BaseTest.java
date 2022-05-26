@@ -28,7 +28,7 @@ import static org.mockito.Mockito.when;
 @ActiveProfiles("itest")
 @AutoConfigureWireMock(port = 0, stubs = "classpath:/wiremock-stubs")
 @AutoConfigureMockMvc(addFilters = false)
-@SuppressWarnings({"HideUtilityClassConstructor", "PMD.LawOfDemeter", "PMD.JUnitAssertionsShouldIncludeMessage"})
+@SuppressWarnings({"HideUtilityClassConstructor"})
 public class BaseTest {
 
     @Value("${wiremock.server.port}")
