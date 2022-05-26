@@ -5,8 +5,8 @@ Feature: F-003: Get Translations
 
   Background: Load test data for the scenario
     Given an appropriate test context as detailed in the test data source
-    And a successful call [to PUT phrase with translation into the dictionary] as in [F-003_Put_English_Phrase_With_Translation]
-    And another successful call [to PUT phrase without translation into the dictionary] as in [F-003_Put_English_Phrase_Without_Translation]
+    And a successful call [to PUT phrase with translation into the dictionary] as in [F-003_Put_Dictionary]
+    And another successful call [to GET the dictionary] as in [F-003_Get_Dictionary]
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   @S-003.1 #AC01

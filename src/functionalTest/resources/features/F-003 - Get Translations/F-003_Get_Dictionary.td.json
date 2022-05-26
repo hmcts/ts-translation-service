@@ -1,0 +1,29 @@
+{
+  "_guid_": "F-003_Get_Dictionary",
+  "_extends_": "F-001_Test_Base_Data",
+
+  "specs": [
+    "to GET the dictionary"
+  ],
+
+  "users": {
+    "invokingUser": {
+      "_extends_": "ManageAndLoadTranslationsUser"
+    }
+  },
+
+  "s2sClientId": "xui_webapp",
+
+  "request": {
+    "_extends_": "Common_Request"
+  },
+
+  "expectedResponse": {
+    "responseCode": 200,
+    "responseMessage": "OK",
+    "_extends_": "Common_Response_Headers_Base",
+    "body": {
+      "translations": "[[ANYTHING_PRESENT]]"
+    }
+  }
+}

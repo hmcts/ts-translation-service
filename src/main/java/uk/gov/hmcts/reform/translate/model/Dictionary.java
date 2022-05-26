@@ -1,10 +1,16 @@
 package uk.gov.hmcts.reform.translate.model;
 
-import lombok.Value;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import java.util.Map;
 
-@Value
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode
 public class Dictionary {
     Map<String, String> translations;
 }

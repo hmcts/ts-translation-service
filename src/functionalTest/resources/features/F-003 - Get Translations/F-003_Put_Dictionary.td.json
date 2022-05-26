@@ -1,5 +1,5 @@
 {
-  "_guid_": "F-003_Put_English_Phrase_With_Translation",
+  "_guid_": "F-003_Put_Dictionary",
   "_extends_": "Put_Dictionary_Base",
   "specs": [
     "to PUT phrase with translation into the dictionary"
@@ -7,8 +7,7 @@
 
   "users": {
     "invokingUser": {
-      "username": "ts.service.translation-manage-load@gmail.com",
-      "password": "[[$TS_SERVICE_TRANSLATION_USERS_PWD]]"
+      "_extends_": "ManageAndLoadTranslationsUser"
     }
   },
 
@@ -16,7 +15,8 @@
     "_extends_": "Common_Request",
     "body": {
       "translations": {
-        "English phrase with translation": "Welsh phrase one"
+        "English phrase with translation": "Welsh phrase one",
+        "English phrase without translation": null
       }
     }
   },
