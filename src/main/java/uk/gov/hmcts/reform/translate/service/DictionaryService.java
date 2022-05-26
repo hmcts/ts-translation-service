@@ -101,7 +101,8 @@ public class DictionaryService {
             throw new BadRequestException("The translations field cannot be empty.");
         }
         if (!isManageTranslationRole && hasAnyTranslations(dictionaryRequest)) {
-            val message = "User with a role different to " + MANAGE_TRANSLATIONS_ROLE + "should not have translations.";
+            val message = "User with a role different to "
+                + MANAGE_TRANSLATIONS_ROLE + " should not have translations.";
             throw new BadRequestException(message);
         }
     }

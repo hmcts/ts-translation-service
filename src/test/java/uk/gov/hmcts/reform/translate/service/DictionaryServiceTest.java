@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.reform.idam.client.models.UserInfo;
+import uk.gov.hmcts.reform.translate.ApplicationParams;
 import uk.gov.hmcts.reform.translate.data.DictionaryEntity;
 import uk.gov.hmcts.reform.translate.errorhandling.RoleMissingException;
 import uk.gov.hmcts.reform.translate.helper.DictionaryMapper;
@@ -37,6 +38,8 @@ import static org.mockito.Mockito.verify;
 class DictionaryServiceTest {
 
     private static final String CLIENTS2S_TOKEN = "clientS2SToken";
+    private static final String DEFINITION_STORE = "definition_store";
+    private static final String XUI = "xui";
     @Mock
     DictionaryRepository dictionaryRepository;
 
@@ -47,6 +50,9 @@ class DictionaryServiceTest {
     DictionaryMapper dictionaryMapper;
     @Mock
     SecurityUtils securityUtils;
+
+    @Mock
+    ApplicationParams applicationParams;
 
     @InjectMocks
     DictionaryService dictionaryService;
@@ -157,8 +163,16 @@ class DictionaryServiceTest {
     @Nested
     @DisplayName("PutDictionary")
     class PutDictionary {
+
+        @BeforeEach
+        void setUp() {
+            given(applicationParams.getAuthorisedServicesForTranslation())
+                .willReturn(Arrays.asList(XUI,DEFINITION_STORE));
+        }
+
         @Test
         void shouldPutANewDictionaryForUserWithManageTranslationsRole() {
+            given(securityUtils.getServiceNameFromS2SToken(CLIENTS2S_TOKEN)).willReturn(XUI);
             final Dictionary dictionaryRequest = getDictionaryRequest(1, 4);
             given(securityUtils.getUserInfo()).willReturn(getUserInfoWithManageTranslationsRole());
             given(securityUtils.hasRole(anyString())).willReturn(true);
@@ -172,7 +186,8 @@ class DictionaryServiceTest {
 
         @Test
         void shouldPutANewDictionaryForUserWithoutManageTranslationsRole() {
-            final Dictionary dictionaryRequest = getDictionaryRequest(1, 4);
+            final Dictionary dictionaryRequest = getDictionaryRequestWithoutABody(1, 4);
+            given(securityUtils.getServiceNameFromS2SToken(CLIENTS2S_TOKEN)).willReturn(DEFINITION_STORE);
             given(securityUtils.getUserInfo()).willReturn(getUserInfoWithManageTranslationsRole());
             given(securityUtils.hasRole(anyString())).willReturn(false);
             dictionaryService.putDictionary(dictionaryRequest, CLIENTS2S_TOKEN);
@@ -185,12 +200,12 @@ class DictionaryServiceTest {
 
         @Test
         void shouldUpdateADictionaryForUserWithManageTranslationsRole() {
+            given(securityUtils.getServiceNameFromS2SToken(CLIENTS2S_TOKEN)).willReturn(XUI);
             final Dictionary dictionaryRequest = getDictionaryRequest(1, 2);
             final DictionaryEntity dictionaryEntity =
                 createDictionaryEntity("english_1", "translated_1");
 
             given(dictionaryRepository.findByEnglishPhrase(any())).willReturn(Optional.of(dictionaryEntity));
-
             given(securityUtils.getUserInfo()).willReturn(getUserInfoWithManageTranslationsRole());
             given(securityUtils.hasRole(anyString())).willReturn(true);
             dictionaryService.putDictionary(dictionaryRequest, CLIENTS2S_TOKEN);
@@ -203,7 +218,8 @@ class DictionaryServiceTest {
 
         @Test
         void shouldUpdateADictionaryForUserWithoutManageTranslationsRole() {
-            final Dictionary dictionaryRequest = getDictionaryRequest(1, 2);
+            given(securityUtils.getServiceNameFromS2SToken(CLIENTS2S_TOKEN)).willReturn(XUI);
+            final Dictionary dictionaryRequest = getDictionaryRequestWithoutABody(1, 2);
             final DictionaryEntity dictionaryEntity =
                 createDictionaryEntity("english_1", "translated_1");
 
@@ -222,6 +238,12 @@ class DictionaryServiceTest {
         private Dictionary getDictionaryRequest(int from, int to) {
             final Map<String, String> expectedMapKeysAndValues = new HashMap<>();
             IntStream.range(from, to).forEach(i -> expectedMapKeysAndValues.put("english_" + i, "translated_" + i));
+            return new Dictionary(expectedMapKeysAndValues);
+        }
+
+        private Dictionary getDictionaryRequestWithoutABody(int from, int to) {
+            final Map<String, String> expectedMapKeysAndValues = new HashMap<>();
+            IntStream.range(from, to).forEach(i -> expectedMapKeysAndValues.put("english_" + i, null));
             return new Dictionary(expectedMapKeysAndValues);
         }
 
