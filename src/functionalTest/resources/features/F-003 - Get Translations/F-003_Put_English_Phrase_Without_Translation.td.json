@@ -1,15 +1,17 @@
 {
-  "_guid_": "S-003.1",
+  "_guid_": "F-003_Put_English_Phrase_Without_Translation",
   "_extends_": "Translation_Cy_Base",
-  "title": "must return a successful response when translate operation is requested",
   "specs": [
-    "an active solicitor profile"
+    "to PUT phrase without translation into the dictionary"
   ],
+
   "users": {
     "invokingUser": {
-      "_extends_": "BeftaCaseworker2Solicitor2"
+      "username": "ts.service.translation-manage-load@gmail.com",
+      "password": "[[$TS_SERVICE_TRANSLATION_USERS_PWD]]"
     }
   },
+
   "request": {
     "_extends_": "Common_Request",
     "headers": {
@@ -17,7 +19,7 @@
     },
     "body": {
       "phrases": [
-        "An English Phrase"
+        "English phrase without translation"
       ]
     }
   },
@@ -27,7 +29,7 @@
     "responseMessage": "OK",
     "body": {
       "translations": {
-        "An English Phrase": "An English Phrase"
+        "English phrase without translation": "English phrase without translation"
       }
     }
   }
