@@ -31,7 +31,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
@@ -186,7 +185,7 @@ class DictionaryServiceTest {
                 .isNotNull()
                 .isEqualTo("translated");
 
-            verify(dictionaryRepository).findByEnglishPhrase(eq(THE_QUICK_FOX_PHRASE));
+            verify(dictionaryRepository).findByEnglishPhrase(THE_QUICK_FOX_PHRASE);
             verifyNoMoreInteractions(dictionaryRepository);
         }
 
@@ -201,7 +200,7 @@ class DictionaryServiceTest {
                 .isNotNull()
                 .isEqualTo(THE_QUICK_FOX_PHRASE);
 
-            verify(dictionaryRepository).findByEnglishPhrase(eq(THE_QUICK_FOX_PHRASE));
+            verify(dictionaryRepository).findByEnglishPhrase(THE_QUICK_FOX_PHRASE);
             verifyNoMoreInteractions(dictionaryRepository);
         }
 
@@ -218,7 +217,7 @@ class DictionaryServiceTest {
                 .isEqualTo(THE_QUICK_FOX_PHRASE);
 
             verify(dictionaryRepository).save(any());
-            verify(dictionaryRepository).findByEnglishPhrase(eq(THE_QUICK_FOX_PHRASE));
+            verify(dictionaryRepository).findByEnglishPhrase(THE_QUICK_FOX_PHRASE);
         }
 
         @Test
@@ -238,12 +237,12 @@ class DictionaryServiceTest {
             final DictionaryEntity entity2 = createDictionaryEntity(englishPhraseWithNoTranslation, null);
             final DictionaryEntity entity3 = createDictionaryEntity(englishPhraseNotInDictionary, null);
 
-            doReturn(Optional.of(entity1)).when(dictionaryRepository).findByEnglishPhrase(eq(englishPhrase));
+            doReturn(Optional.of(entity1)).when(dictionaryRepository).findByEnglishPhrase(englishPhrase);
             doReturn(Optional.of(entity2)).when(dictionaryRepository)
-                .findByEnglishPhrase(eq(englishPhraseWithNoTranslation));
+                .findByEnglishPhrase(englishPhraseWithNoTranslation);
             doReturn(Optional.empty()).when(dictionaryRepository)
-                .findByEnglishPhrase(eq(englishPhraseNotInDictionary));
-            doReturn(entity3).when(dictionaryRepository).save(eq(entity3));
+                .findByEnglishPhrase(englishPhraseNotInDictionary);
+            doReturn(entity3).when(dictionaryRepository).save(entity3);
 
             final List<String> translationRequestPhrases = List.of(
                 englishPhrase,
@@ -259,10 +258,10 @@ class DictionaryServiceTest {
                 .isNotEmpty()
                 .containsAllEntriesOf(expectedTranslations);
 
-            verify(dictionaryRepository).findByEnglishPhrase(eq(englishPhrase));
-            verify(dictionaryRepository).findByEnglishPhrase(eq(englishPhraseWithNoTranslation));
-            verify(dictionaryRepository).findByEnglishPhrase(eq(englishPhraseNotInDictionary));
-            verify(dictionaryRepository).save(eq(entity3));
+            verify(dictionaryRepository).findByEnglishPhrase(englishPhrase);
+            verify(dictionaryRepository).findByEnglishPhrase(englishPhraseWithNoTranslation);
+            verify(dictionaryRepository).findByEnglishPhrase(englishPhraseNotInDictionary);
+            verify(dictionaryRepository).save(entity3);
         }
 
         @Test
