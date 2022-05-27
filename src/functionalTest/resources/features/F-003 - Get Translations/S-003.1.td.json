@@ -22,9 +22,7 @@
     }
   },
   "expectedResponse": {
-    "_extends_": "Common_Response",
-    "responseCode": 200,
-    "responseMessage": "OK",
+    "_extends_": "Common_200_Response",
     "body": {
       "translations": {
         "An English Phrase": "An English Phrase"

@@ -19,9 +19,7 @@
   },
 
   "expectedResponse": {
-    "responseCode": 200,
-    "responseMessage": "OK",
-    "_extends_": "Common_Response_Headers_Base",
+    "_extends_": "Common_200_Response",
     "body": {
       "translations": "[[ANYTHING_PRESENT]]"
     }
