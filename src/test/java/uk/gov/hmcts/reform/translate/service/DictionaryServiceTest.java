@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -244,7 +245,7 @@ class DictionaryServiceTest {
                 .findByEnglishPhrase(englishPhraseNotInDictionary);
             doReturn(entity3).when(dictionaryRepository).save(entity3);
 
-            final List<String> translationRequestPhrases = List.of(
+            final Set<String> translationRequestPhrases = Set.of(
                 englishPhrase,
                 englishPhraseWithNoTranslation,
                 englishPhraseNotInDictionary
