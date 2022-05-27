@@ -14,9 +14,9 @@ import uk.gov.hmcts.reform.translate.security.SecurityUtils;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -61,7 +61,7 @@ public class DictionaryService {
         }
     }
 
-    public Map<String, String> getTranslations(@NonNull final List<String> phrases) {
+    public Map<String, String> getTranslations(@NonNull final Set<String> phrases) {
         return phrases.stream()
             .map(phrase -> {
                 final String translation = getTranslation(phrase);

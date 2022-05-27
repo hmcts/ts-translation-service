@@ -26,12 +26,12 @@ import uk.gov.hmcts.reform.translate.model.TranslationsResponse;
 import uk.gov.hmcts.reform.translate.service.DictionaryService;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -78,14 +78,14 @@ class DictionaryControllerTest {
         @Test
         void shouldReturnTranslations() {
             doReturn(Map.of("English phrase", "Translated English phrase"))
-                .when(dictionaryService).getTranslations(anyList());
+                .when(dictionaryService).getTranslations(anySet());
 
-            final TranslationsRequest translationRequest = new TranslationsRequest(List.of("English phrase"));
+            final TranslationsRequest translationRequest = new TranslationsRequest(Set.of("English phrase"));
             final Dictionary dictionary = dictionaryController.getTranslation(translationRequest);
 
             assertThat(dictionary)
                 .isNotNull();
-            verify(dictionaryService).getTranslations(anyList());
+            verify(dictionaryService).getTranslations(anySet());
         }
     }
 
