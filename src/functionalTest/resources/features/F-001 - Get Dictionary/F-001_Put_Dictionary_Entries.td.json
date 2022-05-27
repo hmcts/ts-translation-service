@@ -14,9 +14,16 @@
   },
 
   "request": {
-    "_extends_": "Common_Request",
+    "headers": {
+      "_extends_": "Common_Request_Headers",
+      "ServiceAuthorization": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ4dWlfd2ViYXBwIiwiZXhwIjoxNjUzNjU3NTMzfQ.2c2-BkVYKa_h_ivwy4pyvlT68yMkWD51VBPquL_gszAMFA8-wLnrFOvz6mUlyoVCYeS_gm1ziN6uNAe8XlAzJg"
+    },
     "body": {
-      "_extends_": "Translations_Dictionary"
+      "translations": {
+        "EnglishPhrase1": "WelshPhrase1",
+        "EnglishPhrase2": "WelshPhrase2",
+        "EnglishPhrase3": "WelshPhrase3"
+      }
     }
   },
 
