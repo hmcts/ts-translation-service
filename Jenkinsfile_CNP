@@ -16,7 +16,6 @@ def secrets = [
     secret('mc-idam-client-secret', 'BEFTA_OAUTH2_CLIENT_SECRET_OF_XUIWEBAPP')
   ],
   'ccd-${env}': [
-    secret('ccd-befta-caseworker-2-solicitor-2-pwd', 'CCD_BEFTA_CASEWORKER_2_SOLICITOR_2_PWD'),
     secret('ccd-api-gateway-oauth2-client-secret', 'CCD_API_GATEWAY_OAUTH2_CLIENT_SECRET'),
     secret('ts-service-translation-users-pwd', 'TS_SERVICE_TRANSLATION_USERS_PWD'),
   ],

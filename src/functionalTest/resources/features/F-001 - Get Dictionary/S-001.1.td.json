@@ -1,0 +1,28 @@
+{
+  "_guid_": "S-001.1",
+  "_extends_": "F-001_Test_Base_Data",
+  "title": "must return a 200 OK containing all dictionary entries",
+  "specs": [
+    "with manage-translation IDAM role",
+    "has the 200 OK status code"
+  ],
+
+  "s2sClientId": "xui_webapp",
+
+  "users": {
+    "invokingUser": {
+      "_extends_": "ManageTranslationsUser"
+    }
+  },
+
+  "request": {
+    "_extends_": "Common_Request"
+  },
+
+  "expectedResponse": {
+    "_extends_": "Common_200_Response",
+    "body": {
+      "translations": "${[scenarioContext][customValues][containsDictionaryTranslations EnglishPhrase1: WelshPhrase1, EnglishPhrase2: WelshPhrase2, EnglishPhrase3: WelshPhrase3]}"
+    }
+  }
+}
