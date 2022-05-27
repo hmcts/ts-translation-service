@@ -44,7 +44,7 @@ public class TranslationServiceTestAutomationAdapter extends DefaultTestAutomati
 
 
             boolean allMatch = expectedValuesMap.entrySet().stream().allMatch(
-                entrySet ->translations.containsKey(entrySet.getKey())
+                entrySet -> translations.containsKey(entrySet.getKey())
                     && translations.containsValue(entrySet.getValue())
             );
 
