@@ -1,6 +1,6 @@
 {
   "_guid_": "S-001.1",
-  "_extends_": "F-001_Test_Base_Data",
+  "_extends_": "Get_Dictionary_Base",
   "title": "must return a 200 OK containing all dictionary entries",
   "specs": [
     "with manage-translation IDAM role",

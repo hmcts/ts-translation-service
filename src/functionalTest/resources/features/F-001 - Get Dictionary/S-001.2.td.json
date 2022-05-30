@@ -1,6 +1,6 @@
 {
   "_guid_": "S-001.2",
-  "_extends_": "F-001_Test_Base_Data",
+  "_extends_": "Get_Dictionary_Base",
   "title": "Must return a 403 Forbidden for missing role",
   "specs": [
     "without manage-translation IDAM role",

@@ -1,5 +1,5 @@
 {
-  "_guid_": "F-001_Test_Base_Data",
+  "_guid_": "Get_Dictionary_Base",
   "productName": "Translation Service",
   "operationName": "GET dictionary",
   "method": "GET",
