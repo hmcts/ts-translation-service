@@ -42,8 +42,8 @@ import static org.mockito.Mockito.when;
 @DisplayName("SecurityUtils")
 class SecurityUtilsTest {
 
-    private static final String SERVICE_JWT = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ4dWlfd2ViYXBwIiwiZXhwIjoxNjUzOTM2NDgwfQ." +
-        "JzkZ5WDfIj3lnNglBNqDMdA3nnwOuCdKwHl4wbLMi8uNGKFiKhyFcLVAiby2dX6dECZHDC0EgRjqQN2s9TXWow";
+    private static final String SERVICE_JWT = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ4dWlfd2ViYXBwIiwiZXhwIjoxNjUzOTM2NDgwfQ."
+        + "JzkZ5WDfIj3lnNglBNqDMdA3nnwOuCdKwHl4wbLMi8uNGKFiKhyFcLVAiby2dX6dECZHDC0EgRjqQN2s9TXWow";
     private static final String USER_ID = "123";
     private static final String USER_JWT = "Bearer 8gf364fg367f67";
     private static final String CLIENT_ID = "xui_webapp";
