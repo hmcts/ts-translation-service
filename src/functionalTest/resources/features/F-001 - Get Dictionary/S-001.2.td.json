@@ -1,7 +1,7 @@
 {
   "_guid_": "S-001.2",
-  "_extends_": "F-001_Test_Base_Data",
-  "title": "must return a 403 Forbidden for missing role",
+  "_extends_": "Get_Dictionary_Base",
+  "title": "Must return a 403 Forbidden for missing role",
   "specs": [
     "without manage-translation IDAM role",
     "has the 403 Forbidden status code"
@@ -9,8 +9,7 @@
 
   "users": {
       "invokingUser": {
-        "username": "befta.caseworker.2.solicitor.2@gmail.com",
-        "password": "[[$CCD_BEFTA_CASEWORKER_2_SOLICITOR_2_PWD]]"
+        "_extends_": "LoadTranslationsUser"
       }
   },
 
