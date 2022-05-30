@@ -1,5 +1,7 @@
 package uk.gov.hmcts.reform.translate.security;
 
+import com.auth0.jwt.exceptions.JWTDecodeException;
+import lombok.val;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -19,6 +21,7 @@ import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 import uk.gov.hmcts.reform.translate.security.idam.IdamRepository;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,7 +32,9 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
@@ -37,9 +42,11 @@ import static org.mockito.Mockito.when;
 @DisplayName("SecurityUtils")
 class SecurityUtilsTest {
 
-    private static final String SERVICE_JWT = "7gf364fg367f67";
+    private static final String SERVICE_JWT = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ4dWlfd2ViYXBwIiwiZXhwIjoxNjUzOTM2NDgwfQ." +
+        "JzkZ5WDfIj3lnNglBNqDMdA3nnwOuCdKwHl4wbLMi8uNGKFiKhyFcLVAiby2dX6dECZHDC0EgRjqQN2s9TXWow";
     private static final String USER_ID = "123";
     private static final String USER_JWT = "Bearer 8gf364fg367f67";
+    private static final String CLIENT_ID = "xui_webapp";
 
     @Mock
     private Authentication authentication;
@@ -118,5 +125,35 @@ class SecurityUtilsTest {
     @DisplayName("Check manage-translations role not present")
     void shouldReturnTrueWhenRoleNotPresent() {
         assertFalse(securityUtils.hasRole("unknown-role"));
+    }
+
+    @Test
+    @DisplayName("Check any role present")
+    void shouldReturnTrueWhenHasAnyOfTheseRolesPresent() {
+        assertTrue(securityUtils.hasAnyOfTheseRoles(Arrays.asList("myRole")));
+    }
+
+    @Test
+    @DisplayName("Check any role not present")
+    void shouldReturnTrueWhenHasAnyOfTheseNotRolesPresent() {
+        assertFalse(securityUtils.hasAnyOfTheseRoles(Arrays.asList("NOTmyRole")));
+    }
+
+    @Test
+    @DisplayName("get client from getServiceNameFromS2SToken")
+    void shouldReturnAClientForGetServiceNameFromS2SToken() {
+        val clientID = securityUtils.getServiceNameFromS2SToken(SERVICE_JWT);
+        assertEquals(CLIENT_ID,clientID);
+    }
+
+
+    @Test
+    @DisplayName("Fail get client from getServiceNameFromS2SToken")
+    void shouldFailReturnAClientForGetServiceNameFromS2SToken() {
+        val jwtDecodeException =
+            assertThrows(JWTDecodeException.class, () ->
+                securityUtils.getServiceNameFromS2SToken("prudaj"));
+
+        assertEquals("The token was expected to have 3 parts, but got 1.", jwtDecodeException.getMessage());
     }
 }

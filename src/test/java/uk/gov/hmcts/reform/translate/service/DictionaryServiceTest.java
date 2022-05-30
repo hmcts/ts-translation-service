@@ -1,5 +1,6 @@
 package uk.gov.hmcts.reform.translate.service;
 
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -12,6 +13,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 import uk.gov.hmcts.reform.translate.ApplicationParams;
 import uk.gov.hmcts.reform.translate.data.DictionaryEntity;
+import uk.gov.hmcts.reform.translate.errorhandling.BadRequestException;
+import uk.gov.hmcts.reform.translate.errorhandling.RequestErrorException;
 import uk.gov.hmcts.reform.translate.errorhandling.RoleMissingException;
 import uk.gov.hmcts.reform.translate.helper.DictionaryMapper;
 import uk.gov.hmcts.reform.translate.model.Dictionary;
@@ -25,15 +28,21 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static uk.gov.hmcts.reform.translate.security.SecurityUtils.LOAD_TRANSLATIONS_ROLE;
 import static uk.gov.hmcts.reform.translate.security.SecurityUtils.MANAGE_TRANSLATIONS_ROLE;
+import static uk.gov.hmcts.reform.translate.service.DictionaryService.INVALID_PAYLOAD_FORMAT;
+import static uk.gov.hmcts.reform.translate.service.DictionaryService.INVALID_PAYLOAD_FOR_ROLE;
 
 @ExtendWith(MockitoExtension.class)
 class DictionaryServiceTest {
@@ -229,6 +238,168 @@ class DictionaryServiceTest {
             verify(dictionaryRepository, times(1)).findByEnglishPhrase(any());
             verify(securityUtils, times(1)).hasRole(anyString());
             verify(dictionaryRepository, times(0)).save(any());
+        }
+
+
+        @Test
+        void shouldPutDictionaryRoleCheckForAValidUserWithManageTranslationsRole() {
+
+            final Dictionary dictionaryRequest = getDictionaryRequest(1, 4);
+            given(applicationParams.getPutDictionaryS2sServicesBypassRoleAuthCheck())
+                .willReturn(Arrays.asList(DEFINITION_STORE));
+            given(securityUtils.getServiceNameFromS2SToken(CLIENTS2S_TOKEN)).willReturn(XUI);
+            given(securityUtils.hasAnyOfTheseRoles(anyList())).willReturn(true);
+            given(securityUtils.getUserInfo()).willReturn(getUserInfoWithManageTranslationsRole());
+            given(securityUtils.hasRole(anyString())).willReturn(true);
+            dictionaryService.putDictionaryRoleCheck(CLIENTS2S_TOKEN);
+            dictionaryService.putDictionary(dictionaryRequest);
+
+            verify(dictionaryRepository, times(3)).findByEnglishPhrase(any());
+            verify(securityUtils, times(1)).hasRole(anyString());
+            verify(dictionaryMapper, times(3)).modelToEntityWithTranslationUploadEntity(any(), any());
+            verify(dictionaryRepository, times(3)).save(any());
+
+        }
+
+        @Test
+        void shouldPutDictionaryRoleCheckForAValidUserWithLoadTranslationRole() {
+            final Dictionary dictionaryRequest = getDictionaryRequestWithoutABody(1, 2);
+            final DictionaryEntity dictionaryEntity =
+                createDictionaryEntity("english_1", "translated_1");
+            given(applicationParams.getPutDictionaryS2sServicesBypassRoleAuthCheck())
+                .willReturn(Arrays.asList(DEFINITION_STORE));
+            given(securityUtils.hasAnyOfTheseRoles(anyList())).willReturn(true);
+            given(securityUtils.getServiceNameFromS2SToken(CLIENTS2S_TOKEN)).willReturn(XUI);
+
+            given(dictionaryRepository.findByEnglishPhrase(any())).willReturn(Optional.of(dictionaryEntity));
+            given(securityUtils.getUserInfo()).willReturn(getUserInfoWithManageTranslationsRole());
+            given(securityUtils.hasRole(anyString())).willReturn(true);
+            dictionaryService.putDictionaryRoleCheck(CLIENTS2S_TOKEN);
+            dictionaryService.putDictionary(dictionaryRequest);
+
+            verify(dictionaryRepository, times(1)).findByEnglishPhrase(any());
+            verify(securityUtils, times(1)).hasRole(anyString());
+            verify(dictionaryRepository, times(1)).save(any());
+        }
+
+        @Test
+        void shouldPutDictionaryRoleCheckForAValidDefinitionStore() {
+
+            final Dictionary dictionaryRequest = getDictionaryRequestWithoutABody(1, 2);
+            final DictionaryEntity dictionaryEntity =
+                createDictionaryEntity("english_1", "translated_1");
+            given(applicationParams.getPutDictionaryS2sServicesBypassRoleAuthCheck())
+                .willReturn(Arrays.asList(DEFINITION_STORE));
+            given(securityUtils.getServiceNameFromS2SToken(CLIENTS2S_TOKEN)).willReturn(DEFINITION_STORE);
+
+            given(dictionaryRepository.findByEnglishPhrase(any())).willReturn(Optional.of(dictionaryEntity));
+            given(securityUtils.getUserInfo()).willReturn(getUserInfoWithManageTranslationsRole());
+            given(securityUtils.hasRole(anyString())).willReturn(true);
+            dictionaryService.putDictionaryRoleCheck(CLIENTS2S_TOKEN);
+            dictionaryService.putDictionary(dictionaryRequest);
+
+            verify(dictionaryRepository, times(1)).findByEnglishPhrase(any());
+            verify(securityUtils, times(1)).hasRole(anyString());
+            verify(dictionaryRepository, times(1)).save(any());
+
+        }
+
+
+        @Test
+        void shouldFailPutDictionaryRoleCheckForAValidUserWithOutAnyRole() {
+            lenient().when(securityUtils.hasRole(any())).thenReturn(true);
+            given(applicationParams.getPutDictionaryS2sServicesBypassRoleAuthCheck())
+                .willReturn(Arrays.asList(DEFINITION_STORE));
+
+            given(securityUtils.getServiceNameFromS2SToken(CLIENTS2S_TOKEN)).willReturn(XUI);
+            given(securityUtils.hasAnyOfTheseRoles(anyList())).willReturn(false);
+
+            RequestErrorException roleMissingException = assertThrows(
+                RequestErrorException.class, () -> dictionaryService.putDictionaryRoleCheck(CLIENTS2S_TOKEN)
+            );
+            assertThat(roleMissingException).isInstanceOf(RequestErrorException.class);
+            assertEquals(
+                String.format(
+                    RequestErrorException.ERROR_MESSAGE, MANAGE_TRANSLATIONS_ROLE + "," + LOAD_TRANSLATIONS_ROLE
+                ),
+                roleMissingException.getMessage()
+            );
+        }
+
+        @Test
+        void shouldFailPutDictionaryDueToInvalidClientToken() {
+            lenient().when(securityUtils.hasRole(any())).thenReturn(true);
+            given(applicationParams.getPutDictionaryS2sServicesBypassRoleAuthCheck())
+                .willReturn(Arrays.asList(DEFINITION_STORE));
+
+            given(securityUtils.getServiceNameFromS2SToken(CLIENTS2S_TOKEN)).willReturn(XUI);
+            given(securityUtils.hasAnyOfTheseRoles(anyList())).willReturn(false);
+
+            RequestErrorException roleMissingException = assertThrows(
+                RequestErrorException.class, () -> dictionaryService.putDictionaryRoleCheck(CLIENTS2S_TOKEN)
+            );
+            assertThat(roleMissingException).isInstanceOf(RequestErrorException.class);
+            assertEquals(
+                String.format(
+                    RequestErrorException.ERROR_MESSAGE, MANAGE_TRANSLATIONS_ROLE + "," + LOAD_TRANSLATIONS_ROLE
+                ),
+                roleMissingException.getMessage()
+            );
+        }
+
+
+        // Incorrect pay_load
+        @Test
+        void shouldFailUpdateADictionaryForUserWithoutManageTranslationsRoleAndNullPayload() {
+
+
+            final Dictionary dictionaryRequest = new Dictionary(null);
+            given(applicationParams.getPutDictionaryS2sServicesBypassRoleAuthCheck())
+                .willReturn(Arrays.asList(DEFINITION_STORE));
+            given(securityUtils.getServiceNameFromS2SToken(CLIENTS2S_TOKEN)).willReturn(DEFINITION_STORE);
+            given(securityUtils.hasRole(anyString())).willReturn(false);
+            dictionaryService.putDictionaryRoleCheck(CLIENTS2S_TOKEN);
+
+            BadRequestException badRequestException = assertThrows(
+                BadRequestException.class, () -> dictionaryService.putDictionary(dictionaryRequest)
+            );
+            assertThat(badRequestException).isInstanceOf(BadRequestException.class);
+            assertEquals(INVALID_PAYLOAD_FORMAT, badRequestException.getMessage());
+
+        }
+
+        @Test
+        void shouldFailUpdateADictionaryForUserWithoutManageTranslationsRoleAndIncorrectPayload() {
+
+
+            final Dictionary dictionaryRequest = new Dictionary(new HashMap<>());
+            given(applicationParams.getPutDictionaryS2sServicesBypassRoleAuthCheck())
+                .willReturn(Arrays.asList(DEFINITION_STORE));
+            given(securityUtils.getServiceNameFromS2SToken(CLIENTS2S_TOKEN)).willReturn(DEFINITION_STORE);
+            given(securityUtils.hasRole(anyString())).willReturn(false);
+            dictionaryService.putDictionaryRoleCheck(CLIENTS2S_TOKEN);
+
+            BadRequestException badRequestException = assertThrows(
+                BadRequestException.class, () -> dictionaryService.putDictionary(dictionaryRequest)
+            );
+            assertThat(badRequestException).isInstanceOf(BadRequestException.class);
+            assertEquals(INVALID_PAYLOAD_FORMAT, badRequestException.getMessage());
+
+        }
+
+        @Test
+        void shouldFailUpdateADictionaryForDefinitionStoreWithIncorrectPayload() {
+
+            final Dictionary dictionaryRequest = getDictionaryRequest(1, 2);
+            lenient().when(securityUtils.hasRole(any())).thenReturn(true);
+            given(securityUtils.hasRole(anyString())).willReturn(false);
+
+            BadRequestException badRequestException = assertThrows(
+                BadRequestException.class, () -> dictionaryService.putDictionary(dictionaryRequest)
+            );
+            assertThat(badRequestException).isInstanceOf(BadRequestException.class);
+            assertEquals(INVALID_PAYLOAD_FOR_ROLE, badRequestException.getMessage());
+
         }
 
 

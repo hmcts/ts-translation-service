@@ -30,11 +30,14 @@ import static uk.gov.hmcts.reform.translate.security.SecurityUtils.MANAGE_TRANSL
 @Service
 public class DictionaryService {
 
+    public static final String INVALID_PAYLOAD_FORMAT = "The translations field cannot be empty.";
     private final DictionaryRepository dictionaryRepository;
     private final DictionaryMapper dictionaryMapper;
     private final SecurityUtils securityUtils;
     private final ApplicationParams applicationParams;
     private final Predicate<String> isTranslationNull = translation -> !StringUtils.isEmpty(translation);
+    public static final String INVALID_PAYLOAD_FOR_ROLE = "User with a role different to "
+        + MANAGE_TRANSLATIONS_ROLE + " should not have translations.";
 
     @Autowired
     public DictionaryService(DictionaryRepository dictionaryRepository, DictionaryMapper dictionaryMapper,
@@ -83,13 +86,8 @@ public class DictionaryService {
 
     public void putDictionaryRoleCheck(String clientS2SToken) {
         val clientServiceName = securityUtils.getServiceNameFromS2SToken(clientS2SToken);
-        validateServiceRequest(clientServiceName);
-        isBypassRoleAuthCheck(clientServiceName);
-    }
-
-    private void validateServiceRequest(String clientServiceName) {
         if (isBypassRoleAuthCheck(clientServiceName)
-            || securityUtils.hasAnyOfThisRoles(Arrays.asList(MANAGE_TRANSLATIONS_ROLE, LOAD_TRANSLATIONS_ROLE))) {
+            || securityUtils.hasAnyOfTheseRoles(Arrays.asList(MANAGE_TRANSLATIONS_ROLE, LOAD_TRANSLATIONS_ROLE))) {
             return;
         }
         throw new RequestErrorException(MANAGE_TRANSLATIONS_ROLE + "," + LOAD_TRANSLATIONS_ROLE);
@@ -102,12 +100,10 @@ public class DictionaryService {
     private void validateDictionary(final Dictionary dictionaryRequest, boolean isManageTranslationRole) {
 
         if (isTranslationEmpty(dictionaryRequest)) {
-            throw new BadRequestException("The translations field cannot be empty.");
+            throw new BadRequestException(INVALID_PAYLOAD_FORMAT);
         }
         if (!isManageTranslationRole && hasAnyTranslations(dictionaryRequest)) {
-            val message = "User with a role different to "
-                + MANAGE_TRANSLATIONS_ROLE + " should not have translations.";
-            throw new BadRequestException(message);
+            throw new BadRequestException(INVALID_PAYLOAD_FOR_ROLE);
         }
     }
 
