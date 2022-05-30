@@ -23,7 +23,8 @@ import static java.util.stream.Collectors.toSet;
 @Slf4j
 public class SecurityUtils {
     public static final String SERVICE_AUTHORIZATION = "ServiceAuthorization";
-
+    public static final String MANAGE_TRANSLATIONS_ROLE = "manage-translations";
+    public static final String LOAD_TRANSLATIONS_ROLE = "load-translations";
     public static final String BEARER = "Bearer ";
 
     private final AuthTokenGenerator authTokenGenerator;

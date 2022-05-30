@@ -24,11 +24,12 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import static uk.gov.hmcts.reform.translate.security.SecurityUtils.LOAD_TRANSLATIONS_ROLE;
+import static uk.gov.hmcts.reform.translate.security.SecurityUtils.MANAGE_TRANSLATIONS_ROLE;
+
 @Service
 public class DictionaryService {
 
-    protected static final String MANAGE_TRANSLATIONS_ROLE = "manage-translations";
-    protected static final String LOAD_TRANSLATIONS = "load-translations";
     private final DictionaryRepository dictionaryRepository;
     private final DictionaryMapper dictionaryMapper;
     private final SecurityUtils securityUtils;
@@ -69,11 +70,8 @@ public class DictionaryService {
     }
 
 
-    public void putDictionary(Dictionary dictionaryRequest, String clientS2SToken) {
+    public void putDictionary(Dictionary dictionaryRequest) {
 
-        val clientServiceName = securityUtils.getServiceNameFromS2SToken(clientS2SToken);
-        validateServiceRequest(clientServiceName);
-        val isADefinitionStoreCall = isADefinitionStoreCall(clientServiceName);
         val isManageTranslationRole = securityUtils.hasRole(MANAGE_TRANSLATIONS_ROLE);
         validateDictionary(dictionaryRequest, isManageTranslationRole);
         val currentUserId = securityUtils.getUserInfo().getUid();
@@ -83,16 +81,22 @@ public class DictionaryService {
             .forEach(phrase -> processPhrase(phrase, currentUserId, isManageTranslationRole));
     }
 
-    private void validateServiceRequest(String clientServiceName) {
-        if (isADefinitionStoreCall(clientServiceName)
-            || securityUtils.hasAnyOfThisRoles(Arrays.asList(MANAGE_TRANSLATIONS_ROLE, LOAD_TRANSLATIONS))) {
-            return;
-        }
-        throw new RequestErrorException(MANAGE_TRANSLATIONS_ROLE + "," + LOAD_TRANSLATIONS);
+    public void putDictionaryRoleCheck(String clientS2SToken) {
+        val clientServiceName = securityUtils.getServiceNameFromS2SToken(clientS2SToken);
+        validateServiceRequest(clientServiceName);
+        isBypassRoleAuthCheck(clientServiceName);
     }
 
-    private boolean isADefinitionStoreCall(String clientServiceName) {
-        return applicationParams.getAuthorisedServicesForTranslation().contains(clientServiceName);
+    private void validateServiceRequest(String clientServiceName) {
+        if (isBypassRoleAuthCheck(clientServiceName)
+            || securityUtils.hasAnyOfThisRoles(Arrays.asList(MANAGE_TRANSLATIONS_ROLE, LOAD_TRANSLATIONS_ROLE))) {
+            return;
+        }
+        throw new RequestErrorException(MANAGE_TRANSLATIONS_ROLE + "," + LOAD_TRANSLATIONS_ROLE);
+    }
+
+    private boolean isBypassRoleAuthCheck(String clientServiceName) {
+        return applicationParams.getPutDictionaryS2sServicesBypassRoleAuthCheck().contains(clientServiceName);
     }
 
     private void validateDictionary(final Dictionary dictionaryRequest, boolean isManageTranslationRole) {

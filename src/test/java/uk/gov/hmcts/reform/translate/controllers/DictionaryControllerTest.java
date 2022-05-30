@@ -73,7 +73,7 @@ class DictionaryControllerTest {
             final var dictionaryController = new DictionaryController(dictionaryService);
             final var getDictionaryRequest = getDictionaryRequest(1, 2);
             dictionaryController.putDictionary(getDictionaryRequest, CLIENTS2S_TOKEN);
-            verify(dictionaryService, times(1)).putDictionary(getDictionaryRequest, CLIENTS2S_TOKEN);
+            verify(dictionaryService, times(1)).putDictionary(getDictionaryRequest);
         }
 
         private Dictionary getDictionaryRequest(int from, int to) {

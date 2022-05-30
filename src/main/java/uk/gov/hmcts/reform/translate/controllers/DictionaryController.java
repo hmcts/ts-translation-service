@@ -15,12 +15,12 @@ import uk.gov.hmcts.reform.translate.model.Dictionary;
 import uk.gov.hmcts.reform.translate.service.DictionaryService;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static uk.gov.hmcts.reform.translate.security.SecurityUtils.SERVICE_AUTHORIZATION;
 
 @RestController
 @RequestMapping("/dictionary")
 public class DictionaryController {
 
-    private static final String SERVICE_AUTHORIZATION = "ServiceAuthorization";
     private final DictionaryService dictionaryService;
 
     @Autowired
@@ -52,6 +52,7 @@ public class DictionaryController {
     public void putDictionary(@RequestBody Dictionary dictionaryRequest,
                               @RequestHeader(SERVICE_AUTHORIZATION) String clientS2SToken) {
 
-        dictionaryService.putDictionary(dictionaryRequest,clientS2SToken);
+        dictionaryService.putDictionaryRoleCheck(clientS2SToken);
+        dictionaryService.putDictionary(dictionaryRequest);
     }
 }

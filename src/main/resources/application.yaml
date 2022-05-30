@@ -82,7 +82,8 @@ idam:
 oidc:
   issuer: ${OIDC_ISSUER:http://fr-am:8080/openam/oauth2/hmcts}
 
-ccd:
-  s2s-authorised:
-    services:
-      translations: ccd_definition
+ts:
+  endpoints:
+    put-dictionary:
+      s2s-authorised:
+        bypass-role-authorise-check-for-services: ccd_definition

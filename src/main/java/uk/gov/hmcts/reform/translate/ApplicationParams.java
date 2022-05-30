@@ -10,11 +10,11 @@ import javax.inject.Singleton;
 @Singleton
 public class ApplicationParams {
 
-    @Value("#{'${ccd.s2s-authorised.services.translations}'.split(',')}")
-    private List<String> authorisedServicesForTranslation;
 
+    @Value("#{'${ts.endpoints.put-dictionary.s2s-authorised.bypass-role-authorise-check-for-services}'.split(',')}")
+    private List<String> putDictionaryS2sServicesBypassRoleAuthCheck;
 
-    public List<String> getAuthorisedServicesForTranslation() {
-        return authorisedServicesForTranslation;
+    public List<String> getPutDictionaryS2sServicesBypassRoleAuthCheck() {
+        return putDictionaryS2sServicesBypassRoleAuthCheck;
     }
 }

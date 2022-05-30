@@ -33,6 +33,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static uk.gov.hmcts.reform.translate.security.SecurityUtils.MANAGE_TRANSLATIONS_ROLE;
 
 @ExtendWith(MockitoExtension.class)
 class DictionaryServiceTest {
@@ -156,7 +157,7 @@ class DictionaryServiceTest {
             RoleMissingException.class,
             () -> dictionaryService.getDictionaryContents()
         );
-        assertEquals(String.format(RoleMissingException.ERROR_MESSAGE, DictionaryService.MANAGE_TRANSLATIONS_ROLE),
+        assertEquals(String.format(RoleMissingException.ERROR_MESSAGE, MANAGE_TRANSLATIONS_ROLE),
                      roleMissingException.getMessage());
     }
 
@@ -166,17 +167,15 @@ class DictionaryServiceTest {
 
         @BeforeEach
         void setUp() {
-            given(applicationParams.getAuthorisedServicesForTranslation())
-                .willReturn(Arrays.asList(XUI,DEFINITION_STORE));
         }
 
         @Test
         void shouldPutANewDictionaryForUserWithManageTranslationsRole() {
-            given(securityUtils.getServiceNameFromS2SToken(CLIENTS2S_TOKEN)).willReturn(XUI);
+
             final Dictionary dictionaryRequest = getDictionaryRequest(1, 4);
             given(securityUtils.getUserInfo()).willReturn(getUserInfoWithManageTranslationsRole());
             given(securityUtils.hasRole(anyString())).willReturn(true);
-            dictionaryService.putDictionary(dictionaryRequest, CLIENTS2S_TOKEN);
+            dictionaryService.putDictionary(dictionaryRequest);
 
             verify(dictionaryRepository, times(3)).findByEnglishPhrase(any());
             verify(securityUtils, times(1)).hasRole(anyString());
@@ -187,10 +186,9 @@ class DictionaryServiceTest {
         @Test
         void shouldPutANewDictionaryForUserWithoutManageTranslationsRole() {
             final Dictionary dictionaryRequest = getDictionaryRequestWithoutABody(1, 4);
-            given(securityUtils.getServiceNameFromS2SToken(CLIENTS2S_TOKEN)).willReturn(DEFINITION_STORE);
             given(securityUtils.getUserInfo()).willReturn(getUserInfoWithManageTranslationsRole());
             given(securityUtils.hasRole(anyString())).willReturn(false);
-            dictionaryService.putDictionary(dictionaryRequest, CLIENTS2S_TOKEN);
+            dictionaryService.putDictionary(dictionaryRequest);
 
             verify(dictionaryRepository, times(3)).findByEnglishPhrase(any());
             verify(securityUtils, times(1)).hasRole(anyString());
@@ -200,7 +198,7 @@ class DictionaryServiceTest {
 
         @Test
         void shouldUpdateADictionaryForUserWithManageTranslationsRole() {
-            given(securityUtils.getServiceNameFromS2SToken(CLIENTS2S_TOKEN)).willReturn(XUI);
+
             final Dictionary dictionaryRequest = getDictionaryRequest(1, 2);
             final DictionaryEntity dictionaryEntity =
                 createDictionaryEntity("english_1", "translated_1");
@@ -208,7 +206,7 @@ class DictionaryServiceTest {
             given(dictionaryRepository.findByEnglishPhrase(any())).willReturn(Optional.of(dictionaryEntity));
             given(securityUtils.getUserInfo()).willReturn(getUserInfoWithManageTranslationsRole());
             given(securityUtils.hasRole(anyString())).willReturn(true);
-            dictionaryService.putDictionary(dictionaryRequest, CLIENTS2S_TOKEN);
+            dictionaryService.putDictionary(dictionaryRequest);
 
             verify(dictionaryRepository, times(1)).findByEnglishPhrase(any());
             verify(securityUtils, times(1)).hasRole(anyString());
@@ -218,16 +216,15 @@ class DictionaryServiceTest {
 
         @Test
         void shouldUpdateADictionaryForUserWithoutManageTranslationsRole() {
-            given(securityUtils.getServiceNameFromS2SToken(CLIENTS2S_TOKEN)).willReturn(XUI);
+
             final Dictionary dictionaryRequest = getDictionaryRequestWithoutABody(1, 2);
             final DictionaryEntity dictionaryEntity =
                 createDictionaryEntity("english_1", "translated_1");
 
             given(dictionaryRepository.findByEnglishPhrase(any())).willReturn(Optional.of(dictionaryEntity));
-
             given(securityUtils.getUserInfo()).willReturn(getUserInfoWithManageTranslationsRole());
             given(securityUtils.hasRole(anyString())).willReturn(false);
-            dictionaryService.putDictionary(dictionaryRequest, CLIENTS2S_TOKEN);
+            dictionaryService.putDictionary(dictionaryRequest);
 
             verify(dictionaryRepository, times(1)).findByEnglishPhrase(any());
             verify(securityUtils, times(1)).hasRole(anyString());
