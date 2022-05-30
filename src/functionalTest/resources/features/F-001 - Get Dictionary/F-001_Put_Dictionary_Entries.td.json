@@ -1,11 +1,9 @@
 {
   "_guid_": "F-001_Put_Dictionary_Entries",
-  "_extends_": "PutDictionaryOperation",
+  "_extends_": "Put_Dictionary_Base",
   "specs": [
     "to PUT translation phrases into the dictionary"
   ],
-
-  "s2sClientId": "xui_webapp",
 
   "users": {
     "invokingUser": {
@@ -14,7 +12,10 @@
   },
 
   "request": {
-    "_extends_": "Common_Request",
+    "headers": {
+      "_extends_": "Common_Request_Headers",
+      "ServiceAuthorization": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ4dWlfd2ViYXBwIiwiZXhwIjoxNjUzNjU3NTMzfQ.2c2-BkVYKa_h_ivwy4pyvlT68yMkWD51VBPquL_gszAMFA8-wLnrFOvz6mUlyoVCYeS_gm1ziN6uNAe8XlAzJg"
+    },
     "body": {
       "translations": {
         "EnglishPhrase1": "WelshPhrase1",

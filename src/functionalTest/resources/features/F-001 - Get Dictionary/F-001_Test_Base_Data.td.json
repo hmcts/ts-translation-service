@@ -3,5 +3,7 @@
   "productName": "Translation Service",
   "operationName": "GET dictionary",
   "method": "GET",
-  "uri": "/dictionary"
+  "uri": "/dictionary",
+
+  "s2sClientId": "xui_webapp"
 }

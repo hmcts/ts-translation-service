@@ -1,7 +1,9 @@
 {
-  "_guid_": "PutDictionaryOperation",
+  "_guid_": "Put_Dictionary_Base",
   "productName": "Translation Service",
   "operationName": "PUT dictionary",
   "method": "PUT",
-  "uri": "/dictionary"
+  "uri": "/dictionary",
+
+  "s2sClientId": "xui_webapp"
 }
