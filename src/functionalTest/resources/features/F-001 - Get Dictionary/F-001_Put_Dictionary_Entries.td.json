@@ -12,10 +12,7 @@
   },
 
   "request": {
-    "headers": {
-      "_extends_": "Common_Request_Headers",
-      "ServiceAuthorization": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ4dWlfd2ViYXBwIiwiZXhwIjoxNjUzNjU3NTMzfQ.2c2-BkVYKa_h_ivwy4pyvlT68yMkWD51VBPquL_gszAMFA8-wLnrFOvz6mUlyoVCYeS_gm1ziN6uNAe8XlAzJg"
-    },
+    "_extends_": "Common_Request",
     "body": {
       "translations": {
         "EnglishPhrase1": "WelshPhrase1",
