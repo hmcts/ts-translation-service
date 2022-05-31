@@ -31,13 +31,14 @@ import static uk.gov.hmcts.reform.translate.security.SecurityUtils.MANAGE_TRANSL
 public class DictionaryService {
 
     public static final String INVALID_PAYLOAD_FORMAT = "The translations field cannot be empty.";
+    public static final String INVALID_PAYLOAD_FOR_ROLE = "User with a role different to "
+        + MANAGE_TRANSLATIONS_ROLE + " should not have translations.";
+
     private final DictionaryRepository dictionaryRepository;
     private final DictionaryMapper dictionaryMapper;
     private final SecurityUtils securityUtils;
     private final ApplicationParams applicationParams;
     private final Predicate<String> isTranslationNull = translation -> !StringUtils.isEmpty(translation);
-    public static final String INVALID_PAYLOAD_FOR_ROLE = "User with a role different to "
-        + MANAGE_TRANSLATIONS_ROLE + " should not have translations.";
 
     @Autowired
     public DictionaryService(DictionaryRepository dictionaryRepository, DictionaryMapper dictionaryMapper,

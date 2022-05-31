@@ -29,6 +29,7 @@ import java.util.Optional;
 import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -36,7 +37,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static uk.gov.hmcts.reform.translate.security.SecurityUtils.LOAD_TRANSLATIONS_ROLE;
@@ -67,116 +67,116 @@ class DictionaryServiceTest {
     @InjectMocks
     DictionaryService dictionaryService;
 
-    @BeforeEach
-    void setUp() {
-        given(securityUtils.hasRole(any())).willReturn(true);
-    }
+    @Nested
+    @DisplayName("getDictionary")
+    class GetDictionary {
 
-    @Test
-    void shouldReturnDictionaryContents() {
-        Map<String, String> expectedMapKeysAndValues = new HashMap<>();
+        @BeforeEach
+        void setUp() {
+            given(securityUtils.hasRole(any())).willReturn(true);
+        }
 
-        IntStream.range(1, 3).forEach(i -> expectedMapKeysAndValues.put("english" + i, "translated" + i));
+        @Test
+        void shouldReturnDictionaryContents() {
+            Map<String, String> expectedMapKeysAndValues = new HashMap<>();
 
-        var dictionaryEntities = expectedMapKeysAndValues.entrySet().stream()
-            .map(es -> createDictionaryEntity(
-                es.getKey(),
-                es.getValue()
-            ))
-            .toArray(DictionaryEntity[]::new);
+            IntStream.range(1, 3).forEach(i -> expectedMapKeysAndValues.put("english" + i, "translated" + i));
 
-        var spliterator = Arrays.spliterator(dictionaryEntities);
-        given(repositoryResults.spliterator()).willReturn(spliterator);
-        given(dictionaryRepository.findAll()).willReturn(repositoryResults);
+            var dictionaryEntities = expectedMapKeysAndValues.entrySet().stream()
+                .map(es -> createDictionaryEntity(
+                    es.getKey(),
+                    es.getValue()
+                ))
+                .toArray(DictionaryEntity[]::new);
 
-        assertTrue(dictionaryService.getDictionaryContents().entrySet()
-                       .containsAll(expectedMapKeysAndValues.entrySet()));
-    }
+            var spliterator = Arrays.spliterator(dictionaryEntities);
+            given(repositoryResults.spliterator()).willReturn(spliterator);
+            given(dictionaryRepository.findAll()).willReturn(repositoryResults);
 
-    @Test
-    void shouldReturnDictionaryContentsTranslationPhraseIsNull() {
-        Map<String, String> expectedMapKeysAndValues = new HashMap<>();
+            assertTrue(dictionaryService.getDictionaryContents().entrySet()
+                           .containsAll(expectedMapKeysAndValues.entrySet()));
+        }
 
-        IntStream.range(1, 3).forEach(i -> expectedMapKeysAndValues.put("english" + i, null));
+        @Test
+        void shouldReturnDictionaryContentsTranslationPhraseIsNull() {
+            Map<String, String> expectedMapKeysAndValues = new HashMap<>();
 
-        var dictionaryEntities = expectedMapKeysAndValues.entrySet().stream()
-            .map(es -> createDictionaryEntity(
-                es.getKey(),
-                es.getValue()
-            ))
-            .toArray(DictionaryEntity[]::new);
+            IntStream.range(1, 3).forEach(i -> expectedMapKeysAndValues.put("english" + i, null));
 
-        var spliterator = Arrays.spliterator(dictionaryEntities);
-        given(repositoryResults.spliterator()).willReturn(spliterator);
-        given(dictionaryRepository.findAll()).willReturn(repositoryResults);
+            var dictionaryEntities = expectedMapKeysAndValues.entrySet().stream()
+                .map(es -> createDictionaryEntity(
+                    es.getKey(),
+                    es.getValue()
+                ))
+                .toArray(DictionaryEntity[]::new);
 
-        Map<String, String> dictionaryContents = dictionaryService.getDictionaryContents();
-        assertTrue(dictionaryContents.keySet()
-                       .containsAll(expectedMapKeysAndValues.keySet()));
-        assertTrue(dictionaryContents.values()
-                       .containsAll(List.of("", "", "")));
-    }
+            var spliterator = Arrays.spliterator(dictionaryEntities);
+            given(repositoryResults.spliterator()).willReturn(spliterator);
+            given(dictionaryRepository.findAll()).willReturn(repositoryResults);
 
-    @Test
-    void shouldThrowExceptionWhenDictionaryContainsDuplicateEnglishPhrases() {
-        final var englishPhrase = "English phrase";
-        final var translatedPhrase = "Translated phrase";
+            Map<String, String> dictionaryContents = dictionaryService.getDictionaryContents();
+            assertTrue(dictionaryContents.keySet()
+                           .containsAll(expectedMapKeysAndValues.keySet()));
+            assertTrue(dictionaryContents.values()
+                           .containsAll(List.of("", "", "")));
+        }
 
-        DictionaryEntity[] dictionaryEntities = { createDictionaryEntity(englishPhrase, translatedPhrase),
-            createDictionaryEntity(englishPhrase, translatedPhrase),
-            createDictionaryEntity(englishPhrase, translatedPhrase)};
+        @Test
+        void shouldThrowExceptionWhenDictionaryContainsDuplicateEnglishPhrases() {
+            final var englishPhrase = "English phrase";
+            final var translatedPhrase = "Translated phrase";
 
-        var spliterator = Arrays.spliterator(dictionaryEntities);
-        given(repositoryResults.spliterator()).willReturn(spliterator);
-        given(dictionaryRepository.findAll()).willReturn(repositoryResults);
+            DictionaryEntity[] dictionaryEntities = {createDictionaryEntity(englishPhrase, translatedPhrase),
+                createDictionaryEntity(englishPhrase, translatedPhrase),
+                createDictionaryEntity(englishPhrase, translatedPhrase)};
 
-        IllegalStateException illegalStateException = assertThrows(
-            IllegalStateException.class,
-            () -> dictionaryService.getDictionaryContents()
-        );
+            var spliterator = Arrays.spliterator(dictionaryEntities);
+            given(repositoryResults.spliterator()).willReturn(spliterator);
+            given(dictionaryRepository.findAll()).willReturn(repositoryResults);
 
-        assertEquals(String.format("Duplicate key %s (attempted merging values %s and %s)",
-                                   englishPhrase, translatedPhrase, translatedPhrase),
-                     illegalStateException.getMessage());
-    }
+            IllegalStateException illegalStateException = assertThrows(
+                IllegalStateException.class,
+                () -> dictionaryService.getDictionaryContents()
+            );
 
-    private DictionaryEntity createDictionaryEntity(String phrase, String translationPhrase) {
-        final var dictionaryEntity = new DictionaryEntity();
-        dictionaryEntity.setEnglishPhrase(phrase);
-        dictionaryEntity.setTranslationPhrase(translationPhrase);
-        return dictionaryEntity;
-    }
+            assertEquals(
+                String.format("Duplicate key %s (attempted merging values %s and %s)",
+                              englishPhrase, translatedPhrase, translatedPhrase
+                ),
+                illegalStateException.getMessage()
+            );
+        }
 
-    @Test
-    void shouldReturnEmptyDictionaryContents() {
-        given(dictionaryRepository.findAll()).willReturn(repositoryResults);
-        assertTrue(dictionaryService.getDictionaryContents().isEmpty());
-    }
+        @Test
+        void shouldReturnEmptyDictionaryContents() {
+            given(dictionaryRepository.findAll()).willReturn(repositoryResults);
+            assertTrue(dictionaryService.getDictionaryContents().isEmpty());
+        }
 
-    @Test
-    void shouldThrowExceptionWhenReturningDictionaryContentsNoUserInfoAvailable() {
-        Mockito.reset(securityUtils);
-        assertThrows(RoleMissingException.class, () -> dictionaryService.getDictionaryContents());
-    }
+        @Test
+        void shouldThrowExceptionWhenReturningDictionaryContentsNoUserInfoAvailable() {
+            Mockito.reset(securityUtils);
+            assertThrows(RoleMissingException.class, () -> dictionaryService.getDictionaryContents());
+        }
 
-    @Test
-    void shouldThrowExceptionWhenReturningDictionaryContentsUsingIncorrectRole() {
-        given(securityUtils.hasRole(any())).willReturn(false);
-        RoleMissingException roleMissingException = assertThrows(
-            RoleMissingException.class,
-            () -> dictionaryService.getDictionaryContents()
-        );
-        assertEquals(String.format(RoleMissingException.ERROR_MESSAGE, MANAGE_TRANSLATIONS_ROLE),
-                     roleMissingException.getMessage());
+        @Test
+        void shouldThrowExceptionWhenReturningDictionaryContentsUsingIncorrectRole() {
+            given(securityUtils.hasRole(any())).willReturn(false);
+            RoleMissingException roleMissingException = assertThrows(
+                RoleMissingException.class,
+                () -> dictionaryService.getDictionaryContents()
+            );
+            assertEquals(
+                String.format(RoleMissingException.ERROR_MESSAGE, MANAGE_TRANSLATIONS_ROLE),
+                roleMissingException.getMessage()
+            );
+        }
+
     }
 
     @Nested
     @DisplayName("PutDictionary")
     class PutDictionary {
-
-        @BeforeEach
-        void setUp() {
-        }
 
         @Test
         void shouldPutANewDictionaryForUserWithManageTranslationsRole() {
@@ -244,70 +244,42 @@ class DictionaryServiceTest {
         @Test
         void shouldPutDictionaryRoleCheckForAValidUserWithManageTranslationsRole() {
 
-            final Dictionary dictionaryRequest = getDictionaryRequest(1, 4);
             given(applicationParams.getPutDictionaryS2sServicesBypassRoleAuthCheck())
                 .willReturn(Arrays.asList(DEFINITION_STORE));
             given(securityUtils.getServiceNameFromS2SToken(CLIENTS2S_TOKEN)).willReturn(XUI);
             given(securityUtils.hasAnyOfTheseRoles(anyList())).willReturn(true);
-            given(securityUtils.getUserInfo()).willReturn(getUserInfoWithManageTranslationsRole());
-            given(securityUtils.hasRole(anyString())).willReturn(true);
-            dictionaryService.putDictionaryRoleCheck(CLIENTS2S_TOKEN);
-            dictionaryService.putDictionary(dictionaryRequest);
-
-            verify(dictionaryRepository, times(3)).findByEnglishPhrase(any());
-            verify(securityUtils, times(1)).hasRole(anyString());
-            verify(dictionaryMapper, times(3)).modelToEntityWithTranslationUploadEntity(any(), any());
-            verify(dictionaryRepository, times(3)).save(any());
-
+            assertDoesNotThrow(
+                () -> dictionaryService.putDictionaryRoleCheck(CLIENTS2S_TOKEN)
+            );
         }
 
         @Test
         void shouldPutDictionaryRoleCheckForAValidUserWithLoadTranslationRole() {
-            final Dictionary dictionaryRequest = getDictionaryRequestWithoutABody(1, 2);
-            final DictionaryEntity dictionaryEntity =
-                createDictionaryEntity("english_1", "translated_1");
             given(applicationParams.getPutDictionaryS2sServicesBypassRoleAuthCheck())
                 .willReturn(Arrays.asList(DEFINITION_STORE));
             given(securityUtils.hasAnyOfTheseRoles(anyList())).willReturn(true);
             given(securityUtils.getServiceNameFromS2SToken(CLIENTS2S_TOKEN)).willReturn(XUI);
-
-            given(dictionaryRepository.findByEnglishPhrase(any())).willReturn(Optional.of(dictionaryEntity));
-            given(securityUtils.getUserInfo()).willReturn(getUserInfoWithManageTranslationsRole());
-            given(securityUtils.hasRole(anyString())).willReturn(true);
-            dictionaryService.putDictionaryRoleCheck(CLIENTS2S_TOKEN);
-            dictionaryService.putDictionary(dictionaryRequest);
-
-            verify(dictionaryRepository, times(1)).findByEnglishPhrase(any());
-            verify(securityUtils, times(1)).hasRole(anyString());
-            verify(dictionaryRepository, times(1)).save(any());
+            assertDoesNotThrow(
+                () -> dictionaryService.putDictionaryRoleCheck(CLIENTS2S_TOKEN)
+            );
         }
 
         @Test
         void shouldPutDictionaryRoleCheckForAValidDefinitionStore() {
 
-            final Dictionary dictionaryRequest = getDictionaryRequestWithoutABody(1, 2);
-            final DictionaryEntity dictionaryEntity =
-                createDictionaryEntity("english_1", "translated_1");
             given(applicationParams.getPutDictionaryS2sServicesBypassRoleAuthCheck())
                 .willReturn(Arrays.asList(DEFINITION_STORE));
             given(securityUtils.getServiceNameFromS2SToken(CLIENTS2S_TOKEN)).willReturn(DEFINITION_STORE);
 
-            given(dictionaryRepository.findByEnglishPhrase(any())).willReturn(Optional.of(dictionaryEntity));
-            given(securityUtils.getUserInfo()).willReturn(getUserInfoWithManageTranslationsRole());
-            given(securityUtils.hasRole(anyString())).willReturn(true);
             dictionaryService.putDictionaryRoleCheck(CLIENTS2S_TOKEN);
-            dictionaryService.putDictionary(dictionaryRequest);
-
-            verify(dictionaryRepository, times(1)).findByEnglishPhrase(any());
-            verify(securityUtils, times(1)).hasRole(anyString());
-            verify(dictionaryRepository, times(1)).save(any());
-
+            assertDoesNotThrow(
+                () -> dictionaryService.putDictionaryRoleCheck(CLIENTS2S_TOKEN)
+            );
         }
 
 
         @Test
         void shouldFailPutDictionaryRoleCheckForAValidUserWithOutAnyRole() {
-            lenient().when(securityUtils.hasRole(any())).thenReturn(true);
             given(applicationParams.getPutDictionaryS2sServicesBypassRoleAuthCheck())
                 .willReturn(Arrays.asList(DEFINITION_STORE));
 
@@ -328,7 +300,7 @@ class DictionaryServiceTest {
 
         @Test
         void shouldFailPutDictionaryDueToInvalidClientToken() {
-            lenient().when(securityUtils.hasRole(any())).thenReturn(true);
+
             given(applicationParams.getPutDictionaryS2sServicesBypassRoleAuthCheck())
                 .willReturn(Arrays.asList(DEFINITION_STORE));
 
@@ -391,7 +363,6 @@ class DictionaryServiceTest {
         void shouldFailUpdateADictionaryForDefinitionStoreWithIncorrectPayload() {
 
             final Dictionary dictionaryRequest = getDictionaryRequest(1, 2);
-            lenient().when(securityUtils.hasRole(any())).thenReturn(true);
             given(securityUtils.hasRole(anyString())).willReturn(false);
 
             BadRequestException badRequestException = assertThrows(
@@ -427,6 +398,13 @@ class DictionaryServiceTest {
                 .build();
             return userInfo;
         }
+    }
+
+    private DictionaryEntity createDictionaryEntity(String phrase, String translationPhrase) {
+        final var dictionaryEntity = new DictionaryEntity();
+        dictionaryEntity.setEnglishPhrase(phrase);
+        dictionaryEntity.setTranslationPhrase(translationPhrase);
+        return dictionaryEntity;
     }
 }
 
