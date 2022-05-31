@@ -85,12 +85,12 @@ public class DictionaryService {
         return Optional.ofNullable(entity.getTranslationPhrase()).orElseGet(entity::getEnglishPhrase);
     }
 
+    @Transactional
     public void putDictionary(final Dictionary dictionaryRequest) {
 
         val isManageTranslationRole = securityUtils.hasRole(MANAGE_TRANSLATIONS_ROLE);
         val currentUserId = securityUtils.getUserInfo().getUid();
         dictionaryRequest.getTranslations().entrySet()
-            .stream()
             .forEach(phrase -> processPhrase(phrase, currentUserId, isManageTranslationRole));
     }
 
