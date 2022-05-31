@@ -13,6 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Table(name = "dictionary")
@@ -24,10 +25,10 @@ import javax.persistence.Table;
 public class DictionaryEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY,
-        generator = "dictionary_id_seq")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "dictionary_id_gen")
+    @SequenceGenerator(name = "dictionary_id_gen", sequenceName = "dictionary_id_seq", allocationSize = 1)
     @Column(name = "id")
-    private Integer id;
+    private Long id;
 
     @Column(name = "english_phrase")
     private String englishPhrase;

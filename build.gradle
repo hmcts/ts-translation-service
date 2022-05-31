@@ -266,6 +266,7 @@ dependencies {
   integrationTestImplementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
   testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
   integrationTestAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
+  integrationTestImplementation group: 'com.pivovarit', name: 'throwing-function', version: '1.5.1'
 
   functionalTestImplementation sourceSets.main.runtimeClasspath
   functionalTestImplementation sourceSets.test.runtimeClasspath

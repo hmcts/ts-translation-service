@@ -4,6 +4,7 @@ import lombok.NonNull;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import uk.gov.hmcts.reform.translate.data.DictionaryEntity;
 import uk.gov.hmcts.reform.translate.data.TranslationUploadEntity;
 import uk.gov.hmcts.reform.translate.errorhandling.RoleMissingException;
@@ -61,6 +62,7 @@ public class DictionaryService {
         }
     }
 
+    @Transactional
     public Map<String, String> getTranslations(@NonNull final Set<String> phrases) {
         return phrases.stream()
             .map(phrase -> {
