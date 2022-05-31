@@ -49,6 +49,8 @@ public class BaseTest {
     protected static final String GET_TRANSLATION_TABLES_DUPLICATE_ENGLISH_PHRASES_SCRIPT =
         "classpath:sql/get-Dictionary_WithDuplicateEnglishPhrases.sql";
 
+    protected static final String ADD_ENGLISH_PHRASE_SCRIPT = "classpath:sql/add-Dictionary.sql";
+
     @BeforeEach
     void init() {
         Jwt jwt = dummyJwt();

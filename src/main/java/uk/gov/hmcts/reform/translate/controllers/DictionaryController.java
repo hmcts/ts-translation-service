@@ -18,6 +18,8 @@ import java.util.Map;
 import javax.validation.Valid;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static uk.gov.hmcts.reform.translate.model.ControllerConstants.DICTIONARY_URL;
+import static uk.gov.hmcts.reform.translate.model.ControllerConstants.TRANSLATIONS_URL;
 
 @RestController
 public class DictionaryController {
@@ -29,7 +31,7 @@ public class DictionaryController {
         this.dictionaryService = dictionaryService;
     }
 
-    @GetMapping(path = "/dictionary", produces = APPLICATION_JSON_VALUE)
+    @GetMapping(path = DICTIONARY_URL, produces = APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Dictionary returned successfully"),
@@ -40,8 +42,7 @@ public class DictionaryController {
         return new Dictionary(dictionaryService.getDictionaryContents());
     }
 
-
-    @PutMapping(path = "/dictionary", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    @PutMapping(path = DICTIONARY_URL, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     @ApiResponses(value = {
         @ApiResponse(responseCode = "201", description = "Success"),
@@ -54,11 +55,11 @@ public class DictionaryController {
         dictionaryService.putDictionary(dictionaryRequest);
     }
 
-    @PostMapping(path = "/translation/cy", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    @PostMapping(path = TRANSLATIONS_URL, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Translation returned successfully"),
-        @ApiResponse(responseCode = "400", description = "Bad Request (001 bad schema)"),
+        @ApiResponse(responseCode = "400", description = TranslationsRequest.BAD_REQUEST_MESSAGE),
         @ApiResponse(responseCode = "401", description = "Unauthorised"),
         @ApiResponse(responseCode = "403", description = "Forbidden")
     })
