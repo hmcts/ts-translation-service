@@ -74,9 +74,8 @@ public class DictionaryService {
     String getTranslation(@NonNull final String englishPhrase) {
         final DictionaryEntity entity = dictionaryRepository.findByEnglishPhrase(englishPhrase)
             .orElseGet(() -> {
-                final DictionaryEntity dictionaryEntity = DictionaryEntity.builder()
-                    .englishPhrase(englishPhrase)
-                    .build();
+                DictionaryEntity dictionaryEntity = new DictionaryEntity();
+                dictionaryEntity.setEnglishPhrase(englishPhrase);
                 return dictionaryRepository.save(dictionaryEntity);
             });
 

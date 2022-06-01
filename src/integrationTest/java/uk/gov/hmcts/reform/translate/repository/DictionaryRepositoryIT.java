@@ -35,11 +35,10 @@ class DictionaryRepositoryIT extends BaseTest {
         translationUploadEntity.setUploaded(now);
         translationUploadEntity.setUserId(IDAM_USER_ID);
 
-        final var dictionaryEntity = DictionaryEntity.builder()
-            .englishPhrase(ENGLISH_PHRASE)
-            .translationPhrase(TRANSLATION_PHRASE)
-            .translationUpload(translationUploadEntity)
-            .build();
+        final var dictionaryEntity = new DictionaryEntity();
+        dictionaryEntity.setEnglishPhrase(ENGLISH_PHRASE);
+        dictionaryEntity.setTranslationPhrase(TRANSLATION_PHRASE);
+        dictionaryEntity.setTranslationUpload(translationUploadEntity);
 
         final var dictionary = dictionaryRepository.save(dictionaryEntity);
 
