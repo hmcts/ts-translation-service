@@ -100,9 +100,8 @@ class DictionaryRepositoryIT extends BaseTest {
 
         assertEquals(3, Streams.stream(allDictionaryEntities.iterator()).count());
 
-        assertTrue(Streams.stream(allDictionaryEntities.iterator()).allMatch(dictionaryEntity ->
-                                                                                 dictionaryEntity.getTranslationUpload() != null)
-        );
+        assertTrue(Streams.stream(allDictionaryEntities.iterator())
+                       .allMatch(dictionaryEntity -> dictionaryEntity.getTranslationUpload() != null));
     }
 
     @Sql(scripts = {DELETE_TRANSLATION_TABLES_SCRIPT, GET_TRANSLATION_TABLES_SCRIPT})

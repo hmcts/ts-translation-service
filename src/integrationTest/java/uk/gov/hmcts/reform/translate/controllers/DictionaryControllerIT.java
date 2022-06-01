@@ -132,7 +132,7 @@ public class DictionaryControllerIT extends BaseTest {
 
 
     @Nested
-    @Disabled
+    @Disabled // Pending WLTS-25
     class PutDictionary {
 
         @Test
