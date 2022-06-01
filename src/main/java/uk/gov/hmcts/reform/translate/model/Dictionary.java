@@ -1,18 +1,16 @@
 package uk.gov.hmcts.reform.translate.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Getter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import java.util.Map;
 
-@Getter
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode
 public class Dictionary {
-
-    private final Map<String, String> translations;
-
-    @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
-    public Dictionary(@JsonProperty("translations") Map<String, String> translations) {
-        this.translations = translations;
-    }
+    Map<String, String> translations;
 }

@@ -18,21 +18,26 @@ import org.springframework.web.context.WebApplicationContext;
 import uk.gov.hmcts.reform.translate.TestIdamConfiguration;
 import uk.gov.hmcts.reform.translate.config.SecurityConfiguration;
 import uk.gov.hmcts.reform.translate.model.Dictionary;
+import uk.gov.hmcts.reform.translate.model.TranslationsRequest;
 import uk.gov.hmcts.reform.translate.security.JwtGrantedAuthoritiesConverter;
 import uk.gov.hmcts.reform.translate.service.DictionaryService;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.IntStream;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anySet;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.context.annotation.FilterType.ASSIGNABLE_TYPE;
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(controllers = DictionaryController.class,
-    excludeFilters = @ComponentScan.Filter(type = ASSIGNABLE_TYPE, classes =
-        {SecurityConfiguration.class, JwtGrantedAuthoritiesConverter.class}))
+    excludeFilters = @ComponentScan.Filter(type = ASSIGNABLE_TYPE,
+        classes = {SecurityConfiguration.class, JwtGrantedAuthoritiesConverter.class}))
 @AutoConfigureMockMvc(addFilters = false)
 @ImportAutoConfiguration(TestIdamConfiguration.class)
 class DictionaryControllerTest {
@@ -46,9 +51,12 @@ class DictionaryControllerTest {
     @MockBean
     private DictionaryService dictionaryService;
 
+    private DictionaryController dictionaryController;
+
     @BeforeEach
     void setUp() {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+        dictionaryController = new DictionaryController(dictionaryService);
     }
 
     @Nested
@@ -56,9 +64,26 @@ class DictionaryControllerTest {
     class GetDictionary {
         @Test
         void shouldReturn200() {
-            DictionaryController dictionaryController = new DictionaryController(dictionaryService);
             dictionaryController.getDictionary();
             verify(dictionaryService).getDictionaryContents();
+        }
+    }
+
+    @Nested
+    @DisplayName("GetTranslation")
+    class GetTranslations {
+        @Test
+        void shouldReturnTranslations() {
+            doReturn(Map.of("English phrase", "Translated English phrase"))
+                .when(dictionaryService).getTranslations(anySet());
+
+            final TranslationsRequest translationRequest = new TranslationsRequest(Set.of("English phrase"));
+            final Dictionary dictionary = dictionaryController.getTranslation(translationRequest);
+
+            assertThat(dictionary)
+                .isNotNull()
+                .isNotNull();
+            verify(dictionaryService).getTranslations(anySet());
         }
     }
 
