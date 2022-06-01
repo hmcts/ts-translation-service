@@ -88,7 +88,7 @@ public class SecurityUtils {
         return userInfo != null && userInfo.getRoles().stream().anyMatch(role -> role.equalsIgnoreCase(roleToMatch));
     }
 
-    public boolean hasAnyOfThisRoles(List<String> roleToMatch) {
+    public boolean hasAnyOfTheseRoles(List<String> roleToMatch) {
         val userInfo = getUserInfo();
         return userInfo != null
             && userInfo.getRoles().stream().anyMatch(roleToMatch.stream().collect(toSet())::contains);
