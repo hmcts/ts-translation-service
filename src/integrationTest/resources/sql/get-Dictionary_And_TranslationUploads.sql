@@ -7,3 +7,6 @@ insert into dictionary values
   (1, 'English Phrase 1', null, 1),
   (2, 'English Phrase 2', 'Translated Phrase 2', 2),
   (3, 'English Phrase 3', 'Translated Phrase 1', 3);
+
+ALTER SEQUENCE translation_version_seq RESTART WITH 4;
+ALTER SEQUENCE dictionary_id_seq RESTART WITH 4;
