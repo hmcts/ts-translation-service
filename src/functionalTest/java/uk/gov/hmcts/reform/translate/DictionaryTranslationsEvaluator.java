@@ -20,7 +20,8 @@ public class DictionaryTranslationsEvaluator implements CustomValueEvaluator {
     @Override
     public Object calculate(BackEndFunctionalTestScenarioContext scenarioContext, Object key) {
         try {
-            @SuppressWarnings("unchecked") final Map<String, String> translations = (Map<String, String>) ReflectionUtils.deepGetFieldInObject(
+            @SuppressWarnings("unchecked")
+            final Map<String, String> translations = (Map<String, String>) ReflectionUtils.deepGetFieldInObject(
                 scenarioContext,
                 "testData.actualResponse.body.translations"
             );

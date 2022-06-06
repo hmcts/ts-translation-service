@@ -1,6 +1,6 @@
 {
   "_guid_": "F-003_Get_Dictionary",
-  "_extends_": "F-001_Test_Base_Data",
+  "_extends_": "Get_Dictionary_Base",
 
   "specs": [
     "to GET the dictionary"

@@ -12,7 +12,7 @@ public class UniqueStringEvaluator implements CustomValueEvaluator {
 
     @Override
     public Object calculate(BackEndFunctionalTestScenarioContext scenarioContext, Object key) {
-        final int COUNT = 10;
-        return "TEST-" + RandomStringUtils.randomAlphabetic(COUNT);
+        final int count = 10;
+        return "TEST-" + RandomStringUtils.randomAlphabetic(count);
     }
 }
