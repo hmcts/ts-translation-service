@@ -21,7 +21,7 @@
   "expectedResponse": {
     "_extends_": "Common_200_Response",
     "body": {
-      "translations": "[[ANYTHING_PRESENT]]"
+      "translations": "${[scenarioContext][customValues][containsDictionaryTranslations \"English phrase with translation\": \"Welsh phrase one\", \"English phrase without translation\": \"\"]}"
     }
   }
 }
