@@ -37,11 +37,10 @@ class DictionaryRepositoryIT extends BaseTest {
         translationUploadEntity.setUploaded(now);
         translationUploadEntity.setUserId(IDAM_USER_ID);
 
-        final var dictionaryEntity = DictionaryEntity.builder()
-            .englishPhrase(ENGLISH_PHRASE)
-            .translationPhrase(TRANSLATION_PHRASE)
-            .translationUpload(translationUploadEntity)
-            .build();
+        final var dictionaryEntity = new DictionaryEntity();
+        dictionaryEntity.setEnglishPhrase(ENGLISH_PHRASE);
+        dictionaryEntity.setTranslationPhrase(TRANSLATION_PHRASE);
+        dictionaryEntity.setTranslationUpload(translationUploadEntity);
 
         final var dictionary = dictionaryRepository.save(dictionaryEntity);
 
@@ -130,12 +129,11 @@ class DictionaryRepositoryIT extends BaseTest {
     @Sql(scripts = {DELETE_TRANSLATION_TABLES_SCRIPT, ADD_ENGLISH_PHRASE_SCRIPT})
     void testInsertDuplicateEnglishPhrase() {
         // GIVEN
-        final DictionaryEntity entity = DictionaryEntity.builder()
-            .englishPhrase(ENGLISH_PHRASE)
-            .build();
+        DictionaryEntity dictionaryEntity = new DictionaryEntity();
+        dictionaryEntity.setEnglishPhrase(ENGLISH_PHRASE);
 
         // WHEN
-        final Throwable thrown = catchThrowable(() -> dictionaryRepository.save(entity));
+        final Throwable thrown = catchThrowable(() -> dictionaryRepository.save(dictionaryEntity));
 
         // THEN
         assertThat(thrown)
