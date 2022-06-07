@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -13,6 +14,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.hmcts.reform.translate.model.Dictionary;
 import uk.gov.hmcts.reform.translate.service.DictionaryService;
+
+import java.util.Map;
+import javax.validation.Valid;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static uk.gov.hmcts.reform.translate.security.SecurityUtils.SERVICE_AUTHORIZATION;
@@ -54,5 +58,18 @@ public class DictionaryController {
 
         dictionaryService.putDictionaryRoleCheck(clientS2SToken);
         dictionaryService.putDictionary(dictionaryRequest);
+    }
+
+    @PostMapping(path = "/translation/cy", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Translation returned successfully"),
+        @ApiResponse(responseCode = "400", description = "Bad Request (001 bad schema)"),
+        @ApiResponse(responseCode = "401", description = "Unauthorised"),
+        @ApiResponse(responseCode = "403", description = "Forbidden")
+    })
+    public Dictionary getTranslation(@Valid @RequestBody final TranslationsRequest payload) {
+        final Map<String, String> translations = dictionaryService.getTranslations(payload.getPhrases());
+        return new Dictionary(translations);
     }
 }

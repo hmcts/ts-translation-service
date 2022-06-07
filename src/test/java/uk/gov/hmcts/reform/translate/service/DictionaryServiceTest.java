@@ -407,4 +407,3 @@ class DictionaryServiceTest {
         return dictionaryEntity;
     }
 }
-

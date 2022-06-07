@@ -8,10 +8,10 @@ import uk.gov.hmcts.reform.translate.data.DictionaryEntity;
 
 import java.util.Optional;
 
-
 @Transactional(propagation = Propagation.REQUIRES_NEW)
 @Repository
 public interface DictionaryRepository extends CrudRepository<DictionaryEntity, Integer> {
 
     Optional<DictionaryEntity> findByEnglishPhrase(String englishPhrase);
+
 }
