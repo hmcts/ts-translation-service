@@ -30,7 +30,7 @@ public class DictionaryEntity {
     @Column(name = "translation_phrase")
     private String translationPhrase;
 
-    @OneToOne(cascade = CascadeType.PERSIST)
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "translation_version", referencedColumnName = "version")
     private TranslationUploadEntity translationUpload;
 }
