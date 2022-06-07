@@ -233,8 +233,8 @@ dependencies {
   implementation group: 'org.springframework.security', name: 'spring-security-web'
   implementation group: 'org.springframework.security', name: 'spring-security-oauth2-jose'
   implementation group: 'org.springframework.security', name: 'spring-security-config'
-
   implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.6.7'
+  implementation group: 'javax.inject', name: 'javax.inject', version: '1'
 
   configurations.all {
     exclude group: 'com.vaadin.external.google', module: 'android-json'
