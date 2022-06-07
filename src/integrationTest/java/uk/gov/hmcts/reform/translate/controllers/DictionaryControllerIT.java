@@ -96,9 +96,9 @@ public class DictionaryControllerIT extends BaseTest {
     @Nested
     @DisplayName("Put Dictionary")
     class PutDictionary {
-        private final String SERVICE_JWT_DEFINITION = generateDummyS2SToken("ccd_definition");
+        private final String serviceJwtDefinition = generateDummyS2SToken("ccd_definition");
 
-        private final String SERVICE_JWT_XUI_WEB = generateDummyS2SToken("xui_webapp");
+        private final String serviceJwtXuiWeb = generateDummyS2SToken("xui_webapp");
 
         // manage-translations
         @Test
@@ -107,7 +107,7 @@ public class DictionaryControllerIT extends BaseTest {
 
             stubUserInfo("manage-translations");
             mockMvc.perform(put(URL)
-                                .header("ServiceAuthorization", SERVICE_JWT_XUI_WEB)
+                                .header("ServiceAuthorization", serviceJwtXuiWeb)
                                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                                 .content(objectMapper.writeValueAsString(getDictionaryRequest(1, 2))))
                 .andExpect(status().is(201))
@@ -119,7 +119,7 @@ public class DictionaryControllerIT extends BaseTest {
         void shouldReturn201ForPutDictionaryForIdamUserWithManageTranslationUpdateARecord() throws Exception {
             stubUserInfo("manage-translations");
             mockMvc.perform(put(URL)
-                                .header("ServiceAuthorization", SERVICE_JWT_XUI_WEB)
+                                .header("ServiceAuthorization", serviceJwtXuiWeb)
                                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                                 .content(objectMapper.writeValueAsString(getDictionaryRequest(1, 2))))
                 .andExpect(status().is(201))
@@ -133,7 +133,7 @@ public class DictionaryControllerIT extends BaseTest {
 
             stubUserInfo("load-translations");
             mockMvc.perform(put(URL)
-                                .header("ServiceAuthorization", SERVICE_JWT_XUI_WEB)
+                                .header("ServiceAuthorization", serviceJwtXuiWeb)
                                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                                 .content(objectMapper.writeValueAsString(getDictionaryRequestWithoutABody(1, 2))))
                 .andExpect(status().is(201))
@@ -147,7 +147,7 @@ public class DictionaryControllerIT extends BaseTest {
 
             stubUserInfo("load-translations");
             mockMvc.perform(put(URL)
-                                .header("ServiceAuthorization", SERVICE_JWT_XUI_WEB)
+                                .header("ServiceAuthorization", serviceJwtXuiWeb)
                                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                                 .content(objectMapper.writeValueAsString(getDictionaryRequestWithoutABody(1, 2))))
                 .andExpect(status().is(201))
@@ -160,7 +160,7 @@ public class DictionaryControllerIT extends BaseTest {
 
             stubUserInfo("load-translations");
             mockMvc.perform(put(URL)
-                                .header("ServiceAuthorization", SERVICE_JWT_XUI_WEB)
+                                .header("ServiceAuthorization", serviceJwtXuiWeb)
                                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                                 .content(objectMapper.writeValueAsString(getDictionaryRequest(1, 2))))
                 .andExpect(status().is(400))
@@ -172,7 +172,7 @@ public class DictionaryControllerIT extends BaseTest {
 
             stubUserInfo("load-translations");
             mockMvc.perform(put(URL)
-                                .header("ServiceAuthorization", SERVICE_JWT_DEFINITION)
+                                .header("ServiceAuthorization", serviceJwtDefinition)
                                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                                 .content(objectMapper.writeValueAsString(getDictionaryRequest(1, 2))))
                 .andExpect(status().is(400))
