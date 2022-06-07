@@ -1,5 +1,6 @@
 package uk.gov.hmcts.reform.translate.service;
 
+import lombok.NonNull;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 import java.util.function.Predicate;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -73,6 +76,26 @@ public class DictionaryService {
         }
     }
 
+    public Map<String, String> getTranslations(@NonNull final Set<String> phrases) {
+        return phrases.stream()
+            .map(phrase -> {
+                final String translation = getTranslation(phrase);
+                return Map.of(phrase, translation);
+            })
+            .flatMap(m -> m.entrySet().stream())
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
+    String getTranslation(@NonNull final String englishPhrase) {
+        final DictionaryEntity entity = dictionaryRepository.findByEnglishPhrase(englishPhrase)
+            .orElseGet(() -> {
+                DictionaryEntity dictionaryEntity = new DictionaryEntity();
+                dictionaryEntity.setEnglishPhrase(englishPhrase);
+                return dictionaryRepository.save(dictionaryEntity);
+            });
+
+        return Optional.ofNullable(entity.getTranslationPhrase()).orElseGet(entity::getEnglishPhrase);
+    }
 
     public void putDictionary(Dictionary dictionaryRequest) {
 

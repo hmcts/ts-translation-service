@@ -9,8 +9,10 @@ import uk.gov.hmcts.reform.translate.data.DictionaryEntity;
 import uk.gov.hmcts.reform.translate.data.TranslationUploadEntity;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -94,5 +96,27 @@ class DictionaryRepositoryIT extends BaseTest {
         assertTrue(Streams.stream(allDictionaryEntities.iterator()).allMatch(dictionaryEntity ->
             dictionaryEntity.getTranslationUpload() != null)
         );
+    }
+
+    @Sql(scripts = {DELETE_TRANSLATION_TABLES_SCRIPT, GET_TRANSLATION_TABLES_SCRIPT})
+    @Test
+    void testShouldFindDictionaryEntityByEnglishPhrase() {
+        final Optional<DictionaryEntity> optionalDictionaryEntity =
+            dictionaryRepository.findByEnglishPhrase("English Phrase 1");
+
+        assertThat(optionalDictionaryEntity)
+            .isPresent()
+            .map(DictionaryEntity::getEnglishPhrase)
+            .hasValue("English Phrase 1");
+    }
+
+    @Sql(scripts = {DELETE_TRANSLATION_TABLES_SCRIPT, GET_TRANSLATION_TABLES_SCRIPT})
+    @Test
+    void testFindDictionaryEntityByEnglishPhraseShouldReturnEmptyWhenPhraseIsNotPresent() {
+        final Optional<DictionaryEntity> optionalDictionaryEntity =
+            dictionaryRepository.findByEnglishPhrase(ENGLISH_PHRASE);
+
+        assertThat(optionalDictionaryEntity)
+            .isNotPresent();
     }
 }

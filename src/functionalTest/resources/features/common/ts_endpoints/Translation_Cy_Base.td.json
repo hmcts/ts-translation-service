@@ -1,0 +1,10 @@
+{
+  "_guid_": "Translation_Cy_Base",
+
+  "productName": "Translation Service",
+  "operationName": "translate",
+  "method": "POST",
+  "uri": "/translation/cy",
+
+  "s2sClientId": "xui_webapp"
+}

@@ -1,0 +1,27 @@
+{
+  "_guid_": "F-003_Put_Dictionary",
+  "_extends_": "Put_Dictionary_Base",
+  "specs": [
+    "to PUT phrase with translation into the dictionary"
+  ],
+
+  "users": {
+    "invokingUser": {
+      "_extends_": "ManageAndLoadTranslationsUser"
+    }
+  },
+
+  "request": {
+    "_extends_": "Common_Request",
+    "body": {
+      "translations": {
+        "English phrase with translation": "Welsh phrase one",
+        "English phrase without translation": null
+      }
+    }
+  },
+
+  "expectedResponse": {
+    "_extends_": "Common_201_Response"
+  }
+}

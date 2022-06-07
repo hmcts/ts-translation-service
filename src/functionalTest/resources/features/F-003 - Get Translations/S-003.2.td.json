@@ -1,0 +1,38 @@
+{
+  "_guid_": "S-003.2",
+  "_extends_": "Translation_Cy_Base",
+  "title": "must return a successful response when English phrase exists in dictionary with translation",
+
+  "specs": [
+    "an active solicitor profile"
+  ],
+
+  "users": {
+    "invokingUser": {
+      "_extends_": "BeftaCaseworker2Solicitor2"
+    }
+  },
+
+  "request": {
+    "_extends_": "Common_Request",
+
+    "headers": {
+      "Accept": "application/json"
+    },
+    "body": {
+      "phrases": [
+        "English phrase with translation"      ]
+    }
+  },
+
+  "expectedResponse": {
+    "responseCode": 200,
+    "responseMessage": "OK",
+    "_extends_": "Common_200_Response",
+    "body": {
+      "translations": {
+        "English phrase with translation": "Welsh phrase one"
+      }
+    }
+  }
+}
