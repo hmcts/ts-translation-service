@@ -96,13 +96,9 @@ public class DictionaryControllerIT extends BaseTest {
     @Nested
     @DisplayName("Put Dictionary")
     class PutDictionary {
-        private static final String SERVICE_JWT_DEFINITION =
-            "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjY2RfZGVmaW5pdGlvbiIsImV4cCI6MTY1"
-                + "NDEwNjYwNX0.aPkqfAzRIYI4yv7-J-JfkeUSTDTuxKSjRbe3dcMKGDo0HNMXz8IEIJGoYBx12SZUb7nzdd8siKIqNl5gmePOOQ";
+        private final String SERVICE_JWT_DEFINITION = generateDummyS2SToken("ccd_definition");
 
-        private static final String SERVICE_JWT_XUI_WEB =
-            "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ4dWlfd2ViYXBwIiwiZXhwIjoxNjU0MTA4Mz"
-                + "kyfQ.NUnKrHdqu_OBrb7MtdytKd6Yj3jlbz6DZuD_wkXBiOv5eQvm4CPTPZSDtAp00YqU-xJ5pVDI7dsslCe3_j4rNw";
+        private final String SERVICE_JWT_XUI_WEB = generateDummyS2SToken("xui_webapp");
 
         // manage-translations
         @Test
