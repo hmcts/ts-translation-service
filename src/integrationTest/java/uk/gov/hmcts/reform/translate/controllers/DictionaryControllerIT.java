@@ -4,53 +4,53 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.NestedServletException;
 import uk.gov.hmcts.reform.translate.BaseTest;
 import uk.gov.hmcts.reform.translate.model.Dictionary;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.IntStream;
 
+import static java.util.Collections.emptyMap;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class DictionaryControllerIT extends BaseTest {
 
-
     @Autowired
     private MockMvc mockMvc;
-
     @Autowired
     protected ObjectMapper objectMapper;
 
-    private static final String URL = "/dictionary";
+    private static final String DICTIONARY_URL = "/dictionary";
 
     @Nested
     @DisplayName("Get Dictionary")
-    @Transactional
     class GetDictionary {
 
         @Test
         @Sql(scripts = {DELETE_TRANSLATION_TABLES_SCRIPT})
         void shouldReturn200WhenDictionaryReturnsNoResults() throws Exception {
-            mockMvc.perform(get(URL)
+            mockMvc.perform(get(DICTIONARY_URL)
                                 .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().is(200))
-                .andExpect(jsonPath("$.translations", is(Collections.emptyMap())))
+                .andExpect(jsonPath("$.translations", is(emptyMap())))
                 .andReturn();
         }
 
@@ -63,7 +63,7 @@ public class DictionaryControllerIT extends BaseTest {
             expectedDictionary.put("English Phrase 2", "Translated Phrase 2");
             expectedDictionary.put("English Phrase 3", "Translated Phrase 1");
 
-            mockMvc.perform(get(URL)
+            mockMvc.perform(get(DICTIONARY_URL)
                                 .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().is(200))
                 .andExpect(jsonPath("$.translations", equalTo(expectedDictionary)))
@@ -75,7 +75,7 @@ public class DictionaryControllerIT extends BaseTest {
         void shouldThrowExceptionWhenDictionaryReturnsDuplicateEnglishPhrases() {
             NestedServletException nestedServletException = assertThrows(
                 NestedServletException.class,
-                () -> mockMvc.perform(get(URL)
+                () -> mockMvc.perform(get(DICTIONARY_URL)
                                           .contentType(MediaType.APPLICATION_JSON_VALUE))
             );
 
@@ -86,10 +86,39 @@ public class DictionaryControllerIT extends BaseTest {
         @Test
         void shouldReturn403WhenUserDoesNotHaveManageTranslationsRole() throws Exception {
             stubUserInfo("unknown-role");
-            mockMvc.perform(get(URL)
+            mockMvc.perform(get(DICTIONARY_URL)
                                 .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().is(403))
                 .andReturn();
+        }
+    }
+
+    @Nested
+    class GetTranslations {
+        private static final String TRANSLATIONS_URL = "/translation/cy";
+
+        @ParameterizedTest
+        @EmptySource
+        @ValueSource(strings = {"{}", "{\"phrases\":[]}", "{\"phrases\":[\"\"]}", "{\"illegal\":[\"English Phrase\"]}"})
+        void shouldReturn400BadRequestWhenBadTranslationRequestIsSubmitted(final String input) throws Exception {
+            mockMvc.perform(post(TRANSLATIONS_URL)
+                                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                                .accept(MediaType.APPLICATION_JSON_VALUE)
+                                .content(input))
+                .andExpect(status().isBadRequest());
+        }
+
+        @Test
+        @Sql(scripts = {DELETE_TRANSLATION_TABLES_SCRIPT, GET_TRANSLATION_TABLES_SCRIPT})
+        void shouldReturn200WhenLegalRequestIsSubmitted() throws Exception {
+            final Map<String, String> expectedTranslations = Map.of("English Phrase 2", "Translated Phrase 2");
+
+            mockMvc.perform(post(TRANSLATIONS_URL)
+                                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                                .accept(MediaType.APPLICATION_JSON_VALUE)
+                                .content("{\"phrases\": [\"English Phrase 2\"]}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.translations", equalTo(expectedTranslations)));
         }
     }
 
@@ -106,7 +135,7 @@ public class DictionaryControllerIT extends BaseTest {
         void shouldReturn201ForPutDictionaryForIdamMUserWithManageTranslationCreateANewRecord() throws Exception {
 
             stubUserInfo("manage-translations");
-            mockMvc.perform(put(URL)
+            mockMvc.perform(put(DICTIONARY_URL)
                                 .header("ServiceAuthorization", serviceJwtXuiWeb)
                                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                                 .content(objectMapper.writeValueAsString(getDictionaryRequest(1, 2))))
@@ -118,7 +147,7 @@ public class DictionaryControllerIT extends BaseTest {
         @Sql(scripts = {DELETE_TRANSLATION_TABLES_SCRIPT,PUT_CREATE_ENGLISH_PHRASES_WITH_TRANSLATIONS_SCRIPT})
         void shouldReturn201ForPutDictionaryForIdamUserWithManageTranslationUpdateARecord() throws Exception {
             stubUserInfo("manage-translations");
-            mockMvc.perform(put(URL)
+            mockMvc.perform(put(DICTIONARY_URL)
                                 .header("ServiceAuthorization", serviceJwtXuiWeb)
                                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                                 .content(objectMapper.writeValueAsString(getDictionaryRequest(1, 2))))
@@ -132,7 +161,7 @@ public class DictionaryControllerIT extends BaseTest {
         void shouldReturn201ForPutDictionaryForIdamUserWithLoadTranslation() throws Exception {
 
             stubUserInfo("load-translations");
-            mockMvc.perform(put(URL)
+            mockMvc.perform(put(DICTIONARY_URL)
                                 .header("ServiceAuthorization", serviceJwtXuiWeb)
                                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                                 .content(objectMapper.writeValueAsString(getDictionaryRequestWithoutABody(1, 2))))
@@ -146,7 +175,7 @@ public class DictionaryControllerIT extends BaseTest {
         void shouldReturn201ForPutDictionaryForIdamUserWithLoadTranslationUpdateARecord() throws Exception {
 
             stubUserInfo("load-translations");
-            mockMvc.perform(put(URL)
+            mockMvc.perform(put(DICTIONARY_URL)
                                 .header("ServiceAuthorization", serviceJwtXuiWeb)
                                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                                 .content(objectMapper.writeValueAsString(getDictionaryRequestWithoutABody(1, 2))))
@@ -159,7 +188,7 @@ public class DictionaryControllerIT extends BaseTest {
         void shouldReturn400ForPutDictionaryForIdamUserWithLoadTranslationWithIncorrectPayLoad() throws Exception {
 
             stubUserInfo("load-translations");
-            mockMvc.perform(put(URL)
+            mockMvc.perform(put(DICTIONARY_URL)
                                 .header("ServiceAuthorization", serviceJwtXuiWeb)
                                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                                 .content(objectMapper.writeValueAsString(getDictionaryRequest(1, 2))))
@@ -171,7 +200,7 @@ public class DictionaryControllerIT extends BaseTest {
         void shouldReturn400ForPutDictionaryForIdamDefinitionStoreWithIncorrectPayLoad() throws Exception {
 
             stubUserInfo("load-translations");
-            mockMvc.perform(put(URL)
+            mockMvc.perform(put(DICTIONARY_URL)
                                 .header("ServiceAuthorization", serviceJwtDefinition)
                                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                                 .content(objectMapper.writeValueAsString(getDictionaryRequest(1, 2))))
@@ -183,7 +212,7 @@ public class DictionaryControllerIT extends BaseTest {
         @Test
         @Sql(scripts = {DELETE_TRANSLATION_TABLES_SCRIPT})
         void shouldReturn400ForPutDictionaryForNonIdam() throws Exception {
-            mockMvc.perform(put(URL)
+            mockMvc.perform(put(DICTIONARY_URL)
                                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                                 .content(objectMapper.writeValueAsString(getDictionaryRequest(1, 2))))
                 .andExpect(status().is(400))
