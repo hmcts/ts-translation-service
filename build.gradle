@@ -15,7 +15,7 @@ group = 'uk.gov.hmcts.reform'
 version = '0.0.1'
 
 ext {
-  set('springCloudVersion', "2021.0.2")
+  set('springCloudVersion', "2021.0.3")
 }
 ext['spring-security.version'] = '5.6.5'
 ext['spring-framework.version'] = '5.3.20'
@@ -35,23 +35,23 @@ java {
 }
 
 def versions = [
-        springBoot      : springBoot.class.package.implementationVersion,
-        testcontainers  : '1.15.2',
-        lombok          : '1.18.24',
-        junit           : '5.8.2',
-        junitPlatform   : '1.7.2',
-        serviceAuthVersion: '4.0.3',
-        idamClientVersion : '2.0.1'
+  springBoot      : springBoot.class.package.implementationVersion,
+  testcontainers  : '1.15.2',
+  lombok          : '1.18.24',
+  junit           : '5.8.2',
+  junitPlatform   : '1.7.2',
+  serviceAuthVersion: '4.0.3',
+  idamClientVersion : '2.0.1'
 ]
 
 ext.libraries = [
-        junit5: [
-                "org.junit.jupiter:junit-jupiter-api:${versions.junit}",
-                "org.junit.jupiter:junit-jupiter-engine:${versions.junit}",
-                "org.junit.jupiter:junit-jupiter-params:${versions.junit}",
-                "org.junit.platform:junit-platform-commons:${versions.junitPlatform}",
-                "org.junit.platform:junit-platform-engine:${versions.junitPlatform}"
-        ]
+  junit5: [
+    "org.junit.jupiter:junit-jupiter-api:${versions.junit}",
+    "org.junit.jupiter:junit-jupiter-engine:${versions.junit}",
+    "org.junit.jupiter:junit-jupiter-params:${versions.junit}",
+    "org.junit.platform:junit-platform-commons:${versions.junitPlatform}",
+    "org.junit.platform:junit-platform-engine:${versions.junitPlatform}"
+  ]
 ]
 
 sourceSets {
@@ -225,16 +225,32 @@ dependencies {
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-aop'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-json'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa'
+  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-oauth2-client'
+  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-cache'
+  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-oauth2-resource-server'
   implementation group: 'org.springframework.cloud', name: 'spring-cloud-config-server'
   implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-config'
-  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-cache'
-
+  implementation group: 'org.springframework.security', name: 'spring-security-web'
+  implementation group: 'org.springframework.security', name: 'spring-security-oauth2-jose'
+  implementation group: 'org.springframework.security', name: 'spring-security-config'
   implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.6.7'
+  implementation group: 'javax.inject', name: 'javax.inject', version: '1'
+
+  configurations.all {
+    exclude group: 'com.vaadin.external.google', module: 'android-json'
+  }
 
   implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: '6.0.1'
 
   implementation group: 'org.apache.logging.log4j', name: 'log4j-api'
   implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j'
+  implementation group: 'org.flywaydb', name: 'flyway-core', version: '7.7.0'
+  implementation group: 'org.postgresql', name: 'postgresql', version: '42.3.4'
+  implementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: versions.serviceAuthVersion
+  implementation group: 'com.github.hmcts', name: 'idam-java-client', version: versions.idamClientVersion
+
+  annotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
+  implementation group: 'org.projectlombok', name: 'lombok', version: versions.lombok
 
   testImplementation(platform('org.junit:junit-bom:5.8.2'))
   testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
@@ -242,21 +258,6 @@ dependencies {
     exclude group: 'junit', module: 'junit'
     exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
   }
-  implementation group: 'org.flywaydb', name: 'flyway-core', version: '7.7.0'
-  implementation group: 'org.postgresql', name: 'postgresql', version: '42.3.4'
-  implementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: versions.serviceAuthVersion
-  implementation group: 'com.github.hmcts', name: 'idam-java-client', version: versions.idamClientVersion
-  implementation group: 'org.springframework.security', name: 'spring-security-web'
-  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-oauth2-client'
-
-  implementation group: 'org.springframework.security', name: 'spring-security-oauth2-jose'
-  implementation group: 'org.springframework.security', name: 'spring-security-config'
-  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-oauth2-resource-server'
-  implementation group: 'javax.inject', name: 'javax.inject', version: '1'
-
-  annotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
-  implementation group: 'org.projectlombok', name: 'lombok', version: versions.lombok
-
 
   integrationTestImplementation sourceSets.main.runtimeClasspath
   integrationTestImplementation sourceSets.test.runtimeClasspath
@@ -303,7 +304,7 @@ sonarqube {
     property "sonar.coverage.jacoco.xmlReportPaths", "${jacocoTestReport.reports.xml.destination.path}"
     property "sonar.exclusions",
       "src/main/java/uk/gov/hmcts/reform/translate/Application.java," +
-      "src/main/java/uk/gov/hmcts/reform/translate/config/SecurityConfiguration.java"
+        "src/main/java/uk/gov/hmcts/reform/translate/config/SecurityConfiguration.java"
   }
 }
 
@@ -375,5 +376,5 @@ rootProject.tasks.named("processIntegrationTestResources") {
 }
 
 wrapper {
-    distributionType = Wrapper.DistributionType.ALL
+  distributionType = Wrapper.DistributionType.ALL
 }
