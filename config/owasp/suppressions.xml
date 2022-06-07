@@ -23,6 +23,9 @@
    ]]></notes>
     <gav regex="true">^org\.springframework\.security:spring-security-crypto:5\.6\.[0-5]</gav>
     <cve>CVE-2020-5408</cve>
+  </suppress>
+
+  <suppress until="2022-06-27">
     <cve>CVE-2022-22976</cve>
   </suppress>
 </suppressions>
