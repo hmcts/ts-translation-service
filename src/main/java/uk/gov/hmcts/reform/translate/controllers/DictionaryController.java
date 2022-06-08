@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.hmcts.reform.translate.model.Dictionary;
@@ -20,6 +21,7 @@ import javax.validation.Valid;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static uk.gov.hmcts.reform.translate.model.ControllerConstants.DICTIONARY_URL;
 import static uk.gov.hmcts.reform.translate.model.ControllerConstants.TRANSLATIONS_URL;
+import static uk.gov.hmcts.reform.translate.security.SecurityUtils.SERVICE_AUTHORIZATION;
 
 @RestController
 public class DictionaryController {
@@ -51,7 +53,10 @@ public class DictionaryController {
         @ApiResponse(responseCode = "403", description = "Forbidden"),
         @ApiResponse(responseCode = "500", description = "Error occurred on the server")
     })
-    public void putDictionary(@RequestBody Dictionary dictionaryRequest) {
+    public void putDictionary(@RequestBody Dictionary dictionaryRequest,
+                              @RequestHeader(SERVICE_AUTHORIZATION) String clientS2SToken) {
+
+        dictionaryService.putDictionaryRoleCheck(clientS2SToken);
         dictionaryService.putDictionary(dictionaryRequest);
     }
 
