@@ -39,7 +39,7 @@ def versions = [
   testcontainers  : '1.15.2',
   lombok          : '1.18.24',
   junit           : '5.8.2',
-  junitPlatform   : '1.7.2',
+  junitPlatform   : '1.8.2',
   serviceAuthVersion: '4.0.3',
   idamClientVersion : '2.0.1'
 ]
