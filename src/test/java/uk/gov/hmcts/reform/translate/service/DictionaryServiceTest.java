@@ -1,6 +1,5 @@
 package uk.gov.hmcts.reform.translate.service;
 
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -31,7 +30,6 @@ import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -43,11 +41,11 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static uk.gov.hmcts.reform.translate.security.SecurityUtils.LOAD_TRANSLATIONS_ROLE;
 import static uk.gov.hmcts.reform.translate.security.SecurityUtils.MANAGE_TRANSLATIONS_ROLE;
 import static uk.gov.hmcts.reform.translate.service.DictionaryService.INVALID_PAYLOAD_FORMAT;
 import static uk.gov.hmcts.reform.translate.service.DictionaryService.INVALID_PAYLOAD_FOR_ROLE;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 @ExtendWith(MockitoExtension.class)
 class DictionaryServiceTest {
@@ -174,18 +172,11 @@ class DictionaryServiceTest {
                 () -> dictionaryService.getDictionaryContents()
             );
             assertEquals(
-                String.format(RoleMissingException.ERROR_MESSAGE, DictionaryService.MANAGE_TRANSLATIONS_ROLE),
+                String.format(RoleMissingException.ERROR_MESSAGE, MANAGE_TRANSLATIONS_ROLE),
                 roleMissingException.getMessage()
             );
         }
 
-    }
-
-    private DictionaryEntity createDictionaryEntity(String phrase, String translationPhrase) {
-        final var dictionaryEntity = new DictionaryEntity();
-        dictionaryEntity.setEnglishPhrase(phrase);
-        dictionaryEntity.setTranslationPhrase(translationPhrase);
-        return dictionaryEntity;
     }
 
     @Nested
