@@ -265,19 +265,19 @@ public class DictionaryControllerIT extends BaseTest {
         return new Dictionary(expectedMapKeysAndValues);
     }
 
-    private void assertDictionaryEntityWithTranslationPhrases(String englishPhrase){
+    private void assertDictionaryEntityWithTranslationPhrases(String englishPhrase) {
 
         val dictionaryEntity = dictionaryRepository.findByEnglishPhrase(englishPhrase);
-        assertTrue( dictionaryEntity.isPresent());
+        assertTrue(dictionaryEntity.isPresent());
         assertNotNull(dictionaryEntity.get().getTranslationUpload());
         assertNotNull(dictionaryEntity.get().getTranslationUpload().getVersion());
         assertNotNull(dictionaryEntity.get().getTranslationPhrase());
     }
 
 
-    private void assertDictionaryEntityWithOutTranslationPhrases(String englishPhrase){
+    private void assertDictionaryEntityWithOutTranslationPhrases(String englishPhrase) {
         val dictionaryEntity = dictionaryRepository.findByEnglishPhrase(englishPhrase);
-        assertTrue( dictionaryEntity.isPresent());
+        assertTrue(dictionaryEntity.isPresent());
         assertNull(dictionaryEntity.get().getTranslationUpload());
         assertNull(dictionaryEntity.get().getTranslationPhrase());
     }
