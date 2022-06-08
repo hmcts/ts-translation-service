@@ -2,10 +2,14 @@ package uk.gov.hmcts.reform.translate.service;
 
 import lombok.NonNull;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import uk.gov.hmcts.reform.translate.ApplicationParams;
 import uk.gov.hmcts.reform.translate.data.DictionaryEntity;
 import uk.gov.hmcts.reform.translate.data.TranslationUploadEntity;
+import uk.gov.hmcts.reform.translate.errorhandling.BadRequestException;
+import uk.gov.hmcts.reform.translate.errorhandling.RequestErrorException;
 import uk.gov.hmcts.reform.translate.errorhandling.RoleMissingException;
 import uk.gov.hmcts.reform.translate.helper.DictionaryMapper;
 import uk.gov.hmcts.reform.translate.model.Dictionary;
@@ -13,29 +17,40 @@ import uk.gov.hmcts.reform.translate.repository.DictionaryRepository;
 import uk.gov.hmcts.reform.translate.security.SecurityUtils;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import static uk.gov.hmcts.reform.translate.security.SecurityUtils.LOAD_TRANSLATIONS_ROLE;
+import static uk.gov.hmcts.reform.translate.security.SecurityUtils.MANAGE_TRANSLATIONS_ROLE;
+
 @Service
 public class DictionaryService {
 
-    protected static final String MANAGE_TRANSLATIONS_ROLE = "manage-translations";
+    public static final String INVALID_PAYLOAD_FORMAT = "The translations field cannot be empty.";
+    public static final String INVALID_PAYLOAD_FOR_ROLE = "User with a role different to "
+        + MANAGE_TRANSLATIONS_ROLE + " should not have translations.";
+
     private final DictionaryRepository dictionaryRepository;
     private final DictionaryMapper dictionaryMapper;
     private final SecurityUtils securityUtils;
+    private final ApplicationParams applicationParams;
+    private final Predicate<String> isTranslationNull = translation -> !StringUtils.isEmpty(translation);
 
     @Autowired
     public DictionaryService(DictionaryRepository dictionaryRepository, DictionaryMapper dictionaryMapper,
-                             SecurityUtils securityUtils) {
+                             SecurityUtils securityUtils, ApplicationParams applicationParams) {
 
         this.dictionaryRepository = dictionaryRepository;
         this.dictionaryMapper = dictionaryMapper;
         this.securityUtils = securityUtils;
+        this.applicationParams = applicationParams;
     }
 
     public Map<String, String> getDictionaryContents() {
@@ -82,13 +97,47 @@ public class DictionaryService {
         return Optional.ofNullable(entity.getTranslationPhrase()).orElseGet(entity::getEnglishPhrase);
     }
 
-    public void putDictionary(final Dictionary dictionaryRequest) {
+
+    public void putDictionary(Dictionary dictionaryRequest) {
 
         val isManageTranslationRole = securityUtils.hasRole(MANAGE_TRANSLATIONS_ROLE);
+        validateDictionary(dictionaryRequest, isManageTranslationRole);
         val currentUserId = securityUtils.getUserInfo().getUid();
+
         dictionaryRequest.getTranslations().entrySet()
             .stream()
             .forEach(phrase -> processPhrase(phrase, currentUserId, isManageTranslationRole));
+    }
+
+    public void putDictionaryRoleCheck(String clientS2SToken) {
+        val clientServiceName = securityUtils.getServiceNameFromS2SToken(clientS2SToken);
+        if (isBypassRoleAuthCheck(clientServiceName)
+            || securityUtils.hasAnyOfTheseRoles(Arrays.asList(MANAGE_TRANSLATIONS_ROLE, LOAD_TRANSLATIONS_ROLE))) {
+            return;
+        }
+        throw new RequestErrorException(MANAGE_TRANSLATIONS_ROLE + "," + LOAD_TRANSLATIONS_ROLE);
+    }
+
+    private boolean isBypassRoleAuthCheck(String clientServiceName) {
+        return applicationParams.getPutDictionaryS2sServicesBypassRoleAuthCheck().contains(clientServiceName);
+    }
+
+    private void validateDictionary(final Dictionary dictionaryRequest, boolean isManageTranslationRole) {
+
+        if (isTranslationEmpty(dictionaryRequest)) {
+            throw new BadRequestException(INVALID_PAYLOAD_FORMAT);
+        }
+        if (!isManageTranslationRole && hasAnyTranslations(dictionaryRequest)) {
+            throw new BadRequestException(INVALID_PAYLOAD_FOR_ROLE);
+        }
+    }
+
+    private boolean isTranslationEmpty(final Dictionary dictionaryRequest) {
+        return dictionaryRequest.getTranslations() == null || dictionaryRequest.getTranslations().isEmpty();
+    }
+
+    private boolean hasAnyTranslations(final Dictionary dictionaryRequest) {
+        return dictionaryRequest.getTranslations().values().stream().anyMatch(isTranslationNull);
     }
 
     private void processPhrase(Map.Entry<String, String> currentPhrase, String currentUserId,

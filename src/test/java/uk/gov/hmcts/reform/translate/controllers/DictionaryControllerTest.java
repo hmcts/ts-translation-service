@@ -42,6 +42,8 @@ import static org.springframework.context.annotation.FilterType.ASSIGNABLE_TYPE;
 @ImportAutoConfiguration(TestIdamConfiguration.class)
 class DictionaryControllerTest {
 
+    private static final String CLIENTS2S_TOKEN = "clientS2SToken";
+
     @Autowired
     protected MockMvc mockMvc;
 
@@ -95,7 +97,7 @@ class DictionaryControllerTest {
         void shouldReturn200() {
             final var dictionaryController = new DictionaryController(dictionaryService);
             final var getDictionaryRequest = getDictionaryRequest(1, 2);
-            dictionaryController.putDictionary(getDictionaryRequest);
+            dictionaryController.putDictionary(getDictionaryRequest, CLIENTS2S_TOKEN);
             verify(dictionaryService, times(1)).putDictionary(getDictionaryRequest);
         }
 
