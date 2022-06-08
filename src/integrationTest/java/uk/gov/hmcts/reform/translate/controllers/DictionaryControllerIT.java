@@ -138,7 +138,8 @@ public class DictionaryControllerIT extends BaseTest {
             mockMvc.perform(put(DICTIONARY_URL)
                                 .header("ServiceAuthorization", serviceJwtXuiWeb)
                                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                                .content(objectMapper.writeValueAsString(getDictionaryRequest(1, 2))))
+                                .content(
+                                    objectMapper.writeValueAsString(getDictionaryRequestsWithTranslationPhrases(1, 2))))
                 .andExpect(status().is(201))
                 .andReturn();
         }
@@ -150,7 +151,8 @@ public class DictionaryControllerIT extends BaseTest {
             mockMvc.perform(put(DICTIONARY_URL)
                                 .header("ServiceAuthorization", serviceJwtXuiWeb)
                                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                                .content(objectMapper.writeValueAsString(getDictionaryRequest(1, 2))))
+                                .content(
+                                    objectMapper.writeValueAsString(getDictionaryRequestsWithTranslationPhrases(1, 2))))
                 .andExpect(status().is(201))
                 .andReturn();
         }
@@ -158,13 +160,15 @@ public class DictionaryControllerIT extends BaseTest {
 
         // load-translations user
         @Test
-        void shouldReturn201ForPutDictionaryForIdamUserWithLoadTranslation() throws Exception {
+        void shouldReturn201ForPutDictionaryForIdamUserWithLoadTranslationNewPhrases() throws Exception {
 
             stubUserInfo("load-translations");
             mockMvc.perform(put(DICTIONARY_URL)
                                 .header("ServiceAuthorization", serviceJwtXuiWeb)
                                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                                .content(objectMapper.writeValueAsString(getDictionaryRequestWithoutABody(1, 2))))
+                                .content(objectMapper.writeValueAsString(
+                                    getDictionaryRequestsWithoutTranslationPhrases(1, 2)))
+            )
                 .andExpect(status().is(201))
                 .andReturn();
 
@@ -172,38 +176,45 @@ public class DictionaryControllerIT extends BaseTest {
 
         @Test
         @Sql(scripts = {DELETE_TRANSLATION_TABLES_SCRIPT,PUT_CREATE_ENGLISH_PHRASES_WITH_TRANSLATIONS_SCRIPT})
-        void shouldReturn201ForPutDictionaryForIdamUserWithLoadTranslationUpdateARecord() throws Exception {
+        void shouldReturn201ForPutDictionaryForIdamUserWithLoadTranslationExistingPhrases() throws Exception {
 
             stubUserInfo("load-translations");
             mockMvc.perform(put(DICTIONARY_URL)
                                 .header("ServiceAuthorization", serviceJwtXuiWeb)
                                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                                .content(objectMapper.writeValueAsString(getDictionaryRequestWithoutABody(1, 2))))
+                                .content(
+                                    objectMapper.writeValueAsString(
+                                        getDictionaryRequestsWithoutTranslationPhrases(1, 2)))
+            )
                 .andExpect(status().is(201))
                 .andReturn();
         }
 
         // 400 errors
         @Test
+        @DisplayName("Incorrect payload: translations not permitted without `manage-translations` role")
         void shouldReturn400ForPutDictionaryForIdamUserWithLoadTranslationWithIncorrectPayLoad() throws Exception {
 
             stubUserInfo("load-translations");
             mockMvc.perform(put(DICTIONARY_URL)
                                 .header("ServiceAuthorization", serviceJwtXuiWeb)
                                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                                .content(objectMapper.writeValueAsString(getDictionaryRequest(1, 2))))
+                                .content(
+                                    objectMapper.writeValueAsString(getDictionaryRequestsWithTranslationPhrases(1, 2))))
                 .andExpect(status().is(400))
                 .andReturn();
         }
 
         @Test
+        @DisplayName("Incorrect payload: translations not permitted for definition store client")
         void shouldReturn400ForPutDictionaryForIdamDefinitionStoreWithIncorrectPayLoad() throws Exception {
 
             stubUserInfo("load-translations");
             mockMvc.perform(put(DICTIONARY_URL)
                                 .header("ServiceAuthorization", serviceJwtDefinition)
                                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                                .content(objectMapper.writeValueAsString(getDictionaryRequest(1, 2))))
+                                .content(
+                                    objectMapper.writeValueAsString(getDictionaryRequestsWithTranslationPhrases(1, 2))))
                 .andExpect(status().is(400))
                 .andReturn();
         }
@@ -214,20 +225,21 @@ public class DictionaryControllerIT extends BaseTest {
         void shouldReturn400ForPutDictionaryForNonIdam() throws Exception {
             mockMvc.perform(put(DICTIONARY_URL)
                                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                                .content(objectMapper.writeValueAsString(getDictionaryRequest(1, 2))))
+                                .content(
+                                    objectMapper.writeValueAsString(getDictionaryRequestsWithTranslationPhrases(1, 2))))
                 .andExpect(status().is(400))
                 .andReturn();
         }
 
     }
 
-    private Dictionary getDictionaryRequest(int from, int to) {
+    private Dictionary getDictionaryRequestsWithTranslationPhrases(int from, int to) {
         final Map<String, String> expectedMapKeysAndValues = new HashMap<>();
         IntStream.range(from, to).forEach(i -> expectedMapKeysAndValues.put("english_" + i, "translated_" + i));
         return new Dictionary(expectedMapKeysAndValues);
     }
 
-    private Dictionary getDictionaryRequestWithoutABody(int from, int to) {
+    private Dictionary getDictionaryRequestsWithoutTranslationPhrases(int from, int to) {
         final Map<String, String> expectedMapKeysAndValues = new HashMap<>();
         IntStream.range(from, to).forEach(i -> expectedMapKeysAndValues.put("english_" + i, null));
         return new Dictionary(expectedMapKeysAndValues);
