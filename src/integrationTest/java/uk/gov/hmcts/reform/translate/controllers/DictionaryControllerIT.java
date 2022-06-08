@@ -1,6 +1,7 @@
 package uk.gov.hmcts.reform.translate.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.val;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -14,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.util.NestedServletException;
 import uk.gov.hmcts.reform.translate.BaseTest;
 import uk.gov.hmcts.reform.translate.model.Dictionary;
+import uk.gov.hmcts.reform.translate.repository.DictionaryRepository;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -23,6 +25,8 @@ import java.util.stream.IntStream;
 import static java.util.Collections.emptyMap;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -37,6 +41,9 @@ public class DictionaryControllerIT extends BaseTest {
     private MockMvc mockMvc;
     @Autowired
     protected ObjectMapper objectMapper;
+
+    @Autowired
+    protected DictionaryRepository dictionaryRepository;
 
     private static final String DICTIONARY_URL = "/dictionary";
 
@@ -134,15 +141,20 @@ public class DictionaryControllerIT extends BaseTest {
         @Sql(scripts = {DELETE_TRANSLATION_TABLES_SCRIPT})
         void shouldReturn201ForPutDictionaryForIdamMUserWithManageTranslationCreateANewRecord() throws Exception {
 
+
             stubUserInfo("manage-translations");
             mockMvc.perform(put(DICTIONARY_URL)
                                 .header("ServiceAuthorization", serviceJwtXuiWeb)
                                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                                 .content(
-                                    objectMapper.writeValueAsString(getDictionaryRequestsWithTranslationPhrases(1, 2))))
+                                    objectMapper.writeValueAsString(getDictionaryRequestsWithTranslationPhrases(1, 3))))
                 .andExpect(status().is(201))
                 .andReturn();
+
+            assertDictionaryEntityWithTranslationPhrases("english_1");
+            assertDictionaryEntityWithTranslationPhrases("english_2");
         }
+
 
         @Test
         @Sql(scripts = {DELETE_TRANSLATION_TABLES_SCRIPT,PUT_CREATE_ENGLISH_PHRASES_WITH_TRANSLATIONS_SCRIPT})
@@ -152,14 +164,18 @@ public class DictionaryControllerIT extends BaseTest {
                                 .header("ServiceAuthorization", serviceJwtXuiWeb)
                                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                                 .content(
-                                    objectMapper.writeValueAsString(getDictionaryRequestsWithTranslationPhrases(1, 2))))
+                                    objectMapper.writeValueAsString(getDictionaryRequestsWithTranslationPhrases(1, 3))))
                 .andExpect(status().is(201))
                 .andReturn();
+
+            assertDictionaryEntityWithTranslationPhrases("english_1");
+            assertDictionaryEntityWithTranslationPhrases("english_2");
         }
 
 
         // load-translations user
         @Test
+        @Sql(scripts = {DELETE_TRANSLATION_TABLES_SCRIPT})
         void shouldReturn201ForPutDictionaryForIdamUserWithLoadTranslationNewPhrases() throws Exception {
 
             stubUserInfo("load-translations");
@@ -167,11 +183,13 @@ public class DictionaryControllerIT extends BaseTest {
                                 .header("ServiceAuthorization", serviceJwtXuiWeb)
                                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                                 .content(objectMapper.writeValueAsString(
-                                    getDictionaryRequestsWithoutTranslationPhrases(1, 2)))
+                                    getDictionaryRequestsWithoutTranslationPhrases(1, 3)))
             )
                 .andExpect(status().is(201))
                 .andReturn();
 
+            assertDictionaryEntityWithOutTranslationPhrases("english_1");
+            assertDictionaryEntityWithOutTranslationPhrases("english_2");
         }
 
         @Test
@@ -188,6 +206,8 @@ public class DictionaryControllerIT extends BaseTest {
             )
                 .andExpect(status().is(201))
                 .andReturn();
+            // No action taken for existing phrases, verify previous translations are preserved.
+            assertDictionaryEntityWithTranslationPhrases("english_1");
         }
 
         // 400 errors
@@ -245,4 +265,20 @@ public class DictionaryControllerIT extends BaseTest {
         return new Dictionary(expectedMapKeysAndValues);
     }
 
+    private void assertDictionaryEntityWithTranslationPhrases(String englishPhrase){
+
+        val dictionaryEntity = dictionaryRepository.findByEnglishPhrase(englishPhrase);
+        assertTrue( dictionaryEntity.isPresent());
+        assertNotNull(dictionaryEntity.get().getTranslationUpload());
+        assertNotNull(dictionaryEntity.get().getTranslationUpload().getVersion());
+        assertNotNull(dictionaryEntity.get().getTranslationPhrase());
+    }
+
+
+    private void assertDictionaryEntityWithOutTranslationPhrases(String englishPhrase){
+        val dictionaryEntity = dictionaryRepository.findByEnglishPhrase(englishPhrase);
+        assertTrue( dictionaryEntity.isPresent());
+        assertNull(dictionaryEntity.get().getTranslationUpload());
+        assertNull(dictionaryEntity.get().getTranslationPhrase());
+    }
 }
