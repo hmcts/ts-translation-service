@@ -121,6 +121,7 @@ public class DictionaryControllerIT extends BaseTest {
         }
 
         @Test
+        @Disabled // TODO in WLTS-24
         @Sql(scripts = {DELETE_TRANSLATION_TABLES_SCRIPT})
         void shouldTestConcurrentAddToDictionaryViaTranslateEndpoint() {
             final String payload = "{\"phrases\": [\"English phrase 2\"]}";
