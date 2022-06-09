@@ -24,5 +24,15 @@
     <gav regex="true">^org\.springframework\.security:spring-security-crypto:5\.6\.[0-5]</gav>
     <cve>CVE-2020-5408</cve>
   </suppress>
+  <suppress until="2022-06-25">
+    <notes><![CDATA[
+     Temp suppression:
+        file name: spring-boot-starter-oauth2-client-2.6.8.jar
+        file name: spring-boot-starter-oauth2-resource-server-2.6.8.jar
+        file name: spring-security-rsa-1.0.10.RELEASE.jar
+   ]]></notes>
+    <gav regex="true">^org\.springframework\.(security|boot):(spring-security-rsa:1\.0\.1[0-1].*|spring-boot-starter-oauth2-(client|resource-server):2\.6\.[0-8])</gav>
+    <cve>CVE-2022-22976</cve>
+  </suppress>
 
 </suppressions>

@@ -1,6 +1,8 @@
 package uk.gov.hmcts.reform.translate.security;
 
+import com.auth0.jwt.JWT;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.GrantedAuthority;
@@ -12,13 +14,17 @@ import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 import uk.gov.hmcts.reform.translate.security.idam.IdamRepository;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toSet;
 
 @Service
 @Slf4j
 public class SecurityUtils {
     public static final String SERVICE_AUTHORIZATION = "ServiceAuthorization";
-
+    public static final String MANAGE_TRANSLATIONS_ROLE = "manage-translations";
+    public static final String LOAD_TRANSLATIONS_ROLE = "load-translations";
     public static final String BEARER = "Bearer ";
 
     private final AuthTokenGenerator authTokenGenerator;
@@ -80,6 +86,22 @@ public class SecurityUtils {
     public boolean hasRole(String roleToMatch) {
         UserInfo userInfo = getUserInfo();
         return userInfo != null && userInfo.getRoles().stream().anyMatch(role -> role.equalsIgnoreCase(roleToMatch));
+    }
+
+    public boolean hasAnyOfTheseRoles(List<String> roleToMatch) {
+        val userInfo = getUserInfo();
+        return userInfo != null
+            && userInfo.getRoles().stream().anyMatch(roleToMatch.stream().collect(toSet())::contains);
+    }
+
+    public String getServiceNameFromS2SToken(String serviceAuthenticationToken) {
+        // NB: this grabs the service name straight from the token under the assumption
+        // that the S2S token has already been verified elsewhere
+        return JWT.decode(removeBearerFromToken(serviceAuthenticationToken)).getSubject();
+    }
+
+    private String removeBearerFromToken(String token) {
+        return token.startsWith(BEARER) ? token.substring(BEARER.length()) : token;
     }
 }
 
