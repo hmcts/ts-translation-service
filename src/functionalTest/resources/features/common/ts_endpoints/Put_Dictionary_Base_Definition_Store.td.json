@@ -1,0 +1,9 @@
+{
+  "_guid_": "Put_Dictionary_Base_Definition_Store",
+  "productName": "Translation Service",
+  "operationName": "PUT dictionary",
+  "method": "PUT",
+  "uri": "/dictionary",
+
+  "s2sClientId": "ccd_definition"
+}

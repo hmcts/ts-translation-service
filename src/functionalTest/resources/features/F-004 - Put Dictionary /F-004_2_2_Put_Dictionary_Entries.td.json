@@ -1,0 +1,26 @@
+{
+  "_guid_": "F-004_2_2_Put_Dictionary_Entries",
+  "_extends_": "Put_Dictionary_Base",
+  "specs": [
+    "to PUT translation phrases into the dictionary 2"
+  ],
+
+  "users": {
+    "invokingUser": {
+      "_extends_": "ManageTranslationsUser"
+    }
+  },
+
+  "request": {
+    "_extends_": "Common_Request",
+    "body": {
+      "translations": {
+        "EnglishPhrase2": "WelshPhrase2"
+      }
+    }
+  },
+
+  "expectedResponse": {
+    "_extends_": "Common_201_Response"
+  }
+}

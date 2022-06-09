@@ -1,0 +1,30 @@
+{
+  "_guid_": "S-004.4",
+  "_extends_": "Put_Dictionary_Base",
+  "specs": [
+    "without manage-translation or load-translation IDAM role",
+    "has the 403 Forbidden status code"
+  ],
+
+  "users": {
+    "invokingUser": {
+      "_extends_": "BeftaCaseworker1"
+    }
+  },
+
+  "request": {
+    "_extends_": "Common_Request",
+    "body": {
+      "translations": {
+        "EnglishPhrase1": "WelshPhrase1",
+        "EnglishPhrase2": "WelshPhrase2",
+        "EnglishPhrase3": "WelshPhrase3"
+      }
+    }
+  },
+
+  "expectedResponse": {
+    "responseCode": 403,
+    "responseMessage": "Forbidden"
+  }
+}

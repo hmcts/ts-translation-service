@@ -1,0 +1,24 @@
+{
+  "_guid_": "F-004_1_Put_Dictionary_Entries",
+  "_extends_": "Put_Dictionary_Base",
+  "specs": [
+    "to PUT translation phrases into the dictionary"
+  ],
+
+  "users": {
+    "invokingUser": {
+      "_extends_": "ManageTranslationsUser"
+    }
+  },
+
+  "request": {
+    "_extends_": "Common_Request",
+    "body": {
+      "translations": "${[scenarioContext][customValues][createUniqueTranslationPhrase TEST1]}"
+    }
+  },
+
+  "expectedResponse": {
+    "_extends_": "Common_201_Response"
+  }
+}
