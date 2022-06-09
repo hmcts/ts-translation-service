@@ -14,7 +14,7 @@ import javax.validation.constraints.NotEmpty;
 @AllArgsConstructor
 @EqualsAndHashCode
 public class TranslationsRequest {
-    private static final String BAD_REQUEST_MESSAGE = "Bad Request (001 bad schema)";
+    public static final String BAD_REQUEST_MESSAGE = "Bad Request (001 bad schema)";
 
     @NotEmpty(message = BAD_REQUEST_MESSAGE)
     private Set<@NotBlank(message = BAD_REQUEST_MESSAGE) String> phrases;

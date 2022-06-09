@@ -17,18 +17,14 @@
     },
     "body": {
       "phrases": [
-        "An English Phrase"
+        "${[scenarioContext][customValues][UniqueString]}"
       ]
     }
   },
   "expectedResponse": {
-    "_extends_": "Common_Response",
-    "responseCode": 200,
-    "responseMessage": "OK",
+    "_extends_": "Common_200_Response",
     "body": {
-      "translations": {
-        "An English Phrase": "An English Phrase"
-      }
+      "translations": "${[scenarioContext][customValues][S-003.1]}"
     }
   }
 }

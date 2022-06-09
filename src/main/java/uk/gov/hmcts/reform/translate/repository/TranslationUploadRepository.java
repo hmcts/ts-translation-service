@@ -8,5 +8,5 @@ import uk.gov.hmcts.reform.translate.data.TranslationUploadEntity;
 
 @Transactional(propagation = Propagation.REQUIRES_NEW)
 @Repository
-public interface TranslationUploadRepository extends CrudRepository<TranslationUploadEntity, Integer> {
+public interface TranslationUploadRepository extends CrudRepository<TranslationUploadEntity, Long> {
 }

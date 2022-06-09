@@ -3,6 +3,7 @@ package uk.gov.hmcts.reform.translate.repository;
 import org.assertj.core.util.Streams;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.jdbc.Sql;
 import uk.gov.hmcts.reform.translate.BaseTest;
 import uk.gov.hmcts.reform.translate.data.DictionaryEntity;
@@ -13,6 +14,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -55,7 +57,7 @@ class DictionaryRepositoryIT extends BaseTest {
     @Sql(scripts = {DELETE_TRANSLATION_TABLES_SCRIPT, GET_TRANSLATION_TABLES_SCRIPT})
     @Test
     void testFindDictionaryAndTranslationUploadNoTranslationPhrase() {
-        final var optionalDictionaryEntity = dictionaryRepository.findById(1);
+        final var optionalDictionaryEntity = dictionaryRepository.findById(1L);
         assertTrue(optionalDictionaryEntity.isPresent());
 
         final var dictionaryEntity = optionalDictionaryEntity.get();
@@ -63,8 +65,10 @@ class DictionaryRepositoryIT extends BaseTest {
         assertAll(
             () -> assertNull(dictionaryEntity.getTranslationPhrase()),
             () -> assertEquals("English Phrase 1", dictionaryEntity.getEnglishPhrase()),
-            () -> assertEquals(LocalDateTime.parse("2022-05-06T11:12:13.000000"),
-                               dictionaryEntity.getTranslationUpload().getUploaded()),
+            () -> assertEquals(
+                LocalDateTime.parse("2022-05-06T11:12:13.000000"),
+                dictionaryEntity.getTranslationUpload().getUploaded()
+            ),
             () -> assertEquals("IdamUser1", dictionaryEntity.getTranslationUpload().getUserId())
         );
     }
@@ -72,7 +76,7 @@ class DictionaryRepositoryIT extends BaseTest {
     @Sql(scripts = {DELETE_TRANSLATION_TABLES_SCRIPT, GET_TRANSLATION_TABLES_SCRIPT})
     @Test
     void testFindDictionaryAndTranslationUploadWithTranslationPhrase() {
-        final var optionalDictionaryEntity = dictionaryRepository.findById(2);
+        final var optionalDictionaryEntity = dictionaryRepository.findById(2L);
         assertTrue(optionalDictionaryEntity.isPresent());
 
         final var dictionaryEntity = optionalDictionaryEntity.get();
@@ -80,8 +84,10 @@ class DictionaryRepositoryIT extends BaseTest {
         assertAll(
             () -> assertEquals(dictionaryEntity.getTranslationPhrase(), "Translated Phrase 2"),
             () -> assertEquals("English Phrase 2", dictionaryEntity.getEnglishPhrase()),
-            () -> assertEquals(LocalDateTime.parse("2022-05-07T09:00:05.000000"),
-                               dictionaryEntity.getTranslationUpload().getUploaded()),
+            () -> assertEquals(
+                LocalDateTime.parse("2022-05-07T09:00:05.000000"),
+                dictionaryEntity.getTranslationUpload().getUploaded()
+            ),
             () -> assertEquals("IdamUser2", dictionaryEntity.getTranslationUpload().getUserId())
         );
     }
@@ -93,9 +99,8 @@ class DictionaryRepositoryIT extends BaseTest {
 
         assertEquals(3, Streams.stream(allDictionaryEntities.iterator()).count());
 
-        assertTrue(Streams.stream(allDictionaryEntities.iterator()).allMatch(dictionaryEntity ->
-            dictionaryEntity.getTranslationUpload() != null)
-        );
+        assertTrue(Streams.stream(allDictionaryEntities.iterator())
+                       .allMatch(dictionaryEntity -> dictionaryEntity.getTranslationUpload() != null));
     }
 
     @Sql(scripts = {DELETE_TRANSLATION_TABLES_SCRIPT, GET_TRANSLATION_TABLES_SCRIPT})
@@ -118,5 +123,21 @@ class DictionaryRepositoryIT extends BaseTest {
 
         assertThat(optionalDictionaryEntity)
             .isNotPresent();
+    }
+
+    @Test
+    @Sql(scripts = {DELETE_TRANSLATION_TABLES_SCRIPT, ADD_ENGLISH_PHRASE_SCRIPT})
+    void testInsertDuplicateEnglishPhrase() {
+        // GIVEN
+        DictionaryEntity dictionaryEntity = new DictionaryEntity();
+        dictionaryEntity.setEnglishPhrase(ENGLISH_PHRASE);
+
+        // WHEN
+        final Throwable thrown = catchThrowable(() -> dictionaryRepository.save(dictionaryEntity));
+
+        // THEN
+        assertThat(thrown)
+            .isNotNull()
+            .isInstanceOf(DataIntegrityViolationException.class);
     }
 }

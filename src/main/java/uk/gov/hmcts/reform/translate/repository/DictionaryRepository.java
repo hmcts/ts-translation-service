@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Transactional(propagation = Propagation.REQUIRES_NEW)
 @Repository
-public interface DictionaryRepository extends CrudRepository<DictionaryEntity, Integer> {
+public interface DictionaryRepository extends CrudRepository<DictionaryEntity, Long> {
 
     Optional<DictionaryEntity> findByEnglishPhrase(String englishPhrase);
 

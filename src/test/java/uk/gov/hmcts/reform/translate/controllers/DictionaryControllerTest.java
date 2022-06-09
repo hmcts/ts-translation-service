@@ -83,12 +83,10 @@ class DictionaryControllerTest {
             final Dictionary dictionary = dictionaryController.getTranslation(translationRequest);
 
             assertThat(dictionary)
-                .isNotNull()
                 .isNotNull();
             verify(dictionaryService).getTranslations(anySet());
         }
     }
-
 
     @Nested
     @DisplayName("putDictionary")
