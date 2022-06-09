@@ -1,6 +1,9 @@
 package uk.gov.hmcts.reform.translate;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.impl.TextCodec;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +18,8 @@ import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.test.context.ActiveProfiles;
 import uk.gov.hmcts.reform.translate.security.SecurityUtils;
+
+import java.util.Date;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
@@ -49,6 +54,9 @@ public class BaseTest {
     protected static final String GET_TRANSLATION_TABLES_DUPLICATE_ENGLISH_PHRASES_SCRIPT =
         "classpath:sql/get-Dictionary_WithDuplicateEnglishPhrases.sql";
 
+    protected static final String PUT_CREATE_ENGLISH_PHRASES_WITH_TRANSLATIONS_SCRIPT =
+        "classpath:sql/put-create-Dictionary_EnglishPhrases.sql";
+
     @BeforeEach
     void init() {
         Jwt jwt = dummyJwt();
@@ -78,5 +86,13 @@ public class BaseTest {
             aResponse().withStatus(HttpStatus.OK.value())
                 .withHeader("Content-Type", "application/json")
                 .withBody(jsonBody)));
+    }
+
+    public static String generateDummyS2SToken(String serviceName) {
+        return Jwts.builder()
+            .setSubject(serviceName)
+            .setIssuedAt(new Date())
+            .signWith(SignatureAlgorithm.HS256, TextCodec.BASE64.encode("AA"))
+            .compact();
     }
 }
