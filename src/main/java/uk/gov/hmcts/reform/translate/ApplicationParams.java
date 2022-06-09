@@ -1,13 +1,12 @@
 package uk.gov.hmcts.reform.translate;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
-import javax.inject.Named;
-import javax.inject.Singleton;
 
-@Named
-@Singleton
+
+@Component
 public class ApplicationParams {
 
 
