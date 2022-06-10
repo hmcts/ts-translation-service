@@ -5,16 +5,20 @@ management:
   endpoint:
     health:
       show-details: "always"
+      cache:
+        time-to-live: 10s
   endpoints:
     web:
       base-path: /
       exposure:
         include: health, info, prometheus
+  health:
+    probes:
+      enabled: true
 
 springdoc:
   packagesToScan: uk.gov.hmcts.reform.translate.controllers
 
-#If you use a database then uncomment below lines and update db properties accordingly
 spring:
   main:
     allow-bean-definition-overriding: true
