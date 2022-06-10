@@ -54,6 +54,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.reform.translate.model.ControllerConstants.DICTIONARY_URL;
 import static uk.gov.hmcts.reform.translate.model.ControllerConstants.TRANSLATIONS_URL;
+import static uk.gov.hmcts.reform.translate.security.SecurityUtils.SERVICE_AUTHORIZATION;
 
 public class DictionaryControllerIT extends BaseTest {
 
@@ -170,8 +171,6 @@ public class DictionaryControllerIT extends BaseTest {
     @Nested
     @DisplayName("Put Dictionary")
     class PutDictionary {
-        private static final String SERVICE_AUTHORIZATION = "ServiceAuthorization";
-
         private final String serviceJwtDefinition = generateDummyS2SToken("ccd_definition");
 
         private final String serviceJwtXuiWeb = generateDummyS2SToken("xui_webapp");
