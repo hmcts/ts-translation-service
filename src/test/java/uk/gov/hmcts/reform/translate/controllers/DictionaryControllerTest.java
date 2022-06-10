@@ -72,8 +72,8 @@ class DictionaryControllerTest {
     }
 
     @Nested
-    @DisplayName("GetTranslation")
-    class GetTranslations {
+    @DisplayName("RequestTranslation")
+    class RequestTranslations {
         @Test
         void shouldReturnTranslations() {
             doReturn(Map.of("English phrase", "Translated English phrase"))

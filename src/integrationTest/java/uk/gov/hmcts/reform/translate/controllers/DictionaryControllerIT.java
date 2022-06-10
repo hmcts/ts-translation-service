@@ -1,9 +1,9 @@
 package uk.gov.hmcts.reform.translate.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.pivovarit.function.ThrowingSupplier;
+import io.vavr.control.Either;
 import lombok.val;
-import org.junit.jupiter.api.Disabled;
+import org.assertj.vavr.api.VavrAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -12,6 +12,9 @@ import org.junit.jupiter.params.provider.EmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.context.SecurityContextImpl;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -19,21 +22,30 @@ import uk.gov.hmcts.reform.translate.BaseTest;
 import uk.gov.hmcts.reform.translate.model.Dictionary;
 import uk.gov.hmcts.reform.translate.repository.DictionaryRepository;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
+import java.util.Objects;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.stream.IntStream;
 
 import static java.util.Collections.emptyMap;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -42,6 +54,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.reform.translate.model.ControllerConstants.DICTIONARY_URL;
 import static uk.gov.hmcts.reform.translate.model.ControllerConstants.TRANSLATIONS_URL;
+import static uk.gov.hmcts.reform.translate.security.SecurityUtils.SERVICE_AUTHORIZATION;
 
 public class DictionaryControllerIT extends BaseTest {
 
@@ -56,6 +69,7 @@ public class DictionaryControllerIT extends BaseTest {
     @Nested
     @DisplayName("Get Dictionary")
     class GetDictionary {
+
         @Test
         @Sql(scripts = {DELETE_TRANSLATION_TABLES_SCRIPT})
         void shouldReturn200WhenDictionaryReturnsNoResults() throws Exception {
@@ -121,65 +135,83 @@ public class DictionaryControllerIT extends BaseTest {
         }
 
         @Test
-        @Disabled // TODO in WLTS-24
         @Sql(scripts = {DELETE_TRANSLATION_TABLES_SCRIPT})
-        void shouldTestConcurrentAddToDictionaryViaTranslateEndpoint() {
+        void shouldTestConcurrentAddToDictionaryViaTranslateEndpoint() throws Exception {
+            final ExecutorService executorService = Executors.newFixedThreadPool(4);
+            try {
+                // GIVEN
+                Collection<Callable<ResultActions>> callables = new ArrayList<>();
+                IntStream.rangeClosed(1, 4)
+                    .forEach(i -> callables.add(createRequestTranslationCallable()));
+
+                // WHEN
+                final List<Future<ResultActions>> taskFutureList = executorService.invokeAll(callables);
+
+                // THEN
+                assertThatResultsContainsConstraintViolation(taskFutureList);
+            } finally {
+                Objects.requireNonNull(executorService).shutdown();
+            }
+        }
+    }
+
+    private Callable<ResultActions> createRequestTranslationCallable() {
+        return new Callable<>() {
             final String payload = "{\"phrases\": [\"English phrase 2\"]}";
 
-            final CompletableFuture<ResultActions> future1 = CompletableFuture.supplyAsync(
-                ThrowingSupplier.unchecked(() -> mockMvc.perform(post(TRANSLATIONS_URL)
-                                                                     .contentType(APPLICATION_JSON_VALUE)
-                                                                     .accept(APPLICATION_JSON_VALUE)
-                                                                     .content(payload)))
-            );
-            final CompletableFuture<ResultActions> future2 = CompletableFuture.supplyAsync(
-                ThrowingSupplier.unchecked(() -> mockMvc.perform(post(TRANSLATIONS_URL)
-                                                                     .contentType(APPLICATION_JSON_VALUE)
-                                                                     .accept(APPLICATION_JSON_VALUE)
-                                                                     .content(payload)))
-            );
-
-            final Throwable thrown = catchThrowable(() -> CompletableFuture.allOf(future1, future2).get());
-
-            // THEN
-            assertThatDataIntegrityViolationExceptionWasThrown(thrown);
-        }
+            public ResultActions call() throws Exception {
+                return mockMvc.perform(post(TRANSLATIONS_URL)
+                                           .contentType(APPLICATION_JSON_VALUE)
+                                           .accept(APPLICATION_JSON_VALUE)
+                                           .content(payload));
+            }
+        };
     }
 
     @Nested
     @DisplayName("Put Dictionary")
     class PutDictionary {
-
         private final String serviceJwtDefinition = generateDummyS2SToken("ccd_definition");
 
         private final String serviceJwtXuiWeb = generateDummyS2SToken("xui_webapp");
 
         @Test
         @Sql(scripts = {DELETE_TRANSLATION_TABLES_SCRIPT})
-        @Disabled // TODO in WLTS-24
-        void shouldTestConcurrentAddToDictionaryViaPutEndpoint() {
+        void shouldTestConcurrentAddToDictionaryViaPutEndpoint() throws Exception {
             stubUserInfo("manage-translations");
+            final ExecutorService executorService = Executors.newFixedThreadPool(4);
+            try {
+                // GIVEN
+                Collection<Callable<ResultActions>> callables = new ArrayList<>();
+                IntStream.rangeClosed(1, 4)
+                    .forEach(i -> callables.add(createPutDictionaryCallable()));
 
-            final String payload = "{\"English phrase 2\": \"Translated Phrase 2\","
-                + " \"English Phrase 3\": \"Translated Phrase 3\"}";
+                // WHEN
+                final List<Future<ResultActions>> taskFutureList = executorService.invokeAll(callables);
 
-            final CompletableFuture<ResultActions> future1 = CompletableFuture.supplyAsync(
-                ThrowingSupplier.unchecked(() -> mockMvc.perform(put(DICTIONARY_URL)
-                                                                     .header("ServiceAuthorization", serviceJwtXuiWeb)
-                                                                     .contentType(APPLICATION_JSON_VALUE)
-                                                                     .content(payload)))
-            );
-            final CompletableFuture<ResultActions> future2 = CompletableFuture.supplyAsync(
-                ThrowingSupplier.unchecked(() -> mockMvc.perform(put(DICTIONARY_URL)
-                                                                     .header("ServiceAuthorization", serviceJwtXuiWeb)
-                                                                     .contentType(APPLICATION_JSON_VALUE)
-                                                                     .content(payload)))
-            );
+                // THEN
+                assertThatResultsContainsConstraintViolation(taskFutureList);
+            } finally {
+                Objects.requireNonNull(executorService).shutdown();
+            }
+        }
 
-            final Throwable thrown = catchThrowable(() -> CompletableFuture.allOf(future1, future2).get());
+        private Callable<ResultActions> createPutDictionaryCallable() {
+            return new Callable<>() {
+                final String payload = "{\"translations\":{\"English phrase 2\": \"Translated Phrase 2\","
+                    + " \"English Phrase 3\": \"Translated Phrase 3\"}}";
 
-            // THEN
-            assertThatDataIntegrityViolationExceptionWasThrown(thrown);
+                public ResultActions call() throws Exception {
+                    final Jwt jwt = dummyJwt();
+                    when(authentication.getPrincipal()).thenReturn(jwt);
+                    SecurityContextHolder.setContext(new SecurityContextImpl(authentication));
+
+                    return mockMvc.perform(put(DICTIONARY_URL)
+                                               .header(SERVICE_AUTHORIZATION, serviceJwtXuiWeb)
+                                               .contentType(APPLICATION_JSON_VALUE)
+                                               .content(payload));
+                }
+            };
         }
 
         // manage-translations
@@ -188,7 +220,7 @@ public class DictionaryControllerIT extends BaseTest {
         void shouldReturn201ForPutDictionaryForIdamMUserWithManageTranslationCreateANewRecord() throws Exception {
             stubUserInfo("manage-translations");
             mockMvc.perform(put(DICTIONARY_URL)
-                                .header("ServiceAuthorization", serviceJwtXuiWeb)
+                                .header(SERVICE_AUTHORIZATION, serviceJwtXuiWeb)
                                 .contentType(APPLICATION_JSON_VALUE)
                                 .content(
                                     objectMapper.writeValueAsString(getDictionaryRequestsWithTranslationPhrases(1, 3))))
@@ -199,13 +231,12 @@ public class DictionaryControllerIT extends BaseTest {
             assertDictionaryEntityWithTranslationPhrases("english_2");
         }
 
-
         @Test
-        @Sql(scripts = {DELETE_TRANSLATION_TABLES_SCRIPT,PUT_CREATE_ENGLISH_PHRASES_WITH_TRANSLATIONS_SCRIPT})
+        @Sql(scripts = {DELETE_TRANSLATION_TABLES_SCRIPT, PUT_CREATE_ENGLISH_PHRASES_WITH_TRANSLATIONS_SCRIPT})
         void shouldReturn201ForPutDictionaryForIdamUserWithManageTranslationUpdateARecord() throws Exception {
             stubUserInfo("manage-translations");
             mockMvc.perform(put(DICTIONARY_URL)
-                                .header("ServiceAuthorization", serviceJwtXuiWeb)
+                                .header(SERVICE_AUTHORIZATION, serviceJwtXuiWeb)
                                 .contentType(APPLICATION_JSON_VALUE)
                                 .content(
                                     objectMapper.writeValueAsString(getDictionaryRequestsWithTranslationPhrases(1, 3))))
@@ -215,7 +246,6 @@ public class DictionaryControllerIT extends BaseTest {
             assertDictionaryEntityWithTranslationPhrases("english_1");
             assertDictionaryEntityWithTranslationPhrases("english_2");
         }
-
 
         // load-translations user
         @Test
@@ -224,11 +254,11 @@ public class DictionaryControllerIT extends BaseTest {
 
             stubUserInfo("load-translations");
             mockMvc.perform(put(DICTIONARY_URL)
-                                .header("ServiceAuthorization", serviceJwtXuiWeb)
+                                .header(SERVICE_AUTHORIZATION, serviceJwtXuiWeb)
                                 .contentType(APPLICATION_JSON_VALUE)
                                 .content(objectMapper.writeValueAsString(
                                     getDictionaryRequestsWithoutTranslationPhrases(1, 3)))
-            )
+                )
                 .andExpect(status().is(201))
                 .andReturn();
 
@@ -237,17 +267,17 @@ public class DictionaryControllerIT extends BaseTest {
         }
 
         @Test
-        @Sql(scripts = {DELETE_TRANSLATION_TABLES_SCRIPT,PUT_CREATE_ENGLISH_PHRASES_WITH_TRANSLATIONS_SCRIPT})
+        @Sql(scripts = {DELETE_TRANSLATION_TABLES_SCRIPT, PUT_CREATE_ENGLISH_PHRASES_WITH_TRANSLATIONS_SCRIPT})
         void shouldReturn201ForPutDictionaryForIdamUserWithLoadTranslationExistingPhrases() throws Exception {
 
             stubUserInfo("load-translations");
             mockMvc.perform(put(DICTIONARY_URL)
-                                .header("ServiceAuthorization", serviceJwtXuiWeb)
+                                .header(SERVICE_AUTHORIZATION, serviceJwtXuiWeb)
                                 .contentType(APPLICATION_JSON_VALUE)
                                 .content(
                                     objectMapper.writeValueAsString(
                                         getDictionaryRequestsWithoutTranslationPhrases(1, 2)))
-            )
+                )
                 .andExpect(status().is(201))
                 .andReturn();
             // No action taken for existing phrases, verify previous translations are preserved.
@@ -261,7 +291,7 @@ public class DictionaryControllerIT extends BaseTest {
 
             stubUserInfo("load-translations");
             mockMvc.perform(put(DICTIONARY_URL)
-                                .header("ServiceAuthorization", serviceJwtXuiWeb)
+                                .header(SERVICE_AUTHORIZATION, serviceJwtXuiWeb)
                                 .contentType(APPLICATION_JSON_VALUE)
                                 .content(
                                     objectMapper.writeValueAsString(getDictionaryRequestsWithTranslationPhrases(1, 2))))
@@ -275,14 +305,13 @@ public class DictionaryControllerIT extends BaseTest {
 
             stubUserInfo("load-translations");
             mockMvc.perform(put(DICTIONARY_URL)
-                                .header("ServiceAuthorization", serviceJwtDefinition)
+                                .header(SERVICE_AUTHORIZATION, serviceJwtDefinition)
                                 .contentType(APPLICATION_JSON_VALUE)
                                 .content(
                                     objectMapper.writeValueAsString(getDictionaryRequestsWithTranslationPhrases(1, 2))))
                 .andExpect(status().is(400))
                 .andReturn();
         }
-
 
         @Test
         @Sql(scripts = {DELETE_TRANSLATION_TABLES_SCRIPT})
@@ -297,12 +326,37 @@ public class DictionaryControllerIT extends BaseTest {
 
     }
 
-    private void assertThatDataIntegrityViolationExceptionWasThrown(final Throwable thrown) {
+    private void assertThatResultsContainsConstraintViolation(final List<Future<ResultActions>> taskFutureList) {
+        final List<Either<Throwable, ResultActions>> results = collateResults(taskFutureList);
+        assertThat(results)
+            .isNotNull()
+            .satisfies(items -> items.stream()
+                .filter(Either::isLeft)
+                .findFirst()
+                .map(item -> VavrAssertions.assertThat(item)
+                    .isNotNull()
+                    .hasLeftValueSatisfying(DictionaryControllerIT.this::assertConstraintViolation)));
+    }
+
+    private List<Either<Throwable, ResultActions>> collateResults(final List<Future<ResultActions>> taskFutureList) {
+        return taskFutureList.stream()
+            .map(future -> {
+                try {
+                    final ResultActions resultActions = future.get(4, TimeUnit.SECONDS);
+                    return Either.<Throwable, ResultActions>right(resultActions);
+                } catch (InterruptedException | ExecutionException | TimeoutException e) {
+                    return Either.<Throwable, ResultActions>left(e);
+                }
+            })
+            .toList();
+    }
+
+    private void assertConstraintViolation(final Throwable thrown) {
         assertThat(thrown)
             .isNotNull()
             .isInstanceOfSatisfying(
                 ExecutionException.class,
-                exception -> assertThat(exception.getCause().getCause().getCause())
+                exception -> assertThat(exception.getCause().getCause())
                     .isInstanceOf(DataIntegrityViolationException.class)
             );
     }

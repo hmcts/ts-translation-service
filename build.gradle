@@ -110,12 +110,6 @@ task smoke(type: JavaExec) {
   description = "Runs smoke tests"
   group = "Verification"
 
-  new File("$buildDir/test-results/test").mkdirs()
-  copy {
-    from "src/functional/resources/DummyTest.xml"
-    into "$buildDir/test-results/test"
-  }
-
   generateCucumberReports.enabled = false
   main = "uk.gov.hmcts.reform.translate.TranslationServiceBeftaMain"
   classpath += sourceSets.functionalTest.runtimeClasspath + sourceSets.main.output + sourceSets.test.output
@@ -123,7 +117,7 @@ task smoke(type: JavaExec) {
     '--strict',
     '--threads', '10',
     '--plugin', "json:${rootDir}/target/cucumber.json",
-    '--plugin', "junit:${buildDir}/test-results/functional/cucumber.xml",
+    '--plugin', "junit:${buildDir}/test-results/smoke/cucumber.xml",
     '--tags', '@Smoke and not @Ignore',
     '--glue', 'uk.gov.hmcts.befta.player', 'src/functionalTest/resources/features'
   ]
@@ -257,6 +251,8 @@ dependencies {
     exclude group: 'junit', module: 'junit'
     exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
   }
+  testImplementation group: 'io.vavr', name: 'vavr', version: '0.10.4'
+  testImplementation group: 'org.assertj', name: 'assertj-vavr', version: '0.4.2'
 
   integrationTestImplementation sourceSets.main.runtimeClasspath
   integrationTestImplementation sourceSets.test.runtimeClasspath
