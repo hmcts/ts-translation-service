@@ -66,7 +66,7 @@ public class BaseTest {
         SecurityContextHolder.setContext(new SecurityContextImpl(authentication));
     }
 
-    private Jwt dummyJwt() {
+    protected Jwt dummyJwt() {
         return Jwt.withTokenValue("a dummy jwt token")
             .claim("aClaim", "aClaim")
             .header("aHeader", "aHeader")

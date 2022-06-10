@@ -41,7 +41,8 @@ def versions = [
   junit           : '5.8.2',
   junitPlatform   : '1.7.2',
   serviceAuthVersion: '4.0.3',
-  idamClientVersion : '2.0.1'
+  idamClientVersion : '2.0.1',
+  authCheckerVersion : '2.1.5'
 ]
 
 ext.libraries = [
@@ -241,6 +242,9 @@ dependencies {
   implementation group: 'org.postgresql', name: 'postgresql', version: '42.3.4'
   implementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: versions.serviceAuthVersion
   implementation group: 'com.github.hmcts', name: 'idam-java-client', version: versions.idamClientVersion
+  implementation group: 'com.github.hmcts', name: 'auth-checker-lib', version: versions.authCheckerVersion, {
+    exclude group: 'uk.gov.hmcts.reform', module: 'java-logging-spring'
+  }
 
   annotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
   implementation group: 'org.projectlombok', name: 'lombok', version: versions.lombok
@@ -251,6 +255,8 @@ dependencies {
     exclude group: 'junit', module: 'junit'
     exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
   }
+  testImplementation group: 'io.vavr', name: 'vavr', version: '0.10.4'
+  testImplementation group: 'org.assertj', name: 'assertj-vavr', version: '0.4.2'
 
   integrationTestImplementation sourceSets.main.runtimeClasspath
   integrationTestImplementation sourceSets.test.runtimeClasspath
