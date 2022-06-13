@@ -251,6 +251,8 @@ dependencies {
     exclude group: 'junit', module: 'junit'
     exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
   }
+  testImplementation group: 'io.vavr', name: 'vavr', version: '0.10.4'
+  testImplementation group: 'org.assertj', name: 'assertj-vavr', version: '0.4.2'
 
   integrationTestImplementation sourceSets.main.runtimeClasspath
   integrationTestImplementation sourceSets.test.runtimeClasspath
@@ -261,6 +263,7 @@ dependencies {
   integrationTestImplementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
   testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
   integrationTestAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
+  integrationTestImplementation group: 'com.pivovarit', name: 'throwing-function', version: '1.5.1'
 
   functionalTestImplementation sourceSets.main.runtimeClasspath
   functionalTestImplementation sourceSets.test.runtimeClasspath

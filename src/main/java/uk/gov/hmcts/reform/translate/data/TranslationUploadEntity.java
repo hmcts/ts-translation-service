@@ -8,18 +8,18 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
 
 @Table(name = "translation_upload")
 @Entity
 @Data
 public class TranslationUploadEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY,
-        generator = "translation_version_seq")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "translation_version_gen")
+    @SequenceGenerator(name = "translation_version_gen", sequenceName = "translation_version_seq", allocationSize = 1)
     @Column(name = "version")
-    private Integer version;
+    private Long version;
 
     @Column(name = "uploaded")
     private LocalDateTime uploaded;
