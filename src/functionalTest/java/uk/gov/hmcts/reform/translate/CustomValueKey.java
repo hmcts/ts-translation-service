@@ -4,8 +4,10 @@ import java.util.Arrays;
 
 public enum CustomValueKey {
     UNIQUE_STRING("UniqueString"),
+    UNIQUE_TRANSLATION("UniqueTranslation"),
     CONTAINS_DICTIONARY_TRANSLATIONS("containsDictionaryTranslations"),
     S_003_1("S-003.1"),
+    S_004_1("S-004.1"),
     DEFAULT_KEY("DefaultKey");
 
     private final String value;

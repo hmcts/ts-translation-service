@@ -7,7 +7,7 @@
 
   "users": {
     "invokingUser": {
-      "_extends_": "BeftaCaseworker1"
+      "_extends_": "BeftaCaseworker2Solicitor1"
     }
   },
 

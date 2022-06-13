@@ -14,7 +14,7 @@
   "request": {
     "_extends_": "Common_Request",
     "body": {
-      "translations": "${[scenarioContext][customValues][createUniqueEnglishPhrase]}"
+      "translations": "${[scenarioContext][customValues][UniqueTranslation TEST1]}"
     }
   },
 

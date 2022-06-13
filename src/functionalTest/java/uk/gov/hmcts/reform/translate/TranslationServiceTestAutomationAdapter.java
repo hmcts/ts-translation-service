@@ -8,13 +8,25 @@ import uk.gov.hmcts.befta.player.BackEndFunctionalTestScenarioContext;
 import java.util.stream.Stream;
 
 public class TranslationServiceTestAutomationAdapter extends DefaultTestAutomationAdapter {
+
     private final CustomValueEvaluator dictionaryTranslationsEvaluator = new DictionaryTranslationsEvaluator();
     private final CustomValueEvaluator getTranslationsEvaluator = new GetTranslationsEvaluator();
     private final CustomValueEvaluator uniqueStringEvaluator = new UniqueStringEvaluator();
 
     @Override
     public synchronized Object calculateCustomValue(BackEndFunctionalTestScenarioContext scenarioContext, Object key) {
-        return Stream.of(dictionaryTranslationsEvaluator, getTranslationsEvaluator, uniqueStringEvaluator)
+
+//      System.out.println("CONTEXTID ----   "+scenarioContext.getContextId());
+//        if (scenarioContext.getContextId().equals("S-004.1")) {
+//            System.out.println("CUSTOMVALUE PARENT===>     "+scenarioContext.getParentContext());
+//            System.out.println("CUSTOMVALUE SIBLING===>     "+scenarioContext.getSiblingContexts());
+//            System.out.println("CUSTOMVALUE CHILD===>     "+scenarioContext.getChildContexts());
+//        }
+
+
+        return Stream.of(dictionaryTranslationsEvaluator, getTranslationsEvaluator, uniqueStringEvaluator
+
+            )
             .filter(candidate -> candidate.matches(CustomValueKey.getEnum(key.toString())))
             .findFirst()
             .map(evaluator -> evaluator.calculate(scenarioContext, key))

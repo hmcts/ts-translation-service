@@ -4,20 +4,17 @@
   "specs": [
     "to PUT translation phrases into the dictionary"
   ],
-
   "users": {
     "invokingUser": {
-      "_extends_": "ManageTranslationsUser"
+      "_extends_": "ManageAndLoadTranslationsUser"
     }
   },
-
   "request": {
     "_extends_": "Common_Request",
     "body": {
-      "translations": "${[scenarioContext][customValues][createUniqueTranslationPhrase TEST1]}"
+        "translations": "${[scenarioContext][customValues][UniqueTranslation]}"
     }
   },
-
   "expectedResponse": {
     "_extends_": "Common_201_Response"
   }

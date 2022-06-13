@@ -1,9 +1,9 @@
 {
-  "_guid_": "S-004.3",
+  "_guid_": "S-004.1",
   "_extends_": "Get_Dictionary_Base",
 
   "specs": [
-    "with load-translation IDAM role",
+    "with manage-translation IDAM role",
     "has the 200 OK status code"
   ],
   "users": {
@@ -19,7 +19,7 @@
     "responseCode": 200,
     "responseMessage": "OK",
     "body": {
-      "translations": "${[scenarioContext][customValues][containsUniqueDictionaryTranslations  TEST1]}"
+      "translations": "[[ANYTHING_PRESENT]]"
     }
   }
 }
