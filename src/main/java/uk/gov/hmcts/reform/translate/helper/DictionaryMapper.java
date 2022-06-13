@@ -7,25 +7,20 @@ import uk.gov.hmcts.reform.translate.data.TranslationUploadEntity;
 
 import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.Optional;
 
 @Component
 public class DictionaryMapper {
 
     public DictionaryEntity modelToEntityWithTranslationUploadEntity(final Map.Entry<String, String> currentPhrase,
-                                                                     final String currentUserId) {
-
+                                                                     TranslationUploadEntity translationUploadEntity) {
         val dictionaryEntity = modelToEntity(currentPhrase);
-        val translationUploadEntity = new TranslationUploadEntity();
-        translationUploadEntity.setUserId(currentUserId);
-        translationUploadEntity.setUploaded(LocalDateTime.now());
-
         dictionaryEntity.setTranslationUpload(translationUploadEntity);
         return dictionaryEntity;
     }
 
     public DictionaryEntity modelToEntity(final Map.Entry<String, String> currentPhrase) {
-        val dictionaryEntity = new DictionaryEntity();
-        dictionaryEntity.setEnglishPhrase(currentPhrase.getKey());
+        val dictionaryEntity = modelToEntityWithoutTranslationPhrase(currentPhrase);
         dictionaryEntity.setTranslationPhrase(currentPhrase.getValue());
         return dictionaryEntity;
     }
@@ -34,5 +29,16 @@ public class DictionaryMapper {
         val dictionaryEntity = new DictionaryEntity();
         dictionaryEntity.setEnglishPhrase(currentPhrase.getKey());
         return dictionaryEntity;
+    }
+
+    public TranslationUploadEntity createTranslationUploadEntity(String currentUserId) {
+        val translationUploadEntity = new TranslationUploadEntity();
+        translationUploadEntity.setUserId(currentUserId);
+        translationUploadEntity.setUploaded(LocalDateTime.now());
+        return translationUploadEntity;
+    }
+
+    public Optional<TranslationUploadEntity> getTranslationUploadEntityEmpty() {
+        return Optional.empty();
     }
 }
