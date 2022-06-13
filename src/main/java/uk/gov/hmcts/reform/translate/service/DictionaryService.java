@@ -2,7 +2,6 @@ package uk.gov.hmcts.reform.translate.service;
 
 import lombok.NonNull;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.translate.ApplicationParams;
@@ -21,11 +20,13 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import static uk.gov.hmcts.reform.translate.helper.DictionaryUtils.hasAnyTranslation;
+import static uk.gov.hmcts.reform.translate.helper.DictionaryUtils.hasAnyTranslations;
+import static uk.gov.hmcts.reform.translate.helper.DictionaryUtils.isTranslationBodyEmpty;
 import static uk.gov.hmcts.reform.translate.security.SecurityUtils.LOAD_TRANSLATIONS_ROLE;
 import static uk.gov.hmcts.reform.translate.security.SecurityUtils.MANAGE_TRANSLATIONS_ROLE;
 
@@ -40,7 +41,6 @@ public class DictionaryService {
     private final DictionaryMapper dictionaryMapper;
     private final SecurityUtils securityUtils;
     private final ApplicationParams applicationParams;
-    private final Predicate<String> isTranslationNotNull = translation -> !StringUtils.isEmpty(translation);
 
     @Autowired
     public DictionaryService(DictionaryRepository dictionaryRepository, DictionaryMapper dictionaryMapper,
@@ -104,8 +104,8 @@ public class DictionaryService {
         val currentUserId = securityUtils.getUserInfo().getUid();
 
         val translationUploadOptional = hasAnyTranslations(dictionaryRequest)
-            ? Optional.of(dictionaryMapper.createTranslationUploadEntity(currentUserId))
-            : dictionaryMapper.getTranslationUploadEntityEmpty();
+            ? dictionaryMapper.createTranslationUploadEntity(currentUserId)
+            : new TranslationUploadEntity();
 
         dictionaryRequest.getTranslations().entrySet()
             .stream()
@@ -113,7 +113,7 @@ public class DictionaryService {
     }
 
     private void processPhrase(Map.Entry<String, String> currentPhrase,
-                               Optional<TranslationUploadEntity> translationUploadOptional) {
+                               TranslationUploadEntity translationUploadOptional) {
 
         val result = dictionaryRepository.findByEnglishPhrase(currentPhrase.getKey());
         if (result.isPresent()) {
@@ -125,20 +125,20 @@ public class DictionaryService {
 
 
     private void createNewPhrase(Map.Entry<String, String> currentPhrase,
-                                 Optional<TranslationUploadEntity> translationUploadOptional) {
+                                 TranslationUploadEntity translationUploadOptional) {
 
         val newEntity = hasAnyTranslation(currentPhrase)
-            ? dictionaryMapper.modelToEntityWithTranslationUploadEntity(currentPhrase, translationUploadOptional.get())
+            ? dictionaryMapper.modelToEntityWithTranslationUploadEntity(currentPhrase, translationUploadOptional)
             : dictionaryMapper.modelToEntityWithoutTranslationPhrase(currentPhrase);
         dictionaryRepository.save(newEntity);
     }
 
     private void updatePhrase(Map.Entry<String, String> currentPhrase,
                               DictionaryEntity dictionaryEntity,
-                              Optional<TranslationUploadEntity> translationUploadOptional) {
+                              TranslationUploadEntity translationUploadOptional) {
 
         if (hasAnyTranslation(currentPhrase)) {
-            dictionaryEntity.setTranslationUpload(translationUploadOptional.get());
+            dictionaryEntity.setTranslationUpload(translationUploadOptional);
             dictionaryEntity.setTranslationPhrase(currentPhrase.getValue());
             dictionaryRepository.save(dictionaryEntity);
         }
@@ -165,17 +165,5 @@ public class DictionaryService {
         if (!isManageTranslationRole && hasAnyTranslations(dictionaryRequest)) {
             throw new BadRequestException(INVALID_PAYLOAD_FOR_ROLE);
         }
-    }
-
-    private boolean isTranslationBodyEmpty(final Dictionary dictionaryRequest) {
-        return dictionaryRequest.getTranslations() == null || dictionaryRequest.getTranslations().isEmpty();
-    }
-
-    private boolean hasAnyTranslations(final Dictionary dictionaryRequest) {
-        return dictionaryRequest.getTranslations().values().stream().anyMatch(isTranslationNotNull);
-    }
-
-    private boolean hasAnyTranslation(final Map.Entry<String, String> currentPhrase) {
-        return isTranslationNotNull.test(currentPhrase.getValue());
     }
 }
