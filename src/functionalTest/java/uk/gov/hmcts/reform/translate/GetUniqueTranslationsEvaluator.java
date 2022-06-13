@@ -4,11 +4,7 @@ import uk.gov.hmcts.befta.exception.FunctionalTestException;
 import uk.gov.hmcts.befta.player.BackEndFunctionalTestScenarioContext;
 import uk.gov.hmcts.befta.util.ReflectionUtils;
 
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-
-import static java.util.Collections.singletonMap;
 
 public class GetUniqueTranslationsEvaluator implements CustomValueEvaluator {
     @Override
@@ -18,20 +14,16 @@ public class GetUniqueTranslationsEvaluator implements CustomValueEvaluator {
 
     @Override
     public Object calculate(BackEndFunctionalTestScenarioContext scenarioContext, Object key) {
-      /*  try {
-            @SuppressWarnings("unchecked")
-            final List<String> phrases = (List<String>) ReflectionUtils.deepGetFieldInObject(
+        try {
+            @SuppressWarnings("unchecked") final Map<String, String> translations =
+                (Map<String, String>) ReflectionUtils.deepGetFieldInObject(
                 scenarioContext,
-                "testData.request.body.phrases"
+                "childContexts.F-004_1_Put_Dictionary_Entries.testData.request.body.translations"
             );
 
-            return phrases.stream()
-                .map(phrase -> singletonMap(phrase, phrase))
-                .flatMap(m -> m.entrySet().stream())
-                .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
+            return translations.keySet();
         } catch (Exception e) {
             throw new FunctionalTestException("Problem checking acceptable response payload: ", e);
-        }*/
-        return scenarioContext;
+        }
     }
 }

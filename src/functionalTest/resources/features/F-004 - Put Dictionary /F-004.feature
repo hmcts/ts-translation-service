@@ -13,7 +13,7 @@ Feature: F-004: Put Dictionary Operation
     Given a user [with manage-translation IDAM role],
     And   a successful call [to PUT translation phrases into the dictionary] as in [F-004_1_Put_Dictionary_Entries],
     When  a request is prepared with appropriate values
-    And   it is submitted to call the [GET dictionary] operation of [Translation Service]
+    And   it is submitted to call the [translate] operation of [Translation Service]
     Then  a positive response is received
     And   the response [has the 200 OK status code]
     And   the response has all other details as expected.

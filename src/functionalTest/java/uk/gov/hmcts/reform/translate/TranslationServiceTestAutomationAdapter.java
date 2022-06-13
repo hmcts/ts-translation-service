@@ -12,21 +12,13 @@ public class TranslationServiceTestAutomationAdapter extends DefaultTestAutomati
     private final CustomValueEvaluator dictionaryTranslationsEvaluator = new DictionaryTranslationsEvaluator();
     private final CustomValueEvaluator getTranslationsEvaluator = new GetTranslationsEvaluator();
     private final CustomValueEvaluator uniqueStringEvaluator = new UniqueStringEvaluator();
+    private final CustomValueEvaluator uniqueTranslationEvaluator = new UniqueTranslationEvaluator();
+    private final CustomValueEvaluator getDictionaryTranslationsEvaluator = new GetUniqueTranslationsEvaluator();
 
     @Override
     public synchronized Object calculateCustomValue(BackEndFunctionalTestScenarioContext scenarioContext, Object key) {
-
-//      System.out.println("CONTEXTID ----   "+scenarioContext.getContextId());
-//        if (scenarioContext.getContextId().equals("S-004.1")) {
-//            System.out.println("CUSTOMVALUE PARENT===>     "+scenarioContext.getParentContext());
-//            System.out.println("CUSTOMVALUE SIBLING===>     "+scenarioContext.getSiblingContexts());
-//            System.out.println("CUSTOMVALUE CHILD===>     "+scenarioContext.getChildContexts());
-//        }
-
-
-        return Stream.of(dictionaryTranslationsEvaluator, getTranslationsEvaluator, uniqueStringEvaluator
-
-            )
+        return Stream.of(dictionaryTranslationsEvaluator, getTranslationsEvaluator, uniqueStringEvaluator,
+                         uniqueTranslationEvaluator, getDictionaryTranslationsEvaluator)
             .filter(candidate -> candidate.matches(CustomValueKey.getEnum(key.toString())))
             .findFirst()
             .map(evaluator -> evaluator.calculate(scenarioContext, key))
