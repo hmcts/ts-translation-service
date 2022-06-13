@@ -24,8 +24,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import static uk.gov.hmcts.reform.translate.helper.DictionaryUtils.hasAnyTranslation;
 import static uk.gov.hmcts.reform.translate.helper.DictionaryUtils.hasAnyTranslations;
+import static uk.gov.hmcts.reform.translate.helper.DictionaryUtils.hasTranslationPhrase;
 import static uk.gov.hmcts.reform.translate.helper.DictionaryUtils.isTranslationBodyEmpty;
 import static uk.gov.hmcts.reform.translate.security.SecurityUtils.LOAD_TRANSLATIONS_ROLE;
 import static uk.gov.hmcts.reform.translate.security.SecurityUtils.MANAGE_TRANSLATIONS_ROLE;
@@ -105,7 +105,7 @@ public class DictionaryService {
 
         val translationUploadOptional = hasAnyTranslations(dictionaryRequest)
             ? dictionaryMapper.createTranslationUploadEntity(currentUserId)
-            : new TranslationUploadEntity();
+            : null;
 
         dictionaryRequest.getTranslations().entrySet()
             .stream()
@@ -127,7 +127,7 @@ public class DictionaryService {
     private void createNewPhrase(Map.Entry<String, String> currentPhrase,
                                  TranslationUploadEntity translationUploadOptional) {
 
-        val newEntity = hasAnyTranslation(currentPhrase)
+        val newEntity = hasTranslationPhrase(currentPhrase)
             ? dictionaryMapper.modelToEntityWithTranslationUploadEntity(currentPhrase, translationUploadOptional)
             : dictionaryMapper.modelToEntityWithoutTranslationPhrase(currentPhrase);
         dictionaryRepository.save(newEntity);
@@ -137,7 +137,7 @@ public class DictionaryService {
                               DictionaryEntity dictionaryEntity,
                               TranslationUploadEntity translationUploadOptional) {
 
-        if (hasAnyTranslation(currentPhrase)) {
+        if (hasTranslationPhrase(currentPhrase)) {
             dictionaryEntity.setTranslationUpload(translationUploadOptional);
             dictionaryEntity.setTranslationPhrase(currentPhrase.getValue());
             dictionaryRepository.save(dictionaryEntity);

@@ -6,8 +6,8 @@ import uk.gov.hmcts.reform.translate.model.Dictionary;
 import java.util.Map;
 import java.util.function.Predicate;
 
-@SuppressWarnings({"PMD", "checkstyle:hideutilityclassconstructor"})
-public class DictionaryUtils {
+
+public final class DictionaryUtils {
 
     private static final Predicate<String> isTranslationNotNull = translation -> !StringUtils.isEmpty(translation);
 
@@ -19,7 +19,11 @@ public class DictionaryUtils {
         return dictionaryRequest.getTranslations().values().stream().anyMatch(isTranslationNotNull);
     }
 
-    public static boolean hasAnyTranslation(final Map.Entry<String, String> currentPhrase) {
+    public static boolean hasTranslationPhrase(final Map.Entry<String, String> currentPhrase) {
         return isTranslationNotNull.test(currentPhrase.getValue());
+    }
+
+    // Hide Utility Class Constructor : Utility classes should not have a public or default constructor (squid:S1118)
+    private DictionaryUtils() {
     }
 }
