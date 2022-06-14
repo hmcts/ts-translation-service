@@ -376,7 +376,7 @@ public class DictionaryControllerIT extends BaseTest {
         return new Dictionary(expectedMapKeysAndValues);
     }
 
-    private Integer assertDictionaryEntityWithTranslationPhrases(String englishPhrase) {
+    private Long assertDictionaryEntityWithTranslationPhrases(String englishPhrase) {
         val dictionaryEntity = dictionaryRepository.findByEnglishPhrase(englishPhrase);
         assertTrue(dictionaryEntity.isPresent());
         assertNotNull(dictionaryEntity.get().getTranslationUpload());

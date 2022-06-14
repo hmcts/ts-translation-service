@@ -76,6 +76,7 @@ public class DictionaryService {
         }
     }
 
+    @Transactional
     public Map<String, String> getTranslations(@NonNull final Set<String> phrases) {
         return phrases.stream()
             .map(phrase -> {
@@ -98,7 +99,7 @@ public class DictionaryService {
     }
 
     @Transactional
-    public void putDictionary(Dictionary dictionaryRequest) {
+    public void putDictionary(final Dictionary dictionaryRequest) {
 
         val isManageTranslationRole = securityUtils.hasRole(MANAGE_TRANSLATIONS_ROLE);
         validateDictionary(dictionaryRequest, isManageTranslationRole);
