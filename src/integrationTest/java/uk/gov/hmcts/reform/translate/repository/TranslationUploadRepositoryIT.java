@@ -37,7 +37,7 @@ class TranslationUploadRepositoryIT extends BaseTest {
     @Sql(scripts = {DELETE_TRANSLATION_TABLES_SCRIPT, GET_TRANSLATION_TABLES_SCRIPT})
     @Test
     void testFindTranslationUploadById() {
-        final var optionalTranslationUploadEntity = translationUploadRepository.findById(1);
+        final var optionalTranslationUploadEntity = translationUploadRepository.findById(1L);
         assertTrue(optionalTranslationUploadEntity.isPresent());
 
         final var translationUploadEntity = optionalTranslationUploadEntity.get();

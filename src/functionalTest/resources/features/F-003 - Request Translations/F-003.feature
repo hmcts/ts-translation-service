@@ -1,7 +1,6 @@
 #====================================
 @F-003
-@Ignore # to be completed under WLTS-16
-Feature: F-003: Get Translations
+Feature: F-003: Request Translations
 #====================================
 
   Background: Load test data for the scenario
