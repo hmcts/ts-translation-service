@@ -5,16 +5,20 @@ management:
   endpoint:
     health:
       show-details: "always"
+      cache:
+        time-to-live: 10s
   endpoints:
     web:
       base-path: /
       exposure:
         include: health, info, prometheus
+  health:
+    probes:
+      enabled: true
 
 springdoc:
   packagesToScan: uk.gov.hmcts.reform.translate.controllers
 
-#If you use a database then uncomment below lines and update db properties accordingly
 spring:
   main:
     allow-bean-definition-overriding: true
@@ -73,7 +77,7 @@ idam:
     totp_secret: ${IDAM_KEY_TS_TRANSLATION_SERVICE:AAAAAAAAAAAAAAAA}
     url: ${S2S_URL:http://localhost:4502}
   s2s-authorised:
-    services: ${TS_TRANSLATION_SERVICE_S2S_AUTHORISED_SERVICES:xui_webapp,ccd_admin}
+    services: ${TS_TRANSLATION_SERVICE_S2S_AUTHORISED_SERVICES:xui_webapp,ccd_admin,ccd_definition}
 
 oidc:
   issuer: ${OIDC_ISSUER:http://fr-am:8080/openam/oauth2/hmcts}
