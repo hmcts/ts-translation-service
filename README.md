@@ -47,6 +47,15 @@ You should get a response similar to this:
   {"status":"UP","components":{"diskSpace":{"status":"UP","details":{"total":67371577344,"free":42536177664,"threshold":10485760,"exists":true}},"ping":{"status":"UP"}}}
 ```
 
+Should the docker containers fail to start, it is likely that the `bootWithCCD` plugin is not authorized to pull the container images from Azure.
+
+Log in, using the commands below
+
+```bash
+  az acr login --name hmctspublic --subscription DCD-CNP-DEV
+  az acr login --name hmctspublic --subscription DCD-CFT-Sandbox
+```
+
 ### Alternative to running the application
 
 Create the image of the application by executing the following command:
