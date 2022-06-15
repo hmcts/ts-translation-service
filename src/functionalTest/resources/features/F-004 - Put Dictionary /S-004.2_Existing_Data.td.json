@@ -1,5 +1,5 @@
 {
-  "_guid_": "F-004_3_Put_Dictionary_Entries",
+  "_guid_": "S-004.2_Existing_Data",
   "_extends_": "Put_Dictionary_Base",
   "specs": [
     "to PUT translation phrases into the dictionary"
@@ -7,14 +7,16 @@
 
   "users": {
     "invokingUser": {
-      "_extends_": "LoadTranslationsUser"
+      "_extends_": "ManageTranslationsUser"
     }
   },
 
   "request": {
     "_extends_": "Common_Request",
     "body": {
-      "translations": "${[scenarioContext][customValues][UniqueTranslation TEST1]}"
+      "translations": {
+        "EnglishPhrase2": "WelshPhrase1"
+      }
     }
   },
 

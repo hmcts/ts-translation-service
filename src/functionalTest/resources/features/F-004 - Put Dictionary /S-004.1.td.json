@@ -1,31 +1,23 @@
 {
   "_guid_": "S-004.1",
-  "_extends_": "Translation_Cy_Base",
-
+  "_extends_": "Put_Dictionary_Base",
   "specs": [
+    "add a new English to Welsh translation",
     "with manage-translation IDAM role",
-    "has the 200 OK status code"
+    "has the 201 OK status code"
   ],
   "users": {
     "invokingUser": {
-      "_extends_": "ManageTranslationsUser"
+      "_extends_": "ManageAndLoadTranslationsUser"
     }
   },
   "request": {
     "_extends_": "Common_Request",
-    "headers": {
-      "Accept": "application/json"
-    },
     "body": {
-      "phrases": "${[scenarioContext][customValues][S-004.1]}"
+        "translations": "${[scenarioContext][customValues][UniqueTranslation]}"
     }
   },
   "expectedResponse": {
-    "_extends_": "Common_Response",
-    "responseCode": 200,
-    "responseMessage": "OK",
-    "body": {
-      "translations": "${[scenarioContext][childContexts][F-004_1_Put_Dictionary_Entries][testData][request][body][translations]}"
-    }
+    "_extends_": "Common_201_Response"
   }
 }

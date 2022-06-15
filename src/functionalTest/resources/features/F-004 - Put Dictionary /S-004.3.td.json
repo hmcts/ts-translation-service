@@ -1,25 +1,26 @@
 {
   "_guid_": "S-004.3",
-  "_extends_": "Get_Dictionary_Base",
-
+  "_extends_": "Put_Dictionary_Base",
   "specs": [
+    "add a new English only phrase",
     "with load-translation IDAM role",
-    "has the 200 OK status code"
+    "has the 201 OK status code"
   ],
+
   "users": {
     "invokingUser": {
-      "_extends_": "ManageTranslationsUser"
+      "_extends_": "LoadTranslationsUser"
     }
   },
+
   "request": {
-    "_extends_": "Common_Request"
-  },
-  "expectedResponse": {
-    "_extends_": "Common_Response",
-    "responseCode": 200,
-    "responseMessage": "OK",
+    "_extends_": "Common_Request",
     "body": {
-      "translations": "${[scenarioContext][customValues][containsUniqueDictionaryTranslations]}"
+      "translations": "${[scenarioContext][customValues][UniqueLoadTranslation]}"
     }
+  },
+
+  "expectedResponse": {
+    "_extends_": "Common_201_Response"
   }
 }

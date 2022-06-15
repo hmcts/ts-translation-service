@@ -2,6 +2,7 @@
   "_guid_": "S-004.4",
   "_extends_": "Put_Dictionary_Base",
   "specs": [
+    "is a valid request with the wrong roles",
     "without manage-translation or load-translation IDAM role",
     "has the 403 Forbidden status code"
   ],

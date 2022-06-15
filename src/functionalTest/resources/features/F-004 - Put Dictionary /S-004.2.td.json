@@ -1,25 +1,28 @@
 {
   "_guid_": "S-004.2",
-  "_extends_": "Get_Dictionary_Base",
-
+  "_extends_": "Put_Dictionary_Base",
   "specs": [
+    "update Welsh phrase of an existing English phrase",
     "with manage-translation IDAM role",
-    "has the 200 OK status code"
+    "has the 201 OK status code"
   ],
+
   "users": {
     "invokingUser": {
       "_extends_": "ManageTranslationsUser"
     }
   },
+
   "request": {
-    "_extends_": "Common_Request"
-  },
-  "expectedResponse": {
-    "_extends_": "Common_Response",
-    "responseCode": 200,
-    "responseMessage": "OK",
+    "_extends_": "Common_Request",
     "body": {
-      "translations": "${[scenarioContext][customValues][containsDictionaryTranslations EnglishPhrase2: WelshPhrase2]}"
+      "translations": {
+        "EnglishPhrase2": "WelshPhrase2"
+      }
     }
+  },
+
+  "expectedResponse": {
+    "_extends_": "Common_201_Response"
   }
 }

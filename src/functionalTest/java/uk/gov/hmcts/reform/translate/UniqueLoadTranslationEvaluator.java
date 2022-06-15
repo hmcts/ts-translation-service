@@ -2,15 +2,18 @@ package uk.gov.hmcts.reform.translate;
 
 import uk.gov.hmcts.befta.player.BackEndFunctionalTestScenarioContext;
 
-public class UniqueStringEvaluator implements CustomValueEvaluator {
+import java.util.Map;
+
+public class UniqueLoadTranslationEvaluator implements CustomValueEvaluator {
 
     @Override
     public Boolean matches(CustomValueKey key) {
-        return CustomValueKey.UNIQUE_STRING.equals(key);
+        return CustomValueKey.UNIQUE_LOAD_TRANSLATION.equals(key);
     }
 
     @Override
     public Object calculate(BackEndFunctionalTestScenarioContext scenarioContext, Object key) {
-        return StringGenerator.generate();
+        String englishPhrase = StringGenerator.generate();
+        return Map.of(englishPhrase, "");
     }
 }

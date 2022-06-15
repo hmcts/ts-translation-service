@@ -9,16 +9,17 @@ import java.util.Map;
 public class GetUniqueTranslationsEvaluator implements CustomValueEvaluator {
     @Override
     public Boolean matches(CustomValueKey key) {
-        return CustomValueKey.S_004_1.equals(key);
+        return CustomValueKey.GET_UNIQUE_TRANSLATIONS.equals(key);
     }
 
     @Override
     public Object calculate(BackEndFunctionalTestScenarioContext scenarioContext, Object key) {
         try {
+
             @SuppressWarnings("unchecked") final Map<String, String> translations =
                 (Map<String, String>) ReflectionUtils.deepGetFieldInObject(
                 scenarioContext,
-                "childContexts.F-004_1_Put_Dictionary_Entries.testData.request.body.translations"
+                "parentContext.testData.request.body.translations"
             );
 
             return translations.keySet();

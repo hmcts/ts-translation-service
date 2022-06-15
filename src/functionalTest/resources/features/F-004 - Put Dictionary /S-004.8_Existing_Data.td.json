@@ -1,21 +1,23 @@
 {
-  "_guid_": "F-004_2_2_Put_Dictionary_Entries",
+  "_guid_": "S-004.8_Existing_Data",
   "_extends_": "Put_Dictionary_Base",
   "specs": [
-    "to PUT translation phrases into the dictionary 2"
+    "to PUT translation phrases into the dictionary"
   ],
 
   "users": {
     "invokingUser": {
-      "_extends_": "ManageTranslationsUser"
+      "_extends_": "BeftaCaseworker2Solicitor1"
     }
   },
+
+  "s2sClientId": "ccd_definition",
 
   "request": {
     "_extends_": "Common_Request",
     "body": {
       "translations": {
-        "EnglishPhrase2": "WelshPhrase2"
+        "EnglishPhrase8": ""
       }
     }
   },

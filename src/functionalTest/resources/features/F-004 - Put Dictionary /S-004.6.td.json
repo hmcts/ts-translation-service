@@ -2,6 +2,7 @@
   "_guid_": "S-004.6",
   "_extends_": "Put_Dictionary_Base",
   "specs": [
+    "where the translations are null",
     "with manage-translation IDAM role",
     "has the 400 Bad Request status code"
   ],

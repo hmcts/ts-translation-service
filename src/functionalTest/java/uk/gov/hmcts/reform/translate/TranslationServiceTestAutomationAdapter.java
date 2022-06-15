@@ -13,12 +13,16 @@ public class TranslationServiceTestAutomationAdapter extends DefaultTestAutomati
     private final CustomValueEvaluator getTranslationsEvaluator = new GetTranslationsEvaluator();
     private final CustomValueEvaluator uniqueStringEvaluator = new UniqueStringEvaluator();
     private final CustomValueEvaluator uniqueTranslationEvaluator = new UniqueTranslationEvaluator();
+    private final CustomValueEvaluator uniqueLoadTranslationEvaluator = new UniqueLoadTranslationEvaluator();
     private final CustomValueEvaluator getDictionaryTranslationsEvaluator = new GetUniqueTranslationsEvaluator();
+    private final CustomValueEvaluator getExpectedTranslationResponseEvaluator
+        = new GetExpectedTranslationResponseEvaluator();
 
     @Override
     public synchronized Object calculateCustomValue(BackEndFunctionalTestScenarioContext scenarioContext, Object key) {
         return Stream.of(dictionaryTranslationsEvaluator, getTranslationsEvaluator, uniqueStringEvaluator,
-                         uniqueTranslationEvaluator, getDictionaryTranslationsEvaluator)
+                         uniqueTranslationEvaluator, getDictionaryTranslationsEvaluator, uniqueLoadTranslationEvaluator,
+                         getExpectedTranslationResponseEvaluator)
             .filter(candidate -> candidate.matches(CustomValueKey.getEnum(key.toString())))
             .findFirst()
             .map(evaluator -> evaluator.calculate(scenarioContext, key))
