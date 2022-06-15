@@ -7,12 +7,12 @@
   ],
   "users": {
     "invokingUser": {
-      "_extends_": "BeftaCaseworker2Solicitor2"
     }
   },
   "request": {
-    "_extends_": "Common_Request",
     "headers": {
+      "ServiceAuthorization": "[[DEFAULT_AUTO_VALUE]]",
+      "Content-Type": "application/json",
       "Accept": "application/json"
     },
     "body": {

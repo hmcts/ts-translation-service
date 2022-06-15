@@ -11,7 +11,6 @@ Feature: F-003: Request Translations
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   @S-003.1 #AC01
   Scenario: must return a successful response when translate operation is requested
-    Given a user with [an active solicitor profile]
     When a request is prepared with appropriate values
     And it is submitted to call the [translate] operation of [Translation Service]
     Then a positive response is received
