@@ -2,7 +2,7 @@
   "_guid_": "S-004.8",
   "_extends_": "Put_Dictionary_Base",
   "specs": [
-    "does not update anything",
+    "contains an entry for an english phrase that already exists",
     "without manage-translation or load-translation IDAM role and uses ccd-definition",
     "has the 201 OK status code"
   ],

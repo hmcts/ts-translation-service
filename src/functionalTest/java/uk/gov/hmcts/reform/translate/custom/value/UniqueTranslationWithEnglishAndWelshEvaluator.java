@@ -1,14 +1,15 @@
-package uk.gov.hmcts.reform.translate;
+package uk.gov.hmcts.reform.translate.custom.value;
 
 import uk.gov.hmcts.befta.player.BackEndFunctionalTestScenarioContext;
+import uk.gov.hmcts.reform.translate.StringGenerator;
 
 import java.util.Map;
 
-public class UniqueTranslationEvaluator implements CustomValueEvaluator {
+public class UniqueTranslationWithEnglishAndWelshEvaluator implements CustomValueEvaluator {
 
     @Override
     public Boolean matches(CustomValueKey key) {
-        return CustomValueKey.UNIQUE_TRANSLATION.equals(key);
+        return CustomValueKey.UNIQUE_TRANSLATION_WITH_ENGLISH_AND_WELSH.equals(key);
     }
 
     @Override

@@ -72,7 +72,7 @@ Feature: F-004: Put Dictionary Operation
     And   the response has all other details as expected.
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  @S-004.6 #AC5 - Translation is null
+  @S-004.6 #WLTS-4 AC5 - Translation is null
   Scenario: Bad Request - Return 400 error when Translations are null
 
     Given a user [with manage-translation IDAM role],
@@ -104,7 +104,7 @@ Feature: F-004: Put Dictionary Operation
     Given a user [without manage-translation or load-translation IDAM role and uses ccd-definition],
     And   a successful call [to PUT translation phrases into the dictionary] as in [S-004.8_Existing_Data],
     When  a request is prepared with appropriate values
-    And   the request [does not update anything]
+    And   the request [contains an entry for an english phrase that already exists]
     And   it is submitted to call the [PUT dictionary] operation of [Translation Service]
     Then  a positive response is received
     And   the response [has the 201 OK status code]

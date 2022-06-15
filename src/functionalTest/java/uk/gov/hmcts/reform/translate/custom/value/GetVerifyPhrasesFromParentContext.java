@@ -1,4 +1,4 @@
-package uk.gov.hmcts.reform.translate;
+package uk.gov.hmcts.reform.translate.custom.value;
 
 import uk.gov.hmcts.befta.exception.FunctionalTestException;
 import uk.gov.hmcts.befta.player.BackEndFunctionalTestScenarioContext;
@@ -6,10 +6,10 @@ import uk.gov.hmcts.befta.util.ReflectionUtils;
 
 import java.util.Map;
 
-public class GetUniqueTranslationsEvaluator implements CustomValueEvaluator {
+public class GetVerifyPhrasesFromParentContext implements CustomValueEvaluator {
     @Override
     public Boolean matches(CustomValueKey key) {
-        return CustomValueKey.GET_UNIQUE_TRANSLATIONS.equals(key);
+        return CustomValueKey.GET_VERIFY_PHRASES_FROM_PARENT_CONTEXT.equals(key);
     }
 
     @Override
@@ -24,7 +24,6 @@ public class GetUniqueTranslationsEvaluator implements CustomValueEvaluator {
 
             return translations.keySet();
         } catch (Exception e) {
-            throw new FunctionalTestException("Problem checking acceptable response payload: ", e);
-        }
+            throw new FunctionalTestException("Problem generating custom value for <evaluator name>: ", e);        }
     }
 }

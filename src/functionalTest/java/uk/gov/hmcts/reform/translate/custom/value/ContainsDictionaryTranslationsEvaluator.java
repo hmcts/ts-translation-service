@@ -1,4 +1,4 @@
-package uk.gov.hmcts.reform.translate;
+package uk.gov.hmcts.reform.translate.custom.value;
 
 import uk.gov.hmcts.befta.exception.FunctionalTestException;
 import uk.gov.hmcts.befta.player.BackEndFunctionalTestScenarioContext;
@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 import static java.util.Collections.singletonMap;
 
-public class DictionaryTranslationsEvaluator implements CustomValueEvaluator {
+public class ContainsDictionaryTranslationsEvaluator implements CustomValueEvaluator {
 
     @Override
     public Boolean matches(CustomValueKey key) {

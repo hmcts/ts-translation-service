@@ -14,7 +14,7 @@
   "request": {
     "_extends_": "Common_Request",
     "body": {
-        "translations": "${[scenarioContext][customValues][UniqueTranslation]}"
+        "translations": "${[scenarioContext][customValues][UniqueTranslationWithEnglishAndWelsh]}"
     }
   },
   "expectedResponse": {

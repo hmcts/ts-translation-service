@@ -25,7 +25,7 @@
   },
 
   "expectedResponse": {
-    "responseCode": 403,
-    "responseMessage": "Forbidden"
+    "_extends_": "Common_403_Response",
+    "body": null
   }
 }

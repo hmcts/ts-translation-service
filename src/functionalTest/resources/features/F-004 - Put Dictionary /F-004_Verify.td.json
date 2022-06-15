@@ -17,7 +17,7 @@
       "Accept": "application/json"
     },
     "body": {
-      "phrases": "${[scenarioContext][customValues][getUniqueTranslations]}"
+      "phrases": "${[scenarioContext][customValues][getVerifyPhrasesFromParentContext]}"
     }
   },
   "expectedResponse": {
@@ -25,7 +25,7 @@
     "responseCode": 200,
     "responseMessage": "OK",
     "body": {
-      "translations": "${[scenarioContext][customValues][getExpectedTranslationResponse]}"
+      "translations": "${[scenarioContext][customValues][getVerifyTranslationResponseFromParentContext]}"
     }
   }
 }
