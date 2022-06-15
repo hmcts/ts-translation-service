@@ -30,10 +30,7 @@ public class GetExpectedTranslationResponseEvaluator implements CustomValueEvalu
                 .collect(Collectors.toMap(
                     Map.Entry::getKey,
                     e -> {
-                        System.out.println("VALUE" + e.getValue());
                         if (StringUtils.isBlank(e.getValue())) {
-                            System.out.println("HERE" + e.getValue());
-                            System.out.println(e.getKey());
                             return e.getKey();
                         }
                         return e.getValue();
