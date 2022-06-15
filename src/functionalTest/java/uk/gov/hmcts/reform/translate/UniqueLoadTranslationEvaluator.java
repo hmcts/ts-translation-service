@@ -13,7 +13,6 @@ public class UniqueLoadTranslationEvaluator implements CustomValueEvaluator {
 
     @Override
     public Object calculate(BackEndFunctionalTestScenarioContext scenarioContext, Object key) {
-        String englishPhrase = StringGenerator.generate();
-        return Map.of(englishPhrase, "");
+        return Map.of(StringGenerator.generate(), "");
     }
 }

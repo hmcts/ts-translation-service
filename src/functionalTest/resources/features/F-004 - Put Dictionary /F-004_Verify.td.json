@@ -21,7 +21,7 @@
     }
   },
   "expectedResponse": {
-    "_extends_": "Common_Response",
+    "_extends_": "Common_200_Response",
     "responseCode": 200,
     "responseMessage": "OK",
     "body": {
