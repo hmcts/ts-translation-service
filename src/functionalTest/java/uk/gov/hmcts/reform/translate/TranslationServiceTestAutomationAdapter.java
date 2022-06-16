@@ -8,7 +8,7 @@ import uk.gov.hmcts.reform.translate.custom.value.ContainsDictionaryTranslations
 import uk.gov.hmcts.reform.translate.custom.value.CustomValueEvaluator;
 import uk.gov.hmcts.reform.translate.custom.value.CustomValueKey;
 import uk.gov.hmcts.reform.translate.custom.value.GetTranslationsEvaluator;
-import uk.gov.hmcts.reform.translate.custom.value.GetVerifyPhrasesFromParentContext;
+import uk.gov.hmcts.reform.translate.custom.value.GetVerifyPhrasesFromParentContextEvaluator;
 import uk.gov.hmcts.reform.translate.custom.value.GetVerifyTranslationResponseFromParentContextEvaluator;
 import uk.gov.hmcts.reform.translate.custom.value.UniqueStringEvaluator;
 import uk.gov.hmcts.reform.translate.custom.value.UniqueTranslationWithEnglishAndWelshEvaluator;
@@ -25,14 +25,15 @@ public class TranslationServiceTestAutomationAdapter extends DefaultTestAutomati
         uniqueTranslationWithEnglishAndWelshEvaluator = new UniqueTranslationWithEnglishAndWelshEvaluator();
     private final CustomValueEvaluator
         uniqueTranslationWithOnlyEnglishEvaluator = new UniqueTranslationWithOnlyEnglishEvaluator();
-    private final CustomValueEvaluator getVerifyPhrasesFromParentContext = new GetVerifyPhrasesFromParentContext();
+    private final CustomValueEvaluator getVerifyPhrasesFromParentContextEvaluator
+        = new GetVerifyPhrasesFromParentContextEvaluator();
     private final CustomValueEvaluator getVerifyTranslationResponseFromParentContextEvaluator
         = new GetVerifyTranslationResponseFromParentContextEvaluator();
 
     @Override
     public synchronized Object calculateCustomValue(BackEndFunctionalTestScenarioContext scenarioContext, Object key) {
         return Stream.of(dictionaryTranslationsEvaluator, getTranslationsEvaluator, uniqueStringEvaluator,
-                         uniqueTranslationWithOnlyEnglishEvaluator, getVerifyPhrasesFromParentContext,
+                         uniqueTranslationWithOnlyEnglishEvaluator, getVerifyPhrasesFromParentContextEvaluator,
                          uniqueTranslationWithEnglishAndWelshEvaluator,
                          getVerifyTranslationResponseFromParentContextEvaluator)
             .filter(candidate -> candidate.matches(CustomValueKey.getEnum(key.toString())))

@@ -37,7 +37,8 @@ public class GetVerifyTranslationResponseFromParentContextEvaluator implements C
                     }
                 ));
         } catch (Exception e) {
-            throw new FunctionalTestException("Problem generating custom value for <evaluator name>: ", e);
+            throw new FunctionalTestException("Problem generating custom value for "
+                                                  + "GetVerifyTranslationResponseFromParentContextEvaluator: ", e);
         }
     }
 }
