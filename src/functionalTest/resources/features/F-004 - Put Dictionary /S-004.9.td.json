@@ -4,7 +4,7 @@
   "specs": [
     "add a new English phrase",
     "with load-translation IDAM role with ccd-definition",
-    "has the 201 OK status code"
+    "has the 201 Created status code"
   ],
 
   "users": {

@@ -4,7 +4,7 @@
   "specs": [
     "update Welsh phrase of an existing English phrase",
     "with manage-translation IDAM role",
-    "has the 201 OK status code"
+    "has the 201 Created status code"
   ],
 
   "users": {
