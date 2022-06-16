@@ -377,12 +377,13 @@ public class DictionaryControllerIT extends BaseTest {
     }
 
     private Long assertDictionaryEntityWithTranslationPhrases(String englishPhrase) {
-        val dictionaryEntity = dictionaryRepository.findByEnglishPhrase(englishPhrase);
-        assertTrue(dictionaryEntity.isPresent());
-        assertNotNull(dictionaryEntity.get().getTranslationUpload());
-        val version = dictionaryEntity.get().getTranslationUpload().getVersion();
+        val dictionaryEntityOptional = dictionaryRepository.findByEnglishPhrase(englishPhrase);
+        assertTrue(dictionaryEntityOptional.isPresent());
+        val dictionaryEntity = dictionaryEntityOptional.get();
+        assertNotNull(dictionaryEntity.getTranslationUpload());
+        val version = dictionaryEntity.getTranslationUpload().getVersion();
         assertNotNull(version);
-        assertNotNull(dictionaryEntity.get().getTranslationPhrase());
+        assertNotNull(dictionaryEntity.getTranslationPhrase());
         return version;
     }
 
