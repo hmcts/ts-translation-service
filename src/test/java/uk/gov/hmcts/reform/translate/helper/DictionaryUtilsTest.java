@@ -12,7 +12,7 @@ import java.util.stream.IntStream;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@DisplayName("DictionaryMapperTest")
+@DisplayName("DictionaryUtilsTest")
 class DictionaryUtilsTest {
 
 
