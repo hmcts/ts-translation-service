@@ -152,8 +152,8 @@ Feature: F-004: Put Dictionary Operation
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-@S-004.12 #WLTS-28 AC5
-  Scenario: Upload a translation where  translatedPhrase is not supplied for englishPhrase which exists in database
+@S-004.12 #WLTS-28 AC6
+  Scenario: Upload a translation where  translatedPhrase is not supplied for englishPhrase which exists in database with a translation_phase as well
 
     Given a user [with manage-translation IDAM role],
     And   a successful call [to PUT translation phrases into the dictionary] as in [S-004.12_Existing_Data],
