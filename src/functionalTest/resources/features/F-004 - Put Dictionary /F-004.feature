@@ -125,3 +125,17 @@ Feature: F-004: Put Dictionary Operation
     And   a successful call [to verify translations] as in [F-004_Verify],
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ @S-004.10 #WLTS-28 AC5
+  Scenario: Update Welsh translation for existing English phrase - Return 201 Success
+
+    Given a user [with manage-translation IDAM role],
+    And   a successful call [to PUT translation phrases into the dictionary] as in [S-004.10_Existing_Data],
+    When  a request is prepared with appropriate values
+    And   the request [is an existing english phrase with a blank welsh translation]
+    And   it is submitted to call the [PUT dictionary] operation of [Translation Service]
+    Then  a positive response is received
+    And   the response [has the 201 OK status code]
+    And   the response has all other details as expected.
+    And   a successful call [to verify no change] as in [F-004.10_Verify],
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

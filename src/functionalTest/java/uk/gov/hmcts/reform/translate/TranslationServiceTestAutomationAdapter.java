@@ -4,7 +4,15 @@ import uk.gov.hmcts.befta.BeftaTestDataLoader;
 import uk.gov.hmcts.befta.DefaultBeftaTestDataLoader;
 import uk.gov.hmcts.befta.DefaultTestAutomationAdapter;
 import uk.gov.hmcts.befta.player.BackEndFunctionalTestScenarioContext;
-import uk.gov.hmcts.reform.translate.custom.value.*;
+import uk.gov.hmcts.reform.translate.custom.value.ContainsDictionaryTranslationsEvaluator;
+import uk.gov.hmcts.reform.translate.custom.value.CustomValueEvaluator;
+import uk.gov.hmcts.reform.translate.custom.value.CustomValueKey;
+import uk.gov.hmcts.reform.translate.custom.value.GetTranslationsEvaluator;
+import uk.gov.hmcts.reform.translate.custom.value.GetVerifyPhrasesFromParentContext;
+import uk.gov.hmcts.reform.translate.custom.value.GetVerifyTranslationResponseFromParentContextEvaluator;
+import uk.gov.hmcts.reform.translate.custom.value.UniqueStringEvaluator;
+import uk.gov.hmcts.reform.translate.custom.value.UniqueTranslationWithEnglishAndWelshEvaluator;
+import uk.gov.hmcts.reform.translate.custom.value.UniqueTranslationWithOnlyEnglishEvaluator;
 
 import java.util.stream.Stream;
 
@@ -13,8 +21,10 @@ public class TranslationServiceTestAutomationAdapter extends DefaultTestAutomati
     private final CustomValueEvaluator dictionaryTranslationsEvaluator = new ContainsDictionaryTranslationsEvaluator();
     private final CustomValueEvaluator getTranslationsEvaluator = new GetTranslationsEvaluator();
     private final CustomValueEvaluator uniqueStringEvaluator = new UniqueStringEvaluator();
-    private final CustomValueEvaluator uniqueTranslationWithEnglishAndWelshEvaluator = new UniqueTranslationWithEnglishAndWelshEvaluator();
-    private final CustomValueEvaluator uniqueTranslationWithOnlyEnglishEvaluator = new UniqueTranslationWithOnlyEnglishEvaluator();
+    private final CustomValueEvaluator
+        uniqueTranslationWithEnglishAndWelshEvaluator = new UniqueTranslationWithEnglishAndWelshEvaluator();
+    private final CustomValueEvaluator
+        uniqueTranslationWithOnlyEnglishEvaluator = new UniqueTranslationWithOnlyEnglishEvaluator();
     private final CustomValueEvaluator getVerifyPhrasesFromParentContext = new GetVerifyPhrasesFromParentContext();
     private final CustomValueEvaluator getVerifyTranslationResponseFromParentContextEvaluator
         = new GetVerifyTranslationResponseFromParentContextEvaluator();

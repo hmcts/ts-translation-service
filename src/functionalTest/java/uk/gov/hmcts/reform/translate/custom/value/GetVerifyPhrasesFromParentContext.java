@@ -24,6 +24,7 @@ public class GetVerifyPhrasesFromParentContext implements CustomValueEvaluator {
 
             return translations.keySet();
         } catch (Exception e) {
-            throw new FunctionalTestException("Problem generating custom value for <evaluator name>: ", e);        }
+            throw new FunctionalTestException("Problem generating custom value for <evaluator name>: ", e);
+        }
     }
 }
