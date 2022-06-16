@@ -1,8 +1,8 @@
 {
-  "_guid_": "S-004.1",
+  "_guid_": "S-004.13",
   "_extends_": "Put_Dictionary_Base",
   "specs": [
-    "add a new English to Welsh translation",
+    "has 3 english phrases and translations that don't exist in the database",
     "with manage-translation IDAM role",
     "has the 201 Created status code"
   ],
