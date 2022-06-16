@@ -136,6 +136,6 @@ Feature: F-004: Put Dictionary Operation
     Then  a positive response is received
     And   the response [has the 201 OK status code]
     And   the response has all other details as expected.
-    And   a successful call [to verify no change] as in [F-004.11_Verify],
+    And   a successful call [to verify no change] as in [S-004.11_Verify],
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
