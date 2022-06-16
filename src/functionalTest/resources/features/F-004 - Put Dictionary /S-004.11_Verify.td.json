@@ -17,7 +17,7 @@
       "Accept": "application/json"
     },
     "body": {
-      "phrases": [ "EnglishPhrase11" ]
+      "phrases": [ "TEST-F004-EnglishPhrase11" ]
     }
   },
   "expectedResponse": {
@@ -26,7 +26,7 @@
     "responseMessage": "OK",
     "body": {
       "translations": {
-        "EnglishPhrase11" : "WelshPhrase11"
+        "TEST-F004-EnglishPhrase11" : "TEST-F004-WelshPhrase11"
       }
     }
   }

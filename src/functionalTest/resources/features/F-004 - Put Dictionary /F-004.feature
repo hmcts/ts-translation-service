@@ -123,6 +123,19 @@ Feature: F-004: Put Dictionary Operation
     And   the response [has the 201 OK status code]
     And   the response has all other details as expected.
     And   a successful call [to verify translations] as in [F-004_Verify],
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+@S-004.10 #WLTS-28 AC4
+  Scenario: Upload a translation where translatedPhrase
+            is not supplied for englishPhrase which does not exists in database
+
+    Given a user [with manage-translation IDAM role],
+    When  a request is prepared with appropriate values
+    And   the request [is a new english phrase with a blank welsh translation]
+    And   it is submitted to call the [PUT dictionary] operation of [Translation Service]
+    Then  a positive response is received
+    And   the response [has the 201 OK status code]
+    And   the response has all other details as expected.
+    And   a successful call [to verify translations] as in [F-004_Verify],
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 @S-004.11 #WLTS-28 AC5
