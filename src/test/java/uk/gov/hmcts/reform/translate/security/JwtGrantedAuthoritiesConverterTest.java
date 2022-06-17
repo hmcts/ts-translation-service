@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
 import uk.gov.hmcts.reform.idam.client.models.UserInfo;
@@ -17,6 +18,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -98,5 +100,22 @@ class JwtGrantedAuthoritiesConverterTest {
         Collection<GrantedAuthority> authorities = converter.convert(jwt);
         assertNotNull(authorities);
         assertEquals(1, authorities.size());
+    }
+
+    @Test
+    @DisplayName("Should rethrow any exceptions as AuthenticationServiceException")
+    void shouldReThrowExceptionsAsAuthenticationServiceException() {
+        Jwt jwt = mock(Jwt.class);
+        when(jwt.containsClaim(anyString())).thenReturn(true);
+        when(jwt.getClaim(anyString())).thenReturn(ACCESS_TOKEN);
+        when(jwt.getTokenValue()).thenReturn(ACCESS_TOKEN);
+        when(idamRepository.getUserInfo(anyString())).thenThrow(new IllegalStateException("Something went wrong"));
+        AuthenticationServiceException authenticationServiceException = assertThrows(
+            AuthenticationServiceException.class,
+            () -> converter.convert(jwt)
+        );
+
+        assertEquals("IDAM error", authenticationServiceException.getMessage());
+        assertEquals("Something went wrong", authenticationServiceException.getCause().getMessage());
     }
 }

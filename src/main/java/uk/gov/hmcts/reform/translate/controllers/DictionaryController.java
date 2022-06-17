@@ -48,7 +48,7 @@ public class DictionaryController {
     @ResponseStatus(HttpStatus.CREATED)
     @ApiResponses(value = {
         @ApiResponse(responseCode = "201", description = "Success"),
-        @ApiResponse(responseCode = "400", description = "Bad Request"),
+        @ApiResponse(responseCode = "400", description = TranslationsRequest.BAD_REQUEST_MESSAGE_BAD_SCHEMA),
         @ApiResponse(responseCode = "401", description = "Unauthorised"),
         @ApiResponse(responseCode = "403", description = "Forbidden"),
         @ApiResponse(responseCode = "500", description = "Error occurred on the server")
@@ -64,7 +64,9 @@ public class DictionaryController {
     @ResponseStatus(HttpStatus.OK)
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Translation returned successfully"),
-        @ApiResponse(responseCode = "400", description = TranslationsRequest.BAD_REQUEST_MESSAGE),
+        @ApiResponse(responseCode = "400", description = "One or more of the following reasons:"
+            + "\n1) " + TranslationsRequest.BAD_REQUEST_MESSAGE_BAD_SCHEMA
+            + "\n2) Bad Request (002 Welsh not allowed for this user)"),
         @ApiResponse(responseCode = "401", description = "Unauthorised"),
         @ApiResponse(responseCode = "403", description = "Forbidden")
     })

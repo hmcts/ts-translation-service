@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import java.io.Serial;
 
 @ResponseStatus(code = HttpStatus.FORBIDDEN)
-public class RequestErrorException extends IllegalStateException {
+public class RequestErrorException extends ApiException {
 
     public static final String ERROR_MESSAGE =
         "The request should be from a valid service or the User does not have '%s' role";
