@@ -7,6 +7,7 @@ import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.util.UriUtils;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
@@ -16,9 +17,11 @@ import javax.servlet.http.HttpServletRequest;
 @Getter
 public class HttpError<T extends Serializable> implements Serializable {
 
+    @Serial
+    private static final long serialVersionUID = -766547293519964254L;
+
     public static final Integer DEFAULT_STATUS = HttpStatus.INTERNAL_SERVER_ERROR.value();
     public static final String DEFAULT_ERROR = "Unexpected Error";
-
     private final String exception;
     private final transient LocalDateTime timestamp;
     private final Integer status;
