@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 import uk.gov.hmcts.reform.translate.security.idam.IdamRepository;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -22,7 +21,6 @@ import static org.springframework.security.oauth2.core.endpoint.OAuth2ParameterN
 @Component
 @Slf4j
 public class JwtGrantedAuthoritiesConverter implements Converter<Jwt, Collection<GrantedAuthority>> {
-
     public static final String TOKEN_NAME = "tokenName";
 
     private final IdamRepository idamRepository;
@@ -34,7 +32,6 @@ public class JwtGrantedAuthoritiesConverter implements Converter<Jwt, Collection
 
     @Override
     public Collection<GrantedAuthority> convert(Jwt jwt) {
-        List<GrantedAuthority> authorities = new ArrayList<>();
         if (jwt.containsClaim(TOKEN_NAME) && jwt.getClaim(TOKEN_NAME).equals(ACCESS_TOKEN)) {
             UserInfo userInfo;
 
