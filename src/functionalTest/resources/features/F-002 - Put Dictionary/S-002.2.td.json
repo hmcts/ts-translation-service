@@ -1,0 +1,28 @@
+{
+  "_guid_": "S-002.2",
+  "_extends_": "Put_Dictionary_Base",
+  "specs": [
+    "update Welsh phrase of an existing English phrase",
+    "with manage-translation IDAM role",
+    "has the 201 OK status code"
+  ],
+
+  "users": {
+    "invokingUser": {
+      "_extends_": "ManageTranslationsUser"
+    }
+  },
+
+  "request": {
+    "_extends_": "Common_Request",
+    "body": {
+      "translations": {
+        "TEST-F004-EnglishPhrase2": "TEST-F004-WelshPhrase2-UPDATED"
+      }
+    }
+  },
+
+  "expectedResponse": {
+    "_extends_": "Common_201_Response"
+  }
+}

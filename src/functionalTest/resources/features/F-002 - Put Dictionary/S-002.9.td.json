@@ -1,0 +1,28 @@
+{
+  "_guid_": "S-002.9",
+  "_extends_": "Put_Dictionary_Base",
+  "specs": [
+    "add a new English phrase",
+    "with load-translation IDAM role with ccd-definition",
+    "has the 201 OK status code"
+  ],
+
+  "users": {
+    "invokingUser": {
+      "_extends_": "LoadTranslationsUser"
+    }
+  },
+
+  "s2sClientId": "ccd_definition",
+
+  "request": {
+    "_extends_": "Common_Request",
+    "body": {
+      "translations": "${[scenarioContext][customValues][UniqueTranslationWithOnlyEnglish]}"
+    }
+  },
+
+  "expectedResponse": {
+    "_extends_": "Common_201_Response"
+  }
+}

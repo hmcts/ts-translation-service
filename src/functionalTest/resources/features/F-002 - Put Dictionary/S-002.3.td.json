@@ -1,0 +1,26 @@
+{
+  "_guid_": "S-002.3",
+  "_extends_": "Put_Dictionary_Base",
+  "specs": [
+    "add a new English only phrase",
+    "with load-translation IDAM role",
+    "has the 201 OK status code"
+  ],
+
+  "users": {
+    "invokingUser": {
+      "_extends_": "LoadTranslationsUser"
+    }
+  },
+
+  "request": {
+    "_extends_": "Common_Request",
+    "body": {
+      "translations": "${[scenarioContext][customValues][UniqueTranslationWithOnlyEnglish]}"
+    }
+  },
+
+  "expectedResponse": {
+    "_extends_": "Common_201_Response"
+  }
+}
