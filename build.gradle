@@ -1,14 +1,15 @@
 plugins {
   id 'application'
   id 'idea'
-  id 'checkstyle'
   id 'jacoco'
   id 'io.spring.dependency-management' version '1.0.11.RELEASE'
   id 'org.springframework.boot' version '2.6.8'
-  id 'org.owasp.dependencycheck' version '6.5.3'
+  id 'org.owasp.dependencycheck' version '7.1.0.1'
   id 'com.github.ben-manes.versions' version '0.42.0'
   id 'org.sonarqube' version '3.3'
   id 'com.github.spacialcircumstances.gradle-cucumber-reporting' version '0.1.23'
+  id 'com.github.hmcts.rse-cft-lib' version '0.17.152'
+  id 'uk.gov.hmcts.java' version '0.12.24'
 }
 
 group = 'uk.gov.hmcts.reform'
@@ -26,6 +27,8 @@ configurations {
 
   integrationTestImplementation.extendsFrom testImplementation
   integrationTestRuntimeOnly.extendsFrom runtimeOnly
+
+  cftlibRuntimeClasspath.extendsFrom(runtimeClasspath)
 }
 
 java {
@@ -181,12 +184,6 @@ task integration(type: Test) {
   failFast = true
 }
 
-checkstyle {
-  maxWarnings = 0
-  toolVersion = '9.2.1'
-  getConfigDirectory().set(new File(rootDir, 'config/checkstyle'))
-}
-
 cucumberReports {
   outputDir = file("${rootDir}/target/cucumber")
   reports = files("${rootDir}/target/cucumber.json")
@@ -207,10 +204,6 @@ jacocoTestReport {
     csv.required = false
     xml.destination file("${buildDir}/reports/jacoco/test/jacocoTestReport.xml")
   }
-}
-
-dependencyCheck {
-  suppressionFile = 'config/owasp/suppressions.xml'
 }
 
 dependencies {
@@ -278,6 +271,8 @@ dependencies {
   functionalTestImplementation (group: 'com.github.hmcts', name: 'ccd-test-definitions', version: '7.17.0') {
     exclude group: 'com.github.hmcts.befta-fw', module: 'befta-fw'
   }
+
+  cftlibImplementation group: 'org.springframework.boot', name: 'spring-boot-devtools'
 }
 
 dependencyManagement {
@@ -318,23 +313,7 @@ dependencyUpdates {
 
 // https://jeremylong.github.io/DependencyCheck/dependency-check-gradle/configuration.html
 dependencyCheck {
-  // Specifies if the build should be failed if a CVSS score above a specified level is identified.
-  // range of 0-10 fails the build, anything greater and it doesn't fail the build
-  failBuildOnCVSS = 0
   suppressionFile = 'config/owasp/suppressions.xml'
-
-  analyzers {
-    // Disable scanning of .NET related binaries
-    assemblyEnabled = false
-  }
-  skipConfigurations = [
-    "checkstyle",
-    "compileOnly",
-    "integrationTest",
-    "functionalTest",
-    "contractTestRuntimeClasspath",
-    "contractTestCompileClasspath"
-  ]
 }
 
 repositories {
@@ -373,4 +352,16 @@ rootProject.tasks.named("processIntegrationTestResources") {
 
 wrapper {
   distributionType = Wrapper.DistributionType.ALL
+}
+
+bootWithCCD {
+
+  authMode = uk.gov.hmcts.rse.AuthMode.Local
+
+  environment("RSE_LIB_ADDITIONAL_DATABASES", "ts_translation_service");
+  environment("TS_TRANSLATION_SERVICE_DB_USERNAME", "postgres")
+  environment("TS_TRANSLATION_SERVICE_DB_PASSWORD", "postgres")
+  environment("TS_TRANSLATION_SERVICE_DB_PORT", "6432")
+  environment("TS_TRANSLATION_SERVICE_DB_NAME", "ts_translation_service")
+  environment("RSE_LIB_S2S_PORT", 4502)
 }
