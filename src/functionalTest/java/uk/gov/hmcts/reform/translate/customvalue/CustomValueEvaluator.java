@@ -1,4 +1,4 @@
-package uk.gov.hmcts.reform.translate.custom.value;
+package uk.gov.hmcts.reform.translate.customvalue;
 
 import uk.gov.hmcts.befta.player.BackEndFunctionalTestScenarioContext;
 

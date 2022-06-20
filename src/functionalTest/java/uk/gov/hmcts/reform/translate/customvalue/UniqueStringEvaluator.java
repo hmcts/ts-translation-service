@@ -1,7 +1,6 @@
-package uk.gov.hmcts.reform.translate.custom.value;
+package uk.gov.hmcts.reform.translate.customvalue;
 
 import uk.gov.hmcts.befta.player.BackEndFunctionalTestScenarioContext;
-import uk.gov.hmcts.reform.translate.StringGenerator;
 
 public class UniqueStringEvaluator implements CustomValueEvaluator {
 
@@ -12,6 +11,6 @@ public class UniqueStringEvaluator implements CustomValueEvaluator {
 
     @Override
     public Object calculate(BackEndFunctionalTestScenarioContext scenarioContext, Object key) {
-        return StringGenerator.generate();
+        return EvaluatorUtils.generate();
     }
 }

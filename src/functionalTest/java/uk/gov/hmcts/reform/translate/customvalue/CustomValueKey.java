@@ -1,4 +1,4 @@
-package uk.gov.hmcts.reform.translate.custom.value;
+package uk.gov.hmcts.reform.translate.customvalue;
 
 import java.util.Arrays;
 
@@ -6,8 +6,8 @@ public enum CustomValueKey {
     UNIQUE_STRING("UniqueString"),
     UNIQUE_TRANSLATION_WITH_ENGLISH_AND_WELSH("UniqueTranslationWithEnglishAndWelsh"),
     UNIQUE_TRANSLATION_WITH_ONLY_ENGLISH("UniqueTranslationWithOnlyEnglish"),
+    CONTAINS_DICTIONARY_FROM_CONTEXT("containsDictionaryFromContext"),
     CONTAINS_DICTIONARY_TRANSLATIONS("containsDictionaryTranslations"),
-    CONTAINS_UNIQUE_PHRASES_PARENT_CONTEXT("containsUniquePhrasesParentContext"),
     S_003_1("S-003.1"),
     DEFAULT_KEY("DefaultKey");
 

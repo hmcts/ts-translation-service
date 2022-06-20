@@ -4,14 +4,15 @@ import uk.gov.hmcts.befta.BeftaTestDataLoader;
 import uk.gov.hmcts.befta.DefaultBeftaTestDataLoader;
 import uk.gov.hmcts.befta.DefaultTestAutomationAdapter;
 import uk.gov.hmcts.befta.player.BackEndFunctionalTestScenarioContext;
-import uk.gov.hmcts.reform.translate.custom.value.*;
+import uk.gov.hmcts.reform.translate.customvalue.*;
 
 import java.util.stream.Stream;
 
 public class TranslationServiceTestAutomationAdapter extends DefaultTestAutomationAdapter {
 
     private final CustomValueEvaluator dictionaryTranslationsEvaluator = new ContainsDictionaryTranslationsEvaluator();
-    private final CustomValueEvaluator containsUniquePhrasesParentContext = new ContainsUniquePhrasesParentContext();
+    private final CustomValueEvaluator containsDictionaryTranslationsFromContextEvaluator =
+        new ContainsDictionaryTranslationsFromContextEvaluator();
     private final CustomValueEvaluator getTranslationsEvaluator = new GetTranslationsEvaluator();
     private final CustomValueEvaluator uniqueStringEvaluator = new UniqueStringEvaluator();
     private final CustomValueEvaluator
@@ -23,7 +24,7 @@ public class TranslationServiceTestAutomationAdapter extends DefaultTestAutomati
     public synchronized Object calculateCustomValue(BackEndFunctionalTestScenarioContext scenarioContext, Object key) {
         return Stream.of(dictionaryTranslationsEvaluator, getTranslationsEvaluator, uniqueStringEvaluator,
                          uniqueTranslationWithOnlyEnglishEvaluator, uniqueTranslationWithEnglishAndWelshEvaluator,
-                         containsUniquePhrasesParentContext)
+                         containsDictionaryTranslationsFromContextEvaluator)
             .filter(candidate -> candidate.matches(CustomValueKey.getEnum(key.toString())))
             .findFirst()
             .map(evaluator -> evaluator.calculate(scenarioContext, key))

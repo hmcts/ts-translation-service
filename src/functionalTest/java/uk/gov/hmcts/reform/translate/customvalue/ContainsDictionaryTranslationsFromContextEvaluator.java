@@ -1,4 +1,4 @@
-package uk.gov.hmcts.reform.translate.custom.value;
+package uk.gov.hmcts.reform.translate.customvalue;
 
 import uk.gov.hmcts.befta.exception.FunctionalTestException;
 import uk.gov.hmcts.befta.player.BackEndFunctionalTestScenarioContext;
@@ -6,11 +6,11 @@ import uk.gov.hmcts.befta.util.ReflectionUtils;
 
 import java.util.Map;
 
-public class ContainsUniquePhrasesParentContext implements CustomValueEvaluator {
+public class ContainsDictionaryTranslationsFromContextEvaluator implements CustomValueEvaluator {
 
     @Override
     public Boolean matches(CustomValueKey key) {
-        return CustomValueKey.CONTAINS_UNIQUE_PHRASES_PARENT_CONTEXT.equals(key);
+        return CustomValueKey.CONTAINS_DICTIONARY_FROM_CONTEXT.equals(key);
     }
 
     @Override
