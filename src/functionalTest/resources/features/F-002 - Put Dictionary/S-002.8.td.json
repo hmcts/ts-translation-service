@@ -1,5 +1,5 @@
 {
-  "_guid_": "S-004.8",
+  "_guid_": "S-002.8",
   "_extends_": "Put_Dictionary_Base",
   "specs": [
     "contains an entry for an english phrase that already exists",
@@ -19,7 +19,7 @@
     "_extends_": "Common_Request",
     "body": {
       "translations": {
-        "EnglishPhrase8": ""
+        "TEST-S002.8-EnglishPhrase": ""
       }
     }
   },
