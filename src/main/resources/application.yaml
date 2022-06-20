@@ -1,6 +1,5 @@
 server:
   port: 4650
-  include-stacktrace: never
 
 management:
   endpoint:
