@@ -19,7 +19,6 @@ Feature: F-002: Put Dictionary Operation
     And   the response has all other details as expected.
     And   a successful call [to verify translations] as in [F-002_Verify],
 
-
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   @S-002.2 #WLTS-4 AC2
   Scenario: Update Welsh translation for existing English phrase - Return 201 Success
