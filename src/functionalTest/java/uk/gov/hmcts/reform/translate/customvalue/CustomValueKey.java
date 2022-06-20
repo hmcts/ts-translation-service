@@ -3,11 +3,11 @@ package uk.gov.hmcts.reform.translate.customvalue;
 import java.util.Arrays;
 
 public enum CustomValueKey {
-    UNIQUE_STRING("UniqueString"),
-    UNIQUE_TRANSLATION_WITH_ENGLISH_AND_WELSH("UniqueTranslationWithEnglishAndWelsh"),
-    UNIQUE_TRANSLATION_WITH_ONLY_ENGLISH("UniqueTranslationWithOnlyEnglish"),
     CONTAINS_DICTIONARY_FROM_CONTEXT("containsDictionaryFromContext"),
     CONTAINS_DICTIONARY_TRANSLATIONS("containsDictionaryTranslations"),
+    UNIQUE_TEST_PHRASE("UniqueTestPhrase"),
+    UNIQUE_TRANSLATION_WITH_ENGLISH_AND_WELSH("UniqueTranslationWithEnglishAndWelsh"),
+    UNIQUE_TRANSLATION_WITH_ONLY_ENGLISH("UniqueTranslationWithOnlyEnglish"),
     S_003_1("S-003.1"),
     DEFAULT_KEY("DefaultKey");
 

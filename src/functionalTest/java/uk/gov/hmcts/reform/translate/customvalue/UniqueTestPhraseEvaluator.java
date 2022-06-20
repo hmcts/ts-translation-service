@@ -2,11 +2,11 @@ package uk.gov.hmcts.reform.translate.customvalue;
 
 import uk.gov.hmcts.befta.player.BackEndFunctionalTestScenarioContext;
 
-public class UniqueStringEvaluator implements CustomValueEvaluator {
+public class UniqueTestPhraseEvaluator implements CustomValueEvaluator {
 
     @Override
     public Boolean matches(CustomValueKey key) {
-        return CustomValueKey.UNIQUE_STRING.equals(key);
+        return CustomValueKey.UNIQUE_TEST_PHRASE.equals(key);
     }
 
     @Override

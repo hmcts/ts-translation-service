@@ -6,7 +6,7 @@ import uk.gov.hmcts.befta.util.ReflectionUtils;
 
 import java.util.Map;
 
-public class ContainsDictionaryTranslationsFromContextEvaluator implements CustomValueEvaluator {
+public class ContainsDictionaryFromContextEvaluator implements CustomValueEvaluator {
 
     @Override
     public Boolean matches(CustomValueKey key) {
