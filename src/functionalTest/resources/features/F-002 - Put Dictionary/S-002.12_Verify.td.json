@@ -1,33 +1,14 @@
 {
   "_guid_": "S-002.12_Verify",
-  "_extends_": "Translation_Cy_Base",
+  "_extends_": "F-002_Verify",
 
   "specs": [
     "to verify no change"
-
   ],
-  "users": {
-    "invokingUser": {
-      "_extends_": "ManageTranslationsUser"
-    }
-  },
-  "request": {
-    "_extends_": "Common_Request",
-    "headers": {
-      "Accept": "application/json"
-    },
-    "body": {
-      "phrases": [ "TEST-S002.12-EnglishPhrase" ]
-    }
-  },
+
   "expectedResponse": {
-    "_extends_": "Common_200_Response",
-    "responseCode": 200,
-    "responseMessage": "OK",
     "body": {
-      "translations": {
-        "TEST-S002.12-EnglishPhrase" : "TEST-S002.12-WelshPhrase"
-      }
+      "translations": "${[scenarioContext][customValues][containsDictionaryFromContext siblingContexts.S-002\\.12_Existing_Data.testData.request.body.translations]}"
     }
   }
 }

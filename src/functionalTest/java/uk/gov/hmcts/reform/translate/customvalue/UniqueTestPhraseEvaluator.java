@@ -11,6 +11,7 @@ public class UniqueTestPhraseEvaluator implements CustomValueEvaluator {
 
     @Override
     public Object calculate(BackEndFunctionalTestScenarioContext scenarioContext, Object key) {
-        return EvaluatorUtils.generate();
+        final String marker =  EvaluatorUtils.extractParameter(key, CustomValueKey.UNIQUE_TEST_PHRASE);
+        return EvaluatorUtils.generateTestPhrase(marker);
     }
 }

@@ -2,7 +2,6 @@ package uk.gov.hmcts.reform.translate.customvalue;
 
 import uk.gov.hmcts.befta.exception.FunctionalTestException;
 import uk.gov.hmcts.befta.player.BackEndFunctionalTestScenarioContext;
-import uk.gov.hmcts.befta.util.ReflectionUtils;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -20,15 +19,10 @@ public class ContainsDictionaryTranslationsEvaluator implements CustomValueEvalu
     @Override
     public Object calculate(BackEndFunctionalTestScenarioContext scenarioContext, Object key) {
         try {
-            @SuppressWarnings("unchecked")
-            final Map<String, String> translations = (Map<String, String>) ReflectionUtils.deepGetFieldInObject(
-                scenarioContext,
-                "testData.actualResponse.body.translations"
-            );
+            final String[] expectedValues
+                = EvaluatorUtils.extractParameters(key, CustomValueKey.CONTAINS_DICTIONARY_TRANSLATIONS);
 
-            final String expectedValueStr = key.toString().replace("containsDictionaryTranslations ", "");
-
-            final Map<String, String> expectedValuesMap = Arrays.stream(expectedValueStr.split(","))
+            final Map<String, String> expectedTranslations = Arrays.stream(expectedValues)
                 .map(entry -> {
                     final String[] keyValuePair = entry.split(":");
                     return singletonMap(strip(keyValuePair[0]), strip(keyValuePair[1]));
@@ -36,7 +30,10 @@ public class ContainsDictionaryTranslationsEvaluator implements CustomValueEvalu
                 .flatMap(m -> m.entrySet().stream())
                 .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
 
-            return translations.entrySet().containsAll(expectedValuesMap.entrySet()) ? translations : expectedValueStr;
+            return EvaluatorUtils.calculateDictionaryFromActualResponseAndExpectedTranslations(
+                scenarioContext,
+                expectedTranslations
+            );
         } catch (Exception e) {
             throw new FunctionalTestException("Problem checking acceptable response payload: ", e);
         }

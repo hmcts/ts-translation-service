@@ -14,13 +14,17 @@ public class UniqueTranslationWithEnglishAndWelshEvaluator implements CustomValu
 
     @Override
     public Object calculate(BackEndFunctionalTestScenarioContext scenarioContext, Object key) {
-        final String expectedValueStr = key.toString()
-            .replace(CustomValueKey.UNIQUE_TRANSLATION_WITH_ENGLISH_AND_WELSH + " ", "");
-        System.out.println("sdansdjaksjdkajs"+expectedValueStr);
-        int uniquePhrasesAmount = Integer.parseInt(expectedValueStr);
+
+        final String[] parameters
+                = EvaluatorUtils.extractParameters(key, CustomValueKey.UNIQUE_TRANSLATION_WITH_ENGLISH_AND_WELSH);
+
+        int paramCount = parameters.length;
+        String scenarioMarker = paramCount > 0 ? parameters[0] : "";
+        int uniquePhrasesAmount = paramCount > 1 ? Integer.parseInt(parameters[1]) : 1;
+
         Map<String, String> map = new HashMap<>();
-        for (int i = 0; i<uniquePhrasesAmount; i++) {
-            String englishPhrase = EvaluatorUtils.generate();
+        for (int i = 0; i < uniquePhrasesAmount; i++) {
+            String englishPhrase = EvaluatorUtils.generateTestPhrase(String.format("%s-%s", scenarioMarker, i + 1));
             final String welshPhrase = englishPhrase + "-WELSH";
             map.put(englishPhrase, welshPhrase);
         }
