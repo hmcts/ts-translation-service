@@ -67,7 +67,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleHttpMessageNotReadable(
         HttpMessageNotReadableException exception, HttpHeaders headers, HttpStatus status, WebRequest request) {
 
-        log.debug("MethodArgumentNotValidException:{}", exception.getLocalizedMessage());
+        log.debug("HttpMessageNotReadableException:{}", exception.getLocalizedMessage());
         final HttpError<Serializable> error = new HttpError<>(exception, request, HttpStatus.BAD_REQUEST)
             .withMessage(TranslationsRequest.BAD_REQUEST_MESSAGE_BAD_SCHEMA);
         return ResponseEntity
