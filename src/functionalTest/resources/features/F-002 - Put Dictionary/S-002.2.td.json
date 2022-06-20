@@ -1,5 +1,5 @@
 {
-  "_guid_": "S-004.2",
+  "_guid_": "S-002.2",
   "_extends_": "Put_Dictionary_Base",
   "specs": [
     "update Welsh phrase of an existing English phrase",

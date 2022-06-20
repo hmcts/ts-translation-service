@@ -1,5 +1,5 @@
 {
-  "_guid_": "S-004.4",
+  "_guid_": "S-002.4",
   "_extends_": "Put_Dictionary_Base",
   "specs": [
     "is a valid request with the wrong roles",
