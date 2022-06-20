@@ -3,6 +3,10 @@
 ## Getting Started
 This is the Translation Microservice.
 
+Provides a capability for service users to maintain Welsh translations.
+
+This enables Welsh Language Support for Professional Users; allowing EXUI users to choose to view the UI in Welsh
+
 ### Prerequisites
 
 - [JDK 17](https://java.com)
