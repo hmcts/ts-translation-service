@@ -119,7 +119,7 @@ class RestExceptionHandlerTest {
 
     }
 
-    @DisplayName("should return correct response when CasePaymentOrdersFilterException is thrown")
+    @DisplayName("should return correct response when BadRequestException is thrown")
     @Test
     void shouldReturnBadRequestExceptionResponse() throws Exception {
 
@@ -141,7 +141,6 @@ class RestExceptionHandlerTest {
     void shouldReturnHttpMessageConversionExceptionResponse() throws Exception {
 
         // GIVEN
-        String myUniqueExceptionMessage = "IDAM ID could not be found";
         HttpMessageConversionException expectedException =
             new HttpMessageConversionException("Conversion problem");
 
@@ -172,7 +171,7 @@ class RestExceptionHandlerTest {
         assertHttpErrorResponse(result, HttpStatus.BAD_REQUEST, TranslationsRequest.BAD_REQUEST_MESSAGE_BAD_SCHEMA);
     }
 
-    @DisplayName("should return correct response when HttpMessageNotReadableException is thrown")
+    @DisplayName("should return correct response when MethodArgumentNotValidException is thrown")
     @Test
     void shouldReturnMethodArgumentNotValidExceptionResponse() throws Exception {
 
@@ -180,10 +179,6 @@ class RestExceptionHandlerTest {
 
         Method[] methods = RestExceptionHandlerTest.class.getMethods();
         MethodParameter methodParameter = new MethodParameter(methods[0], 1);
-
-        // GIVEN
-        MethodArgumentNotValidException expectedException =
-            new MethodArgumentNotValidException(methodParameter, bindingResult);
 
         /// WHEN
         given(service.getDictionaryContents()).willAnswer(invocation -> {
