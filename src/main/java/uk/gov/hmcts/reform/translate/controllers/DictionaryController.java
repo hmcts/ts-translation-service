@@ -21,7 +21,9 @@ import javax.validation.Valid;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static uk.gov.hmcts.reform.translate.model.ControllerConstants.DICTIONARY_URL;
 import static uk.gov.hmcts.reform.translate.model.ControllerConstants.TRANSLATIONS_URL;
+import static uk.gov.hmcts.reform.translate.model.TranslationsRequest.BAD_REQUEST_MESSAGE_BAD_SCHEMA;
 import static uk.gov.hmcts.reform.translate.security.SecurityUtils.SERVICE_AUTHORIZATION;
+import static uk.gov.hmcts.reform.translate.service.DictionaryService.BAD_REQUEST_MESSAGE_WELSH_NOT_ALLOWED;
 
 @RestController
 public class DictionaryController {
@@ -48,7 +50,9 @@ public class DictionaryController {
     @ResponseStatus(HttpStatus.CREATED)
     @ApiResponses(value = {
         @ApiResponse(responseCode = "201", description = "Success"),
-        @ApiResponse(responseCode = "400", description = TranslationsRequest.BAD_REQUEST_MESSAGE_BAD_SCHEMA),
+        @ApiResponse(responseCode = "400", description = "One or more of the following reasons:"
+            + "\n1) " + BAD_REQUEST_MESSAGE_BAD_SCHEMA
+            + "\n2) " + BAD_REQUEST_MESSAGE_WELSH_NOT_ALLOWED),
         @ApiResponse(responseCode = "401", description = "Unauthorised"),
         @ApiResponse(responseCode = "403", description = "Forbidden"),
         @ApiResponse(responseCode = "500", description = "Error occurred on the server")
@@ -64,9 +68,7 @@ public class DictionaryController {
     @ResponseStatus(HttpStatus.OK)
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Translation returned successfully"),
-        @ApiResponse(responseCode = "400", description = "One or more of the following reasons:"
-            + "\n1) " + TranslationsRequest.BAD_REQUEST_MESSAGE_BAD_SCHEMA
-            + "\n2) Bad Request (002 Welsh not allowed for this user)"),
+        @ApiResponse(responseCode = "400", description = BAD_REQUEST_MESSAGE_BAD_SCHEMA),
         @ApiResponse(responseCode = "401", description = "Unauthorised"),
         @ApiResponse(responseCode = "403", description = "Forbidden")
     })
