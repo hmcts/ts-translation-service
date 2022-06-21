@@ -1,6 +1,7 @@
 package uk.gov.hmcts.reform.translate.customvalue;
 
 import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.util.CollectionUtils;
 import uk.gov.hmcts.befta.exception.FunctionalTestException;
 import uk.gov.hmcts.befta.player.BackEndFunctionalTestScenarioContext;
 import uk.gov.hmcts.befta.util.ReflectionUtils;
@@ -16,6 +17,11 @@ public final class EvaluatorUtils {
     public static Map<String, String> calculateDictionaryFromActualResponseAndExpectedTranslations(
         BackEndFunctionalTestScenarioContext scenarioContext,
         Map<String, String> expectedTranslations) {
+
+        if (CollectionUtils.isEmpty(expectedTranslations)) {
+            // throw a more useful error message if generated/found expected-translations list is empty
+            throw new FunctionalTestException("The set of expected translations to search for cannot be empty.");
+        }
 
         final Map<String, String> actualTranslations = extractMapFromContext(
             scenarioContext,
