@@ -1,7 +1,6 @@
-package uk.gov.hmcts.reform.translate.custom.value;
+package uk.gov.hmcts.reform.translate.customvalue;
 
 import uk.gov.hmcts.befta.player.BackEndFunctionalTestScenarioContext;
-import uk.gov.hmcts.reform.translate.StringGenerator;
 
 import java.util.Map;
 
@@ -14,6 +13,7 @@ public class UniqueTranslationWithOnlyEnglishEvaluator implements CustomValueEva
 
     @Override
     public Object calculate(BackEndFunctionalTestScenarioContext scenarioContext, Object key) {
-        return Map.of(StringGenerator.generate(), "");
+        final String marker = EvaluatorUtils.extractParameter(key, CustomValueKey.UNIQUE_TRANSLATION_WITH_ONLY_ENGLISH);
+        return Map.of(EvaluatorUtils.generateTestPhrase(marker), "");
     }
 }

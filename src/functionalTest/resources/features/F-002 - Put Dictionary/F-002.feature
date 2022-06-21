@@ -162,3 +162,16 @@ Feature: F-002: Put Dictionary Operation
     And   a successful call [to verify no change] as in [S-002.12_Verify],
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  @S-002.13 #WLTS-28 AC1
+  Scenario: Add a 3 new English to Welsh translation entry - Return 201 Success
+
+    Given a user [with manage-translation IDAM role],
+    When  a request is prepared with appropriate values
+    And   the request [has 3 english phrases and translations that don't exist in the database]
+    And   it is submitted to call the [PUT dictionary] operation of [Translation Service]
+    Then  a positive response is received
+    And   the response [has the 201 Created status code]
+    And   the response has all other details as expected.
+    And   a successful call [to verify translations] as in [F-002_Verify],
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

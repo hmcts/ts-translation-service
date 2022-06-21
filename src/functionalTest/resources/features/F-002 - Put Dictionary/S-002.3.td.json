@@ -16,7 +16,7 @@
   "request": {
     "_extends_": "Common_Request",
     "body": {
-      "translations": "${[scenarioContext][customValues][UniqueTranslationWithOnlyEnglish]}"
+      "translations": "${[scenarioContext][customValues][UniqueTranslationWithOnlyEnglish S002.3]}"
     }
   },
 
