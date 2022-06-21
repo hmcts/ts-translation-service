@@ -10,6 +10,10 @@ import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+
+import static uk.gov.hmcts.reform.translate.security.SecurityUtils.AUTHORIZATION;
+import static uk.gov.hmcts.reform.translate.security.SecurityUtils.SERVICE_AUTHORIZATION;
+
 @Configuration
 public class OpenAPIConfiguration {
 
@@ -21,19 +25,25 @@ public class OpenAPIConfiguration {
     public OpenAPI openAPI() {
         return new OpenAPI()
             .components(new Components()
-                            .addSecuritySchemes("bearerAuth",
-                                                new SecurityScheme()
-                                                    .name("bearerAuth")
+                            .addSecuritySchemes(
+                                AUTHORIZATION,
+                                new SecurityScheme()
+                                                    .name(AUTHORIZATION)
                                                     .type(SecurityScheme.Type.HTTP)
                                                     .scheme("bearer")
-                                                    .bearerFormat("JWT"))
-                            .addSecuritySchemes("serviceAuthorization",
+                                                    .bearerFormat("JWT")
+                                                    .description("Valid IDAM user token, (Bearer keyword is "
+                                                                     + "added automatically)")
+                            )
+                            .addSecuritySchemes(SERVICE_AUTHORIZATION,
                                                 new SecurityScheme()
                                                     .in(SecurityScheme.In.HEADER)
-                                                    .name("ServiceAuthorization")
+                                                    .name(SERVICE_AUTHORIZATION)
                                                     .type(SecurityScheme.Type.APIKEY)
                                                     .scheme("bearer")
                                                     .bearerFormat("JWT")
+                                                    .description("Valid Service-to-Service JWT token for a "
+                                                                     + "whitelisted micro-service")
                             )
             )
             .info(new Info().title("Welsh Language Translation Service")
@@ -42,7 +52,7 @@ public class OpenAPIConfiguration {
             .externalDocs(new ExternalDocumentation()
                               .description("README")
                               .url("https://github.com/hmcts/ts-translation-service#readme"))
-            .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
-            .addSecurityItem(new SecurityRequirement().addList("serviceAuthorization"));
+            .addSecurityItem(new SecurityRequirement().addList(AUTHORIZATION))
+            .addSecurityItem(new SecurityRequirement().addList(SERVICE_AUTHORIZATION));
     }
 }
