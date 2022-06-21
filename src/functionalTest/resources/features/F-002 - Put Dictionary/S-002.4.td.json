@@ -1,0 +1,31 @@
+{
+  "_guid_": "S-002.4",
+  "_extends_": "Put_Dictionary_Base",
+  "specs": [
+    "is a valid request with the wrong roles",
+    "without manage-translation or load-translation IDAM role",
+    "has the 403 Forbidden status code"
+  ],
+
+  "users": {
+    "invokingUser": {
+      "_extends_": "BeftaCaseworker2Solicitor2"
+    }
+  },
+
+  "request": {
+    "_extends_": "Common_Request",
+    "body": {
+      "translations": {
+        "TEST-F004-EnglishPhrase1": "TEST-F004-WelshPhrase1",
+        "TEST-F004-EnglishPhrase2": "TEST-F004-WelshPhrase2",
+        "TEST-F004-EnglishPhrase3": "TEST-F004-WelshPhrase3"
+      }
+    }
+  },
+
+  "expectedResponse": {
+    "_extends_": "Common_403_Response",
+    "body": null
+  }
+}
