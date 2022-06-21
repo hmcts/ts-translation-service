@@ -1,7 +1,7 @@
-package uk.gov.hmcts.reform.translate;
+package uk.gov.hmcts.reform.translate.custom.value;
 
-import org.apache.commons.lang3.RandomStringUtils;
 import uk.gov.hmcts.befta.player.BackEndFunctionalTestScenarioContext;
+import uk.gov.hmcts.reform.translate.StringGenerator;
 
 public class UniqueStringEvaluator implements CustomValueEvaluator {
 
@@ -12,7 +12,6 @@ public class UniqueStringEvaluator implements CustomValueEvaluator {
 
     @Override
     public Object calculate(BackEndFunctionalTestScenarioContext scenarioContext, Object key) {
-        final int count = 10;
-        return "TEST-" + RandomStringUtils.randomAlphabetic(count);
+        return StringGenerator.generate();
     }
 }

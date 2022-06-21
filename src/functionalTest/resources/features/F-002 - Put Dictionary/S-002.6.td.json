@@ -1,0 +1,26 @@
+{
+  "_guid_": "S-002.6",
+  "_extends_": "Put_Dictionary_Base",
+  "specs": [
+    "where the translations are null",
+    "with manage-translation IDAM role",
+    "has the 400 Bad Request status code"
+  ],
+
+  "users": {
+    "invokingUser": {
+      "_extends_": "ManageTranslationsUser"
+    }
+  },
+
+  "request": {
+    "_extends_": "Common_Request",
+    "body": {
+      "translations": null
+    }
+  },
+
+  "expectedResponse": {
+    "_extends_": "Common_400_Response"
+  }
+}
