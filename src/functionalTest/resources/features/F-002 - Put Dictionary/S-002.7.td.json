@@ -1,0 +1,30 @@
+{
+  "_guid_": "S-002.7",
+  "_extends_": "Put_Dictionary_Base",
+  "specs": [
+    "has welsh phrases",
+    "without manage-translation IDAM role",
+    "has the 400 Bad Request status code"
+  ],
+
+  "users": {
+    "invokingUser": {
+      "_extends_": "LoadTranslationsUser"
+    }
+  },
+
+  "request": {
+    "_extends_": "Common_Request",
+    "body": {
+      "translations": {
+        "TEST-F004-EnglishPhrase1": "TEST-F004-WelshPhrase1",
+        "TEST-F004-EnglishPhrase2": "TEST-F004-WelshPhrase2",
+        "TEST-F004-EnglishPhrase3": "TEST-F004-WelshPhrase3"
+      }
+    }
+  },
+
+  "expectedResponse": {
+    "_extends_": "Common_400_Response"
+  }
+}

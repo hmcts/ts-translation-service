@@ -1,0 +1,31 @@
+{
+  "_guid_": "F-002_Verify",
+  "_extends_": "Translation_Cy_Base",
+
+  "specs": [
+    "to verify translations"
+
+  ],
+  "users": {
+    "invokingUser": {
+      "_extends_": "ManageTranslationsUser"
+    }
+  },
+  "request": {
+    "_extends_": "Common_Request",
+    "headers": {
+      "Accept": "application/json"
+    },
+    "body": {
+      "phrases": "${[scenarioContext][customValues][getVerifyPhrasesFromParentContext]}"
+    }
+  },
+  "expectedResponse": {
+    "_extends_": "Common_200_Response",
+    "responseCode": 200,
+    "responseMessage": "OK",
+    "body": {
+      "translations": "${[scenarioContext][customValues][getVerifyTranslationResponseFromParentContext]}"
+    }
+  }
+}

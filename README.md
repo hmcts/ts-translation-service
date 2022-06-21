@@ -23,6 +23,41 @@ To build the project execute the following command:
 
 ### Running the application
 
+The easiest way to run the application locally is to use the `bootWithCCD` Gradle task.
+
+**Run the application**
+
+Run the application by executing the following command:
+
+```bash
+./gradlew bootWithCCD
+```
+
+This will start the application and its dependent services.
+
+In order to test if the application is up, you can call its health endpoint:
+
+```bash
+  curl http://localhost:4650/health
+```
+
+You should get a response similar to this:
+
+```
+  {"status":"UP","components":{"diskSpace":{"status":"UP","details":{"total":67371577344,"free":42536177664,"threshold":10485760,"exists":true}},"ping":{"status":"UP"}}}
+```
+
+Should the docker containers fail to start, it is likely that the `bootWithCCD` plugin is not authorized to pull the container images from Azure.
+
+Log in, using the commands below
+
+```bash
+  az acr login --name hmctspublic --subscription DCD-CNP-DEV
+  az acr login --name hmctspublic --subscription DCD-CFT-Sandbox
+```
+
+### Alternative to running the application
+
 Create the image of the application by executing the following command:
 
 ```bash
@@ -56,36 +91,6 @@ You should get a response similar to this:
 ```
   {"status":"UP","components":{"diskSpace":{"status":"UP","details":{"total":67371577344,"free":42536177664,"threshold":10485760,"exists":true}},"ping":{"status":"UP"}}}
 ```
-
-### Alternative script to run application
-
-To skip all the setting up and building, just execute the following command:
-
-```bash
-./bin/run-in-docker.sh
-```
-
-For more information:
-
-```bash
-./bin/run-in-docker.sh -h
-```
-
-Script includes bare minimum environment variables necessary to start api instance. Whenever any variable is changed or any other script regarding docker image/container build, the suggested way to ensure all is cleaned up properly is by this command:
-
-```bash
-docker-compose rm
-```
-
-It clears stopped containers correctly. Might consider removing clutter of images too, especially the ones fiddled with:
-
-```bash
-docker images
-
-docker image rm <image-id>
-```
-
-There is no need to remove postgres and java or similar core images.
 
 ### Other
 
