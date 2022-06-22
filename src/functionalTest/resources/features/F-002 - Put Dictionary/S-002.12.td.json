@@ -1,25 +1,24 @@
 {
-  "_guid_": "S-002.8",
+  "_guid_": "S-002.12",
   "_extends_": "Put_Dictionary_Base",
   "specs": [
-    "contains an entry for an english phrase that already exists",
-    "without manage-translation or load-translation IDAM role and uses ccd-definition",
+    "has an existing english phrase with a blank welsh translation and another one with a null welsh translation",
+    "with manage-translation IDAM role",
     "has the 201 Created status code"
   ],
 
   "users": {
     "invokingUser": {
-      "_extends_": "BeftaCaseworker2Solicitor2"
+      "_extends_": "ManageTranslationsUser"
     }
   },
-
-  "s2sClientId": "ccd_definition",
 
   "request": {
     "_extends_": "Common_Request",
     "body": {
       "translations": {
-        "TEST-S002.8-EnglishPhrase": ""
+        "TEST-S002.12-EnglishPhrase-Blank": "",
+        "TEST-S002.12-EnglishPhrase-Null": null
       }
     }
   },

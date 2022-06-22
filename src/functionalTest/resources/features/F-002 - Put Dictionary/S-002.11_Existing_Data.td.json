@@ -1,5 +1,5 @@
 {
-  "_guid_": "S-002.2_Existing_Data",
+  "_guid_": "S-002.11_Existing_Data",
   "_extends_": "Put_Dictionary_Base",
   "specs": [
     "to PUT translation phrases into the dictionary"
@@ -15,7 +15,7 @@
     "_extends_": "Common_Request",
     "body": {
       "translations": {
-        "TEST-S002.2-EnglishPhrase": "TEST-S002.2-WelshPhrase"
+        "TEST-S002.11-EnglishPhrase": ""
       }
     }
   },
