@@ -42,6 +42,7 @@ import static java.util.Collections.emptyMap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -227,8 +228,9 @@ public class DictionaryControllerIT extends BaseTest {
                 .andExpect(status().is(201))
                 .andReturn();
 
-            assertDictionaryEntityWithTranslationPhrases("english_1");
-            assertDictionaryEntityWithTranslationPhrases("english_2");
+            val versionResult = assertDictionaryEntityWithTranslationPhrases("english_1");
+            val versionResult1 = assertDictionaryEntityWithTranslationPhrases("english_2");
+            assertEquals(versionResult, versionResult1);
         }
 
         @Test
@@ -243,8 +245,9 @@ public class DictionaryControllerIT extends BaseTest {
                 .andExpect(status().is(201))
                 .andReturn();
 
-            assertDictionaryEntityWithTranslationPhrases("english_1");
-            assertDictionaryEntityWithTranslationPhrases("english_2");
+            val versionResult = assertDictionaryEntityWithTranslationPhrases("english_1");
+            val versionResult1 = assertDictionaryEntityWithTranslationPhrases("english_2");
+            assertEquals(versionResult, versionResult1);
         }
 
         // load-translations user
@@ -373,13 +376,15 @@ public class DictionaryControllerIT extends BaseTest {
         return new Dictionary(expectedMapKeysAndValues);
     }
 
-    private void assertDictionaryEntityWithTranslationPhrases(String englishPhrase) {
-
-        val dictionaryEntity = dictionaryRepository.findByEnglishPhrase(englishPhrase);
-        assertTrue(dictionaryEntity.isPresent());
-        assertNotNull(dictionaryEntity.get().getTranslationUpload());
-        assertNotNull(dictionaryEntity.get().getTranslationUpload().getVersion());
-        assertNotNull(dictionaryEntity.get().getTranslationPhrase());
+    private Long assertDictionaryEntityWithTranslationPhrases(String englishPhrase) {
+        val dictionaryEntityOptional = dictionaryRepository.findByEnglishPhrase(englishPhrase);
+        assertTrue(dictionaryEntityOptional.isPresent());
+        val dictionaryEntity = dictionaryEntityOptional.get();
+        assertNotNull(dictionaryEntity.getTranslationUpload());
+        val version = dictionaryEntity.getTranslationUpload().getVersion();
+        assertNotNull(version);
+        assertNotNull(dictionaryEntity.getTranslationPhrase());
+        return version;
     }
 
 
