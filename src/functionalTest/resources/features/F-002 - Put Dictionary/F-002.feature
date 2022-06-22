@@ -149,12 +149,12 @@ Feature: F-002: Put Dictionary Operation
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   @S-002.12 #WLTS-28 AC6
-  Scenario: Do nothing when trying to update an existing translation with a blank value.
+  Scenario: Do nothing when trying to update an existing translation with a blank/null value.
 
     Given a user [with manage-translation IDAM role],
     And   a successful call [to PUT translation phrases into the dictionary] as in [S-002.12_Existing_Data],
     When  a request is prepared with appropriate values
-    And   the request [is an existing english phrase with a blank welsh translation]
+    And   the request [has an existing english phrase with a blank welsh translation and another one with a null welsh translation]
     And   it is submitted to call the [PUT dictionary] operation of [Translation Service]
     Then  a positive response is received
     And   the response [has the 201 Created status code]

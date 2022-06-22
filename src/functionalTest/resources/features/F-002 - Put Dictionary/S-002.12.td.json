@@ -2,7 +2,7 @@
   "_guid_": "S-002.12",
   "_extends_": "Put_Dictionary_Base",
   "specs": [
-    "is an existing english phrase with a blank welsh translation",
+    "has an existing english phrase with a blank welsh translation and another one with a null welsh translation",
     "with manage-translation IDAM role",
     "has the 201 Created status code"
   ],
@@ -17,7 +17,8 @@
     "_extends_": "Common_Request",
     "body": {
       "translations": {
-        "TEST-S002.12-EnglishPhrase": ""
+        "TEST-S002.12-EnglishPhrase-Blank": "",
+        "TEST-S002.12-EnglishPhrase-Null": null
       }
     }
   },
