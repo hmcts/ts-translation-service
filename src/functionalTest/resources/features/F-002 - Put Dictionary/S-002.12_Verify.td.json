@@ -1,0 +1,14 @@
+{
+  "_guid_": "S-002.12_Verify",
+  "_extends_": "F-002_Verify",
+
+  "specs": [
+    "to verify no change"
+  ],
+
+  "expectedResponse": {
+    "body": {
+      "translations": "${[scenarioContext][customValues][containsDictionaryFromContext siblingContexts.S-002\\.12_Existing_Data.testData.request.body.translations]}"
+    }
+  }
+}
