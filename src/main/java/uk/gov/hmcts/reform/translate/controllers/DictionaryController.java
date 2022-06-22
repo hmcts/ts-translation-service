@@ -26,7 +26,9 @@ import static uk.gov.hmcts.reform.translate.errorhandling.AuthError.UNAUTHORISED
 import static uk.gov.hmcts.reform.translate.model.ControllerConstants.DICTIONARY_URL;
 import static uk.gov.hmcts.reform.translate.model.ControllerConstants.TRANSLATIONS_URL;
 import static uk.gov.hmcts.reform.translate.security.SecurityUtils.MANAGE_TRANSLATIONS_ROLE;
+import static uk.gov.hmcts.reform.translate.model.TranslationsRequest.BAD_REQUEST_MESSAGE_BAD_SCHEMA;
 import static uk.gov.hmcts.reform.translate.security.SecurityUtils.SERVICE_AUTHORIZATION;
+import static uk.gov.hmcts.reform.translate.service.DictionaryService.BAD_REQUEST_MESSAGE_WELSH_NOT_ALLOWED;
 
 @RestController
 public class DictionaryController {
@@ -66,7 +68,9 @@ public class DictionaryController {
 
         responses = {
             @ApiResponse(responseCode = "201", description = "Success"),
-            @ApiResponse(responseCode = "400", description = "Bad Request"),
+            @ApiResponse(responseCode = "400", description = "One or more of the following reasons:"
+                + "\n1) " + BAD_REQUEST_MESSAGE_BAD_SCHEMA
+                + "\n2) " + BAD_REQUEST_MESSAGE_WELSH_NOT_ALLOWED),
             @ApiResponse(responseCode = "401", description = AUTHENTICATION_TOKEN_INVALID, content = @Content()),
             @ApiResponse(responseCode = "403", description = UNAUTHORISED_S2S_SERVICE, content = @Content())
         }
@@ -83,7 +87,7 @@ public class DictionaryController {
         description = "User does not require any specific roles to call this endpoint",
         responses = {
             @ApiResponse(responseCode = "200", description = "Translation returned successfully"),
-            @ApiResponse(responseCode = "400", description = TranslationsRequest.BAD_REQUEST_MESSAGE),
+            @ApiResponse(responseCode = "400", description = TranslationsRequest.BAD_REQUEST_MESSAGE_BAD_SCHEMA),
             @ApiResponse(responseCode = "401", description = AUTHENTICATION_TOKEN_INVALID, content = @Content()),
             @ApiResponse(responseCode = "403", description = UNAUTHORISED_S2S_SERVICE, content = @Content())
         })

@@ -35,8 +35,9 @@ import static uk.gov.hmcts.reform.translate.security.SecurityUtils.MANAGE_TRANSL
 public class DictionaryService {
 
     public static final String INVALID_PAYLOAD_FORMAT = "The translations field cannot be empty.";
-    public static final String INVALID_PAYLOAD_FOR_ROLE = "User with a role different to "
-        + MANAGE_TRANSLATIONS_ROLE + " should not have translations.";
+
+    public static final String BAD_REQUEST_MESSAGE_WELSH_NOT_ALLOWED =
+        "Bad Request (002 Welsh not allowed for this user)";
 
     private final DictionaryRepository dictionaryRepository;
     private final DictionaryMapper dictionaryMapper;
@@ -165,7 +166,7 @@ public class DictionaryService {
             throw new BadRequestException(INVALID_PAYLOAD_FORMAT);
         }
         if (!isManageTranslationRole && hasAnyTranslations(dictionaryRequest)) {
-            throw new BadRequestException(INVALID_PAYLOAD_FOR_ROLE);
+            throw new BadRequestException(BAD_REQUEST_MESSAGE_WELSH_NOT_ALLOWED);
         }
     }
 }
