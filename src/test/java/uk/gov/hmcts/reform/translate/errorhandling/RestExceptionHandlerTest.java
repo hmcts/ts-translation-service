@@ -23,6 +23,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import uk.gov.hmcts.reform.translate.TestIdamConfiguration;
 import uk.gov.hmcts.reform.translate.config.SecurityConfiguration;
 import uk.gov.hmcts.reform.translate.controllers.DictionaryController;
@@ -30,8 +31,8 @@ import uk.gov.hmcts.reform.translate.model.TranslationsRequest;
 import uk.gov.hmcts.reform.translate.security.JwtGrantedAuthoritiesConverter;
 import uk.gov.hmcts.reform.translate.service.DictionaryService;
 
-import java.lang.reflect.Method;
 
+import java.lang.reflect.Method;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.context.annotation.FilterType.ASSIGNABLE_TYPE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -80,7 +81,6 @@ class RestExceptionHandlerTest {
 
         // THEN
         assertHttpErrorResponse(result, HttpStatus.INTERNAL_SERVER_ERROR, expectedException.getMessage());
-
     }
 
     @DisplayName("should return correct response when RequestErrorException is thrown")
@@ -97,11 +97,32 @@ class RestExceptionHandlerTest {
                                                         .contentType(MediaType.APPLICATION_JSON));
 
         // THEN
-        assertHttpErrorResponse(result, HttpStatus.FORBIDDEN, expectedException.getMessage());
-
+        result
+            .andExpect(status().is(HttpStatus.FORBIDDEN.value()))
+            .andExpect(jsonPath("$").doesNotExist());
     }
 
-    @DisplayName("should return correct response when RoleMissingException is thrown")
+    @DisplayName("should return correct response, without details, when AuthorizationException (401 Unauthorized) "
+        + "is thrown")
+    @Test
+    void shouldAuthorizationExceptionResponse() throws Exception {
+
+        // GIVEN
+        UnauthorizedException expectedException =
+            new UnauthorizedException("you are not authorized");
+
+        /// WHEN
+        setupMockServiceToThrowException(expectedException);
+        ResultActions result = this.mockMvc.perform(get(DICTIONARY_URL)
+                                                        .contentType(MediaType.APPLICATION_JSON));
+
+        // THEN
+        result
+            .andExpect(status().is(HttpStatus.UNAUTHORIZED.value()))
+            .andExpect(jsonPath("$").doesNotExist());
+    }
+
+    @DisplayName("should return correct response, without details, when RoleMissingException (403 Forbidden) is thrown")
     @Test
     void shouldReturnRoleMissingExceptionResponse() throws Exception {
 
@@ -115,8 +136,9 @@ class RestExceptionHandlerTest {
                                                         .contentType(MediaType.APPLICATION_JSON));
 
         // THEN
-        assertHttpErrorResponse(result, HttpStatus.FORBIDDEN, expectedException.getMessage());
-
+        result
+            .andExpect(status().is(HttpStatus.FORBIDDEN.value()))
+            .andExpect(jsonPath("$").doesNotExist());
     }
 
     @DisplayName("should return correct response when BadRequestException is thrown")
@@ -200,16 +222,24 @@ class RestExceptionHandlerTest {
     private void assertHttpErrorResponse(ResultActions result,
                                          HttpStatus expectedStatus,
                                          String expectedMessage) throws Exception {
-
-        // check for alternative error description if default error response
-        String reasonPhrase = expectedStatus.value() == HttpError.DEFAULT_STATUS
-            ? HttpError.DEFAULT_ERROR
-            : expectedStatus.getReasonPhrase();
-
         result
             .andExpect(status().is(expectedStatus.value()))
             .andExpect(jsonPath(ERROR_PATH_STATUS).value(expectedStatus.value()))
-            .andExpect(jsonPath(ERROR_PATH_ERROR).value(reasonPhrase))
+            .andExpect(jsonPath(ERROR_PATH_ERROR).value(getReasonPhrase(expectedStatus)))
             .andExpect(jsonPath(ERROR_PATH_MESSAGE).value(expectedMessage));
+    }
+
+    private String getReasonPhrase(HttpStatus expectedStatus) {
+        return expectedStatus.value() == HttpError.DEFAULT_STATUS
+            ? HttpError.DEFAULT_ERROR
+            : expectedStatus.getReasonPhrase();
+    }
+
+    @ResponseStatus(code = HttpStatus.UNAUTHORIZED)
+    private class UnauthorizedException extends ApiException {
+
+        public UnauthorizedException(String message) {
+            super(message);
+        }
     }
 }

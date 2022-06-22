@@ -30,9 +30,16 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
                                                                       final Exception exception) {
         log.error(exception.getMessage(), exception);
         final HttpError<Serializable> error = new HttpError<>(exception, request);
-        return ResponseEntity
-            .status(error.getStatus())
-            .body(error);
+        int status = error.getStatus();
+        if (status == HttpStatus.UNAUTHORIZED.value() || status == HttpStatus.FORBIDDEN.value()) {
+            return ResponseEntity
+                .status(error.getStatus())
+                .build();
+        } else {
+            return ResponseEntity
+                .status(error.getStatus())
+                .body(error);
+        }
     }
 
     @ExceptionHandler({

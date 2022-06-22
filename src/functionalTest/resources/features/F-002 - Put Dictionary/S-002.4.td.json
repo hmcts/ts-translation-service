@@ -26,10 +26,6 @@
 
   "expectedResponse": {
     "_extends_": "Common_403_Response",
-    "body" : {
-      "exception": "uk.gov.hmcts.reform.translate.errorhandling.RequestErrorException",
-      "message": "The request should be from a valid service or the User does not have 'manage-translations,load-translations' role",
-      "path": "/dictionary"
-    }
+    "body" : null
   }
 }

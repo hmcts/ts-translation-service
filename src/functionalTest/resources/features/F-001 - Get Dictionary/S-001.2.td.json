@@ -19,10 +19,6 @@
 
   "expectedResponse" : {
     "_extends_" : "Common_403_Response",
-    "body" : {
-      "exception": "uk.gov.hmcts.reform.translate.errorhandling.RoleMissingException",
-      "message": "User does not have 'manage-translations' role",
-      "path": "/dictionary"
-    }
+    "body" : null
   }
 }
