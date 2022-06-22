@@ -1,10 +1,10 @@
-package uk.gov.hmcts.reform.translate.custom.value;
+package uk.gov.hmcts.reform.translate.customvalue;
 
 import uk.gov.hmcts.befta.exception.FunctionalTestException;
 import uk.gov.hmcts.befta.player.BackEndFunctionalTestScenarioContext;
 import uk.gov.hmcts.befta.util.ReflectionUtils;
-import uk.gov.hmcts.reform.translate.custom.value.CustomValueEvaluator;
-import uk.gov.hmcts.reform.translate.custom.value.CustomValueKey;
+import uk.gov.hmcts.reform.translate.customvalue.CustomValueEvaluator;
+import uk.gov.hmcts.reform.translate.customvalue.CustomValueKey;
 
 import java.util.List;
 import java.util.Map;
@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import static java.util.Collections.singletonMap;
 
 public class GetTranslationsEvaluator implements CustomValueEvaluator {
+
     @Override
     public Boolean matches(CustomValueKey key) {
         return CustomValueKey.S_003_1.equals(key);

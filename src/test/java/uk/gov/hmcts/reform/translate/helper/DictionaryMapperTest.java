@@ -3,6 +3,7 @@ package uk.gov.hmcts.reform.translate.helper;
 import lombok.val;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import uk.gov.hmcts.reform.translate.data.TranslationUploadEntity;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,9 +21,11 @@ class DictionaryMapperTest {
     void shouldMapModelToEntityWithTranslationUploadEntity() {
         val dictionaryMapper = new DictionaryMapper();
         val currentPhrase = getCurrentPhrase();
+        val translationUploadEntity = new TranslationUploadEntity();
+        translationUploadEntity.setUserId("3333");
         val dictionaryEntity = dictionaryMapper.modelToEntityWithTranslationUploadEntity(
             currentPhrase,
-            "3333"
+            translationUploadEntity
         );
         assertEquals(ENGLISH, dictionaryEntity.getEnglishPhrase());
         assertEquals(WELSH, dictionaryEntity.getTranslationPhrase());

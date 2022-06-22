@@ -1,5 +1,6 @@
 package uk.gov.hmcts.reform.translate.helper;
 
+import lombok.NonNull;
 import lombok.val;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.reform.translate.data.DictionaryEntity;
@@ -12,20 +13,14 @@ import java.util.Map;
 public class DictionaryMapper {
 
     public DictionaryEntity modelToEntityWithTranslationUploadEntity(final Map.Entry<String, String> currentPhrase,
-                                                                     final String currentUserId) {
-
+                                                                     @NonNull TranslationUploadEntity uploadEntity) {
         val dictionaryEntity = modelToEntity(currentPhrase);
-        val translationUploadEntity = new TranslationUploadEntity();
-        translationUploadEntity.setUserId(currentUserId);
-        translationUploadEntity.setUploaded(LocalDateTime.now());
-
-        dictionaryEntity.setTranslationUpload(translationUploadEntity);
+        dictionaryEntity.setTranslationUpload(uploadEntity);
         return dictionaryEntity;
     }
 
     public DictionaryEntity modelToEntity(final Map.Entry<String, String> currentPhrase) {
-        val dictionaryEntity = new DictionaryEntity();
-        dictionaryEntity.setEnglishPhrase(currentPhrase.getKey());
+        val dictionaryEntity = modelToEntityWithoutTranslationPhrase(currentPhrase);
         dictionaryEntity.setTranslationPhrase(currentPhrase.getValue());
         return dictionaryEntity;
     }
@@ -34,5 +29,12 @@ public class DictionaryMapper {
         val dictionaryEntity = new DictionaryEntity();
         dictionaryEntity.setEnglishPhrase(currentPhrase.getKey());
         return dictionaryEntity;
+    }
+
+    public TranslationUploadEntity createTranslationUploadEntity(String currentUserId) {
+        val translationUploadEntity = new TranslationUploadEntity();
+        translationUploadEntity.setUserId(currentUserId);
+        translationUploadEntity.setUploaded(LocalDateTime.now());
+        return translationUploadEntity;
     }
 }
