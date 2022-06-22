@@ -28,6 +28,7 @@ import static uk.gov.hmcts.reform.translate.model.ControllerConstants.TRANSLATIO
 import static uk.gov.hmcts.reform.translate.security.SecurityUtils.MANAGE_TRANSLATIONS_ROLE;
 import static uk.gov.hmcts.reform.translate.model.TranslationsRequest.BAD_REQUEST_MESSAGE_BAD_SCHEMA;
 import static uk.gov.hmcts.reform.translate.security.SecurityUtils.SERVICE_AUTHORIZATION;
+import static uk.gov.hmcts.reform.translate.service.DictionaryService.INVALID_PAYLOAD_FORMAT;
 import static uk.gov.hmcts.reform.translate.service.DictionaryService.BAD_REQUEST_MESSAGE_WELSH_NOT_ALLOWED;
 
 @RestController
@@ -48,7 +49,10 @@ public class DictionaryController {
         responses = {
             @ApiResponse(responseCode = "200", description = "Dictionary returned successfully"),
             @ApiResponse(responseCode = "401", description = AUTHENTICATION_TOKEN_INVALID, content = @Content()),
-            @ApiResponse(responseCode = "403", description = UNAUTHORISED_S2S_SERVICE, content = @Content())
+            @ApiResponse(responseCode = "403", description = "One of the following reasons:\n"
+                + "1. " + UNAUTHORISED_S2S_SERVICE + "\n"
+                + "2. " + "User does not have 'manage-translations' role" + ".",
+                content = @Content())
         })
     public Dictionary getDictionary() {
         return new Dictionary(dictionaryService.getDictionaryContents());
@@ -61,18 +65,23 @@ public class DictionaryController {
             + "\t - User can submit English phrases with/without corresponding Welsh translations\n\n"
             + "If user's current IDAM role is `load translations`\n\n"
             + "\t - User can submit English phrases only\n\n"
-            + "If calling service is on approved list of services for this endpoint\n\n"
+            + "If calling service is on approved list of services for this endpoint that don't need to supply "
+            + " Authorization header: then\n\n"
             + "\t - this endpoint can be called without supplying IDAM credentials (Authorization header) - Service"
             + " to Service authorization (ServiceAuthorization header) is still required.\n\n"
             + "\t - calling service can only submit English phrases\n\n",
-
         responses = {
             @ApiResponse(responseCode = "201", description = "Success"),
-            @ApiResponse(responseCode = "400", description = "One or more of the following reasons:"
-                + "\n1) " + BAD_REQUEST_MESSAGE_BAD_SCHEMA
-                + "\n2) " + BAD_REQUEST_MESSAGE_WELSH_NOT_ALLOWED),
+            @ApiResponse(responseCode = "400", description = "One of the following reasons:\n"
+                + "1. " + INVALID_PAYLOAD_FORMAT + "\n"
+                + "2. " + BAD_REQUEST_MESSAGE_BAD_SCHEMA + "\n"
+                + "3. " + BAD_REQUEST_MESSAGE_WELSH_NOT_ALLOWED),
             @ApiResponse(responseCode = "401", description = AUTHENTICATION_TOKEN_INVALID, content = @Content()),
-            @ApiResponse(responseCode = "403", description = UNAUTHORISED_S2S_SERVICE, content = @Content())
+            @ApiResponse(responseCode = "403", description = "One of the following reasons:\n"
+                + "1. " + UNAUTHORISED_S2S_SERVICE + "\n"
+                + "2. The request should be from a valid service or the User does not have "
+                + "'manage-translations,load-translations' role.",
+                content = @Content())
         }
     )
     public void putDictionary(@RequestBody Dictionary dictionaryRequest,
@@ -84,10 +93,13 @@ public class DictionaryController {
     @PostMapping(path = TRANSLATIONS_URL, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get the Welsh translation of the provided set of English phrases.",
-        description = "User does not require any specific roles to call this endpoint",
+        description = "User does not require any specific roles to call this endpoint\n\n"
+        + "This endpoint can be called without supplying IDAM credentials (Authorization header) - Service "
+        + "to Service authorization (ServiceAuthorization header) is still required.",
         responses = {
             @ApiResponse(responseCode = "200", description = "Translation returned successfully"),
-            @ApiResponse(responseCode = "400", description = TranslationsRequest.BAD_REQUEST_MESSAGE_BAD_SCHEMA),
+            @ApiResponse(responseCode = "400", description = TranslationsRequest.BAD_REQUEST_MESSAGE_BAD_SCHEMA,
+                content = @Content()),
             @ApiResponse(responseCode = "401", description = AUTHENTICATION_TOKEN_INVALID, content = @Content()),
             @ApiResponse(responseCode = "403", description = UNAUTHORISED_S2S_SERVICE, content = @Content())
         })
