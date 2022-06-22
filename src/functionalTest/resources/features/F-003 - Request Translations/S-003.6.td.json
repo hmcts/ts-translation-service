@@ -1,17 +1,19 @@
 {
-  "_guid_": "S-003.1",
+  "_guid_": "S-003.6",
   "_extends_": "Translation_Cy_Base",
-  "title": "must return a successful response when translate operation is requested with no AUTHORIZATION header",
+  "title": "must return a successful response when translate operation is requested",
   "specs": [
-    "is missing IDAM AUTHORIZATION token header"
+    "an active solicitor profile",
+    "has a valid IDAM AUTHORIZATION token header"
   ],
   "users": {
-    "_extends_": "NoInvokingUser"
+    "invokingUser": {
+      "_extends_": "BeftaCaseworker2Solicitor2"
+    }
   },
   "request": {
+    "_extends_": "Common_Request",
     "headers": {
-      "ServiceAuthorization": "[[DEFAULT_AUTO_VALUE]]",
-      "Content-Type": "application/json",
       "Accept": "application/json"
     },
     "body": {
