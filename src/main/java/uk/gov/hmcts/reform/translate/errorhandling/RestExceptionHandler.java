@@ -13,12 +13,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-import uk.gov.hmcts.reform.translate.model.TranslationsRequest;
 
 import java.io.Serializable;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
-
+import static uk.gov.hmcts.reform.translate.errorhandling.BadRequestError.BAD_SCHEMA;
 
 @Slf4j
 @ControllerAdvice
@@ -64,7 +63,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
                                                                   WebRequest request) {
         log.debug("MethodArgumentNotValidException:{}", exception.getLocalizedMessage());
         final HttpError<Serializable> error = new HttpError<>(exception, request, HttpStatus.BAD_REQUEST)
-            .withMessage(TranslationsRequest.BAD_REQUEST_MESSAGE_BAD_SCHEMA);
+            .withMessage(BAD_SCHEMA);
         return ResponseEntity
             .status(HttpStatus.BAD_REQUEST)
             .body(error);
@@ -76,7 +75,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
         log.debug("HttpMessageNotReadableException:{}", exception.getLocalizedMessage());
         final HttpError<Serializable> error = new HttpError<>(exception, request, HttpStatus.BAD_REQUEST)
-            .withMessage(TranslationsRequest.BAD_REQUEST_MESSAGE_BAD_SCHEMA);
+            .withMessage(BAD_SCHEMA);
         return ResponseEntity
             .status(HttpStatus.BAD_REQUEST)
             .body(error);

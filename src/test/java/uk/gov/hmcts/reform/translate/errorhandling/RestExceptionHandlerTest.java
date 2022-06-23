@@ -27,10 +27,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import uk.gov.hmcts.reform.translate.TestIdamConfiguration;
 import uk.gov.hmcts.reform.translate.config.SecurityConfiguration;
 import uk.gov.hmcts.reform.translate.controllers.DictionaryController;
-import uk.gov.hmcts.reform.translate.model.TranslationsRequest;
 import uk.gov.hmcts.reform.translate.security.JwtGrantedAuthoritiesConverter;
 import uk.gov.hmcts.reform.translate.service.DictionaryService;
-
 
 import java.lang.reflect.Method;
 import static org.mockito.BDDMockito.given;
@@ -38,6 +36,7 @@ import static org.springframework.context.annotation.FilterType.ASSIGNABLE_TYPE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static uk.gov.hmcts.reform.translate.errorhandling.BadRequestError.BAD_SCHEMA;
 import static uk.gov.hmcts.reform.translate.model.ControllerConstants.DICTIONARY_URL;
 
 @WebMvcTest(controllers = DictionaryController.class,
@@ -190,7 +189,7 @@ class RestExceptionHandlerTest {
                                                         .contentType(MediaType.APPLICATION_JSON));
 
         // THEN
-        assertHttpErrorResponse(result, HttpStatus.BAD_REQUEST, TranslationsRequest.BAD_REQUEST_MESSAGE_BAD_SCHEMA);
+        assertHttpErrorResponse(result, HttpStatus.BAD_REQUEST, BAD_SCHEMA);
     }
 
     @DisplayName("should return correct response when MethodArgumentNotValidException is thrown")
@@ -211,7 +210,7 @@ class RestExceptionHandlerTest {
                                                         .contentType(MediaType.APPLICATION_JSON));
 
         // THEN
-        assertHttpErrorResponse(result, HttpStatus.BAD_REQUEST, TranslationsRequest.BAD_REQUEST_MESSAGE_BAD_SCHEMA);
+        assertHttpErrorResponse(result, HttpStatus.BAD_REQUEST, BAD_SCHEMA);
     }
 
     private void setupMockServiceToThrowException(Exception expectedException) {

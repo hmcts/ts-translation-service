@@ -24,7 +24,7 @@
     "_extends_": "Common_400_Response",
     "body" : {
       "exception": "uk.gov.hmcts.reform.translate.errorhandling.BadRequestException",
-      "message": "The translations field cannot be empty.",
+      "message": "Bad Request (001 bad schema)",
       "path": "/dictionary"
     }
   }
