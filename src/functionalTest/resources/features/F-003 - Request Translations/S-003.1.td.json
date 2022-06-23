@@ -6,14 +6,10 @@
     "is missing IDAM AUTHORIZATION token header"
   ],
   "users": {
-    "_extends_": "NoInvokingUser"
+    "_extends_": "No_Invoking_User"
   },
   "request": {
-    "headers": {
-      "ServiceAuthorization": "[[DEFAULT_AUTO_VALUE]]",
-      "Content-Type": "application/json",
-      "Accept": "application/json"
-    },
+    "_extends_": "Common_No_Auth_Request",
     "body": {
       "phrases": [
         "${[scenarioContext][customValues][UniqueTestPhrase S003.1]}"

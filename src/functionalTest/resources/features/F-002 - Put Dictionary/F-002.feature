@@ -175,3 +175,44 @@ Feature: F-002: Put Dictionary Operation
     And   a successful call [to verify translations] as in [F-002_Verify],
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  @S-002.14 #WLTS-29 AC2
+  Scenario: Add English phrases to dictionary and return success when IDAM token is missing and service is definition store
+
+    When  a request is prepared with appropriate values
+    And the request [is missing IDAM AUTHORIZATION token header]
+    And the request [originates from ccd-definition]
+    And   the request [add a new English phrase]
+    And   it is submitted to call the [PUT dictionary] operation of [Translation Service]
+    Then  a positive response is received
+    And   the response [has the 201 Created status code]
+    And   the response has all other details as expected
+    And   a successful call [to verify translations] as in [F-002_Verify]
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  @S-002.15 #WLTS-29 AC3
+  Scenario: Fail authentication and return 401 when IDAM token is missing and service is not definition store
+
+    When  a request is prepared with appropriate values
+    And the request [is missing IDAM AUTHORIZATION token header]
+    And the request [does not originate from ccd-definition]
+    And   the request [add a new English phrase]
+    And   it is submitted to call the [PUT dictionary] operation of [Translation Service]
+    Then  a negative response is received
+    And   the response [has the 401 Created status code]
+    And   the response has all other details as expected
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  @S-002.16 #WLTS-29 AC6
+  Scenario: Add English phrases to dictionary and return success when a valid IDAM token is present and service is definition store
+
+    Given a user [with manage-translation IDAM role],
+    When  a request is prepared with appropriate values
+    And the request [originates from ccd-definition]
+    And   the request [add a new English phrase]
+    And   it is submitted to call the [PUT dictionary] operation of [Translation Service]
+    Then  a positive response is received
+    And   the response [has the 201 Created status code]
+    And   the response has all other details as expected
+    And   a successful call [to verify translations] as in [F-002_Verify]
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

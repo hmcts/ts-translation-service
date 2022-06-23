@@ -103,14 +103,12 @@ public class DictionaryService {
 
         val isManageTranslationRole = securityUtils.hasRole(MANAGE_TRANSLATIONS_ROLE);
         validateDictionary(dictionaryRequest, isManageTranslationRole);
-        val currentUserId = securityUtils.getUserInfo().getUid();
 
         val translationUploadOptional = hasAnyTranslations(dictionaryRequest)
-            ? dictionaryMapper.createTranslationUploadEntity(currentUserId)
+            ? dictionaryMapper.createTranslationUploadEntity(securityUtils.getUserInfo().getUid())
             : null;
 
         dictionaryRequest.getTranslations().entrySet()
-            .stream()
             .forEach(phrase -> processPhrase(phrase, translationUploadOptional));
     }
 
