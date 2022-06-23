@@ -21,15 +21,14 @@ import java.util.Map;
 import javax.validation.Valid;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static uk.gov.hmcts.reform.translate.errorhandling.BadRequestError.BAD_SCHEMA;
+import static uk.gov.hmcts.reform.translate.errorhandling.BadRequestError.WELSH_NOT_ALLOWED;
 import static uk.gov.hmcts.reform.translate.errorhandling.AuthError.AUTHENTICATION_TOKEN_INVALID;
 import static uk.gov.hmcts.reform.translate.errorhandling.AuthError.UNAUTHORISED_S2S_SERVICE;
 import static uk.gov.hmcts.reform.translate.model.ControllerConstants.DICTIONARY_URL;
 import static uk.gov.hmcts.reform.translate.model.ControllerConstants.TRANSLATIONS_URL;
 import static uk.gov.hmcts.reform.translate.security.SecurityUtils.MANAGE_TRANSLATIONS_ROLE;
-import static uk.gov.hmcts.reform.translate.model.TranslationsRequest.BAD_REQUEST_MESSAGE_BAD_SCHEMA;
 import static uk.gov.hmcts.reform.translate.security.SecurityUtils.SERVICE_AUTHORIZATION;
-import static uk.gov.hmcts.reform.translate.service.DictionaryService.INVALID_PAYLOAD_FORMAT;
-import static uk.gov.hmcts.reform.translate.service.DictionaryService.BAD_REQUEST_MESSAGE_WELSH_NOT_ALLOWED;
 
 @RestController
 public class DictionaryController {
@@ -73,9 +72,8 @@ public class DictionaryController {
         responses = {
             @ApiResponse(responseCode = "201", description = "Success"),
             @ApiResponse(responseCode = "400", description = "One of the following reasons:\n"
-                + "1. " + INVALID_PAYLOAD_FORMAT + "\n"
-                + "2. " + BAD_REQUEST_MESSAGE_BAD_SCHEMA + "\n"
-                + "3. " + BAD_REQUEST_MESSAGE_WELSH_NOT_ALLOWED),
+                + "1. " + BAD_SCHEMA + "\n"
+                + "2. " + WELSH_NOT_ALLOWED + "\n"),
             @ApiResponse(responseCode = "401", description = AUTHENTICATION_TOKEN_INVALID, content = @Content()),
             @ApiResponse(responseCode = "403", description = "One of the following reasons:\n"
                 + "1. " + UNAUTHORISED_S2S_SERVICE + "\n"
@@ -98,7 +96,7 @@ public class DictionaryController {
         + "to Service authorization (ServiceAuthorization header) is still required.",
         responses = {
             @ApiResponse(responseCode = "200", description = "Translation returned successfully"),
-            @ApiResponse(responseCode = "400", description = TranslationsRequest.BAD_REQUEST_MESSAGE_BAD_SCHEMA,
+            @ApiResponse(responseCode = "400", description = BAD_SCHEMA,
                 content = @Content()),
             @ApiResponse(responseCode = "401", description = AUTHENTICATION_TOKEN_INVALID, content = @Content()),
             @ApiResponse(responseCode = "403", description = UNAUTHORISED_S2S_SERVICE, content = @Content())
