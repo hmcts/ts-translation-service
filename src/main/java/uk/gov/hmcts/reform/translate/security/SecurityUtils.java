@@ -11,6 +11,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.idam.client.models.UserInfo;
+import uk.gov.hmcts.reform.translate.ApplicationParams;
 import uk.gov.hmcts.reform.translate.security.idam.IdamRepository;
 
 import java.util.Collection;
@@ -30,11 +31,15 @@ public class SecurityUtils {
 
     private final AuthTokenGenerator authTokenGenerator;
     private final IdamRepository idamRepository;
+    private final ApplicationParams applicationParams;
 
     @Autowired
-    public SecurityUtils(final AuthTokenGenerator authTokenGenerator, IdamRepository idamRepository) {
+    public SecurityUtils(final AuthTokenGenerator authTokenGenerator,
+                         final IdamRepository idamRepository,
+                         final ApplicationParams applicationParams) {
         this.authTokenGenerator = authTokenGenerator;
         this.idamRepository = idamRepository;
+        this.applicationParams = applicationParams;
     }
 
     public String getS2SToken() {
@@ -113,6 +118,10 @@ public class SecurityUtils {
 
     private String removeBearerFromToken(String token) {
         return token.startsWith(BEARER) ? token.substring(BEARER.length()) : token;
+    }
+
+    public boolean isBypassAuthCheck(String clientServiceName) {
+        return applicationParams.getPutDictionaryS2sServicesBypassRoleAuthCheck().contains(clientServiceName);
     }
 }
 

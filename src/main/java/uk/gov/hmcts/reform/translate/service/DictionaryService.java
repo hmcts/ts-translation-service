@@ -5,7 +5,6 @@ import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import uk.gov.hmcts.reform.translate.ApplicationParams;
 import uk.gov.hmcts.reform.translate.data.DictionaryEntity;
 import uk.gov.hmcts.reform.translate.data.TranslationUploadEntity;
 import uk.gov.hmcts.reform.translate.errorhandling.BadRequestException;
@@ -41,16 +40,15 @@ public class DictionaryService {
     private final DictionaryRepository dictionaryRepository;
     private final DictionaryMapper dictionaryMapper;
     private final SecurityUtils securityUtils;
-    private final ApplicationParams applicationParams;
 
     @Autowired
-    public DictionaryService(DictionaryRepository dictionaryRepository, DictionaryMapper dictionaryMapper,
-                             SecurityUtils securityUtils, ApplicationParams applicationParams) {
+    public DictionaryService(DictionaryRepository dictionaryRepository,
+                             DictionaryMapper dictionaryMapper,
+                             SecurityUtils securityUtils) {
 
         this.dictionaryRepository = dictionaryRepository;
         this.dictionaryMapper = dictionaryMapper;
         this.securityUtils = securityUtils;
-        this.applicationParams = applicationParams;
     }
 
     public Map<String, String> getDictionaryContents() {
@@ -146,16 +144,13 @@ public class DictionaryService {
 
     public void putDictionaryRoleCheck(String clientS2SToken) {
         val clientServiceName = securityUtils.getServiceNameFromS2SToken(clientS2SToken);
-        if (isBypassRoleAuthCheck(clientServiceName)
+        if (securityUtils.isBypassAuthCheck(clientServiceName)
             || securityUtils.hasAnyOfTheseRoles(Arrays.asList(MANAGE_TRANSLATIONS_ROLE, LOAD_TRANSLATIONS_ROLE))) {
             return;
         }
         throw new RequestErrorException(MANAGE_TRANSLATIONS_ROLE + "," + LOAD_TRANSLATIONS_ROLE);
     }
 
-    private boolean isBypassRoleAuthCheck(String clientServiceName) {
-        return applicationParams.getPutDictionaryS2sServicesBypassRoleAuthCheck().contains(clientServiceName);
-    }
 
     private void validateDictionary(final Dictionary dictionaryRequest, boolean isManageTranslationRole) {
 

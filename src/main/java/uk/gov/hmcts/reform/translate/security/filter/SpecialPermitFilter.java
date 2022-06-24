@@ -55,7 +55,7 @@ public class SpecialPermitFilter extends OncePerRequestFilter {
         final String bearerToken = extractBearerToken(request);
         final String serviceName = securityUtils.getServiceNameFromS2SToken(bearerToken);
 
-        return "ccd_definition".equalsIgnoreCase(serviceName);
+        return securityUtils.isBypassAuthCheck(serviceName);
     }
 
     private String extractBearerToken(HttpServletRequest request) {

@@ -8,6 +8,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -20,6 +23,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.idam.client.models.UserInfo;
+import uk.gov.hmcts.reform.translate.ApplicationParams;
 import uk.gov.hmcts.reform.translate.security.idam.IdamRepository;
 
 import java.util.ArrayList;
@@ -71,6 +75,9 @@ class SecurityUtilsTest {
 
     @Mock
     private AuthTokenGenerator serviceTokenGenerator;
+
+    @Mock
+    private ApplicationParams applicationParams;
 
     @InjectMocks
     private SecurityUtils underTest;
@@ -211,6 +218,32 @@ class SecurityUtilsTest {
             doReturn(null).when(authentication).getPrincipal();
 
             assertThat(underTest.getUserToken()).isNull();
+        }
+    }
+
+    @Nested
+    @DisplayName("Auth skipper parameters")
+    class AuthSkipperParameter {
+        @ParameterizedTest
+        @MethodSource("provideArguments")
+        @DisplayName("Return true if param is in the list otherwise false")
+        void shouldTest(final List<String> input, final boolean expected) {
+            doReturn(input).when(applicationParams).getPutDictionaryS2sServicesBypassRoleAuthCheck();
+
+            final boolean result = underTest.isBypassAuthCheck("ccd_definition");
+
+            assertThat(result)
+                .isNotNull()
+                .isEqualTo(expected);
+        }
+
+        private static Stream<Arguments> provideArguments() {
+            return Stream.of(
+                Arguments.of(List.of(), false),
+                Arguments.of(List.of("xui_webapp"), false),
+                Arguments.of(List.of("ccd_definition"), true),
+                Arguments.of(List.of("ccd_definition", "xui_webapp"), true)
+            );
         }
     }
 
