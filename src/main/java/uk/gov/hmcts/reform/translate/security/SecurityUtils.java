@@ -15,6 +15,7 @@ import uk.gov.hmcts.reform.translate.security.idam.IdamRepository;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toSet;
@@ -53,13 +54,19 @@ public class SecurityUtils {
     }
 
     public UserInfo getUserInfo() {
-        UserInfo userInfo = idamRepository.getUserInfo(getUserToken());
-        if (userInfo != null) {
-            log.info("SecurityUtils retrieved user info from idamRepository. User Id={}. Roles={}.",
-                     userInfo.getUid(),
-                     userInfo.getRoles());
-        }
-        return userInfo;
+        return Optional.ofNullable(getUserToken())
+            .map(userToken -> {
+                final UserInfo userInfo = idamRepository.getUserInfo(getUserToken());
+                if (userInfo != null) {
+                    log.info(
+                        "SecurityUtils retrieved user info from idamRepository. User Id={}. Roles={}.",
+                        userInfo.getUid(),
+                        userInfo.getRoles()
+                    );
+                }
+                return userInfo;
+            })
+            .orElse(null);
     }
 
     public String getUserId() {
@@ -67,8 +74,12 @@ public class SecurityUtils {
     }
 
     public String getUserToken() {
-        Jwt jwt = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return jwt.getTokenValue();
+        return Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication().getPrincipal())
+            .map(principal -> {
+                Jwt jwt = (Jwt) principal;
+                return jwt.getTokenValue();
+            })
+            .orElse(null);
     }
 
     public String getUserBearerToken() {
