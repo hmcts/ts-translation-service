@@ -1,5 +1,7 @@
 server:
   port: 4650
+  error:
+    include-stacktrace: never
 
 management:
   endpoint:

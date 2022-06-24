@@ -17,8 +17,9 @@ import uk.gov.hmcts.reform.translate.service.DictionaryService;
 
 import java.util.Map;
 import javax.validation.Valid;
-
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static uk.gov.hmcts.reform.translate.errorhandling.BadRequestError.BAD_SCHEMA;
+import static uk.gov.hmcts.reform.translate.errorhandling.BadRequestError.WELSH_NOT_ALLOWED;
 import static uk.gov.hmcts.reform.translate.model.ControllerConstants.DICTIONARY_URL;
 import static uk.gov.hmcts.reform.translate.model.ControllerConstants.TRANSLATIONS_URL;
 import static uk.gov.hmcts.reform.translate.security.SecurityUtils.SERVICE_AUTHORIZATION;
@@ -48,7 +49,9 @@ public class DictionaryController {
     @ResponseStatus(HttpStatus.CREATED)
     @ApiResponses(value = {
         @ApiResponse(responseCode = "201", description = "Success"),
-        @ApiResponse(responseCode = "400", description = "Bad Request"),
+        @ApiResponse(responseCode = "400", description = "One or more of the following reasons:"
+            + "\n1) " + BAD_SCHEMA
+            + "\n2) " + WELSH_NOT_ALLOWED),
         @ApiResponse(responseCode = "401", description = "Unauthorised"),
         @ApiResponse(responseCode = "403", description = "Forbidden"),
         @ApiResponse(responseCode = "500", description = "Error occurred on the server")
@@ -64,7 +67,7 @@ public class DictionaryController {
     @ResponseStatus(HttpStatus.OK)
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Translation returned successfully"),
-        @ApiResponse(responseCode = "400", description = TranslationsRequest.BAD_REQUEST_MESSAGE),
+        @ApiResponse(responseCode = "400", description = BAD_SCHEMA),
         @ApiResponse(responseCode = "401", description = "Unauthorised"),
         @ApiResponse(responseCode = "403", description = "Forbidden")
     })

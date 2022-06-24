@@ -27,7 +27,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.IntStream;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -42,10 +41,10 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static uk.gov.hmcts.reform.translate.errorhandling.BadRequestError.BAD_SCHEMA;
+import static uk.gov.hmcts.reform.translate.errorhandling.BadRequestError.WELSH_NOT_ALLOWED;
 import static uk.gov.hmcts.reform.translate.security.SecurityUtils.LOAD_TRANSLATIONS_ROLE;
 import static uk.gov.hmcts.reform.translate.security.SecurityUtils.MANAGE_TRANSLATIONS_ROLE;
-import static uk.gov.hmcts.reform.translate.service.DictionaryService.INVALID_PAYLOAD_FORMAT;
-import static uk.gov.hmcts.reform.translate.service.DictionaryService.INVALID_PAYLOAD_FOR_ROLE;
 
 @ExtendWith(MockitoExtension.class)
 class DictionaryServiceTest {
@@ -454,8 +453,7 @@ class DictionaryServiceTest {
                 BadRequestException.class, () -> dictionaryService.putDictionary(dictionaryRequest)
             );
             assertThat(badRequestException).isInstanceOf(BadRequestException.class);
-            assertEquals(INVALID_PAYLOAD_FORMAT, badRequestException.getMessage());
-
+            assertEquals(BAD_SCHEMA, badRequestException.getMessage());
         }
 
         @Test
@@ -473,8 +471,7 @@ class DictionaryServiceTest {
                 BadRequestException.class, () -> dictionaryService.putDictionary(dictionaryRequest)
             );
             assertThat(badRequestException).isInstanceOf(BadRequestException.class);
-            assertEquals(INVALID_PAYLOAD_FORMAT, badRequestException.getMessage());
-
+            assertEquals(BAD_SCHEMA, badRequestException.getMessage());
         }
 
         @Test
@@ -487,8 +484,7 @@ class DictionaryServiceTest {
                 BadRequestException.class, () -> dictionaryService.putDictionary(dictionaryRequest)
             );
             assertThat(badRequestException).isInstanceOf(BadRequestException.class);
-            assertEquals(INVALID_PAYLOAD_FOR_ROLE, badRequestException.getMessage());
-
+            assertEquals(WELSH_NOT_ALLOWED, badRequestException.getMessage());
         }
 
 

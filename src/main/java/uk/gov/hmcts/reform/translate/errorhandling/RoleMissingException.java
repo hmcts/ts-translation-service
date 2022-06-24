@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import java.io.Serial;
 
 @ResponseStatus(code = HttpStatus.FORBIDDEN)
-public class RoleMissingException extends IllegalStateException {
+public class RoleMissingException extends ApiException {
 
     public static final String ERROR_MESSAGE = "User does not have '%s' role";
 
