@@ -5,21 +5,12 @@
   <suppress>
     <notes>False Positives
       CVE-2016-1000027 refer https://tools.hmcts.net/jira/browse/WLTS-35
+      CVE-2018-1258 refer https://tools.hmcts.net/jira/browse/WLTS-36
     </notes>
     <cve>CVE-2016-1000027</cve>
-  </suppress>
-  <!--End of false positives section -->
-
-  <suppress>
-    <notes><![CDATA[
-      Suppressing as it's a false positive (see: https://pivotal.io/security/cve-2018-1258)
-      ]]>
-      https://tools.hmcts.net/jira/browse/WLTS-36
-    </notes>
-    <gav regex="true">^org\.springframework\.(security|boot):(spring-security-crypto:5.6.[0-5]|spring-boot-starter-oauth2-(client|resource-server):2.6.[0-8])</gav>
-    <cpe>cpe:/a:pivotal_software:spring_security</cpe>
     <cve>CVE-2018-1258</cve>
   </suppress>
+  <!--End of false positives section -->
 
   <suppress>
     <notes><![CDATA[
