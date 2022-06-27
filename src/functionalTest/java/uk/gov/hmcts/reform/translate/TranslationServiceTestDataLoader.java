@@ -8,12 +8,14 @@ import io.restassured.specification.RequestSpecification;
 import uk.gov.hmcts.befta.BeftaMain;
 import uk.gov.hmcts.befta.DefaultBeftaTestDataLoader;
 import uk.gov.hmcts.befta.TestAutomationAdapter;
+import uk.gov.hmcts.befta.TestAutomationConfig;
 import uk.gov.hmcts.befta.auth.UserTokenProviderConfig;
 import uk.gov.hmcts.befta.data.UserData;
 import uk.gov.hmcts.befta.util.BeftaUtils;
 import uk.gov.hmcts.befta.util.EnvironmentVariableUtils;
 import uk.gov.hmcts.befta.util.JsonUtils;
 import uk.gov.hmcts.reform.translate.controllers.ControllerConstants;
+import uk.gov.hmcts.reform.translate.security.SecurityUtils;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
@@ -32,7 +34,15 @@ public class TranslationServiceTestDataLoader extends DefaultBeftaTestDataLoader
 
     @Override
     public void loadDataIfNotLoadedVeryRecently() {
-        clearTestPhrases();
+        RestAssured.useRelaxedHTTPSValidation();
+        try {
+            clearTestPhrases();
+        } catch (Exception e) {
+            // Write details to log then swallow this error as this failure is not critical.  i.e. allow it to continue
+            // so any errors related to the deployment under test will re-occur during smoke / functional test run
+            // which has better fault reporting.
+            BeftaUtils.defaultLog("Error clearing down test data.", e);
+        }
     }
 
     private void clearTestPhrases() {
@@ -57,9 +67,12 @@ public class TranslationServiceTestDataLoader extends DefaultBeftaTestDataLoader
             adapter.authenticate(manageTranslationUser, UserTokenProviderConfig.DEFAULT_INSTANCE.getClientId());
             String s2sToken = adapter.getNewS2SToken("xui_webapp");
 
-            return RestAssured.given(new RequestSpecBuilder().setBaseUri(BeftaMain.getConfig().getTestUrl()).build())
-                .header("Authorization", "Bearer " + manageTranslationUser.getAccessToken())
-                .header("ServiceAuthorization", s2sToken);
+            return RestAssured
+                .given(
+                    new RequestSpecBuilder().setBaseUri(TestAutomationConfig.INSTANCE.getTestUrl()).build()
+                )
+                .header(SecurityUtils.AUTHORIZATION, "Bearer " + manageTranslationUser.getAccessToken())
+                .header(SecurityUtils.SERVICE_AUTHORIZATION, s2sToken);
 
         } catch (ExecutionException e) {
             String message = String.format("authenticating as %s failed ", manageTranslationUser.getUsername());
