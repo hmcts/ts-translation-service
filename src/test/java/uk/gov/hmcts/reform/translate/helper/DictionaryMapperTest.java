@@ -9,7 +9,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisplayName("DictionaryMapperTest")
 class DictionaryMapperTest {
@@ -29,7 +31,22 @@ class DictionaryMapperTest {
         );
         assertEquals(ENGLISH, dictionaryEntity.getEnglishPhrase());
         assertEquals(WELSH, dictionaryEntity.getTranslationPhrase());
-        assertTrue(dictionaryEntity.getTranslationUpload() != null);
+        assertNotNull(dictionaryEntity.getTranslationUpload());
+    }
+
+    @SuppressWarnings("ConstantConditions") // NB: testing @NonNull annotation is present and active
+    @Test
+    void shouldThrowNullErrorIfModelToEntityWithTranslationUploadEntityIsPassANullUploadEntity() {
+
+        // GIVEN
+        val dictionaryMapper = new DictionaryMapper();
+        val currentPhrase = getCurrentPhrase();
+
+        // WHEN / THEN
+        assertThrows(
+            NullPointerException.class,
+            () -> dictionaryMapper.modelToEntityWithTranslationUploadEntity(currentPhrase, null)
+        );
     }
 
     @Test
@@ -39,7 +56,7 @@ class DictionaryMapperTest {
         val dictionaryEntity = dictionaryMapper.modelToEntity(currentPhrase);
         assertEquals(ENGLISH, dictionaryEntity.getEnglishPhrase());
         assertEquals(WELSH, dictionaryEntity.getTranslationPhrase());
-        assertTrue(dictionaryEntity.getTranslationUpload() == null);
+        assertNull(dictionaryEntity.getTranslationUpload());
     }
 
     @Test
@@ -49,8 +66,8 @@ class DictionaryMapperTest {
         val currentPhrase = getCurrentPhrase();
         val dictionaryEntity = dictionaryMapper.modelToEntityWithoutTranslationPhrase(currentPhrase);
         assertEquals(ENGLISH, dictionaryEntity.getEnglishPhrase());
-        assertEquals(null, dictionaryEntity.getTranslationPhrase());
-        assertTrue(dictionaryEntity.getTranslationUpload() == null);
+        assertNull(dictionaryEntity.getTranslationPhrase());
+        assertNull(dictionaryEntity.getTranslationUpload());
     }
 
     private Map.Entry<String, String> getCurrentPhrase() {
@@ -59,4 +76,5 @@ class DictionaryMapperTest {
         currentPhrase.put(ENGLISH, WELSH);
         return currentPhrase.entrySet().iterator().next();
     }
+
 }

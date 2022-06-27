@@ -80,7 +80,7 @@ public class TestingSupportControllerIT extends BaseTest {
 
         @Test
         @DisplayName("Delete called but not permitted without `" + MANAGE_TRANSLATIONS_ROLE + "` role")
-        void shouldReturn400ForPutDictionaryForIdamUserWithLoadTranslationWithIncorrectPayLoad() throws Exception {
+        void shouldReturn403WhenUserDoesNotHaveManageTranslationsRole() throws Exception {
 
             // GIVEN
             stubUserInfo(LOAD_TRANSLATIONS_ROLE);

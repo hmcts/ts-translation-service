@@ -40,7 +40,7 @@ public class TestingSupportController {
             @ApiResponse(responseCode = "401", description = AUTHENTICATION_TOKEN_INVALID, content = @Content()),
             @ApiResponse(responseCode = "403", description = "One of the following reasons:\n"
                 + "1. " + UNAUTHORISED_S2S_SERVICE + "\n"
-                + "2. " + "User does not have '" + MANAGE_TRANSLATIONS_ROLE + "' role" + ".",
+                + "2. " + "User does not have '" + MANAGE_TRANSLATIONS_ROLE + "' role.",
                 content = @Content())
         })
     public void deleteDictionaryTestPhrases() {
