@@ -21,12 +21,12 @@ import java.util.Map;
 import javax.validation.Valid;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static uk.gov.hmcts.reform.translate.controllers.ControllerConstants.DICTIONARY_URL;
+import static uk.gov.hmcts.reform.translate.controllers.ControllerConstants.TRANSLATIONS_URL;
 import static uk.gov.hmcts.reform.translate.errorhandling.BadRequestError.BAD_SCHEMA;
 import static uk.gov.hmcts.reform.translate.errorhandling.BadRequestError.WELSH_NOT_ALLOWED;
 import static uk.gov.hmcts.reform.translate.errorhandling.AuthError.AUTHENTICATION_TOKEN_INVALID;
 import static uk.gov.hmcts.reform.translate.errorhandling.AuthError.UNAUTHORISED_S2S_SERVICE;
-import static uk.gov.hmcts.reform.translate.model.ControllerConstants.DICTIONARY_URL;
-import static uk.gov.hmcts.reform.translate.model.ControllerConstants.TRANSLATIONS_URL;
 import static uk.gov.hmcts.reform.translate.security.SecurityUtils.MANAGE_TRANSLATIONS_ROLE;
 import static uk.gov.hmcts.reform.translate.security.SecurityUtils.SERVICE_AUTHORIZATION;
 

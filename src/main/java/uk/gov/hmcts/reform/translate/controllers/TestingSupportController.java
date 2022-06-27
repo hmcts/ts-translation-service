@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.hmcts.reform.translate.service.DictionaryService;
 
+import static uk.gov.hmcts.reform.translate.controllers.ControllerConstants.TESTING_SUPPORT_URL;
+import static uk.gov.hmcts.reform.translate.controllers.ControllerConstants.TEST_PHRASES_URL;
 import static uk.gov.hmcts.reform.translate.errorhandling.AuthError.AUTHENTICATION_TOKEN_INVALID;
 import static uk.gov.hmcts.reform.translate.errorhandling.AuthError.UNAUTHORISED_S2S_SERVICE;
-import static uk.gov.hmcts.reform.translate.model.ControllerConstants.TESTING_SUPPORT_URL;
-import static uk.gov.hmcts.reform.translate.model.ControllerConstants.TEST_PHRASES_URL;
 import static uk.gov.hmcts.reform.translate.security.SecurityUtils.MANAGE_TRANSLATIONS_ROLE;
 
 @RestController

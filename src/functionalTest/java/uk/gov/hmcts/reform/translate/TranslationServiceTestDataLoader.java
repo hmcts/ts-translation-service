@@ -13,7 +13,7 @@ import uk.gov.hmcts.befta.data.UserData;
 import uk.gov.hmcts.befta.util.BeftaUtils;
 import uk.gov.hmcts.befta.util.EnvironmentVariableUtils;
 import uk.gov.hmcts.befta.util.JsonUtils;
-import uk.gov.hmcts.reform.translate.model.ControllerConstants;
+import uk.gov.hmcts.reform.translate.controllers.ControllerConstants;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;

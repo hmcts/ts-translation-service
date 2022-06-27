@@ -15,8 +15,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static uk.gov.hmcts.reform.translate.model.ControllerConstants.TESTING_SUPPORT_URL;
-import static uk.gov.hmcts.reform.translate.model.ControllerConstants.TEST_PHRASES_URL;
+import static uk.gov.hmcts.reform.translate.controllers.ControllerConstants.TESTING_SUPPORT_URL;
+import static uk.gov.hmcts.reform.translate.controllers.ControllerConstants.TEST_PHRASES_URL;
 import static uk.gov.hmcts.reform.translate.security.SecurityUtils.LOAD_TRANSLATIONS_ROLE;
 import static uk.gov.hmcts.reform.translate.security.SecurityUtils.MANAGE_TRANSLATIONS_ROLE;
 

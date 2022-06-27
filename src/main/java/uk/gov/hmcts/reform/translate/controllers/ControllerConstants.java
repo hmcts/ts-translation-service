@@ -1,4 +1,4 @@
-package uk.gov.hmcts.reform.translate.model;
+package uk.gov.hmcts.reform.translate.controllers;
 
 public final class ControllerConstants {
     // DictionaryController
