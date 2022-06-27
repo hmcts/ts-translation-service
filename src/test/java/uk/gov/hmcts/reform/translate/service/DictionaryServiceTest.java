@@ -341,6 +341,7 @@ class DictionaryServiceTest {
             verify(dictionaryMapper, times(3)).modelToEntityWithoutTranslationPhrase(any());
             verify(dictionaryRepository, times(3)).save(any());
             // verify no translation uploaded entity created as no translations
+            verify(dictionaryMapper, never()).createTranslationUploadEntity(anyString());
             verify(translationUploadRepository, never()).save(any());
         }
 
@@ -387,7 +388,8 @@ class DictionaryServiceTest {
             verify(securityUtils, times(1)).hasRole(anyString());
             verify(dictionaryRepository, times(0)).save(any());
             // verify no translation uploaded entity created as no translations
-            verify(translationUploadRepository, times(0)).save(any());
+            verify(dictionaryMapper, never()).createTranslationUploadEntity(anyString());
+            verify(translationUploadRepository, never()).save(any());
         }
 
         @Test
