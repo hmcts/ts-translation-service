@@ -45,6 +45,7 @@ import static uk.gov.hmcts.reform.translate.errorhandling.BadRequestError.BAD_SC
 import static uk.gov.hmcts.reform.translate.errorhandling.BadRequestError.WELSH_NOT_ALLOWED;
 import static uk.gov.hmcts.reform.translate.security.SecurityUtils.LOAD_TRANSLATIONS_ROLE;
 import static uk.gov.hmcts.reform.translate.security.SecurityUtils.MANAGE_TRANSLATIONS_ROLE;
+import static uk.gov.hmcts.reform.translate.service.DictionaryService.TEST_PHRASES_START_WITH;
 
 @ExtendWith(MockitoExtension.class)
 class DictionaryServiceTest {
@@ -52,6 +53,7 @@ class DictionaryServiceTest {
     private static final String CLIENTS2S_TOKEN = "clientS2SToken";
     private static final String DEFINITION_STORE = "definition_store";
     private static final String XUI = "xui";
+
     @Mock
     DictionaryRepository dictionaryRepository;
 
@@ -60,6 +62,7 @@ class DictionaryServiceTest {
 
     @Mock
     DictionaryMapper dictionaryMapper;
+
     @Mock
     SecurityUtils securityUtils;
 
@@ -512,6 +515,46 @@ class DictionaryServiceTest {
                 .build();
             return userInfo;
         }
+    }
+
+    @Nested
+    @DisplayName("DeleteTestPhrases")
+    class DeleteTestPhrases {
+
+        @Test
+        void shouldDeleteTestPhrasesWhenUsingCorrectRole() {
+
+            // GIVEN
+            given(securityUtils.hasRole(MANAGE_TRANSLATIONS_ROLE)).willReturn(true);
+
+            // WHEN
+            dictionaryService.deleteTestPhrases();
+
+            // THEN
+            verify(dictionaryRepository).deleteByEnglishPhraseStartingWith(TEST_PHRASES_START_WITH);
+
+        }
+
+        @Test
+        void shouldThrowExceptionWhenUsingIncorrectRole() {
+
+            // GIVEN
+            given(securityUtils.hasRole(MANAGE_TRANSLATIONS_ROLE)).willReturn(false);
+
+            // WHEN
+            RoleMissingException roleMissingException = assertThrows(
+                RoleMissingException.class,
+                () -> dictionaryService.deleteTestPhrases()
+            );
+
+            // THEN
+            assertEquals(
+                String.format(RoleMissingException.ERROR_MESSAGE, MANAGE_TRANSLATIONS_ROLE),
+                roleMissingException.getMessage()
+            );
+
+        }
+
     }
 
     private DictionaryEntity createDictionaryEntity(String phrase, String translationPhrase) {

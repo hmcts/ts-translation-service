@@ -1,6 +1,7 @@
 package uk.gov.hmcts.reform.translate.service;
 
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,7 +35,10 @@ import static uk.gov.hmcts.reform.translate.security.SecurityUtils.LOAD_TRANSLAT
 import static uk.gov.hmcts.reform.translate.security.SecurityUtils.MANAGE_TRANSLATIONS_ROLE;
 
 @Service
+@Slf4j
 public class DictionaryService {
+
+    public static final String TEST_PHRASES_START_WITH = "TEST-";
 
     private final DictionaryRepository dictionaryRepository;
     private final DictionaryMapper dictionaryMapper;
@@ -49,6 +53,17 @@ public class DictionaryService {
         this.dictionaryMapper = dictionaryMapper;
         this.securityUtils = securityUtils;
         this.applicationParams = applicationParams;
+    }
+
+    public void deleteTestPhrases() {
+        // check manage-translations role before manipulating phrases that may contain translations.
+        if (securityUtils.hasRole(MANAGE_TRANSLATIONS_ROLE)) {
+            long deleteCount = dictionaryRepository.deleteByEnglishPhraseStartingWith(TEST_PHRASES_START_WITH);
+            log.warn("User {} has deleted {} test phrases matching '{}'",
+                     securityUtils.getUserId(), deleteCount, TEST_PHRASES_START_WITH);
+        } else {
+            throw new RoleMissingException(MANAGE_TRANSLATIONS_ROLE);
+        }
     }
 
     public Map<String, String> getDictionaryContents() {
@@ -108,7 +123,6 @@ public class DictionaryService {
             : null;
 
         dictionaryRequest.getTranslations().entrySet()
-            .stream()
             .forEach(phrase -> processPhrase(phrase, translationUploadOptional));
     }
 

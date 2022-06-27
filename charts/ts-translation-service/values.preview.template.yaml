@@ -9,6 +9,7 @@ java:
     TS_TRANSLATION_SERVICE_DB_PASSWORD: "{{ .Values.postgresql.postgresqlPassword}}"
     TS_TRANSLATION_SERVICE_DB_OPTIONS: "?stringtype=unspecified"
     TS_TRANSLATION_SERVICE_DB_PORT: 5432
+    TESTING_SUPPORT_ENABLED: true
   postgresql:
     enabled: true
   keyVaults:

@@ -20,14 +20,36 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static uk.gov.hmcts.reform.translate.service.DictionaryService.TEST_PHRASES_START_WITH;
 
 class DictionaryRepositoryIT extends BaseTest {
+
     @Autowired
     DictionaryRepository dictionaryRepository;
 
     private static final String ENGLISH_PHRASE = "English phrase";
     private static final String TRANSLATION_PHRASE = "Welsh translation phrase";
     private static final String IDAM_USER_ID = UUID.randomUUID().toString();
+
+    @Sql(scripts = {DELETE_TRANSLATION_TABLES_SCRIPT, ADD_TEST_PHRASES_FOR_DELETION_SCRIPT})
+    @Test
+    void testDeleteByEnglishPhraseStartingWith() {
+
+        // WHEN
+        final var numberDeleted = dictionaryRepository.deleteByEnglishPhraseStartingWith(TEST_PHRASES_START_WITH);
+
+        //THEN
+        assertAll(
+            // verify deletes
+            () -> assertEquals(2, numberDeleted),
+            () -> assertTrue(dictionaryRepository.findByEnglishPhrase(DELETE_ME_PHRASE_WITH_TRANSLATION).isEmpty()),
+            () -> assertTrue(dictionaryRepository.findByEnglishPhrase(DELETE_ME_PHRASE_WITHOUT_TRANSLATION).isEmpty()),
+            // verify keeps
+            () -> assertTrue(dictionaryRepository.findByEnglishPhrase(KEEP_ME_PHRASE_WITH_TRANSLATION).isPresent()),
+            () -> assertTrue(dictionaryRepository.findByEnglishPhrase(KEEP_ME_PHRASE_WITHOUT_TRANSLATION).isPresent())
+        );
+
+    }
 
     @Sql(scripts = DELETE_TRANSLATION_TABLES_SCRIPT)
     @Test
@@ -82,7 +104,7 @@ class DictionaryRepositoryIT extends BaseTest {
         final var dictionaryEntity = optionalDictionaryEntity.get();
 
         assertAll(
-            () -> assertEquals(dictionaryEntity.getTranslationPhrase(), "Translated Phrase 2"),
+            () -> assertEquals("Translated Phrase 2", dictionaryEntity.getTranslationPhrase()),
             () -> assertEquals("English Phrase 2", dictionaryEntity.getEnglishPhrase()),
             () -> assertEquals(
                 LocalDateTime.parse("2022-05-07T09:00:05.000000"),
@@ -140,4 +162,5 @@ class DictionaryRepositoryIT extends BaseTest {
             .isNotNull()
             .isInstanceOf(DataIntegrityViolationException.class);
     }
+
 }

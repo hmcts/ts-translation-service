@@ -89,3 +89,5 @@ ts:
     put-dictionary:
       s2s-authorised:
         bypass-role-authorise-check-for-services: ccd_definition
+    testing-support:
+      enabled: ${TESTING_SUPPORT_ENABLED:false}
