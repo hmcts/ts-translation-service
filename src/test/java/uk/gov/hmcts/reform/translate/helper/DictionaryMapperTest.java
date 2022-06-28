@@ -36,7 +36,7 @@ class DictionaryMapperTest {
 
     @SuppressWarnings("ConstantConditions") // NB: testing @NonNull annotation is present and active
     @Test
-    void shouldThrowNullErrorIfModelToEntityWithTranslationUploadEntityIsPassANullUploadEntity() {
+    void shouldThrowNullErrorIfModelToEntityWithTranslationUploadEntityIsPassedANullUploadEntity() {
 
         // GIVEN
         val dictionaryMapper = new DictionaryMapper();
@@ -60,7 +60,7 @@ class DictionaryMapperTest {
     }
 
     @Test
-    void shouldMaModelToEntityWithoutTranslationPhrase() {
+    void shouldMapModelToEntityWithoutTranslationPhrase() {
 
         val dictionaryMapper = new DictionaryMapper();
         val currentPhrase = getCurrentPhrase();
