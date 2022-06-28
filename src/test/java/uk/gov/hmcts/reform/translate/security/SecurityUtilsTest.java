@@ -230,7 +230,7 @@ class SecurityUtilsTest {
         void shouldTest(final List<String> input, final boolean expected) {
             doReturn(input).when(applicationParams).getPutDictionaryS2sServicesBypassRoleAuthCheck();
 
-            final boolean result = underTest.isBypassAuthCheck("ccd_definition");
+            final Boolean result = underTest.isBypassAuthCheck("ccd_definition");
 
             assertThat(result)
                 .isNotNull()
