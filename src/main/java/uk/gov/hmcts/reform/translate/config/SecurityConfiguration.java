@@ -20,10 +20,12 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationFilter;
 import uk.gov.hmcts.reform.authorisation.filters.ServiceAuthFilter;
 import uk.gov.hmcts.reform.translate.security.JwtGrantedAuthoritiesConverter;
-import uk.gov.hmcts.reform.translate.security.filter.SpecialPermitFilter;
+import uk.gov.hmcts.reform.translate.security.filter.CustomPermitAllFilter;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
+import static uk.gov.hmcts.reform.translate.model.ControllerConstants.DICTIONARY_URL;
 import static uk.gov.hmcts.reform.translate.model.ControllerConstants.TRANSLATIONS_URL;
+import static uk.gov.hmcts.reform.translate.security.SecurityUtils.MANAGE_TRANSLATIONS_ROLE;
 
 @Configuration
 @EnableWebSecurity
@@ -36,7 +38,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     private String issuerOverride;
 
     private final ServiceAuthFilter serviceAuthFilter;
-    private final SpecialPermitFilter specialPermitFilter;
+    private final CustomPermitAllFilter customPermitAllFilter;
     private final JwtAuthenticationConverter jwtAuthenticationConverter;
 
     private static final String[] AUTH_ALLOWED_LIST = {
@@ -54,11 +56,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Autowired
     public SecurityConfiguration(final ServiceAuthFilter serviceAuthFilter,
-                                 final SpecialPermitFilter specialPermitFilter,
+                                 final CustomPermitAllFilter customPermitAllFilter,
                                  final JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter) {
         super();
         this.serviceAuthFilter = serviceAuthFilter;
-        this.specialPermitFilter = specialPermitFilter;
+        this.customPermitAllFilter = customPermitAllFilter;
         jwtAuthenticationConverter = new JwtAuthenticationConverter();
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
     }
@@ -72,7 +74,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
             .addFilterBefore(serviceAuthFilter, BearerTokenAuthenticationFilter.class)
-            .addFilterAfter(specialPermitFilter, ServiceAuthFilter.class)
+            .addFilterAfter(customPermitAllFilter, ServiceAuthFilter.class)
             .sessionManagement().sessionCreationPolicy(STATELESS).and()
             .csrf().disable()
             .formLogin().disable()

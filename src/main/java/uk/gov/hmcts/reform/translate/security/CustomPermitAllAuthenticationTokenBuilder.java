@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Collections.emptyList;
 
-public record SpecialAuthenticationTokenBuilder(HttpServletRequest request) {
+public record CustomPermitAllAuthenticationTokenBuilder(HttpServletRequest request) {
 
     public AbstractAuthenticationToken build() {
         AbstractAuthenticationToken authenticationToken = new AbstractAuthenticationToken(emptyList()) {

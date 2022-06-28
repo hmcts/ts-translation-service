@@ -9,7 +9,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import uk.gov.hmcts.reform.auth.checker.core.service.ServiceRequestAuthorizer;
 import uk.gov.hmcts.reform.translate.model.ControllerConstants;
 import uk.gov.hmcts.reform.translate.security.SecurityUtils;
-import uk.gov.hmcts.reform.translate.security.SpecialAuthenticationTokenBuilder;
+import uk.gov.hmcts.reform.translate.security.CustomPermitAllAuthenticationTokenBuilder;
 
 import java.io.IOException;
 import javax.servlet.FilterChain;
@@ -19,14 +19,14 @@ import javax.servlet.http.HttpServletResponse;
 
 @Slf4j
 @Component
-public class SpecialPermitFilter extends OncePerRequestFilter {
+public class CustomPermitAllFilter extends OncePerRequestFilter {
 
     private final SecurityUtils securityUtils;
 
     private static final String PUT_METHOD = "PUT";
 
     @Autowired
-    public SpecialPermitFilter(final SecurityUtils securityUtils) {
+    public CustomPermitAllFilter(final SecurityUtils securityUtils) {
         this.securityUtils = securityUtils;
     }
 
@@ -35,9 +35,10 @@ public class SpecialPermitFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        if (isPutDictionaryEndpoint(request) && isDefinitionStore(request)) {
-            final AbstractAuthenticationToken authenticationToken = new SpecialAuthenticationTokenBuilder(request)
-                .build();
+        if (isPutDictionaryEndpoint(request) && isPermittedService(request)) {
+            final AbstractAuthenticationToken authenticationToken =
+                new CustomPermitAllAuthenticationTokenBuilder(request)
+                    .build();
 
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             filterChain.doFilter(request, response);
@@ -51,7 +52,7 @@ public class SpecialPermitFilter extends OncePerRequestFilter {
             && ControllerConstants.DICTIONARY_URL.equalsIgnoreCase(request.getServletPath());
     }
 
-    private boolean isDefinitionStore(final HttpServletRequest request) {
+    private boolean isPermittedService(final HttpServletRequest request) {
         final String bearerToken = extractBearerToken(request);
         final String serviceName = securityUtils.getServiceNameFromS2SToken(bearerToken);
 

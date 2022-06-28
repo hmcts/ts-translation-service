@@ -18,14 +18,14 @@
     },
     "body": {
       "phrases": [
-        "${[scenarioContext][customValues][UniqueString]}"
+        "${[scenarioContext][customValues][UniqueTestPhrase S-003.6]}"
       ]
     }
   },
   "expectedResponse": {
     "_extends_": "Common_200_Response",
     "body": {
-      "translations": "${[scenarioContext][customValues][S-003.1]}"
+      "translations": "${[scenarioContext][customValues][S-003.6]}"
     }
   }
 }
