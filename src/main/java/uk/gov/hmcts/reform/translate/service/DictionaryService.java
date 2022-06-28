@@ -23,7 +23,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-
+import static uk.gov.hmcts.reform.translate.errorhandling.BadRequestError.BAD_SCHEMA;
+import static uk.gov.hmcts.reform.translate.errorhandling.BadRequestError.WELSH_NOT_ALLOWED;
 import static uk.gov.hmcts.reform.translate.helper.DictionaryUtils.hasAnyTranslations;
 import static uk.gov.hmcts.reform.translate.helper.DictionaryUtils.hasTranslationPhrase;
 import static uk.gov.hmcts.reform.translate.helper.DictionaryUtils.isTranslationBodyEmpty;
@@ -32,10 +33,6 @@ import static uk.gov.hmcts.reform.translate.security.SecurityUtils.MANAGE_TRANSL
 
 @Service
 public class DictionaryService {
-
-    public static final String INVALID_PAYLOAD_FORMAT = "The translations field cannot be empty.";
-    public static final String INVALID_PAYLOAD_FOR_ROLE = "User with a role different to "
-        + MANAGE_TRANSLATIONS_ROLE + " should not have translations.";
 
     private final DictionaryRepository dictionaryRepository;
     private final DictionaryMapper dictionaryMapper;
@@ -155,10 +152,10 @@ public class DictionaryService {
     private void validateDictionary(final Dictionary dictionaryRequest, boolean isManageTranslationRole) {
 
         if (isTranslationBodyEmpty(dictionaryRequest)) {
-            throw new BadRequestException(INVALID_PAYLOAD_FORMAT);
+            throw new BadRequestException(BAD_SCHEMA);
         }
         if (!isManageTranslationRole && hasAnyTranslations(dictionaryRequest)) {
-            throw new BadRequestException(INVALID_PAYLOAD_FOR_ROLE);
+            throw new BadRequestException(WELSH_NOT_ALLOWED);
         }
     }
 }

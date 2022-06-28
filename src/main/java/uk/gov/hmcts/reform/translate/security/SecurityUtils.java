@@ -9,6 +9,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
+import uk.gov.hmcts.reform.authorisation.filters.ServiceAuthFilter;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 import uk.gov.hmcts.reform.translate.ApplicationParams;
@@ -24,7 +25,9 @@ import static java.util.stream.Collectors.toSet;
 @Service
 @Slf4j
 public class SecurityUtils {
-    public static final String SERVICE_AUTHORIZATION = "ServiceAuthorization";
+
+    public static final String AUTHORIZATION = HttpHeaders.AUTHORIZATION;
+    public static final String SERVICE_AUTHORIZATION = ServiceAuthFilter.AUTHORISATION;
     public static final String MANAGE_TRANSLATIONS_ROLE = "manage-translations";
     public static final String LOAD_TRANSLATIONS_ROLE = "load-translations";
     public static final String BEARER = "Bearer ";
@@ -53,7 +56,7 @@ public class SecurityUtils {
         headers.add("user-roles", getUserRolesHeader());
 
         if (SecurityContextHolder.getContext().getAuthentication() != null) {
-            headers.add(HttpHeaders.AUTHORIZATION, getUserBearerToken());
+            headers.add(AUTHORIZATION, getUserBearerToken());
         }
         return headers;
     }
