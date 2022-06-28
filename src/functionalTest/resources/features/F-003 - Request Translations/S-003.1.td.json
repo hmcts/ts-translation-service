@@ -12,14 +12,14 @@
     "_extends_": "Common_No_Auth_Request",
     "body": {
       "phrases": [
-        "${[scenarioContext][customValues][UniqueTestPhrase S003.1]}"
+        "${[scenarioContext][customValues][UniqueTestPhrase S-003.1]}"
       ]
     }
   },
   "expectedResponse": {
     "_extends_": "Common_200_Response",
     "body": {
-      "translations": "${[scenarioContext][customValues][S-003.1]}"
+      "translations": "${[scenarioContext][customValues][containsTestTranslations]}"
     }
   }
 }

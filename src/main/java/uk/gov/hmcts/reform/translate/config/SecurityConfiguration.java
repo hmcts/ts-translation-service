@@ -23,9 +23,7 @@ import uk.gov.hmcts.reform.translate.security.JwtGrantedAuthoritiesConverter;
 import uk.gov.hmcts.reform.translate.security.filter.CustomPermitAllFilter;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
-import static uk.gov.hmcts.reform.translate.model.ControllerConstants.DICTIONARY_URL;
 import static uk.gov.hmcts.reform.translate.model.ControllerConstants.TRANSLATIONS_URL;
-import static uk.gov.hmcts.reform.translate.security.SecurityUtils.MANAGE_TRANSLATIONS_ROLE;
 
 @Configuration
 @EnableWebSecurity

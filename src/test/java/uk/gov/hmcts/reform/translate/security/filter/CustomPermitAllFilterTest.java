@@ -11,7 +11,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import uk.gov.hmcts.reform.auth.checker.core.service.ServiceRequestAuthorizer;
 import uk.gov.hmcts.reform.translate.model.ControllerConstants;
 import uk.gov.hmcts.reform.translate.security.SecurityUtils;
 
@@ -26,6 +25,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
+import static uk.gov.hmcts.reform.translate.security.SecurityUtils.SERVICE_AUTHORIZATION;
 
 @ExtendWith(MockitoExtension.class)
 class CustomPermitAllFilterTest {
@@ -80,7 +80,7 @@ class CustomPermitAllFilterTest {
     void testShouldPerformAuthenticationWhenPutEndpointButNotPermittedService() throws Exception {
         doReturn("PUT").when(request).getMethod();
         doReturn(ControllerConstants.DICTIONARY_URL).when(request).getServletPath();
-        doReturn(SERVICE_JWT).when(request).getHeader(ServiceRequestAuthorizer.AUTHORISATION);
+        doReturn(SERVICE_JWT).when(request).getHeader(SERVICE_AUTHORIZATION);
         doReturn(XUI_WEBAPP).when(securityUtils).getServiceNameFromS2SToken(anyString());
         doReturn(false).when(securityUtils).isBypassAuthCheck(anyString());
         doNothing().when(filterChain).doFilter(request, response);
@@ -97,7 +97,7 @@ class CustomPermitAllFilterTest {
     void testShouldSkipAuthenticationWhenPutDictionaryEndpointAndPermittedService() throws Exception {
         doReturn("PUT").when(request).getMethod();
         doReturn(ControllerConstants.DICTIONARY_URL).when(request).getServletPath();
-        doReturn(SERVICE_JWT).when(request).getHeader(ServiceRequestAuthorizer.AUTHORISATION);
+        doReturn(SERVICE_JWT).when(request).getHeader(SERVICE_AUTHORIZATION);
         doReturn(CCD_DEFINITION).when(securityUtils).getServiceNameFromS2SToken(anyString());
         doReturn(true).when(securityUtils).isBypassAuthCheck(anyString());
         doNothing().when(filterChain).doFilter(request, response);

@@ -25,7 +25,7 @@
   "expectedResponse": {
     "_extends_": "Common_200_Response",
     "body": {
-      "translations": "${[scenarioContext][customValues][S-003.6]}"
+      "translations": "${[scenarioContext][customValues][containsTestTranslations]}"
     }
   }
 }
