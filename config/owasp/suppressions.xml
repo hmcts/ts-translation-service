@@ -28,6 +28,14 @@
   </suppress>
 
   <suppress>
+    <notes><![CDATA[
+     Temp suppression; see OSSIndex/vulns#276 & jeremylong/DependencyCheck#4528.
+   ]]></notes>
+    <gav regex="true">^org\.springframework\.security:spring-security-crypto:5\.6\.[0-5]</gav>
+    <cve>CVE-2020-5408</cve>
+  </suppress>
+
+  <suppress>
     <notes></notes>
     <cve>CVE-2021-22112</cve>
   </suppress>
