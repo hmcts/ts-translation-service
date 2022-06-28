@@ -63,7 +63,7 @@ class DictionaryServiceTest {
     TranslationUploadRepository translationUploadRepository;
 
     @Mock
-    Iterable<DictionaryEntity> repositoryResults;
+    List<DictionaryEntity> repositoryResults;
 
     @Mock
     DictionaryMapper dictionaryMapper;
@@ -319,9 +319,7 @@ class DictionaryServiceTest {
             verify(dictionaryRepository, times(3)).findByEnglishPhrase(any());
             verify(securityUtils, times(1)).hasRole(anyString());
             verify(dictionaryMapper, times(3)).modelToEntityWithTranslationUploadEntity(any(), any());
-            verify(dictionaryRepository, times(3)).save(any());
-            // verify only one translation uploaded entity created
-            verify(translationUploadRepository, times(1)).save(any());
+            verify(dictionaryRepository, times(3)).saveAndFlush(any());
         }
 
         @Test
@@ -339,7 +337,7 @@ class DictionaryServiceTest {
             verify(dictionaryRepository, times(3)).findByEnglishPhrase(any());
             verify(securityUtils, times(1)).hasRole(anyString());
             verify(dictionaryMapper, times(3)).modelToEntityWithoutTranslationPhrase(any());
-            verify(dictionaryRepository, times(3)).save(any());
+            verify(dictionaryRepository, times(3)).saveAndFlush(any());
             // verify no translation uploaded entity created as no translations
             verify(dictionaryMapper, never()).createTranslationUploadEntity(anyString());
             verify(translationUploadRepository, never()).save(any());
@@ -364,7 +362,7 @@ class DictionaryServiceTest {
             // THEN
             verify(dictionaryRepository, times(1)).findByEnglishPhrase(any());
             verify(securityUtils, times(1)).hasRole(anyString());
-            verify(dictionaryRepository, times(1)).save(any());
+            verify(dictionaryRepository, times(1)).saveAndFlush(any());
             verify(translationUploadRepository, times(1)).save(any());
         }
 

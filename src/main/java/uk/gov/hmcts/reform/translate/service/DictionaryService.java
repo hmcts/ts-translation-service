@@ -107,27 +107,23 @@ public class DictionaryService {
         validateDictionary(dictionaryRequest, isManageTranslationRole);
         val currentUserId = securityUtils.getUserInfo().getUid();
 
-        val translationUploadEntity = hasAnyTranslations(dictionaryRequest)
+        val translationUploadOptional = hasAnyTranslations(dictionaryRequest)
             ? dictionaryMapper.createTranslationUploadEntity(currentUserId)
             : null;
 
-        // if upload entity has been generated save it now as we know we have at least one translation that will use it
-        if (translationUploadEntity != null) {
-            translationUploadRepository.save(translationUploadEntity);
-        }
-
         dictionaryRequest.getTranslations().entrySet()
-            .forEach(phrase -> processPhrase(phrase, translationUploadEntity));
+            .stream()
+            .forEach(phrase -> processPhrase(phrase, translationUploadOptional));
     }
 
     private void processPhrase(Map.Entry<String, String> currentPhrase,
-                               TranslationUploadEntity translationUploadEntity) {
+                               TranslationUploadEntity translationUploadOptional) {
 
         val result = dictionaryRepository.findByEnglishPhrase(currentPhrase.getKey());
         if (result.isPresent()) {
-            updatePhrase(currentPhrase, result.get(), translationUploadEntity);
+            updatePhrase(currentPhrase, result.get(), translationUploadOptional);
         } else {
-            createNewPhrase(currentPhrase, translationUploadEntity);
+            createNewPhrase(currentPhrase, translationUploadOptional);
         }
     }
 
@@ -138,7 +134,7 @@ public class DictionaryService {
         val newEntity = hasTranslationPhrase(currentPhrase)
             ? dictionaryMapper.modelToEntityWithTranslationUploadEntity(currentPhrase, translationUploadOptional)
             : dictionaryMapper.modelToEntityWithoutTranslationPhrase(currentPhrase);
-        dictionaryRepository.save(newEntity);
+        dictionaryRepository.saveAndFlush(newEntity);
     }
 
     private void updatePhrase(Map.Entry<String, String> currentPhrase,
@@ -148,7 +144,10 @@ public class DictionaryService {
         if (hasTranslationPhrase(currentPhrase)) {
             dictionaryEntity.setTranslationUpload(translationUploadOptional);
             dictionaryEntity.setTranslationPhrase(currentPhrase.getValue());
-            dictionaryRepository.save(dictionaryEntity);
+            // if upload entity has been generated save it now as we know
+            // we have at least one translation that will use it
+            translationUploadRepository.save(translationUploadOptional);
+            dictionaryRepository.saveAndFlush(dictionaryEntity);
         }
     }
 
