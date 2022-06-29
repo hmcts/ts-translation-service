@@ -320,8 +320,7 @@ class DictionaryServiceTest {
             verify(securityUtils, times(1)).hasRole(anyString());
             verify(dictionaryMapper, times(3)).modelToEntityWithTranslationUploadEntity(any(), any());
             verify(dictionaryRepository, times(3)).save(any());
-            // verify only one translation uploaded entity created
-            verify(translationUploadRepository, times(1)).save(any());
+            verify(translationUploadRepository, never()).save(any());
         }
 
         @Test

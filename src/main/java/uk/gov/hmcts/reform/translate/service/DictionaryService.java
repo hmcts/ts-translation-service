@@ -111,11 +111,6 @@ public class DictionaryService {
             ? dictionaryMapper.createTranslationUploadEntity(currentUserId)
             : null;
 
-        // if upload entity has been generated save it now as we know we have at least one translation that will use it
-        if (translationUploadEntity != null) {
-            translationUploadRepository.save(translationUploadEntity);
-        }
-
         dictionaryRequest.getTranslations().entrySet()
             .forEach(phrase -> processPhrase(phrase, translationUploadEntity));
     }
@@ -148,6 +143,9 @@ public class DictionaryService {
         if (hasTranslationPhrase(currentPhrase)) {
             dictionaryEntity.setTranslationUpload(translationUploadOptional);
             dictionaryEntity.setTranslationPhrase(currentPhrase.getValue());
+            // if upload entity has been generated save it now as we know
+            // we have at least one translation that will use it
+            translationUploadRepository.save(translationUploadOptional);
             dictionaryRepository.save(dictionaryEntity);
         }
     }
