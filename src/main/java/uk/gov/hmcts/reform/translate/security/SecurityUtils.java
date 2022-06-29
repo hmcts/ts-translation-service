@@ -64,7 +64,7 @@ public class SecurityUtils {
     public UserInfo getUserInfo() {
         return Optional.ofNullable(getUserToken())
             .map(userToken -> {
-                final UserInfo userInfo = idamRepository.getUserInfo(getUserToken());
+                final UserInfo userInfo = idamRepository.getUserInfo(userToken);
                 if (userInfo != null) {
                     log.info(
                         "SecurityUtils retrieved user info from idamRepository. User Id={}. Roles={}.",
