@@ -34,6 +34,7 @@
     <gav regex="true">^org\.springframework\.(security|boot):(spring-security-rsa:1\.0\.1[0-1].*|spring-boot-starter-oauth2-(client|resource-server):2\.6\.[0-8])</gav>
     <cve>CVE-2022-22976</cve>
     <cve>CVE-2022-22978</cve>
+    <cve>CVE-2020-5408</cve>
   </suppress>
 
 </suppressions>
