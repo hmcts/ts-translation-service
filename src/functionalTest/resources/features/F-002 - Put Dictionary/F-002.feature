@@ -198,7 +198,7 @@ Feature: F-002: Put Dictionary Operation
     And   the request [add a new English phrase]
     And   it is submitted to call the [PUT dictionary] operation of [Translation Service]
     Then  a negative response is received
-    And   the response [has the 401 Created status code]
+    And   the response [has the 401 Unauthorized status code]
     And   the response has all other details as expected
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

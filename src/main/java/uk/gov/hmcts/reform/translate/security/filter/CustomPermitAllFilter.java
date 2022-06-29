@@ -54,16 +54,9 @@ public class CustomPermitAllFilter extends OncePerRequestFilter {
     }
 
     private boolean isPermittedService(final HttpServletRequest request) {
-        final String bearerToken = extractBearerToken(request);
-        final String serviceName = securityUtils.getServiceNameFromS2SToken(bearerToken);
+        final String serviceName = securityUtils.getServiceNameFromS2SToken(request.getHeader(SERVICE_AUTHORIZATION));
 
         return securityUtils.isBypassAuthCheck(serviceName);
-    }
-
-    private String extractBearerToken(HttpServletRequest request) {
-        final String token = request.getHeader(SERVICE_AUTHORIZATION);
-
-        return token.startsWith("Bearer ") ? token : "Bearer " + token;
     }
 
 }

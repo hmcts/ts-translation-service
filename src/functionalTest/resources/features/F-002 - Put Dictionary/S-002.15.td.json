@@ -6,7 +6,7 @@
     "is missing IDAM AUTHORIZATION token header",
     "does not originate from ccd-definition",
     "add a new English phrase",
-    "has the 401 Created status code"
+    "has the 401 Unauthorized status code"
   ],
 
   "users": {
