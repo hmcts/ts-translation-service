@@ -131,14 +131,14 @@ class SecurityUtilsTest {
         }
 
         @Test
-        @DisplayName("Check manage-translations role not present")
-        void shouldReturnTrueWhenRoleNotPresent() {
+        @DisplayName("Check user does not have role")
+        void shouldReturnFalseWhenRoleNotPresent() {
             assertFalse(underTest.hasRole("unknown-role"));
         }
 
         @Test
         @DisplayName("Check any role not present")
-        void shouldReturnTrueWhenHasAnyOfTheseNotRolesPresent() {
+        void shouldReturnFalseWhenHasAnyOfTheseNotRolesPresent() {
             assertFalse(underTest.hasAnyOfTheseRoles(List.of("NOTmyRole")));
         }
     }

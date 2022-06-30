@@ -216,3 +216,16 @@ Feature: F-002: Put Dictionary Operation
     And   a successful call [to verify translations] as in [F-002_Verify]
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  @S-002.17
+  Scenario: Return 403 when an attempt to add English phrases to dictionary where a valid IDAM token is present and service is authorized
+
+    Given a user [with manage-translation IDAM role],
+    When a request is prepared with appropriate values
+    And the request [originates from ccd_data]
+    And the request [add a new English phrase]
+    And it is submitted to call the [PUT dictionary] operation of [Translation Service]
+    Then a negative response is received
+    And the response [has the 403 Forbidden status code]
+    And the response has all other details as expected
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

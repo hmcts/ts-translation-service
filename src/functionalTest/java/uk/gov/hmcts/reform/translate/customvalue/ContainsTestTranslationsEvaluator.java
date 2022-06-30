@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 import static java.util.Collections.singletonMap;
 
-public class GetTranslationsEvaluator implements CustomValueEvaluator {
+public class ContainsTestTranslationsEvaluator implements CustomValueEvaluator {
 
     @Override
     public Boolean matches(CustomValueKey key) {

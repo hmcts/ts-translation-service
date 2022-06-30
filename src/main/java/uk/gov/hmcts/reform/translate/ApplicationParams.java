@@ -5,10 +5,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-
 @Component
 public class ApplicationParams {
-
 
     @Value("#{'${ts.endpoints.put-dictionary.s2s-authorised.bypass-role-authorise-check-for-services}'.split(',')}")
     private List<String> putDictionaryS2sServicesBypassRoleAuthCheck;
