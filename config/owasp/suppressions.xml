@@ -40,4 +40,8 @@
     <cve>CVE-2021-22112</cve>
   </suppress>
 
+  <suppress>
+    <cve>CVE-2022-34305</cve>
+  </suppress>
+
 </suppressions>
