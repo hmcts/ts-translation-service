@@ -217,7 +217,7 @@ Feature: F-002: Put Dictionary Operation
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   @S-002.17
-  Scenario: Return 403 when an attempt to add English phrases to dictionary where a valid IDAM token is present and service is authorized
+  Scenario: Return 403 when an attempt to add English phrases to dictionary where a valid IDAM token is present and service is unauthorized
 
     Given a user [with manage-translation IDAM role],
     When a request is prepared with appropriate values

@@ -1,7 +1,7 @@
 {
   "_guid_": "S-002.17",
   "_extends_": "Put_Dictionary_Base",
-  "title": "Return 403 when an attempt to add English phrases to dictionary where a valid IDAM token is present and service is authorized",
+  "title": "Return 403 when an attempt to add English phrases to dictionary where a valid IDAM token is present and service is unauthorized",
   "specs": [
     "with manage-translation IDAM role",
     "originates from ccd_data",
