@@ -3,7 +3,9 @@ insert into translation_upload values
 
 insert into dictionary values
   (1, 'english_1', 'translated_1', 1);
+insert into dictionary values
+  (2, 'english_2', 'translated_2', 1);
 
 ALTER SEQUENCE translation_version_seq RESTART WITH 2;
-ALTER SEQUENCE dictionary_id_seq RESTART WITH 2;
+ALTER SEQUENCE dictionary_id_seq RESTART WITH 3;
 

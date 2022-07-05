@@ -55,6 +55,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.reform.translate.controllers.ControllerConstants.DICTIONARY_URL;
 import static uk.gov.hmcts.reform.translate.controllers.ControllerConstants.TRANSLATIONS_URL;
+import static uk.gov.hmcts.reform.translate.security.SecurityUtils.LOAD_TRANSLATIONS_ROLE;
+import static uk.gov.hmcts.reform.translate.security.SecurityUtils.MANAGE_TRANSLATIONS_ROLE;
 import static uk.gov.hmcts.reform.translate.security.SecurityUtils.SERVICE_AUTHORIZATION;
 
 public class DictionaryControllerIT extends BaseTest {
@@ -179,7 +181,7 @@ public class DictionaryControllerIT extends BaseTest {
         @Test
         @Sql(scripts = {DELETE_TRANSLATION_TABLES_SCRIPT})
         void shouldTestConcurrentAddToDictionaryViaPutEndpoint() throws Exception {
-            stubUserInfo("manage-translations");
+            stubUserInfo(MANAGE_TRANSLATIONS_ROLE);
             final ExecutorService executorService = Executors.newFixedThreadPool(4);
             try {
                 // GIVEN
@@ -218,36 +220,75 @@ public class DictionaryControllerIT extends BaseTest {
         // manage-translations
         @Test
         @Sql(scripts = {DELETE_TRANSLATION_TABLES_SCRIPT})
-        void shouldReturn201ForPutDictionaryForIdamMUserWithManageTranslationCreateANewRecord() throws Exception {
-            stubUserInfo("manage-translations");
+        void shouldReturn201ForPutDictionaryForIdamUserWithManageTranslationCreateNewRecords() throws Exception {
+
+            // GIVEN
+            stubUserInfo(MANAGE_TRANSLATIONS_ROLE);
+
+            // WHEN / THEN
             mockMvc.perform(put(DICTIONARY_URL)
                                 .header(SERVICE_AUTHORIZATION, serviceJwtXuiWeb)
                                 .contentType(APPLICATION_JSON_VALUE)
                                 .content(
-                                    objectMapper.writeValueAsString(getDictionaryRequestsWithTranslationPhrases(1, 3))))
+                                    objectMapper.writeValueAsString(getDictionaryRequestsWithTranslationPhrases(2))))
                 .andExpect(status().is(201))
                 .andReturn();
 
-            val versionResult = assertDictionaryEntityWithTranslationPhrases("english_1");
-            val versionResult1 = assertDictionaryEntityWithTranslationPhrases("english_2");
-            assertEquals(versionResult, versionResult1);
+            // THEN
+            val versionResult1 = assertDictionaryEntityWithTranslationPhrases("english_1");
+            val versionResult2 = assertDictionaryEntityWithTranslationPhrases("english_2");
+            // NB: version numbers should be equal across single upload
+            assertEquals(versionResult1, versionResult2);
         }
 
         @Test
         @Sql(scripts = {DELETE_TRANSLATION_TABLES_SCRIPT, PUT_CREATE_ENGLISH_PHRASES_WITH_TRANSLATIONS_SCRIPT})
-        void shouldReturn201ForPutDictionaryForIdamUserWithManageTranslationUpdateARecord() throws Exception {
-            stubUserInfo("manage-translations");
+        void shouldReturn201ForPutDictionaryForIdamUserWithManageTranslationUpdateExistingRecords() throws Exception {
+
+            // GIVEN
+            stubUserInfo(MANAGE_TRANSLATIONS_ROLE);
+
+            // WHEN / THEN
             mockMvc.perform(put(DICTIONARY_URL)
                                 .header(SERVICE_AUTHORIZATION, serviceJwtXuiWeb)
                                 .contentType(APPLICATION_JSON_VALUE)
                                 .content(
-                                    objectMapper.writeValueAsString(getDictionaryRequestsWithTranslationPhrases(1, 3))))
+                                    objectMapper.writeValueAsString(getDictionaryRequestsWithTranslationPhrases(2))))
                 .andExpect(status().is(201))
                 .andReturn();
 
-            val versionResult = assertDictionaryEntityWithTranslationPhrases("english_1");
-            val versionResult1 = assertDictionaryEntityWithTranslationPhrases("english_2");
-            assertEquals(versionResult, versionResult1);
+            // THEN
+            val versionResult1 = assertDictionaryEntityWithTranslationPhrases("english_1");
+            val versionResult2 = assertDictionaryEntityWithTranslationPhrases("english_2");
+            // NB: version numbers should be equal across single upload
+            assertEquals(versionResult1, versionResult2);
+        }
+
+        @Test
+        @Sql(scripts = {DELETE_TRANSLATION_TABLES_SCRIPT, PUT_CREATE_ENGLISH_PHRASES_WITH_TRANSLATIONS_SCRIPT})
+        void shouldReturn201ForPutDictionaryForIdamUserWithManageTranslationNewAndUpdatedRecords() throws Exception {
+
+            // GIVEN
+            stubUserInfo(MANAGE_TRANSLATIONS_ROLE);
+
+            // WHEN / THEN
+            mockMvc.perform(put(DICTIONARY_URL)
+                                .header(SERVICE_AUTHORIZATION, serviceJwtXuiWeb)
+                                .contentType(APPLICATION_JSON_VALUE)
+                                .content(
+                                    objectMapper.writeValueAsString(getDictionaryRequestsWithTranslationPhrases(4))))
+                .andExpect(status().is(201))
+                .andReturn();
+
+            // THEN
+            val versionResult1 = assertDictionaryEntityWithTranslationPhrases("english_1"); // UPDATED (in SQL file)
+            val versionResult2 = assertDictionaryEntityWithTranslationPhrases("english_2"); // UPDATED (in SQL file)
+            val versionResult3 = assertDictionaryEntityWithTranslationPhrases("english_3"); // NEW
+            val versionResult4 = assertDictionaryEntityWithTranslationPhrases("english_4"); // NEW
+            // NB: version numbers should be equal across single upload
+            assertEquals(versionResult1, versionResult2);
+            assertEquals(versionResult2, versionResult3);
+            assertEquals(versionResult3, versionResult4);
         }
 
         // load-translations user
@@ -255,36 +296,47 @@ public class DictionaryControllerIT extends BaseTest {
         @Sql(scripts = {DELETE_TRANSLATION_TABLES_SCRIPT})
         void shouldReturn201ForPutDictionaryForIdamUserWithLoadTranslationNewPhrases() throws Exception {
 
-            stubUserInfo("load-translations");
+            // GIVEN
+            stubUserInfo(LOAD_TRANSLATIONS_ROLE);
+
+            // WHEN / THEN
             mockMvc.perform(put(DICTIONARY_URL)
                                 .header(SERVICE_AUTHORIZATION, serviceJwtXuiWeb)
                                 .contentType(APPLICATION_JSON_VALUE)
                                 .content(objectMapper.writeValueAsString(
-                                    getDictionaryRequestsWithoutTranslationPhrases(1, 3)))
+                                    getDictionaryRequestsWithoutTranslationPhrases(3)))
                 )
                 .andExpect(status().is(201))
                 .andReturn();
 
+            // THEN
             assertDictionaryEntityWithOutTranslationPhrases("english_1");
             assertDictionaryEntityWithOutTranslationPhrases("english_2");
+            assertDictionaryEntityWithOutTranslationPhrases("english_3");
         }
 
         @Test
         @Sql(scripts = {DELETE_TRANSLATION_TABLES_SCRIPT, PUT_CREATE_ENGLISH_PHRASES_WITH_TRANSLATIONS_SCRIPT})
         void shouldReturn201ForPutDictionaryForIdamUserWithLoadTranslationExistingPhrases() throws Exception {
 
-            stubUserInfo("load-translations");
+            // GIVEN
+            stubUserInfo(LOAD_TRANSLATIONS_ROLE);
+
+            // WHEN / THEN
             mockMvc.perform(put(DICTIONARY_URL)
                                 .header(SERVICE_AUTHORIZATION, serviceJwtXuiWeb)
                                 .contentType(APPLICATION_JSON_VALUE)
                                 .content(
                                     objectMapper.writeValueAsString(
-                                        getDictionaryRequestsWithoutTranslationPhrases(1, 2)))
+                                        getDictionaryRequestsWithoutTranslationPhrases(2)))
                 )
                 .andExpect(status().is(201))
                 .andReturn();
+
+            // THEN
             // No action taken for existing phrases, verify previous translations are preserved.
-            assertDictionaryEntityWithTranslationPhrases("english_1");
+            assertDictionaryEntityWithTranslationPhrases("english_1"); // NO CHANGE (in SQL file)
+            assertDictionaryEntityWithTranslationPhrases("english_2"); // NO CHANGE (in SQL file)
         }
 
         // 400 errors
@@ -292,12 +344,15 @@ public class DictionaryControllerIT extends BaseTest {
         @DisplayName("Incorrect payload: translations not permitted without `manage-translations` role")
         void shouldReturn400ForPutDictionaryForIdamUserWithLoadTranslationWithIncorrectPayLoad() throws Exception {
 
-            stubUserInfo("load-translations");
+            // GIVEN
+            stubUserInfo(LOAD_TRANSLATIONS_ROLE);
+
+            // WHEN / THEN
             mockMvc.perform(put(DICTIONARY_URL)
                                 .header(SERVICE_AUTHORIZATION, serviceJwtXuiWeb)
                                 .contentType(APPLICATION_JSON_VALUE)
                                 .content(
-                                    objectMapper.writeValueAsString(getDictionaryRequestsWithTranslationPhrases(1, 2))))
+                                    objectMapper.writeValueAsString(getDictionaryRequestsWithTranslationPhrases(1))))
                 .andExpect(status().is(400))
                 .andReturn();
         }
@@ -306,12 +361,15 @@ public class DictionaryControllerIT extends BaseTest {
         @DisplayName("Incorrect payload: translations not permitted for definition store client")
         void shouldReturn400ForPutDictionaryForIdamDefinitionStoreWithIncorrectPayLoad() throws Exception {
 
-            stubUserInfo("load-translations");
+            // GIVEN
+            stubUserInfo(LOAD_TRANSLATIONS_ROLE);
+
+            // WHEN / THEN
             mockMvc.perform(put(DICTIONARY_URL)
                                 .header(SERVICE_AUTHORIZATION, serviceJwtDefinition)
                                 .contentType(APPLICATION_JSON_VALUE)
                                 .content(
-                                    objectMapper.writeValueAsString(getDictionaryRequestsWithTranslationPhrases(1, 2))))
+                                    objectMapper.writeValueAsString(getDictionaryRequestsWithTranslationPhrases(1))))
                 .andExpect(status().is(400))
                 .andReturn();
         }
@@ -319,10 +377,12 @@ public class DictionaryControllerIT extends BaseTest {
         @Test
         @Sql(scripts = {DELETE_TRANSLATION_TABLES_SCRIPT})
         void shouldReturn400ForPutDictionaryForNonIdam() throws Exception {
+
+            // WHEN / THEN
             mockMvc.perform(put(DICTIONARY_URL)
                                 .contentType(APPLICATION_JSON_VALUE)
                                 .content(
-                                    objectMapper.writeValueAsString(getDictionaryRequestsWithTranslationPhrases(1, 2))))
+                                    objectMapper.writeValueAsString(getDictionaryRequestsWithTranslationPhrases(1))))
                 .andExpect(status().is(400))
                 .andReturn();
         }
@@ -364,15 +424,15 @@ public class DictionaryControllerIT extends BaseTest {
             );
     }
 
-    private Dictionary getDictionaryRequestsWithTranslationPhrases(int from, int to) {
+    private Dictionary getDictionaryRequestsWithTranslationPhrases(int count) {
         final Map<String, String> expectedMapKeysAndValues = new HashMap<>();
-        IntStream.range(from, to).forEach(i -> expectedMapKeysAndValues.put("english_" + i, "translated_" + i));
+        IntStream.range(1, count + 1).forEach(i -> expectedMapKeysAndValues.put("english_" + i, "translated_" + i));
         return new Dictionary(expectedMapKeysAndValues);
     }
 
-    private Dictionary getDictionaryRequestsWithoutTranslationPhrases(int from, int to) {
+    private Dictionary getDictionaryRequestsWithoutTranslationPhrases(int count) {
         final Map<String, String> expectedMapKeysAndValues = new HashMap<>();
-        IntStream.range(from, to).forEach(i -> expectedMapKeysAndValues.put("english_" + i, null));
+        IntStream.range(1, count + 1).forEach(i -> expectedMapKeysAndValues.put("english_" + i, null));
         return new Dictionary(expectedMapKeysAndValues);
     }
 
