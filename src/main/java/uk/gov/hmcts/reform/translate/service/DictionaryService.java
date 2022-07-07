@@ -13,6 +13,7 @@ import uk.gov.hmcts.reform.translate.errorhandling.RoleMissingException;
 import uk.gov.hmcts.reform.translate.helper.DictionaryMapper;
 import uk.gov.hmcts.reform.translate.model.Dictionary;
 import uk.gov.hmcts.reform.translate.repository.DictionaryRepository;
+import uk.gov.hmcts.reform.translate.repository.TranslationUploadRepository;
 import uk.gov.hmcts.reform.translate.security.SecurityUtils;
 
 import java.util.Arrays;
@@ -37,15 +38,18 @@ public class DictionaryService {
     private final DictionaryRepository dictionaryRepository;
     private final DictionaryMapper dictionaryMapper;
     private final SecurityUtils securityUtils;
+    private final TranslationUploadRepository translationUploadRepository;
 
     @Autowired
     public DictionaryService(DictionaryRepository dictionaryRepository,
                              DictionaryMapper dictionaryMapper,
-                             SecurityUtils securityUtils) {
+                             SecurityUtils securityUtils,
+                             TranslationUploadRepository translationUploadRepository) {
 
         this.dictionaryRepository = dictionaryRepository;
         this.dictionaryMapper = dictionaryMapper;
         this.securityUtils = securityUtils;
+        this.translationUploadRepository = translationUploadRepository;
     }
 
     public Map<String, String> getDictionaryContents() {
@@ -99,22 +103,22 @@ public class DictionaryService {
         val isManageTranslationRole = securityUtils.hasRole(MANAGE_TRANSLATIONS_ROLE);
         validateDictionary(dictionaryRequest, isManageTranslationRole);
 
-        val translationUploadOptional = hasAnyTranslations(dictionaryRequest)
+        val translationUploadEntity = hasAnyTranslations(dictionaryRequest)
             ? dictionaryMapper.createTranslationUploadEntity(securityUtils.getUserInfo().getUid())
             : null;
 
         dictionaryRequest.getTranslations().entrySet()
-            .forEach(phrase -> processPhrase(phrase, translationUploadOptional));
+            .forEach(phrase -> processPhrase(phrase, translationUploadEntity));
     }
 
     private void processPhrase(Map.Entry<String, String> currentPhrase,
-                               TranslationUploadEntity translationUploadOptional) {
+                               TranslationUploadEntity translationUploadEntity) {
 
         val result = dictionaryRepository.findByEnglishPhrase(currentPhrase.getKey());
         if (result.isPresent()) {
-            updatePhrase(currentPhrase, result.get(), translationUploadOptional);
+            updatePhrase(currentPhrase, result.get(), translationUploadEntity);
         } else {
-            createNewPhrase(currentPhrase, translationUploadOptional);
+            createNewPhrase(currentPhrase, translationUploadEntity);
         }
     }
 
@@ -130,11 +134,14 @@ public class DictionaryService {
 
     private void updatePhrase(Map.Entry<String, String> currentPhrase,
                               DictionaryEntity dictionaryEntity,
-                              TranslationUploadEntity translationUploadOptional) {
+                              TranslationUploadEntity translationUploadEntity) {
 
         if (hasTranslationPhrase(currentPhrase)) {
-            dictionaryEntity.setTranslationUpload(translationUploadOptional);
+            dictionaryEntity.setTranslationUpload(translationUploadEntity);
             dictionaryEntity.setTranslationPhrase(currentPhrase.getValue());
+            // if upload entity has been generated save it now as we know
+            // we have at least one translation that will use it
+            translationUploadRepository.save(translationUploadEntity);
             dictionaryRepository.save(dictionaryEntity);
         }
     }
