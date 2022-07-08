@@ -28,7 +28,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static uk.gov.hmcts.reform.translate.security.SecurityUtils.SERVICE_AUTHORIZATION;
 
 @ExtendWith(MockitoExtension.class)
-class CustomPermitAllFilterTest {
+class PutDictionaryEndpointFilterTest {
     private static final String SERVICE_JWT = "eyJhbGciOiJIUzUxMiJ9";
     private static final String XUI_WEBAPP = "xui_webapp";
     private static final String CCD_DEFINITION = "ccd_definition";
@@ -37,7 +37,7 @@ class CustomPermitAllFilterTest {
     private SecurityUtils securityUtils;
 
     @InjectMocks
-    private CustomPermitAllFilter customPermitAllFilter;
+    private PutDictionaryEndpointFilter underTest;
 
     private final HttpServletRequest request = mock(HttpServletRequest.class);
     private final HttpServletResponse response = mock(HttpServletResponse.class);
@@ -56,7 +56,7 @@ class CustomPermitAllFilterTest {
         doReturn(ControllerConstants.DICTIONARY_URL).when(request).getServletPath();
         doNothing().when(filterChain).doFilter(request, response);
 
-        customPermitAllFilter.doFilterInternal(request, response, filterChain);
+        underTest.doFilterInternal(request, response, filterChain);
 
         verify(filterChain).doFilter(request, response);
         verifyNoInteractions(securityUtils);
@@ -69,7 +69,7 @@ class CustomPermitAllFilterTest {
         doReturn(ControllerConstants.TRANSLATIONS_URL).when(request).getServletPath();
         doNothing().when(filterChain).doFilter(request, response);
 
-        customPermitAllFilter.doFilterInternal(request, response, filterChain);
+        underTest.doFilterInternal(request, response, filterChain);
 
         verify(filterChain).doFilter(request, response);
         verifyNoInteractions(securityUtils);
@@ -85,7 +85,7 @@ class CustomPermitAllFilterTest {
         doReturn(false).when(securityUtils).isBypassAuthCheck(anyString());
         doNothing().when(filterChain).doFilter(request, response);
 
-        customPermitAllFilter.doFilterInternal(request, response, filterChain);
+        underTest.doFilterInternal(request, response, filterChain);
 
         verify(filterChain).doFilter(request, response);
         verify(securityUtils).getServiceNameFromS2SToken(anyString());
@@ -102,12 +102,11 @@ class CustomPermitAllFilterTest {
         doReturn(true).when(securityUtils).isBypassAuthCheck(anyString());
         doNothing().when(filterChain).doFilter(request, response);
 
-        customPermitAllFilter.doFilterInternal(request, response, filterChain);
+        underTest.doFilterInternal(request, response, filterChain);
 
         verify(filterChain).doFilter(request, response);
         verify(securityUtils).getServiceNameFromS2SToken(anyString());
         verify(securityUtils).isBypassAuthCheck(CCD_DEFINITION);
         verify(securityContext).setAuthentication(any(AbstractAuthenticationToken.class));
     }
-
 }

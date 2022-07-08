@@ -20,7 +20,7 @@ import uk.gov.hmcts.reform.translate.config.SecurityConfiguration;
 import uk.gov.hmcts.reform.translate.model.Dictionary;
 import uk.gov.hmcts.reform.translate.model.TranslationsRequest;
 import uk.gov.hmcts.reform.translate.security.JwtGrantedAuthoritiesConverter;
-import uk.gov.hmcts.reform.translate.security.filter.CustomPermitAllFilter;
+import uk.gov.hmcts.reform.translate.security.filter.PutDictionaryEndpointFilter;
 import uk.gov.hmcts.reform.translate.service.DictionaryService;
 
 import java.util.HashMap;
@@ -38,7 +38,7 @@ import static org.springframework.context.annotation.FilterType.ASSIGNABLE_TYPE;
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(controllers = DictionaryController.class,
     excludeFilters = @ComponentScan.Filter(type = ASSIGNABLE_TYPE,
-        classes = {CustomPermitAllFilter.class, SecurityConfiguration.class, JwtGrantedAuthoritiesConverter.class}))
+        classes = {PutDictionaryEndpointFilter.class, SecurityConfiguration.class, JwtGrantedAuthoritiesConverter.class}))
 @AutoConfigureMockMvc(addFilters = false)
 @ImportAutoConfiguration(TestIdamConfiguration.class)
 class DictionaryControllerTest {

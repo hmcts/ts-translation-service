@@ -229,3 +229,17 @@ Feature: F-002: Put Dictionary Operation
     And the response has all other details as expected
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  @S-002.18 #WLTS-29
+  Scenario: Add English phrases to dictionary and return success when IDAM token is invalid and service is definition store
+
+    Given a user [with invalid IDAM token],
+    When  a request is prepared with appropriate values
+    And the request [originates from ccd-definition]
+    And   the request [add a new English phrase]
+    And   it is submitted to call the [PUT dictionary] operation of [Translation Service]
+    Then  a positive response is received
+    And   the response [has the 201 Created status code]
+    And   the response has all other details as expected
+    And   a successful call [to verify translations] as in [F-002_Verify]
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

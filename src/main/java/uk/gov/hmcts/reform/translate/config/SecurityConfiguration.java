@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -20,10 +19,10 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationFilter;
 import uk.gov.hmcts.reform.authorisation.filters.ServiceAuthFilter;
 import uk.gov.hmcts.reform.translate.security.JwtGrantedAuthoritiesConverter;
-import uk.gov.hmcts.reform.translate.security.filter.CustomPermitAllFilter;
+import uk.gov.hmcts.reform.translate.security.filter.PutDictionaryEndpointFilter;
+import uk.gov.hmcts.reform.translate.security.filter.TranslateCyEndpointFilter;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
-import static uk.gov.hmcts.reform.translate.model.ControllerConstants.TRANSLATIONS_URL;
 
 @Configuration
 @EnableWebSecurity
@@ -36,7 +35,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     private String issuerOverride;
 
     private final ServiceAuthFilter serviceAuthFilter;
-    private final CustomPermitAllFilter customPermitAllFilter;
+    private final PutDictionaryEndpointFilter putDictionaryEndpointFilter;
+    private final TranslateCyEndpointFilter translateCyEndpointFilter;
     private final JwtAuthenticationConverter jwtAuthenticationConverter;
 
     private static final String[] AUTH_ALLOWED_LIST = {
@@ -54,11 +54,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Autowired
     public SecurityConfiguration(final ServiceAuthFilter serviceAuthFilter,
-                                 final CustomPermitAllFilter customPermitAllFilter,
+                                 final PutDictionaryEndpointFilter putDictionaryEndpointFilter,
+                                 final TranslateCyEndpointFilter translateCyEndpointFilter,
                                  final JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter) {
         super();
         this.serviceAuthFilter = serviceAuthFilter;
-        this.customPermitAllFilter = customPermitAllFilter;
+        this.putDictionaryEndpointFilter = putDictionaryEndpointFilter;
+        this.translateCyEndpointFilter = translateCyEndpointFilter;
         jwtAuthenticationConverter = new JwtAuthenticationConverter();
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
     }
@@ -72,13 +74,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
             .addFilterBefore(serviceAuthFilter, BearerTokenAuthenticationFilter.class)
-            .addFilterAfter(customPermitAllFilter, ServiceAuthFilter.class)
+            .addFilterBefore(translateCyEndpointFilter, ServiceAuthFilter.class)
+            .addFilterAfter(putDictionaryEndpointFilter, ServiceAuthFilter.class)
             .sessionManagement().sessionCreationPolicy(STATELESS).and()
             .csrf().disable()
             .formLogin().disable()
             .logout().disable()
             .authorizeRequests()
-            .antMatchers(HttpMethod.POST, TRANSLATIONS_URL).permitAll()
             .anyRequest()
             .authenticated()
             .and()
