@@ -34,7 +34,13 @@ import static org.mockito.Mockito.when;
 @AutoConfigureWireMock(port = 0, stubs = "classpath:/wiremock-stubs")
 @AutoConfigureMockMvc(addFilters = false)
 @SuppressWarnings({"HideUtilityClassConstructor"})
-public class BaseTest {
+public abstract class BaseTest {
+
+    // data values as per: classpath:sql/add-Dictionary_TestPhrasesForDeletion.sql
+    public static final String DELETE_ME_PHRASE_WITH_TRANSLATION = "TEST-delete-me-with-translation";
+    public static final String DELETE_ME_PHRASE_WITHOUT_TRANSLATION = "TEST-delete-me-no-translation";
+    public static final String KEEP_ME_PHRASE_WITH_TRANSLATION = "keep-me-with-translation";
+    public static final String KEEP_ME_PHRASE_WITHOUT_TRANSLATION = "keep-me-no-translation";
 
     @Value("${wiremock.server.port}")
     protected Integer wiremockPort;
@@ -55,6 +61,9 @@ public class BaseTest {
         "classpath:sql/get-Dictionary_WithDuplicateEnglishPhrases.sql";
 
     protected static final String ADD_ENGLISH_PHRASE_SCRIPT = "classpath:sql/add-Dictionary.sql";
+
+    protected static final String ADD_TEST_PHRASES_FOR_DELETION_SCRIPT =
+        "classpath:sql/add-Dictionary_TestPhrasesForDeletion.sql";
 
     protected static final String PUT_CREATE_ENGLISH_PHRASES_WITH_TRANSLATIONS_SCRIPT =
         "classpath:sql/put-create-Dictionary_EnglishPhrases.sql";

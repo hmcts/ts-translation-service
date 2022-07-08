@@ -14,4 +14,6 @@ public interface DictionaryRepository extends CrudRepository<DictionaryEntity, L
 
     Optional<DictionaryEntity> findByEnglishPhrase(String englishPhrase);
 
+    long deleteByEnglishPhraseStartingWith(String startingWith);
+
 }

@@ -8,6 +8,8 @@ import uk.gov.hmcts.befta.util.ReflectionUtils;
 
 import java.util.Map;
 
+import static uk.gov.hmcts.reform.translate.service.DictionaryService.TEST_PHRASES_START_WITH;
+
 public final class EvaluatorUtils {
 
     // Hide Utility Class Constructor : Utility classes should not have a public or default constructor (squid:S1118)
@@ -68,6 +70,6 @@ public final class EvaluatorUtils {
 
     public static String generateTestPhrase(String marker) {
         final int count = 10;
-        return String.format("TEST-%s-%s", marker, RandomStringUtils.randomAlphabetic(count));
+        return String.format("%s%s-%s", TEST_PHRASES_START_WITH, marker, RandomStringUtils.randomAlphabetic(count));
     }
 }

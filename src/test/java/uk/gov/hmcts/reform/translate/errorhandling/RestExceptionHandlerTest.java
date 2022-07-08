@@ -37,7 +37,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.reform.translate.errorhandling.BadRequestError.BAD_SCHEMA;
-import static uk.gov.hmcts.reform.translate.model.ControllerConstants.DICTIONARY_URL;
+import static uk.gov.hmcts.reform.translate.controllers.ControllerConstants.DICTIONARY_URL;
 
 @WebMvcTest(controllers = DictionaryController.class,
     includeFilters = @ComponentScan.Filter(type = ASSIGNABLE_TYPE, classes = MapperConfig.class),

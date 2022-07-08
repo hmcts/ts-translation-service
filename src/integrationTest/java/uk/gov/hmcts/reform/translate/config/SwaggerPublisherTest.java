@@ -23,7 +23,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Each CI run on master should automatically save and upload (if updated) documentation.
  */
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+    properties = {
+        // NB: hide testing-support endpoint from Swagger Publish
+        "ts.endpoints.testing-support.enabled=false"
+    }
+)
 @AutoConfigureMockMvc(addFilters = false)
 @ActiveProfiles("itest")
 class SwaggerPublisherTest extends BaseTest {
