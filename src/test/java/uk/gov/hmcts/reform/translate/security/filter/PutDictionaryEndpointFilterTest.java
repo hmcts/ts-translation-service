@@ -12,6 +12,7 @@ import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import uk.gov.hmcts.reform.translate.model.ControllerConstants;
+import uk.gov.hmcts.reform.translate.security.HttpServletRequestWithoutAuthenticationHeader;
 import uk.gov.hmcts.reform.translate.security.SecurityUtils;
 
 import javax.servlet.FilterChain;
@@ -20,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -100,11 +102,11 @@ class PutDictionaryEndpointFilterTest {
         doReturn(SERVICE_JWT).when(request).getHeader(SERVICE_AUTHORIZATION);
         doReturn(CCD_DEFINITION).when(securityUtils).getServiceNameFromS2SToken(anyString());
         doReturn(true).when(securityUtils).isBypassAuthCheck(anyString());
-        doNothing().when(filterChain).doFilter(request, response);
+        doNothing().when(filterChain).doFilter(any(HttpServletRequestWithoutAuthenticationHeader.class), eq(response));
 
         underTest.doFilterInternal(request, response, filterChain);
 
-        verify(filterChain).doFilter(request, response);
+        verify(filterChain).doFilter(any(HttpServletRequestWithoutAuthenticationHeader.class), eq(response));
         verify(securityUtils).getServiceNameFromS2SToken(anyString());
         verify(securityUtils).isBypassAuthCheck(CCD_DEFINITION);
         verify(securityContext).setAuthentication(any(AbstractAuthenticationToken.class));

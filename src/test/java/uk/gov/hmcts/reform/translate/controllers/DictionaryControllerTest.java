@@ -38,7 +38,8 @@ import static org.springframework.context.annotation.FilterType.ASSIGNABLE_TYPE;
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(controllers = DictionaryController.class,
     excludeFilters = @ComponentScan.Filter(type = ASSIGNABLE_TYPE,
-        classes = {PutDictionaryEndpointFilter.class, SecurityConfiguration.class, JwtGrantedAuthoritiesConverter.class}))
+        classes = {PutDictionaryEndpointFilter.class, SecurityConfiguration.class,
+            JwtGrantedAuthoritiesConverter.class}))
 @AutoConfigureMockMvc(addFilters = false)
 @ImportAutoConfiguration(TestIdamConfiguration.class)
 class DictionaryControllerTest {

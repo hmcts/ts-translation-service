@@ -43,7 +43,8 @@ import static uk.gov.hmcts.reform.translate.model.ControllerConstants.DICTIONARY
 @WebMvcTest(controllers = DictionaryController.class,
     includeFilters = @ComponentScan.Filter(type = ASSIGNABLE_TYPE, classes = MapperConfig.class),
     excludeFilters = @ComponentScan.Filter(type = ASSIGNABLE_TYPE,
-        classes = {PutDictionaryEndpointFilter.class, SecurityConfiguration.class, JwtGrantedAuthoritiesConverter.class}))
+        classes = {PutDictionaryEndpointFilter.class, SecurityConfiguration.class,
+            JwtGrantedAuthoritiesConverter.class}))
 @AutoConfigureMockMvc(addFilters = false)
 @ImportAutoConfiguration(TestIdamConfiguration.class)
 class RestExceptionHandlerTest {
