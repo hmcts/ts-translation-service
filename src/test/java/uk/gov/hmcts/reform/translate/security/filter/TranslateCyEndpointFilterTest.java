@@ -4,10 +4,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -44,9 +45,11 @@ class TranslateCyEndpointFilterTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"GET", "PUT", "HEAD", "OPTIONS"})
-    void testShouldPerformAuthenticationWhenNotPostTranslateCyEndpoint(final String param) throws Exception {
-        doReturn(param).when(request).getMethod();
+    @EnumSource(value = HttpMethod.class,
+        names = {"POST"},
+        mode = EnumSource.Mode.EXCLUDE)
+    void testShouldPerformAuthenticationWhenNotPostTranslateCyEndpoint(final HttpMethod param) throws Exception {
+        doReturn(param.name()).when(request).getMethod();
         doReturn(ControllerConstants.TRANSLATIONS_URL).when(request).getServletPath();
         doNothing().when(filterChain).doFilter(request, response);
 

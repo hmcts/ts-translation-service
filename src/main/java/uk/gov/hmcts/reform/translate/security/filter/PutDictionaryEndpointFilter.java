@@ -2,6 +2,7 @@ package uk.gov.hmcts.reform.translate.security.filter;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -22,8 +23,6 @@ import static uk.gov.hmcts.reform.translate.security.SecurityUtils.SERVICE_AUTHO
 @Slf4j
 @Component
 public class PutDictionaryEndpointFilter extends OncePerRequestFilter {
-
-    private static final String PUT_METHOD = "PUT";
 
     private final SecurityUtils securityUtils;
 
@@ -49,7 +48,7 @@ public class PutDictionaryEndpointFilter extends OncePerRequestFilter {
     }
 
     private boolean isPutDictionaryEndpoint(final HttpServletRequest request) {
-        return PUT_METHOD.equalsIgnoreCase(request.getMethod())
+        return HttpMethod.PUT.name().equalsIgnoreCase(request.getMethod())
             && ControllerConstants.DICTIONARY_URL.equalsIgnoreCase(request.getServletPath());
     }
 

@@ -1,6 +1,7 @@
 package uk.gov.hmcts.reform.translate.security.filter;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -19,8 +20,6 @@ import javax.servlet.http.HttpServletResponse;
 @Component
 public class TranslateCyEndpointFilter extends OncePerRequestFilter {
 
-    private static final String POST_METHOD = "POST";
-
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
@@ -38,7 +37,7 @@ public class TranslateCyEndpointFilter extends OncePerRequestFilter {
     }
 
     private boolean isPostTranslateCyEndpoint(final HttpServletRequest request) {
-        return POST_METHOD.equalsIgnoreCase(request.getMethod())
+        return HttpMethod.POST.name().equalsIgnoreCase(request.getMethod())
             && ControllerConstants.TRANSLATIONS_URL.equalsIgnoreCase(request.getServletPath());
     }
 
