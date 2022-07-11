@@ -8,17 +8,11 @@
   ],
 
   "users": {
-    "invokingUser": {
-      "_extends_": "BeftaCaseworker2Solicitor2"
-    }
+    "_extends_": "No_Invoking_User"
   },
 
   "request": {
-    "_extends_": "Common_Request",
-
-    "headers": {
-      "Accept": "application/json"
-    },
+    "_extends_": "Common_No_Auth_Request",
     "body": {
       "phrases": [
         "English phrase with translation",

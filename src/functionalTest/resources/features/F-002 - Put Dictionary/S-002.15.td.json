@@ -1,0 +1,27 @@
+{
+  "_guid_": "S-002.15",
+  "_extends_": "Put_Dictionary_Base",
+  "title": "Fail authentication and return 401 when IDAM token is missing and service is not definition store",
+  "specs": [
+    "is missing IDAM AUTHORIZATION token header",
+    "does not originate from ccd-definition",
+    "add a new English phrase",
+    "has the 401 Unauthorized status code"
+  ],
+
+  "users": {
+    "_extends_": "No_Invoking_User"
+  },
+
+  "request": {
+    "_extends_": "Common_No_Auth_Request",
+    "body": {
+      "translations": "${[scenarioContext][customValues][UniqueTranslationWithOnlyEnglish S002.15]}"
+    }
+  },
+
+  "expectedResponse": {
+    "_extends_": "Common_401_Response",
+    "body" : null
+  }
+}

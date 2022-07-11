@@ -13,13 +13,14 @@ import org.springframework.security.oauth2.core.OAuth2TokenValidator;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtDecoders;
-import org.springframework.security.oauth2.jwt.JwtIssuerValidator;
 import org.springframework.security.oauth2.jwt.JwtTimestampValidator;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationFilter;
 import uk.gov.hmcts.reform.authorisation.filters.ServiceAuthFilter;
 import uk.gov.hmcts.reform.translate.security.JwtGrantedAuthoritiesConverter;
+import uk.gov.hmcts.reform.translate.security.filter.PutDictionaryEndpointFilter;
+import uk.gov.hmcts.reform.translate.security.filter.TranslateCyEndpointFilter;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
@@ -34,6 +35,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     private String issuerOverride;
 
     private final ServiceAuthFilter serviceAuthFilter;
+    private final PutDictionaryEndpointFilter putDictionaryEndpointFilter;
+    private final TranslateCyEndpointFilter translateCyEndpointFilter;
     private final JwtAuthenticationConverter jwtAuthenticationConverter;
 
     private static final String[] AUTH_ALLOWED_LIST = {
@@ -51,9 +54,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Autowired
     public SecurityConfiguration(final ServiceAuthFilter serviceAuthFilter,
+                                 final PutDictionaryEndpointFilter putDictionaryEndpointFilter,
+                                 final TranslateCyEndpointFilter translateCyEndpointFilter,
                                  final JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter) {
         super();
         this.serviceAuthFilter = serviceAuthFilter;
+        this.putDictionaryEndpointFilter = putDictionaryEndpointFilter;
+        this.translateCyEndpointFilter = translateCyEndpointFilter;
         jwtAuthenticationConverter = new JwtAuthenticationConverter();
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
     }
@@ -67,6 +74,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
             .addFilterBefore(serviceAuthFilter, BearerTokenAuthenticationFilter.class)
+            .addFilterBefore(translateCyEndpointFilter, ServiceAuthFilter.class)
+            .addFilterAfter(putDictionaryEndpointFilter, ServiceAuthFilter.class)
             .sessionManagement().sessionCreationPolicy(STATELESS).and()
             .csrf().disable()
             .formLogin().disable()
@@ -85,11 +94,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Bean
     JwtDecoder jwtDecoder() {
-        NimbusJwtDecoder jwtDecoder = (NimbusJwtDecoder) JwtDecoders.fromOidcIssuerLocation(issuerUri);
+        NimbusJwtDecoder jwtDecoder = JwtDecoders.fromOidcIssuerLocation(issuerUri);
         OAuth2TokenValidator<Jwt> withTimestamp = new JwtTimestampValidator();
-        OAuth2TokenValidator<Jwt> withIssuer = new JwtIssuerValidator(issuerOverride);
         OAuth2TokenValidator<Jwt> validator = new DelegatingOAuth2TokenValidator<>(withTimestamp);
         jwtDecoder.setJwtValidator(validator);
         return jwtDecoder;
     }
+
 }

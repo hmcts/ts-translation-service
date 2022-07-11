@@ -10,7 +10,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.reform.idam.client.models.UserInfo;
-import uk.gov.hmcts.reform.translate.ApplicationParams;
 import uk.gov.hmcts.reform.translate.data.DictionaryEntity;
 import uk.gov.hmcts.reform.translate.data.TranslationUploadEntity;
 import uk.gov.hmcts.reform.translate.errorhandling.BadRequestException;
@@ -70,9 +69,6 @@ class DictionaryServiceTest {
 
     @Mock
     SecurityUtils securityUtils;
-
-    @Mock
-    ApplicationParams applicationParams;
 
     @InjectMocks
     DictionaryService dictionaryService;
@@ -305,11 +301,10 @@ class DictionaryServiceTest {
 
         @Test
         void shouldPutANewDictionaryForUserWithManageTranslationsRole() {
-
             // GIVEN
             final Dictionary dictionaryRequest = getDictionaryRequestWithTranslationPhrases(3);
-            given(securityUtils.getUserInfo()).willReturn(getUserInfoWithManageTranslationsRole());
             given(securityUtils.hasRole(anyString())).willReturn(true);
+            given(securityUtils.getUserInfo()).willReturn(getUserInfoWithManageTranslationsRole());
             given(dictionaryMapper.createTranslationUploadEntity(anyString())).willReturn(createUploadEntity());
 
             // WHEN
@@ -325,10 +320,8 @@ class DictionaryServiceTest {
 
         @Test
         void shouldPutANewDictionaryForUserWithoutManageTranslationsRole() {
-
             // GIVEN
             final Dictionary dictionaryRequest = getDictionaryRequestWithoutTranslationPhrases(3);
-            given(securityUtils.getUserInfo()).willReturn(getUserInfoWithManageTranslationsRole());
             given(securityUtils.hasRole(anyString())).willReturn(false);
 
             // WHEN
@@ -346,15 +339,14 @@ class DictionaryServiceTest {
 
         @Test
         void shouldUpdateADictionaryForUserWithManageTranslationsRole() {
-
             // GIVEN
             final Dictionary dictionaryRequest = getDictionaryRequestWithTranslationPhrases(1);
             final DictionaryEntity dictionaryEntity =
                 createDictionaryEntity("english_1", "translated_1");
 
             given(dictionaryRepository.findByEnglishPhrase(any())).willReturn(Optional.of(dictionaryEntity));
-            given(securityUtils.getUserInfo()).willReturn(getUserInfoWithManageTranslationsRole());
             given(securityUtils.hasRole(anyString())).willReturn(true);
+            given(securityUtils.getUserInfo()).willReturn(getUserInfoWithManageTranslationsRole());
             given(dictionaryMapper.createTranslationUploadEntity(anyString())).willReturn(createUploadEntity());
 
             // WHEN
@@ -369,14 +361,12 @@ class DictionaryServiceTest {
 
         @Test
         void shouldUpdateADictionaryForUserWithoutManageTranslationsRole() {
-
             // GIVEN
             final Dictionary dictionaryRequest = getDictionaryRequestWithoutTranslationPhrases(1);
             final DictionaryEntity dictionaryEntity =
                 createDictionaryEntity("english_1", "translated_1");
 
             given(dictionaryRepository.findByEnglishPhrase(any())).willReturn(Optional.of(dictionaryEntity));
-            given(securityUtils.getUserInfo()).willReturn(getUserInfoWithManageTranslationsRole());
             given(securityUtils.hasRole(anyString())).willReturn(false);
 
             // WHEN
@@ -393,10 +383,8 @@ class DictionaryServiceTest {
 
         @Test
         void shouldPutDictionaryRoleCheckForAValidUserWithManageTranslationsRole() {
-
             // GIVEN
-            given(applicationParams.getPutDictionaryS2sServicesBypassRoleAuthCheck())
-                .willReturn(List.of(DEFINITION_STORE));
+            given(securityUtils.isBypassAuthCheck(XUI)).willReturn(false);
             given(securityUtils.getServiceNameFromS2SToken(CLIENTS2S_TOKEN)).willReturn(XUI);
             given(securityUtils.hasAnyOfTheseRoles(anyList())).willReturn(true);
 
@@ -408,10 +396,8 @@ class DictionaryServiceTest {
 
         @Test
         void shouldPutDictionaryRoleCheckForAValidUserWithLoadTranslationRole() {
-
             // GIVEN
-            given(applicationParams.getPutDictionaryS2sServicesBypassRoleAuthCheck())
-                .willReturn(List.of(DEFINITION_STORE));
+            given(securityUtils.isBypassAuthCheck(XUI)).willReturn(false);
             given(securityUtils.hasAnyOfTheseRoles(anyList())).willReturn(true);
             given(securityUtils.getServiceNameFromS2SToken(CLIENTS2S_TOKEN)).willReturn(XUI);
 
@@ -423,10 +409,8 @@ class DictionaryServiceTest {
 
         @Test
         void shouldPutDictionaryRoleCheckForAValidDefinitionStore() {
-
             // GIVEN
-            given(applicationParams.getPutDictionaryS2sServicesBypassRoleAuthCheck())
-                .willReturn(List.of(DEFINITION_STORE));
+            given(securityUtils.isBypassAuthCheck(DEFINITION_STORE)).willReturn(true);
             given(securityUtils.getServiceNameFromS2SToken(CLIENTS2S_TOKEN)).willReturn(DEFINITION_STORE);
 
             // WHEN / THEN
@@ -438,11 +422,8 @@ class DictionaryServiceTest {
 
         @Test
         void shouldFailPutDictionaryRoleCheckForAValidUserWithOutAnyRole() {
-
             // GIVEN
-            given(applicationParams.getPutDictionaryS2sServicesBypassRoleAuthCheck())
-                .willReturn(List.of(DEFINITION_STORE));
-
+            given(securityUtils.isBypassAuthCheck(XUI)).willReturn(false);
             given(securityUtils.getServiceNameFromS2SToken(CLIENTS2S_TOKEN)).willReturn(XUI);
             given(securityUtils.hasAnyOfTheseRoles(anyList())).willReturn(false);
 
@@ -463,11 +444,8 @@ class DictionaryServiceTest {
 
         @Test
         void shouldFailPutDictionaryDueToInvalidClientToken() {
-
             // GIVEN
-            given(applicationParams.getPutDictionaryS2sServicesBypassRoleAuthCheck())
-                .willReturn(List.of(DEFINITION_STORE));
-
+            given(securityUtils.isBypassAuthCheck(XUI)).willReturn(false);
             given(securityUtils.getServiceNameFromS2SToken(CLIENTS2S_TOKEN)).willReturn(XUI);
             given(securityUtils.hasAnyOfTheseRoles(anyList())).willReturn(false);
 
@@ -490,11 +468,9 @@ class DictionaryServiceTest {
         // Incorrect pay_load
         @Test
         void shouldFailUpdateADictionaryForUserWithoutManageTranslationsRoleAndNullPayload() {
-
             // GIVEN
             final Dictionary dictionaryRequest = new Dictionary(null);
-            given(applicationParams.getPutDictionaryS2sServicesBypassRoleAuthCheck())
-                .willReturn(List.of(DEFINITION_STORE));
+            given(securityUtils.isBypassAuthCheck(DEFINITION_STORE)).willReturn(true);
             given(securityUtils.getServiceNameFromS2SToken(CLIENTS2S_TOKEN)).willReturn(DEFINITION_STORE);
             given(securityUtils.hasRole(anyString())).willReturn(false);
             dictionaryService.putDictionaryRoleCheck(CLIENTS2S_TOKEN);
@@ -511,11 +487,8 @@ class DictionaryServiceTest {
 
         @Test
         void shouldFailUpdateADictionaryForUserWithoutManageTranslationsRoleAndIncorrectPayload() {
-
-
             final Dictionary dictionaryRequest = new Dictionary(new HashMap<>());
-            given(applicationParams.getPutDictionaryS2sServicesBypassRoleAuthCheck())
-                .willReturn(List.of(DEFINITION_STORE));
+            given(securityUtils.isBypassAuthCheck(DEFINITION_STORE)).willReturn(true);
             given(securityUtils.getServiceNameFromS2SToken(CLIENTS2S_TOKEN)).willReturn(DEFINITION_STORE);
             given(securityUtils.hasRole(anyString())).willReturn(false);
             dictionaryService.putDictionaryRoleCheck(CLIENTS2S_TOKEN);
@@ -530,7 +503,6 @@ class DictionaryServiceTest {
 
         @Test
         void shouldFailUpdateADictionaryForDefinitionStoreWithIncorrectPayload() {
-
             // GIVEN
             final Dictionary dictionaryRequest = getDictionaryRequestWithTranslationPhrases(1);
             given(securityUtils.hasRole(anyString())).willReturn(false);

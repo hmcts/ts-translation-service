@@ -21,6 +21,7 @@ import static org.springframework.security.oauth2.core.endpoint.OAuth2ParameterN
 @Component
 @Slf4j
 public class JwtGrantedAuthoritiesConverter implements Converter<Jwt, Collection<GrantedAuthority>> {
+
     public static final String TOKEN_NAME = "tokenName";
 
     private final IdamRepository idamRepository;
@@ -32,7 +33,7 @@ public class JwtGrantedAuthoritiesConverter implements Converter<Jwt, Collection
 
     @Override
     public Collection<GrantedAuthority> convert(Jwt jwt) {
-        if (jwt.containsClaim(TOKEN_NAME) && jwt.getClaim(TOKEN_NAME).equals(ACCESS_TOKEN)) {
+        if (jwt.hasClaim(TOKEN_NAME) && jwt.getClaim(TOKEN_NAME).equals(ACCESS_TOKEN)) {
             UserInfo userInfo;
 
             try {
@@ -40,7 +41,6 @@ public class JwtGrantedAuthoritiesConverter implements Converter<Jwt, Collection
                 log.info("JwtGrantedAuthoritiesConverter retrieved user info from idamRepository."
                              + " User Id={}. Roles={}.",
                          userInfo.getUid(), userInfo.getRoles());
-
             } catch (Exception ex) {
                 // NB: catch, log and then throw a recognised spring authentication error as exception during
                 // HttpSecurity filters may fall outside of the remit of the RestExceptionHandler

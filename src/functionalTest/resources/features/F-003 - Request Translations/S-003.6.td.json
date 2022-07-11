@@ -1,0 +1,31 @@
+{
+  "_guid_": "S-003.6",
+  "_extends_": "Translation_Cy_Base",
+  "title": "must return a successful response when translate operation is requested",
+  "specs": [
+    "an active solicitor profile",
+    "has a valid IDAM AUTHORIZATION token header"
+  ],
+  "users": {
+    "invokingUser": {
+      "_extends_": "BeftaCaseworker2Solicitor2"
+    }
+  },
+  "request": {
+    "_extends_": "Common_Request",
+    "headers": {
+      "Accept": "application/json"
+    },
+    "body": {
+      "phrases": [
+        "${[scenarioContext][customValues][UniqueTestPhrase S-003.6]}"
+      ]
+    }
+  },
+  "expectedResponse": {
+    "_extends_": "Common_200_Response",
+    "body": {
+      "translations": "${[scenarioContext][customValues][containsTestTranslations]}"
+    }
+  }
+}
