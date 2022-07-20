@@ -12,7 +12,6 @@ plugins {
 }
 
 group = 'uk.gov.hmcts.reform'
-version = '0.0.1'
 
 ext {
   set('springCloudVersion', "2021.0.3")
