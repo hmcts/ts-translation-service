@@ -275,7 +275,7 @@ dependencies {
   // CVE-2021-29425
   implementation group: 'commons-io', name: 'commons-io', version: '2.11.0'
 
-  functionalTestImplementation (group: 'com.github.hmcts', name: 'ccd-test-definitions', version: '7.17.0') {
+  functionalTestImplementation (group: 'com.github.hmcts', name: 'ccd-test-definitions', version: '7.19.2_CCD-3535') {
     exclude group: 'com.github.hmcts.befta-fw', module: 'befta-fw'
   }
 
