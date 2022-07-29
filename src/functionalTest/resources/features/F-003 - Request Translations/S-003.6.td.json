@@ -18,7 +18,7 @@
     },
     "body": {
       "phrases": [
-        "${[scenarioContext][customValues][UniqueTestPhrase S-003.6]}"
+        "${[scenarioContext][customValues][UniqueTestPhrase S003.6]}"
       ]
     }
   },

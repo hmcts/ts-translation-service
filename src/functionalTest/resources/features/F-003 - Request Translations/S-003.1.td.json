@@ -12,7 +12,7 @@
     "_extends_": "Common_No_Auth_Request",
     "body": {
       "phrases": [
-        "${[scenarioContext][customValues][UniqueTestPhrase S-003.1]}"
+        "${[scenarioContext][customValues][UniqueTestPhrase S003.1]}"
       ]
     }
   },
