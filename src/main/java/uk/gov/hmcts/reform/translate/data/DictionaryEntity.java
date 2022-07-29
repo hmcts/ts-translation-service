@@ -30,7 +30,7 @@ public class DictionaryEntity {
     @Column(name = "translation_phrase")
     private String translationPhrase;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "translation_version", referencedColumnName = "version")
     private TranslationUploadEntity translationUpload;
 }
