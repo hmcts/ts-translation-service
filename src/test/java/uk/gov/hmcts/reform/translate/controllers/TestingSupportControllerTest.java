@@ -9,6 +9,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import uk.gov.hmcts.reform.translate.config.SecurityConfiguration;
 import uk.gov.hmcts.reform.translate.security.JwtGrantedAuthoritiesConverter;
+import uk.gov.hmcts.reform.translate.security.filter.PutDictionaryEndpointFilter;
 import uk.gov.hmcts.reform.translate.service.DictionaryService;
 
 import static org.mockito.Mockito.verify;
@@ -18,7 +19,8 @@ import static org.springframework.context.annotation.FilterType.ASSIGNABLE_TYPE;
     controllers = TestingSupportController.class,
     properties = {"ts.endpoints.testing-support.enabled=true"},
     excludeFilters = @ComponentScan.Filter(type = ASSIGNABLE_TYPE,
-        classes = {SecurityConfiguration.class, JwtGrantedAuthoritiesConverter.class})
+        classes = {PutDictionaryEndpointFilter.class, SecurityConfiguration.class,
+            JwtGrantedAuthoritiesConverter.class})
 )
 class TestingSupportControllerTest extends BaseControllerTest {
 

@@ -12,7 +12,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import uk.gov.hmcts.reform.translate.model.ControllerConstants;
+import uk.gov.hmcts.reform.translate.controllers.ControllerConstants;
 import uk.gov.hmcts.reform.translate.security.HttpServletRequestWithoutAuthenticationHeader;
 import uk.gov.hmcts.reform.translate.security.SecurityUtils;
 
