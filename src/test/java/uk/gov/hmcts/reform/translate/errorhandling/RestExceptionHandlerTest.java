@@ -28,6 +28,7 @@ import uk.gov.hmcts.reform.translate.TestIdamConfiguration;
 import uk.gov.hmcts.reform.translate.config.SecurityConfiguration;
 import uk.gov.hmcts.reform.translate.controllers.DictionaryController;
 import uk.gov.hmcts.reform.translate.security.JwtGrantedAuthoritiesConverter;
+import uk.gov.hmcts.reform.translate.security.filter.PutDictionaryEndpointFilter;
 import uk.gov.hmcts.reform.translate.service.DictionaryService;
 
 import java.lang.reflect.Method;
@@ -41,8 +42,9 @@ import static uk.gov.hmcts.reform.translate.controllers.ControllerConstants.DICT
 
 @WebMvcTest(controllers = DictionaryController.class,
     includeFilters = @ComponentScan.Filter(type = ASSIGNABLE_TYPE, classes = MapperConfig.class),
-    excludeFilters = @ComponentScan.Filter(type = ASSIGNABLE_TYPE, classes =
-        {SecurityConfiguration.class, JwtGrantedAuthoritiesConverter.class}))
+    excludeFilters = @ComponentScan.Filter(type = ASSIGNABLE_TYPE,
+        classes = {PutDictionaryEndpointFilter.class, SecurityConfiguration.class,
+            JwtGrantedAuthoritiesConverter.class}))
 @AutoConfigureMockMvc(addFilters = false)
 @ImportAutoConfiguration(TestIdamConfiguration.class)
 class RestExceptionHandlerTest {

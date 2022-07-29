@@ -1,0 +1,31 @@
+{
+  "_guid_": "S-002.17",
+  "_extends_": "Put_Dictionary_Base",
+  "title": "Return 403 when an attempt to add English phrases to dictionary where a valid IDAM token is present and service is unauthorized",
+  "specs": [
+    "with manage-translation IDAM role",
+    "originates from ccd_data",
+    "add a new English phrase",
+    "has the 403 Forbidden status code"
+  ],
+
+  "users": {
+    "invokingUser": {
+      "_extends_": "ManageAndLoadTranslationsUser"
+    }
+  },
+
+  "s2sClientId": "ccd_data",
+
+  "request": {
+    "_extends_": "Common_Request",
+    "body": {
+      "translations": "${[scenarioContext][customValues][UniqueTranslationWithOnlyEnglish S002.17]}"
+    }
+  },
+
+  "expectedResponse": {
+    "_extends_": "Common_403_Response",
+    "body" : null
+  }
+}

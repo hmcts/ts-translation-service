@@ -4,23 +4,16 @@
   "title": "Invalid request - Return 400 error",
 
   "specs": [
-    "an active solicitor profile",
     "contains the mandatory elements but the format is not as expected",
     "has 400 Bad Request code"
   ],
 
   "users": {
-    "invokingUser": {
-      "_extends_": "BeftaCaseworker2Solicitor2"
-    }
+    "_extends_": "No_Invoking_User"
   },
 
   "request": {
-    "_extends_": "Common_Request",
-
-    "headers": {
-      "Accept": "application/json"
-    },
+    "_extends_": "Common_No_Auth_Request",
     "body": {
       "phrases": {
         "illegal_object": "Illegal Phrase"

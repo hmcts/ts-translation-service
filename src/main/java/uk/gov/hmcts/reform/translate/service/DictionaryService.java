@@ -6,7 +6,6 @@ import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import uk.gov.hmcts.reform.translate.ApplicationParams;
 import uk.gov.hmcts.reform.translate.data.DictionaryEntity;
 import uk.gov.hmcts.reform.translate.data.TranslationUploadEntity;
 import uk.gov.hmcts.reform.translate.errorhandling.BadRequestException;
@@ -17,7 +16,6 @@ import uk.gov.hmcts.reform.translate.model.Dictionary;
 import uk.gov.hmcts.reform.translate.repository.DictionaryRepository;
 import uk.gov.hmcts.reform.translate.repository.TranslationUploadRepository;
 import uk.gov.hmcts.reform.translate.security.SecurityUtils;
-
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -44,18 +42,17 @@ public class DictionaryService {
     private final DictionaryRepository dictionaryRepository;
     private final DictionaryMapper dictionaryMapper;
     private final SecurityUtils securityUtils;
-    private final ApplicationParams applicationParams;
     private final TranslationUploadRepository translationUploadRepository;
 
     @Autowired
-    public DictionaryService(DictionaryRepository dictionaryRepository, DictionaryMapper dictionaryMapper,
-                             SecurityUtils securityUtils, ApplicationParams applicationParams,
+    public DictionaryService(DictionaryRepository dictionaryRepository,
+                             DictionaryMapper dictionaryMapper,
+                             SecurityUtils securityUtils,
                              TranslationUploadRepository translationUploadRepository) {
 
         this.dictionaryRepository = dictionaryRepository;
         this.dictionaryMapper = dictionaryMapper;
         this.securityUtils = securityUtils;
-        this.applicationParams = applicationParams;
         this.translationUploadRepository = translationUploadRepository;
     }
 
@@ -120,10 +117,9 @@ public class DictionaryService {
 
         val isManageTranslationRole = securityUtils.hasRole(MANAGE_TRANSLATIONS_ROLE);
         validateDictionary(dictionaryRequest, isManageTranslationRole);
-        val currentUserId = securityUtils.getUserInfo().getUid();
 
         val translationUploadEntity = hasAnyTranslations(dictionaryRequest)
-            ? dictionaryMapper.createTranslationUploadEntity(currentUserId)
+            ? dictionaryMapper.createTranslationUploadEntity(securityUtils.getUserInfo().getUid())
             : null;
 
         dictionaryRequest.getTranslations().entrySet()
@@ -153,30 +149,27 @@ public class DictionaryService {
 
     private void updatePhrase(Map.Entry<String, String> currentPhrase,
                               DictionaryEntity dictionaryEntity,
-                              TranslationUploadEntity translationUploadOptional) {
+                              TranslationUploadEntity translationUploadEntity) {
 
         if (hasTranslationPhrase(currentPhrase)) {
-            dictionaryEntity.setTranslationUpload(translationUploadOptional);
+            dictionaryEntity.setTranslationUpload(translationUploadEntity);
             dictionaryEntity.setTranslationPhrase(currentPhrase.getValue());
             // if upload entity has been generated save it now as we know
             // we have at least one translation that will use it
-            translationUploadRepository.save(translationUploadOptional);
+            translationUploadRepository.save(translationUploadEntity);
             dictionaryRepository.save(dictionaryEntity);
         }
     }
 
     public void putDictionaryRoleCheck(String clientS2SToken) {
         val clientServiceName = securityUtils.getServiceNameFromS2SToken(clientS2SToken);
-        if (isBypassRoleAuthCheck(clientServiceName)
+        if (securityUtils.isBypassAuthCheck(clientServiceName)
             || securityUtils.hasAnyOfTheseRoles(Arrays.asList(MANAGE_TRANSLATIONS_ROLE, LOAD_TRANSLATIONS_ROLE))) {
             return;
         }
         throw new RequestErrorException(MANAGE_TRANSLATIONS_ROLE + "," + LOAD_TRANSLATIONS_ROLE);
     }
 
-    private boolean isBypassRoleAuthCheck(String clientServiceName) {
-        return applicationParams.getPutDictionaryS2sServicesBypassRoleAuthCheck().contains(clientServiceName);
-    }
 
     private void validateDictionary(final Dictionary dictionaryRequest, boolean isManageTranslationRole) {
 

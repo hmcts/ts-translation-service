@@ -8,7 +8,7 @@ public enum CustomValueKey {
     UNIQUE_TEST_PHRASE("UniqueTestPhrase"),
     UNIQUE_TRANSLATION_WITH_ENGLISH_AND_WELSH("UniqueTranslationWithEnglishAndWelsh"),
     UNIQUE_TRANSLATION_WITH_ONLY_ENGLISH("UniqueTranslationWithOnlyEnglish"),
-    S_003_1("S-003.1"),
+    CONTAINS_TEST_TRANSLATIONS("containsTestTranslations"),
     DEFAULT_KEY("DefaultKey");
 
     private final String value;

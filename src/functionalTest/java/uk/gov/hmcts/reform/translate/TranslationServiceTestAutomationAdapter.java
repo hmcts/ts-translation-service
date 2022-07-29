@@ -5,35 +5,29 @@ import uk.gov.hmcts.befta.DefaultTestAutomationAdapter;
 import uk.gov.hmcts.befta.player.BackEndFunctionalTestScenarioContext;
 import uk.gov.hmcts.reform.translate.customvalue.ContainsDictionaryFromContextEvaluator;
 import uk.gov.hmcts.reform.translate.customvalue.ContainsDictionaryTranslationsEvaluator;
+import uk.gov.hmcts.reform.translate.customvalue.ContainsTestTranslationsEvaluator;
 import uk.gov.hmcts.reform.translate.customvalue.CustomValueEvaluator;
 import uk.gov.hmcts.reform.translate.customvalue.CustomValueKey;
-import uk.gov.hmcts.reform.translate.customvalue.GetTranslationsEvaluator;
 import uk.gov.hmcts.reform.translate.customvalue.UniqueTestPhraseEvaluator;
 import uk.gov.hmcts.reform.translate.customvalue.UniqueTranslationWithEnglishAndWelshEvaluator;
 import uk.gov.hmcts.reform.translate.customvalue.UniqueTranslationWithOnlyEnglishEvaluator;
 
-import java.util.stream.Stream;
+import java.util.List;
 
 public class TranslationServiceTestAutomationAdapter extends DefaultTestAutomationAdapter {
 
-    private final CustomValueEvaluator
-        containsDictionaryTranslationsEvaluator = new ContainsDictionaryTranslationsEvaluator();
-    private final CustomValueEvaluator
-        containsDictionaryFromContextEvaluator = new ContainsDictionaryFromContextEvaluator();
-
-    private final CustomValueEvaluator uniqueTestPhraseEvaluator = new UniqueTestPhraseEvaluator();
-    private final CustomValueEvaluator getTranslationsEvaluator = new GetTranslationsEvaluator();
-
-    private final CustomValueEvaluator
-        uniqueTranslationWithEnglishAndWelshEvaluator = new UniqueTranslationWithEnglishAndWelshEvaluator();
-    private final CustomValueEvaluator
-        uniqueTranslationWithOnlyEnglishEvaluator = new UniqueTranslationWithOnlyEnglishEvaluator();
+    private final List<CustomValueEvaluator> customValueEvaluators = List.of(
+            new ContainsDictionaryTranslationsEvaluator(),
+            new ContainsDictionaryFromContextEvaluator(),
+            new UniqueTestPhraseEvaluator(),
+            new ContainsTestTranslationsEvaluator(),
+            new UniqueTranslationWithEnglishAndWelshEvaluator(),
+            new UniqueTranslationWithOnlyEnglishEvaluator()
+    );
 
     @Override
     public synchronized Object calculateCustomValue(BackEndFunctionalTestScenarioContext scenarioContext, Object key) {
-        return Stream.of(containsDictionaryTranslationsEvaluator, containsDictionaryFromContextEvaluator,
-                         uniqueTestPhraseEvaluator, getTranslationsEvaluator,
-                         uniqueTranslationWithOnlyEnglishEvaluator, uniqueTranslationWithEnglishAndWelshEvaluator)
+        return customValueEvaluators.stream()
             .filter(candidate -> candidate.matches(CustomValueKey.getEnum(key.toString())))
             .findFirst()
             .map(evaluator -> evaluator.calculate(scenarioContext, key))

@@ -1,0 +1,28 @@
+{
+  "_guid_": "S-002.14",
+  "_extends_": "Put_Dictionary_Base",
+  "title": "Add English phrases to dictionary and return success when IDAM token is missing and service is definition store",
+  "specs": [
+    "is missing IDAM AUTHORIZATION token header",
+    "originates from ccd-definition",
+    "add a new English phrase",
+    "has the 201 Created status code"
+  ],
+
+  "users": {
+    "_extends_": "No_Invoking_User"
+  },
+
+  "s2sClientId": "ccd_definition",
+
+  "request": {
+    "_extends_": "Common_No_Auth_Request",
+    "body": {
+      "translations": "${[scenarioContext][customValues][UniqueTranslationWithOnlyEnglish S002.14]}"
+    }
+  },
+
+  "expectedResponse": {
+    "_extends_": "Common_201_Response"
+  }
+}
