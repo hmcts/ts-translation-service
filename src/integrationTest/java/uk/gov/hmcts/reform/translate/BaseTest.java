@@ -42,6 +42,11 @@ public abstract class BaseTest {
     public static final String KEEP_ME_PHRASE_WITH_TRANSLATION = "keep-me-with-translation";
     public static final String KEEP_ME_PHRASE_WITHOUT_TRANSLATION = "keep-me-no-translation";
 
+    // data values as per: classpath:sql/get-Dictionary_And_TranslationUploads.sql
+    public static final String GET_DICTIONARY_TEST_PHRASE_1 = "English Phrase 1";
+    public static final String GET_DICTIONARY_TEST_PHRASE_2 = "English Phrase 2";
+    public static final String GET_DICTIONARY_TEST_PHRASE_2_TRANSLATION = "Translated Phrase 2";
+
     @Value("${wiremock.server.port}")
     protected Integer wiremockPort;
 

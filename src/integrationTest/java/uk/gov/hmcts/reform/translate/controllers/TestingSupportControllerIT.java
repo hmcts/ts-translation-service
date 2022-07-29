@@ -4,12 +4,14 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.reform.translate.BaseTest;
 import uk.gov.hmcts.reform.translate.repository.DictionaryRepository;
+import uk.gov.hmcts.reform.translate.repository.JpaDictionaryRepository;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -29,6 +31,7 @@ public class TestingSupportControllerIT extends BaseTest {
     private MockMvc mockMvc;
 
     @Autowired
+    @Qualifier(JpaDictionaryRepository.QUALIFIER)
     protected DictionaryRepository dictionaryRepository;
 
     @Nested

@@ -3,11 +3,12 @@ package uk.gov.hmcts.reform.translate.repository;
 import org.assertj.core.util.Streams;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.jdbc.Sql;
 import uk.gov.hmcts.reform.translate.BaseTest;
 import uk.gov.hmcts.reform.translate.data.DictionaryEntity;
 import uk.gov.hmcts.reform.translate.data.TranslationUploadEntity;
+import uk.gov.hmcts.reform.translate.errorhandling.EnglishPhraseUniqueConstraintException;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -22,9 +23,10 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static uk.gov.hmcts.reform.translate.service.DictionaryService.TEST_PHRASES_START_WITH;
 
-class DictionaryRepositoryIT extends BaseTest {
+class DefaultDictionaryRepositoryIT extends BaseTest {
 
     @Autowired
+    @Qualifier(DefaultDictionaryRepository.QUALIFIER)
     DictionaryRepository dictionaryRepository;
 
     private static final String ENGLISH_PHRASE = "English phrase";
@@ -64,7 +66,7 @@ class DictionaryRepositoryIT extends BaseTest {
         dictionaryEntity.setTranslationPhrase(TRANSLATION_PHRASE);
         dictionaryEntity.setTranslationUpload(translationUploadEntity);
 
-        final var dictionary = dictionaryRepository.save(dictionaryEntity);
+        final var dictionary = dictionaryRepository.saveAndFlush(dictionaryEntity);
 
         assertNotNull(dictionary.getId());
 
@@ -86,7 +88,7 @@ class DictionaryRepositoryIT extends BaseTest {
 
         assertAll(
             () -> assertNull(dictionaryEntity.getTranslationPhrase()),
-            () -> assertEquals("English Phrase 1", dictionaryEntity.getEnglishPhrase()),
+            () -> assertEquals(GET_DICTIONARY_TEST_PHRASE_1, dictionaryEntity.getEnglishPhrase()),
             () -> assertEquals(
                 LocalDateTime.parse("2022-05-06T11:12:13.000000"),
                 dictionaryEntity.getTranslationUpload().getUploaded()
@@ -104,8 +106,8 @@ class DictionaryRepositoryIT extends BaseTest {
         final var dictionaryEntity = optionalDictionaryEntity.get();
 
         assertAll(
-            () -> assertEquals("Translated Phrase 2", dictionaryEntity.getTranslationPhrase()),
-            () -> assertEquals("English Phrase 2", dictionaryEntity.getEnglishPhrase()),
+            () -> assertEquals(GET_DICTIONARY_TEST_PHRASE_2_TRANSLATION, dictionaryEntity.getTranslationPhrase()),
+            () -> assertEquals(GET_DICTIONARY_TEST_PHRASE_2, dictionaryEntity.getEnglishPhrase()),
             () -> assertEquals(
                 LocalDateTime.parse("2022-05-07T09:00:05.000000"),
                 dictionaryEntity.getTranslationUpload().getUploaded()
@@ -129,12 +131,12 @@ class DictionaryRepositoryIT extends BaseTest {
     @Test
     void testShouldFindDictionaryEntityByEnglishPhrase() {
         final Optional<DictionaryEntity> optionalDictionaryEntity =
-            dictionaryRepository.findByEnglishPhrase("English Phrase 1");
+            dictionaryRepository.findByEnglishPhrase(GET_DICTIONARY_TEST_PHRASE_1);
 
         assertThat(optionalDictionaryEntity)
             .isPresent()
             .map(DictionaryEntity::getEnglishPhrase)
-            .hasValue("English Phrase 1");
+            .hasValue(GET_DICTIONARY_TEST_PHRASE_1);
     }
 
     @Sql(scripts = {DELETE_TRANSLATION_TABLES_SCRIPT, GET_TRANSLATION_TABLES_SCRIPT})
@@ -142,6 +144,28 @@ class DictionaryRepositoryIT extends BaseTest {
     void testFindDictionaryEntityByEnglishPhraseShouldReturnEmptyWhenPhraseIsNotPresent() {
         final Optional<DictionaryEntity> optionalDictionaryEntity =
             dictionaryRepository.findByEnglishPhrase(ENGLISH_PHRASE);
+
+        assertThat(optionalDictionaryEntity)
+            .isNotPresent();
+    }
+
+    @Sql(scripts = {DELETE_TRANSLATION_TABLES_SCRIPT, GET_TRANSLATION_TABLES_SCRIPT})
+    @Test
+    void testShouldFindDictionaryEntityById() {
+        final Optional<DictionaryEntity> optionalDictionaryEntity =
+            dictionaryRepository.findById(1L);
+
+        assertThat(optionalDictionaryEntity)
+            .isPresent()
+            .map(DictionaryEntity::getEnglishPhrase)
+            .hasValue(GET_DICTIONARY_TEST_PHRASE_1);
+    }
+
+    @Sql(scripts = {DELETE_TRANSLATION_TABLES_SCRIPT, GET_TRANSLATION_TABLES_SCRIPT})
+    @Test
+    void testShouldFindDictionaryEntityByIdShouldReturnEmptyWhenIdIsNotPresent() {
+        final Optional<DictionaryEntity> optionalDictionaryEntity =
+            dictionaryRepository.findById(1234L);
 
         assertThat(optionalDictionaryEntity)
             .isNotPresent();
@@ -155,12 +179,12 @@ class DictionaryRepositoryIT extends BaseTest {
         dictionaryEntity.setEnglishPhrase(ENGLISH_PHRASE);
 
         // WHEN
-        final Throwable thrown = catchThrowable(() -> dictionaryRepository.save(dictionaryEntity));
+        final Throwable thrown = catchThrowable(() -> dictionaryRepository.saveAndFlush(dictionaryEntity));
 
         // THEN
         assertThat(thrown)
             .isNotNull()
-            .isInstanceOf(DataIntegrityViolationException.class);
+            .isInstanceOf(EnglishPhraseUniqueConstraintException.class);
     }
 
 }
