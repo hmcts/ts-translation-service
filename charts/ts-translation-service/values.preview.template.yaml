@@ -4,9 +4,9 @@ java:
   ingressHost: ${SERVICE_FQDN}
   environment:
     TS_TRANSLATION_SERVICE_DB_HOST: "{{ .Release.Name }}-postgresql"
-    TS_TRANSLATION_SERVICE_DB_NAME: "{{ .Values.postgresql.postgresqlDatabase}}"
-    TS_TRANSLATION_SERVICE_DB_USERNAME: "{{ .Values.postgresql.postgresqlUsername}}"
-    TS_TRANSLATION_SERVICE_DB_PASSWORD: "{{ .Values.postgresql.postgresqlPassword}}"
+    TS_TRANSLATION_SERVICE_DB_NAME: "{{ .Values.postgresql.auth.database}}"
+    TS_TRANSLATION_SERVICE_DB_USERNAME: "{{ .Values.postgresql.auth.username}}"
+    TS_TRANSLATION_SERVICE_DB_PASSWORD: "{{ .Values.postgresql.auth.password}}"
     TS_TRANSLATION_SERVICE_DB_OPTIONS: "?stringtype=unspecified"
     TS_TRANSLATION_SERVICE_DB_PORT: 5432
     TESTING_SUPPORT_ENABLED: true
