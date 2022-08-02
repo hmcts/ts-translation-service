@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.test.context.junit4.SpringRunner;
 import uk.gov.hmcts.reform.translate.data.DictionaryEntity;
 import uk.gov.hmcts.reform.translate.errorhandling.EnglishPhraseUniqueConstraintException;
@@ -18,7 +21,6 @@ import uk.gov.hmcts.reform.translate.repository.DictionaryRepository;
 import uk.gov.hmcts.reform.translate.repository.TranslationUploadRepository;
 import uk.gov.hmcts.reform.translate.security.SecurityUtils;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -35,7 +37,7 @@ import static uk.gov.hmcts.reform.translate.service.DictionaryServiceTest.create
 
 @DisplayName("DictionaryService test with RetryEnabled")
 @RunWith(SpringRunner.class)
-@SpringBootTest
+@SpringBootTest(classes = {DictionaryService.class, DictionaryServiceWithRetryEnabledTest.RetryConfig.class})
 class DictionaryServiceWithRetryEnabledTest {
 
     @Autowired
@@ -46,16 +48,23 @@ class DictionaryServiceWithRetryEnabledTest {
     DictionaryRepository dictionaryRepository;
 
     @MockBean
+    @SuppressWarnings("unused")
     TranslationUploadRepository translationUploadRepository;
 
     @MockBean
-    List<DictionaryEntity> repositoryResults;
-
-    @MockBean
+    @SuppressWarnings("unused")
     DictionaryMapper dictionaryMapper;
 
     @MockBean
     SecurityUtils securityUtils;
+
+
+    @Configuration
+    @EnableRetry
+    @Import(DictionaryService.class)
+    public static class RetryConfig {
+        // spring config to enable retry for SpringRunner tests
+    }
 
     private static final String THE_QUICK_FOX_PHRASE = "the quick fox";
 
