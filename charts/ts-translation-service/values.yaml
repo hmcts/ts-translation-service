@@ -18,6 +18,8 @@ java:
           alias: TS_TRANSLATION_SERVICE_DB_PORT
         - name: translation-service-POSTGRES-DATABASE
           alias: TS_TRANSLATION_SERVICE_DB_NAME
+        - name: ts-translation-service-s2s-secret
+          alias: IDAM_KEY_TS_TRANSLATION_SERVICE
 
   environment:
     TS_TRANSLATION_SERVICE_DB_OPTIONS: "?stringtype=unspecified&gssEncMode=disable"
