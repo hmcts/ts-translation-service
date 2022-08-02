@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.test.context.junit4.SpringRunner;
 import uk.gov.hmcts.reform.translate.data.DictionaryEntity;
@@ -58,10 +57,8 @@ class DictionaryServiceWithRetryEnabledTest {
     @MockBean
     SecurityUtils securityUtils;
 
-
     @Configuration
     @EnableRetry
-    @Import(DictionaryService.class)
     public static class RetryConfig {
         // spring config to enable retry for SpringRunner tests
     }
@@ -107,7 +104,7 @@ class DictionaryServiceWithRetryEnabledTest {
 
         // GIVEN
         given(securityUtils.hasRole(anyString())).willReturn(false);
-        // NB: only onw phrase in use
+        // NB: only one phrase in use
         final Dictionary dictionaryRequest = getDictionaryRequestWithoutTranslationPhrases(1);
 
         // WHEN
