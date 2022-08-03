@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static uk.gov.hmcts.reform.translate.service.DictionaryService.TEST_PHRASES_START_WITH;
 
-class DefaultDictionaryRepositoryIT extends BaseTest {
+class DictionaryRepositoryIT extends BaseTest {
 
     @Autowired
     @Qualifier(DefaultDictionaryRepository.QUALIFIER)
@@ -40,14 +40,16 @@ class DefaultDictionaryRepositoryIT extends BaseTest {
         // WHEN
         final var numberDeleted = dictionaryRepository.deleteByEnglishPhraseStartingWith(TEST_PHRASES_START_WITH);
 
-        //THEN
+        // THEN
         assertAll(
             // verify deletes
-            () -> assertEquals(2, numberDeleted),
-            () -> assertTrue(dictionaryRepository.findByEnglishPhrase(DELETE_ME_PHRASE_WITH_TRANSLATION).isEmpty()),
+            () -> assertEquals(3, numberDeleted),
+            () -> assertTrue(dictionaryRepository.findByEnglishPhrase(DELETE_ME_PHRASE_WITH_TRANSLATION_1).isEmpty()),
+            () -> assertTrue(dictionaryRepository.findByEnglishPhrase(DELETE_ME_PHRASE_WITH_TRANSLATION_2).isEmpty()),
             () -> assertTrue(dictionaryRepository.findByEnglishPhrase(DELETE_ME_PHRASE_WITHOUT_TRANSLATION).isEmpty()),
             // verify keeps
-            () -> assertTrue(dictionaryRepository.findByEnglishPhrase(KEEP_ME_PHRASE_WITH_TRANSLATION).isPresent()),
+            () -> assertTrue(dictionaryRepository.findByEnglishPhrase(KEEP_ME_PHRASE_WITH_TRANSLATION_1).isPresent()),
+            () -> assertTrue(dictionaryRepository.findByEnglishPhrase(KEEP_ME_PHRASE_WITH_TRANSLATION_2).isPresent()),
             () -> assertTrue(dictionaryRepository.findByEnglishPhrase(KEEP_ME_PHRASE_WITHOUT_TRANSLATION).isPresent())
         );
 
