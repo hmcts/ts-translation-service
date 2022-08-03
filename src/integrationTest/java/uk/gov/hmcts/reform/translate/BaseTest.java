@@ -37,9 +37,11 @@ import static org.mockito.Mockito.when;
 public abstract class BaseTest {
 
     // data values as per: classpath:sql/add-Dictionary_TestPhrasesForDeletion.sql
-    public static final String DELETE_ME_PHRASE_WITH_TRANSLATION = "TEST-delete-me-with-translation";
+    public static final String DELETE_ME_PHRASE_WITH_TRANSLATION_1 = "TEST-delete-me-with-translation-1";
+    public static final String DELETE_ME_PHRASE_WITH_TRANSLATION_2 = "TEST-delete-me-with-translation-2";
     public static final String DELETE_ME_PHRASE_WITHOUT_TRANSLATION = "TEST-delete-me-no-translation";
-    public static final String KEEP_ME_PHRASE_WITH_TRANSLATION = "keep-me-with-translation";
+    public static final String KEEP_ME_PHRASE_WITH_TRANSLATION_1 = "keep-me-with-translation-1";
+    public static final String KEEP_ME_PHRASE_WITH_TRANSLATION_2 = "keep-me-with-translation-2";
     public static final String KEEP_ME_PHRASE_WITHOUT_TRANSLATION = "keep-me-no-translation";
 
     @Value("${wiremock.server.port}")

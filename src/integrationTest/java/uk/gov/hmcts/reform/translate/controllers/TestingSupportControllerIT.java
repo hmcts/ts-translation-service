@@ -58,9 +58,11 @@ public class TestingSupportControllerIT extends BaseTest {
             stubUserInfo(MANAGE_TRANSLATIONS_ROLE);
 
             // check data exists before delete
-            assertTrue(dictionaryRepository.findByEnglishPhrase(DELETE_ME_PHRASE_WITH_TRANSLATION).isPresent());
+            assertTrue(dictionaryRepository.findByEnglishPhrase(DELETE_ME_PHRASE_WITH_TRANSLATION_1).isPresent());
+            assertTrue(dictionaryRepository.findByEnglishPhrase(DELETE_ME_PHRASE_WITH_TRANSLATION_2).isPresent());
             assertTrue(dictionaryRepository.findByEnglishPhrase(DELETE_ME_PHRASE_WITHOUT_TRANSLATION).isPresent());
-            assertTrue(dictionaryRepository.findByEnglishPhrase(KEEP_ME_PHRASE_WITH_TRANSLATION).isPresent());
+            assertTrue(dictionaryRepository.findByEnglishPhrase(KEEP_ME_PHRASE_WITH_TRANSLATION_1).isPresent());
+            assertTrue(dictionaryRepository.findByEnglishPhrase(KEEP_ME_PHRASE_WITH_TRANSLATION_2).isPresent());
             assertTrue(dictionaryRepository.findByEnglishPhrase(KEEP_ME_PHRASE_WITHOUT_TRANSLATION).isPresent());
 
             // WHEN
@@ -70,10 +72,12 @@ public class TestingSupportControllerIT extends BaseTest {
 
             // THEN
             // verify deletes
-            assertTrue(dictionaryRepository.findByEnglishPhrase(DELETE_ME_PHRASE_WITH_TRANSLATION).isEmpty());
+            assertTrue(dictionaryRepository.findByEnglishPhrase(DELETE_ME_PHRASE_WITH_TRANSLATION_1).isEmpty());
+            assertTrue(dictionaryRepository.findByEnglishPhrase(DELETE_ME_PHRASE_WITH_TRANSLATION_2).isEmpty());
             assertTrue(dictionaryRepository.findByEnglishPhrase(DELETE_ME_PHRASE_WITHOUT_TRANSLATION).isEmpty());
             // verify keeps
-            assertTrue(dictionaryRepository.findByEnglishPhrase(KEEP_ME_PHRASE_WITH_TRANSLATION).isPresent());
+            assertTrue(dictionaryRepository.findByEnglishPhrase(KEEP_ME_PHRASE_WITH_TRANSLATION_1).isPresent());
+            assertTrue(dictionaryRepository.findByEnglishPhrase(KEEP_ME_PHRASE_WITH_TRANSLATION_2).isPresent());
             assertTrue(dictionaryRepository.findByEnglishPhrase(KEEP_ME_PHRASE_WITHOUT_TRANSLATION).isPresent());
 
         }
