@@ -227,6 +227,7 @@ dependencies {
   implementation group: 'org.springframework.security', name: 'spring-security-web'
   implementation group: 'org.springframework.security', name: 'spring-security-oauth2-jose'
   implementation group: 'org.springframework.security', name: 'spring-security-config'
+  implementation group: 'org.springframework.retry', name:'spring-retry'
   implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.6.7'
 
   configurations.all {
@@ -238,7 +239,7 @@ dependencies {
   implementation group: 'org.apache.logging.log4j', name: 'log4j-api'
   implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j'
   implementation group: 'org.flywaydb', name: 'flyway-core', version: '7.7.0'
-  implementation group: 'org.postgresql', name: 'postgresql', version: '42.3.4'
+  implementation group: 'org.postgresql', name: 'postgresql', version: '42.4.1'
   implementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: versions.serviceAuthVersion
   implementation group: 'com.github.hmcts', name: 'idam-java-client', version: versions.idamClientVersion
 
@@ -251,6 +252,7 @@ dependencies {
     exclude group: 'junit', module: 'junit'
     exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
   }
+  testImplementation group: 'org.junit.vintage', name: 'junit-vintage-engine', version: versions.junit
   testImplementation group: 'io.vavr', name: 'vavr', version: '0.10.4'
   testImplementation group: 'org.assertj', name: 'assertj-vavr', version: '0.4.2'
 
