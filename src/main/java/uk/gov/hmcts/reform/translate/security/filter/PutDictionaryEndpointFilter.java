@@ -7,7 +7,7 @@ import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import uk.gov.hmcts.reform.translate.model.ControllerConstants;
+import uk.gov.hmcts.reform.translate.controllers.ControllerConstants;
 import uk.gov.hmcts.reform.translate.security.CustomPermitAllAuthenticationTokenBuilder;
 import uk.gov.hmcts.reform.translate.security.HttpServletRequestWithoutAuthenticationHeader;
 import uk.gov.hmcts.reform.translate.security.SecurityUtils;

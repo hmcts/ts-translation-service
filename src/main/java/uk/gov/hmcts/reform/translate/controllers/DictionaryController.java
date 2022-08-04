@@ -21,12 +21,14 @@ import java.util.Map;
 import javax.validation.Valid;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static uk.gov.hmcts.reform.translate.controllers.ControllerConstants.DICTIONARY_URL;
+import static uk.gov.hmcts.reform.translate.controllers.ControllerConstants.TRANSLATIONS_URL;
 import static uk.gov.hmcts.reform.translate.errorhandling.BadRequestError.BAD_SCHEMA;
 import static uk.gov.hmcts.reform.translate.errorhandling.BadRequestError.WELSH_NOT_ALLOWED;
 import static uk.gov.hmcts.reform.translate.errorhandling.AuthError.AUTHENTICATION_TOKEN_INVALID;
 import static uk.gov.hmcts.reform.translate.errorhandling.AuthError.UNAUTHORISED_S2S_SERVICE;
-import static uk.gov.hmcts.reform.translate.model.ControllerConstants.DICTIONARY_URL;
-import static uk.gov.hmcts.reform.translate.model.ControllerConstants.TRANSLATIONS_URL;
+import static uk.gov.hmcts.reform.translate.security.SecurityUtils.AUTHORIZATION;
+import static uk.gov.hmcts.reform.translate.security.SecurityUtils.LOAD_TRANSLATIONS_ROLE;
 import static uk.gov.hmcts.reform.translate.security.SecurityUtils.MANAGE_TRANSLATIONS_ROLE;
 import static uk.gov.hmcts.reform.translate.security.SecurityUtils.SERVICE_AUTHORIZATION;
 
@@ -50,7 +52,7 @@ public class DictionaryController {
             @ApiResponse(responseCode = "401", description = AUTHENTICATION_TOKEN_INVALID, content = @Content()),
             @ApiResponse(responseCode = "403", description = "One of the following reasons:\n"
                 + "1. " + UNAUTHORISED_S2S_SERVICE + "\n"
-                + "2. " + "User does not have 'manage-translations' role" + ".",
+                + "2. " + "User does not have '" + MANAGE_TRANSLATIONS_ROLE + "' role.",
                 content = @Content())
         })
     public Dictionary getDictionary() {
@@ -60,14 +62,14 @@ public class DictionaryController {
     @PutMapping(path = DICTIONARY_URL, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Upload a set of phrases for which translations may be provided.",
-        description = "If user's current IDAM role is `manage-translations`\n\n"
+        description = "If user's current IDAM role is `" + MANAGE_TRANSLATIONS_ROLE + "`\n\n"
             + "\t - User can submit English phrases with/without corresponding Welsh translations\n\n"
-            + "If user's current IDAM role is `load translations`\n\n"
+            + "If user's current IDAM role is `" + LOAD_TRANSLATIONS_ROLE  + "`\n\n"
             + "\t - User can submit English phrases only\n\n"
             + "If calling service is on approved list of services for this endpoint that don't need to supply "
             + " Authorization header: then\n\n"
-            + "\t - this endpoint can be called without supplying IDAM credentials (Authorization header) - Service"
-            + " to Service authorization (ServiceAuthorization header) is still required.\n\n"
+            + "\t - this endpoint can be called without supplying IDAM credentials (" + AUTHORIZATION + " header) -"
+            + " Service to Service authorization (" + SERVICE_AUTHORIZATION + " header) is still required.\n\n"
             + "\t - calling service can only submit English phrases\n\n",
         responses = {
             @ApiResponse(responseCode = "201", description = "Success"),
@@ -78,7 +80,7 @@ public class DictionaryController {
             @ApiResponse(responseCode = "403", description = "One of the following reasons:\n"
                 + "1. " + UNAUTHORISED_S2S_SERVICE + "\n"
                 + "2. The request should be from a valid service or the User does not have "
-                + "'manage-translations,load-translations' role.",
+                + "'" + MANAGE_TRANSLATIONS_ROLE + "," + LOAD_TRANSLATIONS_ROLE + "' role.",
                 content = @Content())
         }
     )
@@ -92,8 +94,8 @@ public class DictionaryController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get the Welsh translation of the provided set of English phrases.",
         description = "User does not require any specific roles to call this endpoint\n\n"
-        + "This endpoint can be called without supplying IDAM credentials (Authorization header) - Service "
-        + "to Service authorization (ServiceAuthorization header) is still required.",
+        + "This endpoint can be called without supplying IDAM credentials (" + AUTHORIZATION + " header) - Service "
+        + "to Service authorization (" + SERVICE_AUTHORIZATION + " header) is still required.",
         responses = {
             @ApiResponse(responseCode = "200", description = "Translation returned successfully"),
             @ApiResponse(responseCode = "400", description = BAD_SCHEMA,
