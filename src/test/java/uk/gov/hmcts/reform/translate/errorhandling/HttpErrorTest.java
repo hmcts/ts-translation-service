@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import static org.springframework.test.util.AssertionErrors.assertEquals;
 import static org.springframework.test.util.AssertionErrors.assertNotNull;
-import static uk.gov.hmcts.reform.translate.model.ControllerConstants.DICTIONARY_URL;
+import static uk.gov.hmcts.reform.translate.controllers.ControllerConstants.DICTIONARY_URL;
 
 class HttpErrorTest {
 
