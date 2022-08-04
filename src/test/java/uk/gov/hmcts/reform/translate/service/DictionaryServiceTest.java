@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.IntStream;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -49,8 +50,10 @@ import static uk.gov.hmcts.reform.translate.security.SecurityUtils.LOAD_TRANSLAT
 import static uk.gov.hmcts.reform.translate.security.SecurityUtils.MANAGE_TRANSLATIONS_ROLE;
 import static uk.gov.hmcts.reform.translate.service.DictionaryService.TEST_PHRASES_START_WITH;
 
+
+@DisplayName("DictionaryService")
 @ExtendWith(MockitoExtension.class)
-class DictionaryServiceTest {
+public class DictionaryServiceTest {
 
     private static final String CLIENTS2S_TOKEN = "clientS2SToken";
     private static final String DEFINITION_STORE = "definition_store";
@@ -63,7 +66,7 @@ class DictionaryServiceTest {
     TranslationUploadRepository translationUploadRepository;
 
     @Mock
-    Iterable<DictionaryEntity> repositoryResults;
+    List<DictionaryEntity> repositoryResults;
 
     @Mock
     DictionaryMapper dictionaryMapper;
@@ -221,7 +224,7 @@ class DictionaryServiceTest {
         void testShouldTranslatePhraseWhenEnglishPhraseIsNotInDictionary() {
             final DictionaryEntity dictionaryEntity = createDictionaryEntity(THE_QUICK_FOX_PHRASE, null);
             doReturn(Optional.empty()).when(dictionaryRepository).findByEnglishPhrase(anyString());
-            doReturn(dictionaryEntity).when(dictionaryRepository).save(dictionaryEntity);
+            doReturn(dictionaryEntity).when(dictionaryRepository).saveAndFlush(dictionaryEntity);
 
             final String translation = dictionaryService.getTranslation(THE_QUICK_FOX_PHRASE);
 
@@ -229,7 +232,7 @@ class DictionaryServiceTest {
                 .isNotNull()
                 .isEqualTo(THE_QUICK_FOX_PHRASE);
 
-            verify(dictionaryRepository).save(any());
+            verify(dictionaryRepository).saveAndFlush(any());
             verify(dictionaryRepository).findByEnglishPhrase(THE_QUICK_FOX_PHRASE);
         }
 
@@ -255,7 +258,7 @@ class DictionaryServiceTest {
                 .findByEnglishPhrase(englishPhraseWithNoTranslation);
             doReturn(Optional.empty()).when(dictionaryRepository)
                 .findByEnglishPhrase(englishPhraseNotInDictionary);
-            doReturn(entity3).when(dictionaryRepository).save(entity3);
+            doReturn(entity3).when(dictionaryRepository).saveAndFlush(entity3);
 
             final Set<String> translationRequestPhrases = Set.of(
                 englishPhrase,
@@ -274,7 +277,7 @@ class DictionaryServiceTest {
             verify(dictionaryRepository).findByEnglishPhrase(englishPhrase);
             verify(dictionaryRepository).findByEnglishPhrase(englishPhraseWithNoTranslation);
             verify(dictionaryRepository).findByEnglishPhrase(englishPhraseNotInDictionary);
-            verify(dictionaryRepository).save(entity3);
+            verify(dictionaryRepository).saveAndFlush(entity3);
         }
 
         @Test
@@ -302,6 +305,7 @@ class DictionaryServiceTest {
 
         @Test
         void shouldPutANewDictionaryForUserWithManageTranslationsRole() {
+
             // GIVEN
             final Dictionary dictionaryRequest = getDictionaryRequestWithTranslationPhrases(3);
             given(securityUtils.hasRole(anyString())).willReturn(true);
@@ -315,12 +319,13 @@ class DictionaryServiceTest {
             verify(dictionaryRepository, times(3)).findByEnglishPhrase(any());
             verify(securityUtils, times(1)).hasRole(anyString());
             verify(dictionaryMapper, times(3)).modelToEntityWithTranslationUploadEntity(any(), any());
-            verify(dictionaryRepository, times(3)).save(any());
+            verify(dictionaryRepository, times(3)).saveAndFlush(any());
             verify(translationUploadRepository, never()).save(any());
         }
 
         @Test
         void shouldPutANewDictionaryForUserWithoutManageTranslationsRole() {
+
             // GIVEN
             final Dictionary dictionaryRequest = getDictionaryRequestWithoutTranslationPhrases(3);
             given(securityUtils.hasRole(anyString())).willReturn(false);
@@ -332,7 +337,7 @@ class DictionaryServiceTest {
             verify(dictionaryRepository, times(3)).findByEnglishPhrase(any());
             verify(securityUtils, times(1)).hasRole(anyString());
             verify(dictionaryMapper, times(3)).modelToEntityWithoutTranslationPhrase(any());
-            verify(dictionaryRepository, times(3)).save(any());
+            verify(dictionaryRepository, times(3)).saveAndFlush(any());
             // verify no translation uploaded entity created as no translations
             verify(dictionaryMapper, never()).createTranslationUploadEntity(anyString());
             verify(translationUploadRepository, never()).save(any());
@@ -340,6 +345,7 @@ class DictionaryServiceTest {
 
         @Test
         void shouldUpdateADictionaryForUserWithManageTranslationsRole() {
+
             // GIVEN
             final Dictionary dictionaryRequest = getDictionaryRequestWithTranslationPhrases(1);
             final DictionaryEntity dictionaryEntity =
@@ -356,12 +362,13 @@ class DictionaryServiceTest {
             // THEN
             verify(dictionaryRepository, times(1)).findByEnglishPhrase(any());
             verify(securityUtils, times(1)).hasRole(anyString());
-            verify(dictionaryRepository, times(1)).save(any());
+            verify(dictionaryRepository, times(1)).saveAndFlush(any());
             verify(translationUploadRepository, times(1)).save(any());
         }
 
         @Test
         void shouldUpdateADictionaryForUserWithoutManageTranslationsRole() {
+
             // GIVEN
             final Dictionary dictionaryRequest = getDictionaryRequestWithoutTranslationPhrases(1);
             final DictionaryEntity dictionaryEntity =
@@ -376,7 +383,7 @@ class DictionaryServiceTest {
             // THEN
             verify(dictionaryRepository, times(1)).findByEnglishPhrase(any());
             verify(securityUtils, times(1)).hasRole(anyString());
-            verify(dictionaryRepository, times(0)).save(any());
+            verify(dictionaryRepository, times(0)).saveAndFlush(any());
             // verify no translation uploaded entity created as no translations
             verify(dictionaryMapper, never()).createTranslationUploadEntity(anyString());
             verify(translationUploadRepository, never()).save(any());
@@ -384,6 +391,7 @@ class DictionaryServiceTest {
 
         @Test
         void shouldPutDictionaryRoleCheckForAValidUserWithManageTranslationsRole() {
+
             // GIVEN
             given(securityUtils.isBypassAuthCheck(XUI)).willReturn(false);
             given(securityUtils.getServiceNameFromS2SToken(CLIENTS2S_TOKEN)).willReturn(XUI);
@@ -397,6 +405,7 @@ class DictionaryServiceTest {
 
         @Test
         void shouldPutDictionaryRoleCheckForAValidUserWithLoadTranslationRole() {
+
             // GIVEN
             given(securityUtils.isBypassAuthCheck(XUI)).willReturn(false);
             given(securityUtils.hasAnyOfTheseRoles(anyList())).willReturn(true);
@@ -410,6 +419,7 @@ class DictionaryServiceTest {
 
         @Test
         void shouldPutDictionaryRoleCheckForAValidDefinitionStore() {
+
             // GIVEN
             given(securityUtils.isBypassAuthCheck(DEFINITION_STORE)).willReturn(true);
             given(securityUtils.getServiceNameFromS2SToken(CLIENTS2S_TOKEN)).willReturn(DEFINITION_STORE);
@@ -423,6 +433,7 @@ class DictionaryServiceTest {
 
         @Test
         void shouldFailPutDictionaryRoleCheckForAValidUserWithOutAnyRole() {
+
             // GIVEN
             given(securityUtils.isBypassAuthCheck(XUI)).willReturn(false);
             given(securityUtils.getServiceNameFromS2SToken(CLIENTS2S_TOKEN)).willReturn(XUI);
@@ -445,6 +456,7 @@ class DictionaryServiceTest {
 
         @Test
         void shouldFailPutDictionaryDueToInvalidClientToken() {
+
             // GIVEN
             given(securityUtils.isBypassAuthCheck(XUI)).willReturn(false);
             given(securityUtils.getServiceNameFromS2SToken(CLIENTS2S_TOKEN)).willReturn(XUI);
@@ -469,6 +481,7 @@ class DictionaryServiceTest {
         // Incorrect pay_load
         @Test
         void shouldFailUpdateADictionaryForUserWithoutManageTranslationsRoleAndNullPayload() {
+
             // GIVEN
             final Dictionary dictionaryRequest = new Dictionary(null);
             given(securityUtils.isBypassAuthCheck(DEFINITION_STORE)).willReturn(true);
@@ -488,6 +501,7 @@ class DictionaryServiceTest {
 
         @Test
         void shouldFailUpdateADictionaryForUserWithoutManageTranslationsRoleAndIncorrectPayload() {
+
             final Dictionary dictionaryRequest = new Dictionary(new HashMap<>());
             given(securityUtils.isBypassAuthCheck(DEFINITION_STORE)).willReturn(true);
             given(securityUtils.getServiceNameFromS2SToken(CLIENTS2S_TOKEN)).willReturn(DEFINITION_STORE);
@@ -504,6 +518,7 @@ class DictionaryServiceTest {
 
         @Test
         void shouldFailUpdateADictionaryForDefinitionStoreWithIncorrectPayload() {
+
             // GIVEN
             final Dictionary dictionaryRequest = getDictionaryRequestWithTranslationPhrases(1);
             given(securityUtils.hasRole(anyString())).willReturn(false);
@@ -518,13 +533,14 @@ class DictionaryServiceTest {
             assertEquals(WELSH_NOT_ALLOWED, badRequestException.getMessage());
         }
 
-        private Dictionary getDictionaryRequestWithTranslationPhrases(int count) {
+
+        protected static Dictionary getDictionaryRequestWithTranslationPhrases(int count) {
             final Map<String, String> expectedMapKeysAndValues = new HashMap<>();
             IntStream.range(1, count + 1).forEach(i -> expectedMapKeysAndValues.put("english_" + i, "translated_" + i));
             return new Dictionary(expectedMapKeysAndValues);
         }
 
-        private Dictionary getDictionaryRequestWithoutTranslationPhrases(int count) {
+        protected static Dictionary getDictionaryRequestWithoutTranslationPhrases(int count) {
             final Map<String, String> expectedMapKeysAndValues = new HashMap<>();
             IntStream.range(1, count + 1).forEach(i -> expectedMapKeysAndValues.put("english_" + i, null));
             return new Dictionary(expectedMapKeysAndValues);
@@ -582,7 +598,7 @@ class DictionaryServiceTest {
 
     }
 
-    private DictionaryEntity createDictionaryEntity(String phrase, String translationPhrase) {
+    protected static DictionaryEntity createDictionaryEntity(String phrase, String translationPhrase) {
         final var dictionaryEntity = new DictionaryEntity();
         dictionaryEntity.setEnglishPhrase(phrase);
         dictionaryEntity.setTranslationPhrase(translationPhrase);

@@ -142,6 +142,23 @@ class RestExceptionHandlerTest {
             .andExpect(jsonPath("$").doesNotExist());
     }
 
+    @DisplayName("should return correct response when EnglishPhraseUniqueConstraintException is thrown")
+    @Test
+    void shouldReturnEnglishPhraseUniqueConstraintExceptionResponse() throws Exception {
+
+        EnglishPhraseUniqueConstraintException expectedException =
+            new EnglishPhraseUniqueConstraintException("myUniqueExceptionMessage", null);
+
+        /// WHEN
+        setupMockServiceToThrowException(expectedException);
+        ResultActions result = this.mockMvc.perform(get(DICTIONARY_URL)
+                                                        .contentType(MediaType.APPLICATION_JSON));
+
+        // THEN
+        assertHttpErrorResponse(result, HttpStatus.CONFLICT, expectedException.getMessage());
+
+    }
+
     @DisplayName("should return correct response when BadRequestException is thrown")
     @Test
     void shouldReturnBadRequestExceptionResponse() throws Exception {

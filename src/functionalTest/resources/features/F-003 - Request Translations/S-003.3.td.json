@@ -11,7 +11,7 @@
     "_extends_": "Common_No_Auth_Request",
     "body": {
       "phrases": [
-        "English phrase without translation"
+        "TEST-F003 English phrase without translation"
       ]
     }
   },
@@ -20,7 +20,7 @@
     "_extends_": "Common_200_Response",
     "body": {
       "translations": {
-        "English phrase without translation": "English phrase without translation"
+        "TEST-F003 English phrase without translation": "TEST-F003 English phrase without translation"
       }
     }
   }
