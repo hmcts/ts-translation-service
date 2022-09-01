@@ -4,15 +4,20 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uk.gov.hmcts.reform.translate.data.DictionaryEntity;
 import uk.gov.hmcts.reform.translate.data.TranslationUploadEntity;
 import uk.gov.hmcts.reform.translate.errorhandling.BadRequestException;
+import uk.gov.hmcts.reform.translate.errorhandling.EnglishPhraseUniqueConstraintException;
 import uk.gov.hmcts.reform.translate.errorhandling.RequestErrorException;
 import uk.gov.hmcts.reform.translate.errorhandling.RoleMissingException;
 import uk.gov.hmcts.reform.translate.helper.DictionaryMapper;
 import uk.gov.hmcts.reform.translate.model.Dictionary;
+import uk.gov.hmcts.reform.translate.repository.DefaultDictionaryRepository;
 import uk.gov.hmcts.reform.translate.repository.DictionaryRepository;
 import uk.gov.hmcts.reform.translate.repository.TranslationUploadRepository;
 import uk.gov.hmcts.reform.translate.security.SecurityUtils;
@@ -25,6 +30,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+
 import static uk.gov.hmcts.reform.translate.errorhandling.BadRequestError.BAD_SCHEMA;
 import static uk.gov.hmcts.reform.translate.errorhandling.BadRequestError.WELSH_NOT_ALLOWED;
 import static uk.gov.hmcts.reform.translate.helper.DictionaryUtils.hasAnyTranslations;
@@ -45,7 +51,8 @@ public class DictionaryService {
     private final TranslationUploadRepository translationUploadRepository;
 
     @Autowired
-    public DictionaryService(DictionaryRepository dictionaryRepository,
+    public DictionaryService(final @Qualifier(DefaultDictionaryRepository.QUALIFIER)
+                              DictionaryRepository dictionaryRepository,
                              DictionaryMapper dictionaryMapper,
                              SecurityUtils securityUtils,
                              TranslationUploadRepository translationUploadRepository) {
@@ -91,6 +98,11 @@ public class DictionaryService {
     }
 
     @Transactional
+    @Retryable(
+        value = {EnglishPhraseUniqueConstraintException.class},
+        maxAttempts = 3,
+        backoff = @Backoff(delay = 50)
+    )
     public Map<String, String> getTranslations(@NonNull final Set<String> phrases) {
         return phrases.stream()
             .map(phrase -> {
@@ -106,13 +118,18 @@ public class DictionaryService {
             .orElseGet(() -> {
                 DictionaryEntity dictionaryEntity = new DictionaryEntity();
                 dictionaryEntity.setEnglishPhrase(englishPhrase);
-                return dictionaryRepository.save(dictionaryEntity);
+                return dictionaryRepository.saveAndFlush(dictionaryEntity);
             });
 
         return Optional.ofNullable(entity.getTranslationPhrase()).orElseGet(entity::getEnglishPhrase);
     }
 
     @Transactional
+    @Retryable(
+        value = {EnglishPhraseUniqueConstraintException.class},
+        maxAttempts = 3,
+        backoff = @Backoff(delay = 50)
+    )
     public void putDictionary(final Dictionary dictionaryRequest) {
 
         val isManageTranslationRole = securityUtils.hasRole(MANAGE_TRANSLATIONS_ROLE);
@@ -144,7 +161,7 @@ public class DictionaryService {
         val newEntity = hasTranslationPhrase(currentPhrase)
             ? dictionaryMapper.modelToEntityWithTranslationUploadEntity(currentPhrase, translationUploadOptional)
             : dictionaryMapper.modelToEntityWithoutTranslationPhrase(currentPhrase);
-        dictionaryRepository.save(newEntity);
+        dictionaryRepository.saveAndFlush(newEntity);
     }
 
     private void updatePhrase(Map.Entry<String, String> currentPhrase,
@@ -157,7 +174,7 @@ public class DictionaryService {
             // if upload entity has been generated save it now as we know
             // we have at least one translation that will use it
             translationUploadRepository.save(translationUploadEntity);
-            dictionaryRepository.save(dictionaryEntity);
+            dictionaryRepository.saveAndFlush(dictionaryEntity);
         }
     }
 
@@ -180,4 +197,5 @@ public class DictionaryService {
             throw new BadRequestException(WELSH_NOT_ALLOWED);
         }
     }
+
 }

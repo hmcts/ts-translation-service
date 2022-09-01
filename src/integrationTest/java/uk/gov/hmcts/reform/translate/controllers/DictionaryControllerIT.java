@@ -11,6 +11,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
@@ -21,6 +22,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import uk.gov.hmcts.reform.translate.BaseTest;
 import uk.gov.hmcts.reform.translate.model.Dictionary;
 import uk.gov.hmcts.reform.translate.repository.DictionaryRepository;
+import uk.gov.hmcts.reform.translate.repository.JpaDictionaryRepository;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -63,10 +65,12 @@ public class DictionaryControllerIT extends BaseTest {
 
     @Autowired
     private MockMvc mockMvc;
+
     @Autowired
     protected ObjectMapper objectMapper;
 
     @Autowired
+    @Qualifier(JpaDictionaryRepository.QUALIFIER)
     protected DictionaryRepository dictionaryRepository;
 
     @Nested
