@@ -60,4 +60,15 @@
     <cve>CVE-2022-42004</cve>
   </suppress>
 
+  <suppress>
+    <notes>
+      CVE-2022-31690 refer https://tools.hmcts.net/jira/browse/WLTS-52
+      CVE-2022-31692 refer https://tools.hmcts.net/jira/browse/WLTS-52
+      CVE-2022-42252 refer https://tools.hmcts.net/jira/browse/WLTS-53
+    </notes>
+    <cve>CVE-2022-31690</cve>
+    <cve>CVE-2022-31692</cve>
+    <cve>CVE-2022-42252</cve>
+  </suppress>
+
 </suppressions>
