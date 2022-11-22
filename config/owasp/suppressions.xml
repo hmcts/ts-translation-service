@@ -33,11 +33,6 @@
   </suppress>
 
   <suppress>
-    <notes>https://tools.hmcts.net/jira/browse/WLTS-45</notes>
-    <cve>CVE-2022-25857</cve>
-  </suppress>
-
-  <suppress>
     <cve>CVE-2022-38751</cve>
     <cve>CVE-2022-38750</cve>
     <cve>CVE-2022-38749</cve>
