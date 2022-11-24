@@ -9,22 +9,19 @@
       CVE-2022-22976 refer https://tools.hmcts.net/jira/browse/WLTS-26
       CVE-2022-22978 refer https://tools.hmcts.net/jira/browse/WLTS-32
       CVE-2021-22112 refer https://tools.hmcts.net/jira/browse/CCD-3514
+      CVE-2020-5408 refer https://tools.hmcts.net/jira/browse/HMAN-483
     </notes>
     <cve>CVE-2016-1000027</cve>
     <cve>CVE-2018-1258</cve>
     <cve>CVE-2022-22976</cve>
     <cve>CVE-2022-22978</cve>
     <cve>CVE-2021-22112</cve>
+    <cve>CVE-2020-5408</cve>
   </suppress>
   <!--End of false positives section -->
 
   <!--Please add all the temporary suppression under the below section-->
-  <suppress>
-    <notes>Temporary Suppressions
-      CVE-2020-5408 refer https://tools.hmcts.net/jira/browse/HMAN-483
-    </notes>
-    <cve>CVE-2020-5408</cve>
-  </suppress>
+
   <!--End of temporary suppression section -->
 
 </suppressions>
