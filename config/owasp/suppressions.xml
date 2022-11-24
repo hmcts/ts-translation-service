@@ -18,8 +18,13 @@
   </suppress>
   <!--End of false positives section -->
 
-  <!--Please add all the temporary suppressions under the below section-->
-
-  <!--End of temporary suppressions section -->
+  <!--Please add all the temporary suppression under the below section-->
+  <suppress>
+    <notes>Temporary Suppressions
+      CVE-2020-5408 refer https://tools.hmcts.net/jira/browse/HMAN-483
+    </notes>
+    <cve>CVE-2020-5408</cve>
+  </suppress>
+  <!--End of temporary suppression section -->
 
 </suppressions>
