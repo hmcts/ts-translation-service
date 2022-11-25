@@ -16,7 +16,7 @@
     <cve>CVE-2022-22976</cve>
     <cve>CVE-2022-22978</cve>
     <cve>CVE-2021-22112</cve>
-    <cve>CVE-2020-5408</cve>
+    <!-- CVE-2020-5408 -->
   </suppress>
   <!--End of false positives section -->
 
