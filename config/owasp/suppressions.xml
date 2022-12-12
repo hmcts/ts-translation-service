@@ -11,11 +11,7 @@
   <!--End of false positives section -->
 
   <!--Please add all the temporary suppression under the below section-->
-  <suppress>
-    <notes>Temporary Suppression
-      CVE-2021-37533 refer https://tools.hmcts.net/jira/browse/WLTS-59</notes>
-    <cve>CVE-2021-37533</cve>
-  </suppress>
+
   <!--End of temporary suppression section -->
 
 </suppressions>
