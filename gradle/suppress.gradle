@@ -100,7 +100,7 @@ class Globals {
     static String WHITE_SPACE_FOR_INDENT = "\n" + "\u0020".repeat(8) // white space for indentation
 }
 
-tasks.register(suppressCves()) {
+task suppressCves() {
     doLast {
         // Optional argument can be added to specify the name of the report file.
         // If no argument is specified, the default report file is 'dependency-check-report.xml'
