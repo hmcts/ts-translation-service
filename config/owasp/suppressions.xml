@@ -5,8 +5,10 @@
   <suppress>
     <notes>False Positives
       CVE-2016-1000027 refer https://tools.hmcts.net/jira/browse/WLTS-35
+      CVE-2021-37533 refer https://tools.hmcts.net/jira/browse/WLTS-59
     </notes>
     <cve>CVE-2016-1000027</cve>
+    <cve>CVE-2021-37533</cve>
   </suppress>
   <!--End of false positives section -->
 
