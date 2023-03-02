@@ -17,7 +17,7 @@ variable "subscription" {}
 variable "deployment_namespace" {}
 
 variable "common_tags" {
-  type = map
+  type = "map"
 }
 
 variable "tenant_id" {
