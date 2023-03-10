@@ -276,7 +276,7 @@ dependencies {
 
   functionalTestImplementation group: 'commons-lang', name: 'commons-lang', version: '2.6'
 
-  // CVE-2021-29425
+  implementation group: 'commons-fileupload', name: 'commons-fileupload', version: '1.5'
   implementation group: 'commons-io', name: 'commons-io', version: '2.11.0'
 
   functionalTestImplementation (group: 'com.github.hmcts', name: 'ccd-test-definitions', version: '7.17.0') {
@@ -294,7 +294,7 @@ dependencyManagement {
   dependencies {
     dependency group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.70'
 
-    dependencySet(group: 'org.apache.tomcat.embed', version: '9.0.69') {
+    dependencySet(group: 'org.apache.tomcat.embed', version: '9.0.73') {
       entry 'tomcat-embed-core'
       entry 'tomcat-embed-el'
       entry 'tomcat-embed-websocket'
