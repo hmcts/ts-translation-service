@@ -271,7 +271,6 @@ dependencies {
 
   functionalTestImplementation sourceSets.main.runtimeClasspath
   functionalTestImplementation sourceSets.test.runtimeClasspath
-  functionalTestImplementation group: 'com.github.hmcts', name: 'befta-fw', version: '8.7.11'
   functionalTestImplementation libraries.junit5
 
   functionalTestImplementation group: 'commons-lang', name: 'commons-lang', version: '2.6'
@@ -279,9 +278,12 @@ dependencies {
   // CVE-2021-29425
   implementation group: 'commons-io', name: 'commons-io', version: '2.11.0'
 
-  functionalTestImplementation (group: 'com.github.hmcts', name: 'ccd-test-definitions', version: '7.17.0') {
+  testImplementation (group: 'com.github.hmcts', name: 'ccd-test-definitions', version: '7.17.0') {
+    exclude group: 'io.rest-assured', module : 'rest-assured'
     exclude group: 'com.github.hmcts.befta-fw', module: 'befta-fw'
   }
+
+  testImplementation group: 'com.github.hmcts', name: 'befta-fw', version: '8.7.11'
 
   cftlibImplementation group: 'org.springframework.boot', name: 'spring-boot-devtools'
 }
