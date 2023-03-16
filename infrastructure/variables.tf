@@ -14,8 +14,6 @@ variable "location" {
 
 variable "subscription" {}
 
-variable "deployment_namespace" {}
-
 variable "common_tags" {
   type = map(string)
 }
