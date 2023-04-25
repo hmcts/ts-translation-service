@@ -6,8 +6,6 @@
         CVE-2022-1471  refer [Ticket]
         CVE-2023-28708 refer [Ticket]
         CVE-2023-20859 refer [Ticket]
-        CVE-2023-20861 refer [Ticket]
-        CVE-2023-20860 refer [Ticket]
         CVE-2023-20863 refer [Ticket]
     </notes>
     <cve>CVE-2022-45688</cve>
@@ -15,8 +13,6 @@
     <cve>CVE-2022-1471</cve>
     <cve>CVE-2023-28708</cve>
     <cve>CVE-2023-20859</cve>
-    <cve>CVE-2023-20861</cve>
-    <cve>CVE-2023-20860</cve>
     <cve>CVE-2023-20863</cve>
   </suppress>
 </suppressions>
