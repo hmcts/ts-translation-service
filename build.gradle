@@ -17,8 +17,8 @@ version = '0.0.1'
 ext {
   set('springCloudVersion', "2021.0.3")
 }
-ext['spring-security.version'] = '5.8.0'
-ext['spring-framework.version'] = '5.3.26'
+ext['spring-security.version'] = '5.8.3'
+ext['spring-framework.version'] = '5.3.27'
 ext['snakeyaml.version'] = '1.33'
 ext['jackson.version'] = '2.14.1'
 
@@ -224,8 +224,9 @@ dependencies {
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-oauth2-client'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-cache'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-oauth2-resource-server'
-  implementation group: 'org.springframework.cloud', name: 'spring-cloud-config-server'
-  implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-config'
+  implementation group: 'org.springframework.cloud', name: 'spring-cloud-config-server', version: '3.1.7'
+  implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-config', version: '3.1.7'
+  implementation group: 'org.springframework.cloud', name: 'spring-cloud-config-client', version: '3.1.7'
   implementation group: 'org.springframework.security', name: 'spring-security-web'
   implementation group: 'org.springframework.security', name: 'spring-security-oauth2-jose'
   implementation group: 'org.springframework.security', name: 'spring-security-config'
@@ -286,6 +287,12 @@ dependencies {
   testImplementation group: 'com.github.hmcts', name: 'befta-fw', version: '8.7.11'
 
   cftlibImplementation group: 'org.springframework.boot', name: 'spring-boot-devtools'
+
+  //constraints {
+  //  implementation('org.springframework.cloud:3.1.7') {
+  //    because('Versions < 3.1.7 an application is vulnerable to insertion of sensitive information into a log file when it attempts to revoke a Vault batch token - CVE-2023-20859')
+  //  }
+  //}
 }
 
 dependencyManagement {
