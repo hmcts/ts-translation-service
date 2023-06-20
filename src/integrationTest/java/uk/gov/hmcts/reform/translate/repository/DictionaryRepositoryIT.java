@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static uk.gov.hmcts.reform.translate.service.DictionaryService.TEST_PHRASES_START_WITH;
 
 class DictionaryRepositoryIT extends BaseTest {
@@ -31,6 +32,8 @@ class DictionaryRepositoryIT extends BaseTest {
 
     private static final String ENGLISH_PHRASE = "English phrase";
     private static final String TRANSLATION_PHRASE = "Welsh translation phrase";
+    private static final String TRANSLATION_YES = "Welsh translation yes";
+    private static final String TRANSLATION_NO = "Welsh translation no";
     private static final String IDAM_USER_ID = UUID.randomUUID().toString();
 
     @Sql(scripts = {DELETE_TRANSLATION_TABLES_SCRIPT, ADD_TEST_PHRASES_FOR_DELETION_SCRIPT})
@@ -75,6 +78,40 @@ class DictionaryRepositoryIT extends BaseTest {
         assertAll(
             () -> assertEquals(TRANSLATION_PHRASE, dictionary.getTranslationPhrase()),
             () -> assertEquals(ENGLISH_PHRASE, dictionary.getEnglishPhrase()),
+            () -> assertNull(dictionary.getYesOrNo()),
+            () -> assertNull(dictionary.getYes()),
+            () -> assertNull(dictionary.getNo()),
+            () -> assertEquals(now, dictionary.getTranslationUpload().getUploaded()),
+            () -> assertEquals(IDAM_USER_ID, dictionary.getTranslationUpload().getUserId())
+        );
+    }
+
+    @Sql(scripts = DELETE_TRANSLATION_TABLES_SCRIPT)
+    @Test
+    void testSaveDictionaryAndTranslationUploadWithYesOrNo() {
+        final var now = LocalDateTime.now();
+        final var translationUploadEntity = new TranslationUploadEntity();
+        translationUploadEntity.setUploaded(now);
+        translationUploadEntity.setUserId(IDAM_USER_ID);
+
+        final var dictionaryEntity = new DictionaryEntity();
+        dictionaryEntity.setEnglishPhrase(ENGLISH_PHRASE);
+        dictionaryEntity.setTranslationPhrase(TRANSLATION_PHRASE);
+        dictionaryEntity.setTranslationUpload(translationUploadEntity);
+        dictionaryEntity.setYesOrNo(true);
+        dictionaryEntity.setYes(TRANSLATION_YES);
+        dictionaryEntity.setNo(TRANSLATION_NO);
+
+        final var dictionary = dictionaryRepository.saveAndFlush(dictionaryEntity);
+
+        assertNotNull(dictionary.getId());
+
+        assertAll(
+            () -> assertEquals(TRANSLATION_PHRASE, dictionary.getTranslationPhrase()),
+            () -> assertEquals(ENGLISH_PHRASE, dictionary.getEnglishPhrase()),
+            () -> assertEquals(Boolean.TRUE, dictionary.getYesOrNo()),
+            () -> assertEquals(TRANSLATION_YES, dictionary.getYes()),
+            () -> assertEquals(TRANSLATION_NO, dictionary.getNo()),
             () -> assertEquals(now, dictionary.getTranslationUpload().getUploaded()),
             () -> assertEquals(IDAM_USER_ID, dictionary.getTranslationUpload().getUserId())
         );
