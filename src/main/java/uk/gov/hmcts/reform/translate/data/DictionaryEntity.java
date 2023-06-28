@@ -42,4 +42,8 @@ public class DictionaryEntity {
 
     @Column(name = "no")
     private String no;
+
+    public boolean isYesOrNo() {
+        return yesOrNo == null ? false : yesOrNo.booleanValue();
+    }
 }

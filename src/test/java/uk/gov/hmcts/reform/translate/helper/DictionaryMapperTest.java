@@ -4,6 +4,7 @@ import lombok.val;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import uk.gov.hmcts.reform.translate.data.TranslationUploadEntity;
+import uk.gov.hmcts.reform.translate.model.Translation;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -70,10 +71,10 @@ class DictionaryMapperTest {
         assertNull(dictionaryEntity.getTranslationUpload());
     }
 
-    private Map.Entry<String, String> getCurrentPhrase() {
+    private Map.Entry<String, Translation> getCurrentPhrase() {
 
-        Map<String, String> currentPhrase = new HashMap<>();
-        currentPhrase.put(ENGLISH, WELSH);
+        Map<String, Translation> currentPhrase = new HashMap<>();
+        currentPhrase.put(ENGLISH, new Translation(WELSH));
         return currentPhrase.entrySet().iterator().next();
     }
 

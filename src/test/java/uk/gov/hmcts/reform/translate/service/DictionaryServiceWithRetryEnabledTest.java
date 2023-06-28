@@ -15,6 +15,7 @@ import uk.gov.hmcts.reform.translate.data.DictionaryEntity;
 import uk.gov.hmcts.reform.translate.errorhandling.EnglishPhraseUniqueConstraintException;
 import uk.gov.hmcts.reform.translate.helper.DictionaryMapper;
 import uk.gov.hmcts.reform.translate.model.Dictionary;
+import uk.gov.hmcts.reform.translate.model.Translation;
 import uk.gov.hmcts.reform.translate.repository.DefaultDictionaryRepository;
 import uk.gov.hmcts.reform.translate.repository.DictionaryRepository;
 import uk.gov.hmcts.reform.translate.repository.TranslationUploadRepository;
@@ -87,7 +88,7 @@ class DictionaryServiceWithRetryEnabledTest {
         doReturn(Optional.empty()).when(dictionaryRepository).findByEnglishPhrase(THE_QUICK_FOX_PHRASE);
 
         // WHEN
-        final Map<String, String> translations = dictionaryService.getTranslations(inputPhrases);
+        final Map<String, Translation> translations = dictionaryService.getTranslations(inputPhrases);
 
         // THEN
         assertThat(translations)

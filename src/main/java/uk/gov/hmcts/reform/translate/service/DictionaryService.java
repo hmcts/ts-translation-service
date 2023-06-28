@@ -3,6 +3,7 @@ package uk.gov.hmcts.reform.translate.service;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.retry.annotation.Backoff;
@@ -17,6 +18,7 @@ import uk.gov.hmcts.reform.translate.errorhandling.RequestErrorException;
 import uk.gov.hmcts.reform.translate.errorhandling.RoleMissingException;
 import uk.gov.hmcts.reform.translate.helper.DictionaryMapper;
 import uk.gov.hmcts.reform.translate.model.Dictionary;
+import uk.gov.hmcts.reform.translate.model.Translation;
 import uk.gov.hmcts.reform.translate.repository.DefaultDictionaryRepository;
 import uk.gov.hmcts.reform.translate.repository.DictionaryRepository;
 import uk.gov.hmcts.reform.translate.repository.TranslationUploadRepository;
@@ -25,7 +27,6 @@ import uk.gov.hmcts.reform.translate.security.SecurityUtils;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -36,6 +37,7 @@ import static uk.gov.hmcts.reform.translate.errorhandling.BadRequestError.WELSH_
 import static uk.gov.hmcts.reform.translate.helper.DictionaryUtils.hasAnyTranslations;
 import static uk.gov.hmcts.reform.translate.helper.DictionaryUtils.hasTranslationPhrase;
 import static uk.gov.hmcts.reform.translate.helper.DictionaryUtils.isTranslationBodyEmpty;
+import static uk.gov.hmcts.reform.translate.helper.DictionaryUtils.shouldSetYesOrNo;
 import static uk.gov.hmcts.reform.translate.security.SecurityUtils.LOAD_TRANSLATIONS_ROLE;
 import static uk.gov.hmcts.reform.translate.security.SecurityUtils.MANAGE_TRANSLATIONS_ROLE;
 
@@ -74,7 +76,7 @@ public class DictionaryService {
         }
     }
 
-    public Map<String, String> getDictionaryContents() {
+    public Map<String, Translation> getDictionaryContents() {
 
         if (securityUtils.hasRole(MANAGE_TRANSLATIONS_ROLE)) {
             final var dictionaryEntities = dictionaryRepository.findAll();
@@ -86,8 +88,17 @@ public class DictionaryService {
 
                 return stream.collect(Collectors.toMap(
                     DictionaryEntity::getEnglishPhrase,
-                    dictionaryEntity ->
-                        dictionaryEntity.getTranslationPhrase() == null ? "" : dictionaryEntity.getTranslationPhrase()
+                    dictionaryEntity -> {
+                        if (dictionaryEntity.isYesOrNo()) {
+                            return new Translation(
+                                StringUtils.defaultString(dictionaryEntity.getTranslationPhrase()),
+                                true,
+                                StringUtils.defaultString(dictionaryEntity.getYes()),
+                                StringUtils.defaultString(dictionaryEntity.getNo())
+                            );
+                        }
+                        return new Translation(StringUtils.defaultString(dictionaryEntity.getTranslationPhrase()));
+                    }
                 ));
             }
 
@@ -103,17 +114,17 @@ public class DictionaryService {
         maxAttempts = 3,
         backoff = @Backoff(delay = 50)
     )
-    public Map<String, String> getTranslations(@NonNull final Set<String> phrases) {
+    public Map<String, Translation> getTranslations(@NonNull final Set<String> phrases) {
         return phrases.stream()
             .map(phrase -> {
-                final String translation = getTranslation(phrase);
+                final Translation translation = getTranslation(phrase);
                 return Map.of(phrase, translation);
             })
             .flatMap(m -> m.entrySet().stream())
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-    String getTranslation(@NonNull final String englishPhrase) {
+    Translation getTranslation(@NonNull final String englishPhrase) {
         final DictionaryEntity entity = dictionaryRepository.findByEnglishPhrase(englishPhrase)
             .orElseGet(() -> {
                 DictionaryEntity dictionaryEntity = new DictionaryEntity();
@@ -121,7 +132,16 @@ public class DictionaryService {
                 return dictionaryRepository.saveAndFlush(dictionaryEntity);
             });
 
-        return Optional.ofNullable(entity.getTranslationPhrase()).orElseGet(entity::getEnglishPhrase);
+        if (entity.getTranslationPhrase() == null) {
+            return new Translation(entity.getEnglishPhrase());
+        }
+
+        return new Translation(
+            entity.getTranslationPhrase(),
+            entity.getYesOrNo(),
+            entity.getYes(),
+            entity.getNo()
+        );
     }
 
     @Transactional
@@ -143,7 +163,7 @@ public class DictionaryService {
             .forEach(phrase -> processPhrase(phrase, translationUploadEntity));
     }
 
-    private void processPhrase(Map.Entry<String, String> currentPhrase,
+    private void processPhrase(Map.Entry<String, Translation> currentPhrase,
                                TranslationUploadEntity translationUploadEntity) {
 
         val result = dictionaryRepository.findByEnglishPhrase(currentPhrase.getKey());
@@ -155,7 +175,7 @@ public class DictionaryService {
     }
 
 
-    private void createNewPhrase(Map.Entry<String, String> currentPhrase,
+    private void createNewPhrase(Map.Entry<String, Translation> currentPhrase,
                                  TranslationUploadEntity translationUploadOptional) {
 
         val newEntity = hasTranslationPhrase(currentPhrase)
@@ -164,16 +184,25 @@ public class DictionaryService {
         dictionaryRepository.saveAndFlush(newEntity);
     }
 
-    private void updatePhrase(Map.Entry<String, String> currentPhrase,
+    private void updatePhrase(Map.Entry<String, Translation> currentPhrase,
                               DictionaryEntity dictionaryEntity,
                               TranslationUploadEntity translationUploadEntity) {
 
         if (hasTranslationPhrase(currentPhrase)) {
             dictionaryEntity.setTranslationUpload(translationUploadEntity);
-            dictionaryEntity.setTranslationPhrase(currentPhrase.getValue());
+            Translation current = currentPhrase.getValue();
+            dictionaryEntity.setTranslationPhrase(current.getTranslation());
+            if (shouldSetYesOrNo(currentPhrase,dictionaryEntity)) {
+                dictionaryEntity.setYesOrNo(current.getYesOrNo());
+                dictionaryEntity.setYes(current.getYes());
+                dictionaryEntity.setNo(current.getNo());
+            }
             // if upload entity has been generated save it now as we know
             // we have at least one translation that will use it
             translationUploadRepository.save(translationUploadEntity);
+            dictionaryRepository.saveAndFlush(dictionaryEntity);
+        } else if (shouldSetYesOrNo(currentPhrase,dictionaryEntity)) {
+            dictionaryEntity.setYesOrNo(currentPhrase.getValue().getYesOrNo());
             dictionaryRepository.saveAndFlush(dictionaryEntity);
         }
     }
