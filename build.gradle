@@ -17,6 +17,7 @@ version = '0.0.1'
 ext {
   set('springCloudVersion', "2021.0.3")
 }
+
 ext['spring-security.version'] = '5.8.3'
 ext['spring-framework.version'] = '5.3.27'
 ext['snakeyaml.version'] = '1.33'
