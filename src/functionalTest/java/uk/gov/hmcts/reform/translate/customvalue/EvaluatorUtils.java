@@ -5,6 +5,7 @@ import org.springframework.util.CollectionUtils;
 import uk.gov.hmcts.befta.exception.FunctionalTestException;
 import uk.gov.hmcts.befta.player.BackEndFunctionalTestScenarioContext;
 import uk.gov.hmcts.befta.util.ReflectionUtils;
+import uk.gov.hmcts.reform.translate.model.Translation;
 
 import java.util.Map;
 
@@ -16,16 +17,16 @@ public final class EvaluatorUtils {
     private EvaluatorUtils() {
     }
 
-    public static Map<String, String> calculateDictionaryFromActualResponseAndExpectedTranslations(
+    public static Map<String, Translation> calculateDictionaryFromActualResponseAndExpectedTranslations(
         BackEndFunctionalTestScenarioContext scenarioContext,
-        Map<String, String> expectedTranslations) {
+        Map<String, Translation> expectedTranslations) {
 
         if (CollectionUtils.isEmpty(expectedTranslations)) {
             // throw a more useful error message if generated/found expected-translations list is empty
             throw new FunctionalTestException("The set of expected translations to search for cannot be empty.");
         }
 
-        final Map<String, String> actualTranslations = extractMapFromContext(
+        final Map<String, Translation> actualTranslations = extractMapFromContext(
             scenarioContext,
             "testData.actualResponse.body.translations"
         );
@@ -37,14 +38,14 @@ public final class EvaluatorUtils {
             ? actualTranslations : expectedTranslations;
     }
 
-    public static Map<String, String> extractMapFromContext(
+    public static Map<String, Translation> extractMapFromContext(
         BackEndFunctionalTestScenarioContext scenarioContext,
         String fieldPath) {
 
         try {
             @SuppressWarnings("unchecked")
-            final Map<String, String> extractedMap
-                = (Map<String, String>) ReflectionUtils.deepGetFieldInObject(scenarioContext, fieldPath);
+            final Map<String, Translation> extractedMap
+                = (Map<String, Translation>) ReflectionUtils.deepGetFieldInObject(scenarioContext, fieldPath);
 
             return extractedMap;
 

@@ -3,6 +3,7 @@ package uk.gov.hmcts.reform.translate.customvalue;
 import uk.gov.hmcts.befta.exception.FunctionalTestException;
 import uk.gov.hmcts.befta.player.BackEndFunctionalTestScenarioContext;
 import uk.gov.hmcts.befta.util.ReflectionUtils;
+import uk.gov.hmcts.reform.translate.model.Translation;
 
 import java.util.List;
 import java.util.Map;
@@ -27,7 +28,7 @@ public class ContainsTestTranslationsEvaluator implements CustomValueEvaluator {
             );
 
             return phrases.stream()
-                .map(phrase -> singletonMap(phrase, phrase))
+                .map(phrase -> singletonMap(phrase, new Translation(phrase)))
                 .flatMap(m -> m.entrySet().stream())
                 .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
         } catch (Exception e) {
