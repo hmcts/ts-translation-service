@@ -25,8 +25,8 @@ public class UniqueTranslationWithEnglishAndWelshEvaluator implements CustomValu
         Map<String, String> map = new HashMap<>();
         for (int i = 0; i < uniquePhrasesAmount; i++) {
             String englishPhrase = EvaluatorUtils.generateTestPhrase(String.format("%s-%s", scenarioMarker, i + 1));
-            final String welshPhrase = englishPhrase + "-WELSH";
-            map.put(englishPhrase, welshPhrase);
+            final String translation = "{translation=" + englishPhrase + "-WELSH" + "}";
+            map.put(englishPhrase, translation);
         }
         return map;
     }
