@@ -4,7 +4,6 @@ import org.apache.commons.lang.StringUtils;
 import uk.gov.hmcts.befta.exception.FunctionalTestException;
 import uk.gov.hmcts.befta.player.BackEndFunctionalTestScenarioContext;
 import uk.gov.hmcts.befta.util.ReflectionUtils;
-import uk.gov.hmcts.reform.translate.model.Translation;
 
 import java.util.Map;
 
@@ -27,8 +26,8 @@ public class ContainsDictionaryFromContextEvaluator implements CustomValueEvalua
             }
 
             @SuppressWarnings("unchecked")
-            final Map<String, Translation> expectedTranslations =
-                (Map<String, Translation>) ReflectionUtils.deepGetFieldInObject(scenarioContext, contextPath);
+            final Map<String, String> expectedTranslations =
+                (Map<String, String>) ReflectionUtils.deepGetFieldInObject(scenarioContext, contextPath);
 
             return EvaluatorUtils.calculateDictionaryFromActualResponseAndExpectedTranslations(
                 scenarioContext,
