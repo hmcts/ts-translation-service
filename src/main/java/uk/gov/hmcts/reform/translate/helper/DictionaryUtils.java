@@ -32,7 +32,7 @@ public final class DictionaryUtils {
 
     public static boolean shouldSetYesOrNo(final Map.Entry<String, Translation> currentPhrase,
                                            final DictionaryEntity dictionaryEntity) {
-        return currentPhrase.getValue().isYesOrNo() || dictionaryEntity.isYesOrNo();
+        return currentPhrase.getValue() != null && (currentPhrase.getValue().isYesOrNo() || dictionaryEntity.isYesOrNo());
     }
 
     // Hide Utility Class Constructor : Utility classes should not have a public or default constructor (squid:S1118)
