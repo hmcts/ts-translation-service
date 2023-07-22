@@ -21,7 +21,7 @@
   "expectedResponse": {
     "_extends_": "Common_200_Response",
     "body": {
-      "translations": "${[scenarioContext][customValues][containsDictionaryTranslations \"TEST-F003 English phrase with translation\": {\"translation\":\"Welsh phrase one\"}, \"TEST-F003 English phrase without translation\": {\"translation\":\"\"}]}"
+      "translations": "${[scenarioContext][customValues][containsDictionaryTranslations \"TEST-F003 English phrase with translation\": \"Welsh phrase one\", \"TEST-F003 English phrase without translation\": \"\"]}"
     }
   }
 }
