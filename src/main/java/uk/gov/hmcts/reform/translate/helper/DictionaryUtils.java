@@ -34,7 +34,7 @@ public final class DictionaryUtils {
                                            final DictionaryEntity dictionaryEntity) {
         return currentPhrase.getValue() != null && (
             currentPhrase.getValue().isYesOrNo() || dictionaryEntity.isYesOrNo()
-        );
+            );
     }
 
     // Hide Utility Class Constructor : Utility classes should not have a public or default constructor (squid:S1118)
