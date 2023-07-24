@@ -15,6 +15,6 @@ public class UniqueTranslationWithOnlyEnglishEvaluator implements CustomValueEva
     @Override
     public Object calculate(BackEndFunctionalTestScenarioContext scenarioContext, Object key) {
         final String marker = EvaluatorUtils.extractParameter(key, CustomValueKey.UNIQUE_TRANSLATION_WITH_ONLY_ENGLISH);
-        return Map.of(EvaluatorUtils.generateTestPhrase(marker),new Translation(""));
+        return Map.of(EvaluatorUtils.generateTestPhrase(marker),new Translation("").toString());
     }
 }

@@ -23,11 +23,11 @@ public class UniqueTranslationWithEnglishAndWelshEvaluator implements CustomValu
         String scenarioMarker = paramCount > 0 ? parameters[0] : "";
         int uniquePhrasesAmount = paramCount > 1 ? Integer.parseInt(parameters[1]) : 1;
 
-        Map<String, Translation> map = new HashMap<>();
+        Map<String, String> map = new HashMap<>();
         for (int i = 0; i < uniquePhrasesAmount; i++) {
             String englishPhrase = EvaluatorUtils.generateTestPhrase(String.format("%s-%s", scenarioMarker, i + 1));
             final String welsh = englishPhrase + "-WELSH";
-            map.put(englishPhrase, new Translation(welsh));
+            map.put(englishPhrase, new Translation(welsh).toString());
         }
         return map;
     }

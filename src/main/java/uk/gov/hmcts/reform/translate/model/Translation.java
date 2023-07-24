@@ -2,6 +2,7 @@ package uk.gov.hmcts.reform.translate.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,6 +23,15 @@ public class Translation {
 
     public boolean isYesOrNo() {
         return yesOrNo == null ? false : yesOrNo.booleanValue();
+    }
+
+    @Override
+    public String toString() {
+        try {
+            return new ObjectMapper().writeValueAsString(this);
+        } catch(Exception e) {
+            return null;
+        }
     }
 
 }
