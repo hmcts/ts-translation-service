@@ -5,6 +5,7 @@ import org.springframework.util.CollectionUtils;
 
 import uk.gov.hmcts.befta.exception.FunctionalTestException;
 import uk.gov.hmcts.befta.player.BackEndFunctionalTestScenarioContext;
+import uk.gov.hmcts.befta.util.BeftaUtils;
 import uk.gov.hmcts.befta.util.ReflectionUtils;
 import uk.gov.hmcts.reform.translate.model.Translation;
 
@@ -38,10 +39,14 @@ public final class EvaluatorUtils {
         // if 'actual-response' contains all 'expected-translations':
         //    then return actual-response translations to ensure BEFTA assert passes
         //    otherwise return only expected-translations to cause befta assert failure
+        boolean matches = createComparableTranslation(actualTranslations).entrySet()
+            .containsAll(createComparableTranslation(expectedTranslations).entrySet());
 
-        return createComparableTranslation(actualTranslations).entrySet()
-            .containsAll(createComparableTranslation(expectedTranslations).entrySet())
-            ? actualTranslations : expectedTranslations;
+        if (matches) {
+            return actualTranslations;
+        }
+        BeftaUtils.defaultLog("Failed to match");
+        return expectedTranslations;
     }
 
     public static Map<String, Object> extractMapFromContext(
