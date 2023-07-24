@@ -22,7 +22,7 @@ public class ContainsDictionaryTranslationsEvaluator implements CustomValueEvalu
             final String[] expectedValues
                 = EvaluatorUtils.extractParameters(key, CustomValueKey.CONTAINS_DICTIONARY_TRANSLATIONS);
 
-            final Map<String, String> expectedTranslations = Arrays.stream(expectedValues)
+            final Map<String, Object> expectedTranslations = Arrays.stream(expectedValues)
                 .map(entry -> {
                     final String[] keyValuePair = entry.split(":");
                     return singletonMap(strip(keyValuePair[0]),

@@ -1,12 +1,14 @@
 package uk.gov.hmcts.reform.translate.customvalue;
 
 import org.apache.commons.lang3.RandomStringUtils;
+import org.jooq.lambda.Unchecked;
 import org.springframework.util.CollectionUtils;
 
 import uk.gov.hmcts.befta.exception.FunctionalTestException;
 import uk.gov.hmcts.befta.player.BackEndFunctionalTestScenarioContext;
 import uk.gov.hmcts.befta.util.BeftaUtils;
 import uk.gov.hmcts.befta.util.ReflectionUtils;
+import uk.gov.hmcts.reform.translate.model.Translation;
 
 import java.util.Map;
 
@@ -18,25 +20,45 @@ public final class EvaluatorUtils {
     private EvaluatorUtils() {
     }
 
-    public static Map<String, String> calculateDictionaryFromActualResponseAndExpectedTranslations(
+    @SuppressWarnings("unchecked")
+    public static Map<String, Object> calculateDictionaryFromActualResponseAndExpectedTranslations(
         BackEndFunctionalTestScenarioContext scenarioContext,
-        Map<String, String> expectedTranslations) {
+        Map<String, Object> expectedTranslations) {
 
         if (CollectionUtils.isEmpty(expectedTranslations)) {
             // throw a more useful error message if generated/found expected-translations list is empty
             throw new FunctionalTestException("The set of expected translations to search for cannot be empty.");
         }
 
-        final Map<String, String> actualTranslations = extractMapFromContext(
+        final Map<String, Object> actualTranslations = extractMapFromContext(
             scenarioContext,
             "testData.actualResponse.body.translations"
         );
-        String expected = expectedTranslations.entrySet().stream()
-            .map(e -> e.getKey() + ":" + e.getValue())
-            .reduce("", (partialString, element) -> partialString + element);
+        String expected = expectedTranslations.entrySet().stream().map(e -> {
+            String result = e.getKey() + ":";
+            if (e.getValue() instanceof Translation tran) {
+                result += tran.getTranslation();
+            } else if (e.getValue() instanceof String str) {
+                result += str;
+            } else if (e.getValue() instanceof Map map) {
+                result += map.getOrDefault("translation","");
+            }
+            return result;
+
+        }).reduce("", (partialString, element) -> partialString + element);
+
         String actual = actualTranslations.entrySet().stream()
-            .map(e -> e.getKey() + ":" + e.getValue())
-            .reduce("", (partialString, element) -> partialString + element);
+            .map(e -> {
+                String result = e.getKey() + ":";
+                if (e.getValue() instanceof Translation tran) {
+                    result += tran.getTranslation();
+                } else if (e.getValue() instanceof String str) {
+                    result += str;
+                } else if (e.getValue() instanceof Map map) {
+                    result += map.getOrDefault("translation","");
+                }
+                return result;
+            }).reduce("", (partialString, element) -> partialString + element);
 
         BeftaUtils.defaultLog("Expected:" + expected);
         BeftaUtils.defaultLog("Actual:" + actual);
@@ -48,14 +70,14 @@ public final class EvaluatorUtils {
             ? actualTranslations : expectedTranslations;
     }
 
-    public static Map<String, String> extractMapFromContext(
+    public static Map<String, Object> extractMapFromContext(
         BackEndFunctionalTestScenarioContext scenarioContext,
         String fieldPath) {
 
         try {
             @SuppressWarnings("unchecked")
-            final Map<String, String> extractedMap
-                = (Map<String, String>) ReflectionUtils.deepGetFieldInObject(scenarioContext, fieldPath);
+            final Map<String, Object> extractedMap
+                = (Map<String, Object>) ReflectionUtils.deepGetFieldInObject(scenarioContext, fieldPath);
 
             return extractedMap;
 
