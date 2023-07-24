@@ -2,7 +2,6 @@ package uk.gov.hmcts.reform.translate.customvalue;
 
 import uk.gov.hmcts.befta.exception.FunctionalTestException;
 import uk.gov.hmcts.befta.player.BackEndFunctionalTestScenarioContext;
-import uk.gov.hmcts.reform.translate.model.Translation;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -27,7 +26,7 @@ public class ContainsDictionaryTranslationsEvaluator implements CustomValueEvalu
                 .map(entry -> {
                     final String[] keyValuePair = entry.split(":");
                     return singletonMap(strip(keyValuePair[0]),
-                        new Translation(strip(keyValuePair[1])).toString()
+                        "{translation=" + strip(keyValuePair[1]) + "}"
                     );
                 })
                 .flatMap(m -> m.entrySet().stream())

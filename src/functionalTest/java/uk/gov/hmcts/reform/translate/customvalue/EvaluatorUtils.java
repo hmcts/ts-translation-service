@@ -5,6 +5,7 @@ import org.springframework.util.CollectionUtils;
 
 import uk.gov.hmcts.befta.exception.FunctionalTestException;
 import uk.gov.hmcts.befta.player.BackEndFunctionalTestScenarioContext;
+import uk.gov.hmcts.befta.util.BeftaUtils;
 import uk.gov.hmcts.befta.util.ReflectionUtils;
 
 import java.util.Map;
@@ -30,6 +31,15 @@ public final class EvaluatorUtils {
             scenarioContext,
             "testData.actualResponse.body.translations"
         );
+        String expected = expectedTranslations.entrySet().stream()
+            .map(e -> e.getKey() + ":" + e.getValue())
+            .reduce("", (partialString, element) -> partialString + element);
+        String actual = actualTranslations.entrySet().stream()
+            .map(e -> e.getKey() + ":" + e.getValue())
+            .reduce("", (partialString, element) -> partialString + element);
+
+        BeftaUtils.defaultLog("Expected:" + expected);
+        BeftaUtils.defaultLog("Actual:" + actual);
 
         // if 'actual-response' contains all 'expected-translations':
         //    then return actual-response translations to ensure BEFTA assert passes
