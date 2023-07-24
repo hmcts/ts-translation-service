@@ -1,7 +1,6 @@
 package uk.gov.hmcts.reform.translate.customvalue;
 
 import org.apache.commons.lang3.RandomStringUtils;
-import org.jooq.lambda.Unchecked;
 import org.springframework.util.CollectionUtils;
 
 import uk.gov.hmcts.befta.exception.FunctionalTestException;
