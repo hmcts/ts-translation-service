@@ -80,11 +80,11 @@ public final class EvaluatorUtils {
         if (translation == null) {
             return "";
         }
+
         StringBuilder sb = new StringBuilder();
         sb.append("{");
 
-
-        if (StringUtils.isNotBlank(translation.getTranslation())) {
+        if (translation.getTranslation() != null) {
             sb.append("translation=" + translation.getTranslation());
         }
 

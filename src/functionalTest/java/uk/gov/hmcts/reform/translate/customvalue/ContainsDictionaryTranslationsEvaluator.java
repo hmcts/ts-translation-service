@@ -26,9 +26,9 @@ public class ContainsDictionaryTranslationsEvaluator implements CustomValueEvalu
             final Map<String, String> expectedTranslations = Arrays.stream(expectedValues)
                 .map(entry -> {
                     final String[] keyValuePair = entry.split(":");
-                    System.out.println(keyValuePair);
+                    System.out.println(entry);
                     return singletonMap(strip(keyValuePair[0]), EvaluatorUtils.wrapTestTranslation(
-                        new Translation(keyValuePair[1])
+                        new Translation(strip(keyValuePair[1]))
                     ));
                 })
                 .flatMap(m -> m.entrySet().stream())
