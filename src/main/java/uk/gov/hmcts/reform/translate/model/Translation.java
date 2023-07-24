@@ -2,6 +2,7 @@ package uk.gov.hmcts.reform.translate.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.AllArgsConstructor;
@@ -29,8 +30,8 @@ public class Translation {
     public String toString() {
         try {
             return new ObjectMapper().writeValueAsString(this);
-        } catch(Exception e) {
-            return null;
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
         }
     }
 

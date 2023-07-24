@@ -3,11 +3,9 @@ package uk.gov.hmcts.reform.translate.customvalue;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.util.CollectionUtils;
 
-import io.micrometer.core.instrument.util.StringUtils;
 import uk.gov.hmcts.befta.exception.FunctionalTestException;
 import uk.gov.hmcts.befta.player.BackEndFunctionalTestScenarioContext;
 import uk.gov.hmcts.befta.util.ReflectionUtils;
-import uk.gov.hmcts.reform.translate.model.Translation;
 
 import java.util.Map;
 
@@ -76,40 +74,4 @@ public final class EvaluatorUtils {
         return String.format("%s%s-%s", TEST_PHRASES_START_WITH, marker, RandomStringUtils.randomAlphabetic(count));
     }
 
-    public static String wrapTestTranslation(Translation translation) {
-        if (translation == null) {
-            return "";
-        }
-
-        StringBuilder sb = new StringBuilder();
-        sb.append("{");
-
-        if (translation.getTranslation() != null) {
-            sb.append("translation=" + translation.getTranslation());
-        }
-
-        if (translation.getYesOrNo() != null) {
-            if (!sb.toString().equals("{")) {
-                sb.append(",");
-            }
-            sb.append("yesOrNo=" + translation.getYesOrNo().booleanValue());
-        }
-
-        if (StringUtils.isNotBlank(translation.getYes())) {
-            if (!sb.toString().equals("{")) {
-                sb.append(",");
-            }
-            sb.append("yes=" + translation.getYes());
-        }
-
-        if (StringUtils.isNotBlank(translation.getNo())) {
-            if (!sb.toString().equals("{")) {
-                sb.append(",");
-            }
-            sb.append("no=" + translation.getNo());
-        }
-
-        sb.append("}");
-        return sb.toString();
-    }
 }
