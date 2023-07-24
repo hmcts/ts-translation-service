@@ -5,11 +5,12 @@ import org.springframework.util.CollectionUtils;
 
 import uk.gov.hmcts.befta.exception.FunctionalTestException;
 import uk.gov.hmcts.befta.player.BackEndFunctionalTestScenarioContext;
-import uk.gov.hmcts.befta.util.BeftaUtils;
 import uk.gov.hmcts.befta.util.ReflectionUtils;
 import uk.gov.hmcts.reform.translate.model.Translation;
 
+import java.util.Collections;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static uk.gov.hmcts.reform.translate.service.DictionaryService.TEST_PHRASES_START_WITH;
 
@@ -33,39 +34,13 @@ public final class EvaluatorUtils {
             scenarioContext,
             "testData.actualResponse.body.translations"
         );
-        String expected = expectedTranslations.entrySet().stream().map(e -> {
-            String result = e.getKey() + ":";
-            if (e.getValue() instanceof Translation tran) {
-                result += tran.getTranslation();
-            } else if (e.getValue() instanceof String str) {
-                result += str;
-            } else if (e.getValue() instanceof Map map) {
-                result += map.getOrDefault("translation","");
-            }
-            return result;
-
-        }).reduce("", (partialString, element) -> partialString + element);
-
-        String actual = actualTranslations.entrySet().stream()
-            .map(e -> {
-                String result = e.getKey() + ":";
-                if (e.getValue() instanceof Translation tran) {
-                    result += tran.getTranslation();
-                } else if (e.getValue() instanceof String str) {
-                    result += str;
-                } else if (e.getValue() instanceof Map map) {
-                    result += map.getOrDefault("translation","");
-                }
-                return result;
-            }).reduce("", (partialString, element) -> partialString + element);
-
-        BeftaUtils.defaultLog("Expected:" + expected);
-        BeftaUtils.defaultLog("Actual:" + actual);
 
         // if 'actual-response' contains all 'expected-translations':
         //    then return actual-response translations to ensure BEFTA assert passes
         //    otherwise return only expected-translations to cause befta assert failure
-        return actualTranslations.entrySet().containsAll(expectedTranslations.entrySet())
+
+        return createComparableTranslation(actualTranslations).entrySet()
+            .containsAll(createComparableTranslation(expectedTranslations).entrySet())
             ? actualTranslations : expectedTranslations;
     }
 
@@ -105,4 +80,20 @@ public final class EvaluatorUtils {
         return String.format("%s%s-%s", TEST_PHRASES_START_WITH, marker, RandomStringUtils.randomAlphabetic(count));
     }
 
+    @SuppressWarnings("unchecked")
+    private static Map<String,String> createComparableTranslation(Map<String,Object> input) {
+
+        return input.entrySet().stream().map(e -> {
+            String result = "";
+            if (e.getValue() instanceof Translation tran) {
+                result += tran.getTranslation();
+            } else if (e.getValue() instanceof String str) {
+                result += str;
+            } else if (e.getValue() instanceof Map map) {
+                result += map.getOrDefault("translation","");
+            }
+            return Collections.singletonMap(e.getKey(), result);
+        }).flatMap(m -> m.entrySet().stream())
+        .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
 }
