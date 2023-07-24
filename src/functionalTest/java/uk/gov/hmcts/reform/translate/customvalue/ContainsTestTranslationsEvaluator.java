@@ -27,10 +27,15 @@ public class ContainsTestTranslationsEvaluator implements CustomValueEvaluator {
                 "testData.request.body.phrases"
             );
 
-            return phrases.stream()
+            Map<String,Object> expectedTranslations = phrases.stream()
                 .map(phrase -> singletonMap(phrase, new Translation(phrase)))
                 .flatMap(m -> m.entrySet().stream())
                 .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
+
+            return EvaluatorUtils.calculateDictionaryFromActualResponseAndExpectedTranslations(
+                    scenarioContext,
+                    expectedTranslations
+                );
         } catch (Exception e) {
             throw new FunctionalTestException("Problem checking acceptable response payload: ", e);
         }
