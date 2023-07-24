@@ -4,17 +4,13 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 
 @AllArgsConstructor
 @RequiredArgsConstructor
-@Getter
-@Setter
-@EqualsAndHashCode
+@Data
 @JsonInclude(Include.NON_NULL)
 public class Translation {
 
