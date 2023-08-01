@@ -19,3 +19,16 @@ java:
         - name: AppInsightsInstrumentationKey
         - name: ts-translation-service-s2s-secret
           alias: IDAM_KEY_TS_TRANSLATION_SERVICE
+
+ccd:
+  enabled: true
+  definitionStore:
+    enabled: true
+    ingressHost: ts-translation-service-pr-226.preview.platform.hmcts.net
+  adminWeb:
+    enabled: true
+    ingressHost: ccd-admin-web-pr-582.preview.platform.hmcts.net
+  definitionImporter:
+    enabled: true
+  userProfileImporter:
+    enabled: true
