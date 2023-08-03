@@ -24,14 +24,16 @@ ccd:
   enabled: true
   definitionStore:
     enabled: true
-    ingressHost: ccd-definition-store-api-pr-1386.preview.platform.hmcts.net/
     java:
+      ingressHost: ccd-definition-store-api-pr-1386.preview.platform.hmcts.net
+      image: hmctspublic.azurecr.io/ccd/definition-store-api:pr-1386-bbc96c3-20230726142127
       environment:
         TS_TRANSLATION_SERVICE_HOST: https://ts-translation-service-pr-226.preview.platform.hmcts.net
   adminWeb:
     enabled: true
-    ingressHost: ccd-admin-web-pr-582.preview.platform.hmcts.net
     java:
+      ingressHost: ccd-admin-web-pr-582.preview.platform.hmcts.net
+      image: hmctspublic.azurecr.io/ccd/admin-web:pr-582-fecab3e-20230801134604
       environment:
         ADMINWEB_GET_DICTIONARY_URL: https://ts-translation-service-pr-226.preview.platform.hmcts.net/dictionary
   definitionImporter:
