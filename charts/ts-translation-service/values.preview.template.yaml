@@ -22,6 +22,10 @@ java:
 
 ccd:
   enabled: true
+  ras:
+    enabled: false
+  userProfile:
+    enabled: false
   definitionStore:
     enabled: true
     java:
