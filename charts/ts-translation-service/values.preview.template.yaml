@@ -21,9 +21,17 @@ java:
 
 ccd:
   enabled: true
-  ras:
+  s2s:
     enabled: false
   userProfile:
+    enabled: false
+  dataStore:
+    enabled: false
+  definitionImporter:
+    enabled: true
+  userProfileImporter:
+    enabled: true
+  ras:
     enabled: false
   postgresql:
     enabled: true
@@ -54,7 +62,3 @@ ccd:
       image: hmctspublic.azurecr.io/ccd/admin-web:pr-582-fecab3e-20230801134604
       environment:
         ADMINWEB_GET_DICTIONARY_URL: https://ts-translation-service-pr-226.preview.platform.hmcts.net/dictionary
-  definitionImporter:
-    enabled: true
-  userProfileImporter:
-    enabled: true
