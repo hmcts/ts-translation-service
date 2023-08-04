@@ -51,15 +51,19 @@ ccd:
               CREATE DATABASE "ts_translation_service" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
     definitionStore:
       enabled: true
-      java:
-        ingressHost: ccd-definition-store-api.{{ .Values.global.environment }}.platform.hmcts.net
-        image: hmctspublic.azurecr.io/ccd/definition-store-api:pr-1386-bbc96c3-20230726142127
-        environment:
-          TS_TRANSLATION_SERVICE_HOST: https://ts-translation-service-pr-226.preview.platform.hmcts.net
     adminWeb:
       enabled: true
-      java:
-        ingressHost: ccd-admin-web.{{ .Values.global.environment }}.platform.hmcts.net
-        image: hmctspublic.azurecr.io/ccd/admin-web:pr-582-fecab3e-20230801134604
-        environment:
-          ADMINWEB_GET_DICTIONARY_URL: https://ts-translation-service-pr-226.preview.platform.hmcts.net/dictionary
+
+  ccd-definition-store-api:
+    java:
+      ingressHost: ccd-definition-store-api.{{ .Values.global.environment }}.platform.hmcts.net
+      image: hmctspublic.azurecr.io/ccd/definition-store-api:pr-1386-bbc96c3-20230726142127
+      environment:
+        TS_TRANSLATION_SERVICE_HOST: https://ts-translation-service-pr-226.preview.platform.hmcts.net
+
+  ccd-admin-web:
+    java:
+      ingressHost: ccd-admin-web.{{ .Values.global.environment }}.platform.hmcts.net
+      image: hmctspublic.azurecr.io/ccd/admin-web:pr-582-fecab3e-20230801134604
+      environment:
+        ADMINWEB_GET_DICTIONARY_URL: https://ts-translation-service-pr-226.preview.platform.hmcts.net/dictionary
