@@ -92,5 +92,5 @@ ccd:
         ADMINWEB_IMPORT_AUDITS_URL: https://ts-translation-service-pr-226-ccd-definition-store.preview.platform.hmcts.net/api/import-audits
         ADMINWEB_ELASTIC_INDEX_URL: https://ts-translation-service-pr-226-ccd-definition-store.preview.platform.hmcts.net/elastic-support/index
         ADMINWEB_ELASTIC_CASE_TYPES_URL: https://ts-translation-service-pr-226-ccd-definition-store.preview.platform.hmcts.net/elastic-support/case-types
-        ADMINWEB_GLOBAL_SEARCH_INDEX_URL: https://ts-translation-service-pr-226-ccd-definition-store.preview.platform.hmcts.net/elastic-support/global-search/index"
+        ADMINWEB_GLOBAL_SEARCH_INDEX_URL: https://ts-translation-service-pr-226-ccd-definition-store.preview.platform.hmcts.net/elastic-support/global-search/index
    
