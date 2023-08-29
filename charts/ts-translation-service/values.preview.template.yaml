@@ -77,6 +77,8 @@ ccd:
       ingressHost:  ${SERVICE_FQDN}-ccd-admin-web.preview.platform.hmcts.net
       image: hmctspublic.azurecr.io/ccd/admin-web:pr-582-ff6134d-20230829130829
       environment:
+        IDAM_ADMIN_WEB_SERVICE_KEY: ${ADMIN_S2S_KEY}
+        IDAM_OAUTH2_AW_CLIENT_SECRET: ${ADMIN_WEB_IDAM_SECRET}
         ADMINWEB_GET_DICTIONARY_URL: https://ts-translation-service-pr-226.preview.platform.hmcts.net/dictionary
         ADMINWEB_IMPORT_URL: https://ts-translation-service-pr-226-ccd-definition-store.preview.platform.hmcts.net/import
         ADMINWEB_JURISDICTIONS_URL: https://ts-translation-service-pr-226-ccd-definition-store.preview.platform.hmcts.net/api/data/jurisdictions
