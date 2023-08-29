@@ -61,10 +61,6 @@ ccd:
       environment:
         TS_TRANSLATION_SERVICE_HOST: https://ts-translation-service-pr-226.preview.platform.hmcts.net
         ELASTIC_SEARCH_FAIL_ON_IMPORT: false
-        IDAM_USER_URL: https://idam-web-public.aat.platform.hmcts.net
-        IDAM_S2S_URL: http://rpe-service-auth-provider-aat.service.core-compute-aat.internal
-        USER_PROFILE_HOST: http://ccd-user-profile-api-aat.service.core-compute-aat.internal
-        OIDC_ISSUER: https://forgerock-am.service.core-compute-idam-aat.internal:8443/openam/oauth2/hmcts
        
   ccd-admin-web:
     nodejs:
@@ -72,15 +68,8 @@ ccd:
       image: hmctspublic.azurecr.io/ccd/admin-web:pr-582-ff6134d-20230829130829
       environment:
         ADMINWEB_GET_DICTIONARY_URL: https://ts-translation-service-pr-226.preview.platform.hmcts.net/dictionary
-        IDAM_S2S_URL: http://rpe-service-auth-provider-aat.service.core-compute-aat.internal
-        IDAM_BASE_URL: https://idam-api.aat.platform.hmcts.net
-        IDAM_OAUTH2_TOKEN_ENDPOINT: https://idam-api.aat.platform.hmcts.net/oauth2/token
-        IDAM_OAUTH2_LOGOUT_ENDPOINT: https://idam-api.aat.platform.hmcts.net/session/:token
-        ADMINWEB_LOGIN_URL: https://idam-web-public.aat.platform.hmcts.net/login
         ADMINWEB_IMPORT_URL: https://ts-translation-service-pr-226-ccd-definition-store.preview.platform.hmcts.net/import
         ADMINWEB_JURISDICTIONS_URL: https://ts-translation-service-pr-226-ccd-definition-store.preview.platform.hmcts.net/api/data/jurisdictions
-        ADMINWEB_USER_PROFILE_URL: http://ccd-user-profile-api-aat.service.core-compute-aat.internal/users
-        ADMINWEB_SAVE_USER_PROFILE_URL: http://ccd-user-profile-api-aat.service.core-compute-aat.internal/users/save
         ADMINWEB_USER_ROLE_URL: https://ts-translation-service-pr-226-ccd-definition-store.preview.platform.hmcts.net/api/user-role
         ADMIN_ALL_USER_ROLES_URL: https://ts-translation-service-pr-226-ccd-definition-store.preview.platform.hmcts.net/api/user-roles
         ADMINWEB_CREATE_DEFINITION_URL: https://ts-translation-service-pr-226-ccd-definition-store.preview.platform.hmcts.net/api/draft
