@@ -58,6 +58,7 @@ ccd:
     ccdAdminWebIngress:  ${SERVICE_FQDN}-ccd-admin-web.preview.platform.hmcts.net
     idamApiUrl: https://idam-api.aat.platform.hmcts.net
     idamWebUrl: https://idam-web-public.aat.platform.hmcts.net
+    s2sUrl: http://rpe-service-auth-provider-aat.service.core-compute-aat.internal
     
   ccd-definition-store-api:
     java:
