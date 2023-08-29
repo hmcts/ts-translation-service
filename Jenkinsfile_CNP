@@ -24,7 +24,9 @@ def secrets = [
     secret('microservicekey-xui-webapp', 'BEFTA_S2S_CLIENT_SECRET'),
     secret('microservicekey-xui-webapp', 'BEFTA_S2S_CLIENT_SECRET_OF_XUI_WEBAPP'),
     secret('microservicekey-ccd-definition', 'BEFTA_S2S_CLIENT_SECRET_OF_CCD_DEFINITION'),
-    secret('microservicekey-ccd-data', 'BEFTA_S2S_CLIENT_SECRET_OF_CCD_DATA')
+    secret('microservicekey-ccd-data', 'BEFTA_S2S_CLIENT_SECRET_OF_CCD_DATA'),
+    secret('ccd-admin-web-oauth2-client-secret', 'ADMIN_WEB_IDAM_SECRET'),
+    secret('microservicekey-ccd-admin', 'ADMIN_S2S_KEY')
   ]
 ]
 
