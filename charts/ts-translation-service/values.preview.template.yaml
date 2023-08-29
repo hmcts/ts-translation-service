@@ -53,7 +53,10 @@ ccd:
       enabled: true
     adminWeb:
       enabled: true
-
+      
+  global:
+    ccdAdminWebIngress:  ${SERVICE_FQDN}-ccd-admin-web.preview.platform.hmcts.net
+    
   ccd-definition-store-api:
     java:
       ingressHost: ${SERVICE_FQDN}-ccd-definition-store.preview.platform.hmcts.net
