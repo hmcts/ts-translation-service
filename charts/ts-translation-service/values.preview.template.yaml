@@ -56,6 +56,8 @@ ccd:
       
   global:
     ccdAdminWebIngress:  ${SERVICE_FQDN}-ccd-admin-web.preview.platform.hmcts.net
+    idamApiUrl: https://idam-api.aat.platform.hmcts.net
+    idamWebUrl: https://idam-web-public.aat.platform.hmcts.net
     
   ccd-definition-store-api:
     java:
