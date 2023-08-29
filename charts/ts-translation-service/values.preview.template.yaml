@@ -57,7 +57,7 @@ ccd:
   ccd-definition-store-api:
     java:
       ingressHost: ${SERVICE_FQDN}-ccd-definition-store.preview.platform.hmcts.net
-      image: hmctspublic.azurecr.io/ccd/definition-store-api:pr-1386-1d9f5a3-20230818165747
+      image: hmctspublic.azurecr.io/ccd/definition-store-api:pr-1386-f6ed51d-20230829104932
       environment:
         TS_TRANSLATION_SERVICE_HOST: https://ts-translation-service-pr-226.preview.platform.hmcts.net
         ELASTIC_SEARCH_FAIL_ON_IMPORT: false
@@ -69,7 +69,7 @@ ccd:
   ccd-admin-web:
     java:
       ingressHost:  ${SERVICE_FQDN}-ccd-admin-web.preview.platform.hmcts.net
-      image: hmctspublic.azurecr.io/ccd/admin-web:pr-582-fecab3e-20230801134604
+      image: hmctspublic.azurecr.io/ccd/admin-web:pr-582-ff6134d-20230829130829
       environment:
         ADMINWEB_GET_DICTIONARY_URL: https://ts-translation-service-pr-226.preview.platform.hmcts.net/dictionary
         IDAM_S2S_URL: http://rpe-service-auth-provider-aat.service.core-compute-aat.internal
