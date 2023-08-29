@@ -61,6 +61,10 @@ ccd:
       environment:
         TS_TRANSLATION_SERVICE_HOST: https://ts-translation-service-pr-226.preview.platform.hmcts.net
         ELASTIC_SEARCH_FAIL_ON_IMPORT: false
+        IDAM_USER_URL: https://idam-web-public.aat.platform.hmcts.net
+        IDAM_S2S_URL: http://rpe-service-auth-provider-aat.service.core-compute-aat.internal
+        USER_PROFILE_HOST: http://ccd-user-profile-api-aat.service.core-compute-aat.internal
+        OIDC_ISSUER: https://forgerock-am.service.core-compute-idam-aat.internal:8443/openam/oauth2/hmcts
        
   ccd-admin-web:
     nodejs:
