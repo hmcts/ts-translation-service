@@ -89,11 +89,11 @@ ccd:
     environment:
     secrets:
       IMPORTER_USERNAME:
-        disabled: false
+        disabled: true
       IMPORTER_PASSWORD:
-        disabled: false
+        disabled: true
       CLIENT_SECRET:
-        disabled: false
+        disabled: true
     userRoles:
       - citizen
       - citizen
