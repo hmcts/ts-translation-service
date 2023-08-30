@@ -59,6 +59,14 @@ ccd:
     idamApiUrl: https://idam-api.aat.platform.hmcts.net
     idamWebUrl: https://idam-web-public.aat.platform.hmcts.net
     s2sUrl: http://rpe-service-auth-provider-aat.service.core-compute-aat.internal
+    ccdDefinitionStoreUrl: http://ccd-def-store-${SERVICE_FQDN}
+    enableKeyVaults: true
+    devMode: true
+    postgresql:
+      auth:
+        postgresUsername: hmcts
+        postgresPassword: hmcts
+
     
   ccd-definition-store-api:
     java:
