@@ -29,7 +29,7 @@ ccd:
     dataStore:
       enabled: false
     definitionImporter:
-      enabled: false
+      enabled: true
     userProfileImporter:
       enabled: true
     ras:
@@ -89,7 +89,6 @@ ccd:
     environment:
     secrets: []
     userRoles:
-      userRoles:
         - citizen
         - citizen
         - letter-holder
