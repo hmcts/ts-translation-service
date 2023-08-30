@@ -87,7 +87,13 @@ ccd:
     definitionFilename: https://github.com/hmcts/ccd-test-definitions/raw/master/src/main/resources/uk/gov/hmcts/ccd/test_definitions/excel/BEFTA_Master_Definition.xlsx
     redirectUri: http://${SERVICE_NAME}-ccd-admin-web/oauth2redirect
     environment:
-    secrets: []
+    secrets:
+      IMPORTER_USERNAME:
+        disabled: false
+      IMPORTER_PASSWORD:
+        disabled: false
+      CLIENT_SECRET:
+        disabled: false
     userRoles:
       - citizen
       - citizen
