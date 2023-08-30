@@ -88,12 +88,9 @@ ccd:
     redirectUri: http://${SERVICE_NAME}-ccd-admin-web/oauth2redirect
     environment:
     secrets:
-      IMPORTER_USERNAME:
-        disabled: true
-      IMPORTER_PASSWORD:
-        disabled: true
-      CLIENT_SECRET:
-        disabled: true
+      IMPORTER_USERNAME: rdl+2908@gmail.com
+      IMPORTER_PASSWORD: Pa55word11
+      CLIENT_SECRET: bsp
     userRoles:
       - citizen
       - citizen
