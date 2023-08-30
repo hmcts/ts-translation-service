@@ -20,7 +20,9 @@ def secrets = [
     secret('ts-service-translation-users-pwd', 'TS_SERVICE_TRANSLATION_USERS_PWD'),
     secret('ccd-befta-caseworker-2-solicitor-2-pwd', 'CCD_BEFTA_CASEWORKER_2_SOLICITOR_2_PWD'),
     secret('ccd-admin-web-oauth2-client-secret', 'ADMIN_WEB_IDAM_SECRET'),
-    secret('microservicekey-ccd-admin', 'ADMIN_S2S_KEY')
+    secret('microservicekey-ccd-admin', 'ADMIN_S2S_KEY'),
+    secret('ccd-as-a-pr-importer-username', 'IMPORT_USERNAME')
+    secret('ccd-as-a-pr-importer-password', 'IMPORT_PWD')
   ],
   's2s-${env}': [
     secret('microservicekey-xui-webapp', 'BEFTA_S2S_CLIENT_SECRET'),
