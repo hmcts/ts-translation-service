@@ -87,19 +87,4 @@ ccd:
       environment:
         IDAM_ADMIN_WEB_SERVICE_KEY: ${ADMIN_S2S_KEY}
         IDAM_OAUTH2_AW_CLIENT_SECRET: ${ADMIN_WEB_IDAM_SECRET}
-        ADMINWEB_GET_DICTIONARY_URL: ccd-def-store-${SERVICE_FQDN}/dictionary
-        ADMINWEB_IMPORT_URL: ccd-def-store-${SERVICE_FQDN}/import
-        ADMINWEB_JURISDICTIONS_URL: ccd-def-store-${SERVICE_FQDN}/api/data/jurisdictions
-        ADMINWEB_USER_ROLE_URL: ccd-def-store-${SERVICE_FQDN}/api/user-role
-        ADMIN_ALL_USER_ROLES_URL: ccd-def-store-${SERVICE_FQDN}/api/user-roles
-        ADMINWEB_CREATE_DEFINITION_URL: ccd-def-store-${SERVICE_FQDN}/api/draft
-        ADMINWEB_UPDATE_DEFINITION_URL: ccd-def-store-${SERVICE_FQDN}/api/draft/save
-        ADMINWEB_DELETE_DEFINITION_URL: ccd-def-store-${SERVICE_FQDN}e/api/draft
-        ADMINWEB_DEFINITIONS_URL: ccd-def-store-${SERVICE_FQDN}/api/drafts
-        ADMINWEB_WHOAMI_URL: ccd-def-store-${SERVICE_FQDN}/api/idam/profile
-        ADMINWEB_AUTHORIZATION_URL: ccd-def-store-${SERVICE_FQDN}/api/idam/adminweb/authorization
-        ADMINWEB_IMPORT_AUDITS_URL: ccd-def-store-${SERVICE_FQDN}/api/import-audits
-        ADMINWEB_ELASTIC_INDEX_URL: ccd-def-store-${SERVICE_FQDN}/elastic-support/index
-        ADMINWEB_ELASTIC_CASE_TYPES_URL: ccd-def-store-${SERVICE_FQDN}/elastic-support/case-types
-        ADMINWEB_GLOBAL_SEARCH_INDEX_URL: ccd-def-store-${SERVICE_FQDN}/elastic-support/global-search/index
    
