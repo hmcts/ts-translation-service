@@ -84,7 +84,7 @@ ccd:
    #Use this image to import your CCD definition. To have an image available, create a git tag and push it.
   ccd-definition-importer:
     image: hmctspublic.azurecr.io/ccd/definition-importer:latest
-    definitionFilename: https://github.com/hmcts/ccd-test-definitions/blob/master/src/main/resources/uk/gov/hmcts/ccd/test_definitions/excel/BEFTA_Master_Definition.xlsx
+    definitionFilename: https://github.com/hmcts/ccd-test-definitions/raw/master/src/main/resources/uk/gov/hmcts/ccd/test_definitions/excel/BEFTA_Master_Definition.xlsx
     redirectUri: http://${SERVICE_NAME}-ccd-admin-web/oauth2redirect
     environment:
     secrets: []
