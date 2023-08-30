@@ -89,7 +89,9 @@ ccd:
     environment:
     secrets:
       IMPORTER_USERNAME: ${IMPORT_USERNAME}
+        disabled: false
       IMPORTER_PASSWORD: ${IMPORT_PWD}
+        disabled: false
     userRoles:
       - citizen
       - citizen
