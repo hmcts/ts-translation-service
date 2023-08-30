@@ -55,14 +55,14 @@ ccd:
       enabled: true
       
   global:
-    ccdAdminWebIngress:  ${SERVICE_FQDN}-ccd-admin-web
+    ccdAdminWebIngress:  ccd-admin-web-${SERVICE_FQDN}
     idamApiUrl: https://idam-api.aat.platform.hmcts.net
     idamWebUrl: https://idam-web-public.aat.platform.hmcts.net
     s2sUrl: http://rpe-service-auth-provider-aat.service.core-compute-aat.internal
     
   ccd-definition-store-api:
     java:
-      ingressHost: ${SERVICE_FQDN}-ccd-def-store
+      ingressHost: ccd-def-store-${SERVICE_FQDN}
       image: hmctspublic.azurecr.io/ccd/definition-store-api:pr-1386-f6ed51d-20230829104932
       environment:
         TS_TRANSLATION_SERVICE_HOST: ${SERVICE_FQDN}
@@ -74,24 +74,24 @@ ccd:
        
   ccd-admin-web:
     nodejs:
-      ingressHost:  ${SERVICE_FQDN}-ccd-admin-web
+      ingressHost:  ccd-admin-web-${SERVICE_FQDN}
       image: hmctspublic.azurecr.io/ccd/admin-web:pr-582-ff6134d-20230829130829
       environment:
         IDAM_ADMIN_WEB_SERVICE_KEY: ${ADMIN_S2S_KEY}
         IDAM_OAUTH2_AW_CLIENT_SECRET: ${ADMIN_WEB_IDAM_SECRET}
-        ADMINWEB_GET_DICTIONARY_URL: ${SERVICE_FQDN}-ccd-def-store/dictionary
-        ADMINWEB_IMPORT_URL: ${SERVICE_FQDN}-ccd-def-store/import
-        ADMINWEB_JURISDICTIONS_URL: ${SERVICE_FQDN}-ccd-def-store/api/data/jurisdictions
-        ADMINWEB_USER_ROLE_URL: ${SERVICE_FQDN}-ccd-def-store/api/user-role
-        ADMIN_ALL_USER_ROLES_URL: ${SERVICE_FQDN}-ccd-def-store/api/user-roles
-        ADMINWEB_CREATE_DEFINITION_URL: ${SERVICE_FQDN}-ccd-def-store/api/draft
-        ADMINWEB_UPDATE_DEFINITION_URL: ${SERVICE_FQDN}-ccd-def-store/api/draft/save
-        ADMINWEB_DELETE_DEFINITION_URL: ${SERVICE_FQDN}-ccd-def-store/api/draft
-        ADMINWEB_DEFINITIONS_URL: ${SERVICE_FQDN}-ccd-def-store/api/drafts
-        ADMINWEB_WHOAMI_URL: ${SERVICE_FQDN}-ccd-def-store/api/idam/profile
-        ADMINWEB_AUTHORIZATION_URL: ${SERVICE_FQDN}-ccd-def-store/api/idam/adminweb/authorization
-        ADMINWEB_IMPORT_AUDITS_URL: ${SERVICE_FQDN}-ccd-def-store/api/import-audits
-        ADMINWEB_ELASTIC_INDEX_URL: ${SERVICE_FQDN}-ccd-def-store/elastic-support/index
-        ADMINWEB_ELASTIC_CASE_TYPES_URL: ${SERVICE_FQDN}-ccd-def-store/elastic-support/case-types
-        ADMINWEB_GLOBAL_SEARCH_INDEX_URL: ${SERVICE_FQDN}-ccd-def-store/elastic-support/global-search/index
+        ADMINWEB_GET_DICTIONARY_URL: ccd-def-store-${SERVICE_FQDN}/dictionary
+        ADMINWEB_IMPORT_URL: ccd-def-store-${SERVICE_FQDN}/import
+        ADMINWEB_JURISDICTIONS_URL: ccd-def-store-${SERVICE_FQDN}/api/data/jurisdictions
+        ADMINWEB_USER_ROLE_URL: ccd-def-store-${SERVICE_FQDN}/api/user-role
+        ADMIN_ALL_USER_ROLES_URL: ccd-def-store-${SERVICE_FQDN}/api/user-roles
+        ADMINWEB_CREATE_DEFINITION_URL: ccd-def-store-${SERVICE_FQDN}/api/draft
+        ADMINWEB_UPDATE_DEFINITION_URL: ccd-def-store-${SERVICE_FQDN}/api/draft/save
+        ADMINWEB_DELETE_DEFINITION_URL: ccd-def-store-${SERVICE_FQDN}e/api/draft
+        ADMINWEB_DEFINITIONS_URL: ccd-def-store-${SERVICE_FQDN}/api/drafts
+        ADMINWEB_WHOAMI_URL: ccd-def-store-${SERVICE_FQDN}/api/idam/profile
+        ADMINWEB_AUTHORIZATION_URL: ccd-def-store-${SERVICE_FQDN}/api/idam/adminweb/authorization
+        ADMINWEB_IMPORT_AUDITS_URL: ccd-def-store-${SERVICE_FQDN}/api/import-audits
+        ADMINWEB_ELASTIC_INDEX_URL: ccd-def-store-${SERVICE_FQDN}/elastic-support/index
+        ADMINWEB_ELASTIC_CASE_TYPES_URL: ccd-def-store-${SERVICE_FQDN}/elastic-support/case-types
+        ADMINWEB_GLOBAL_SEARCH_INDEX_URL: ccd-def-store-${SERVICE_FQDN}/elastic-support/global-search/index
    
