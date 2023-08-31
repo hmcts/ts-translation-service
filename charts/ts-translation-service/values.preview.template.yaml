@@ -73,7 +73,7 @@ ccd:
       ingressHost: ccd-def-store-${SERVICE_FQDN}
       image: hmctspublic.azurecr.io/ccd/definition-store-api:pr-1386-f6ed51d-20230829104932
       environment:
-        TS_TRANSLATION_SERVICE_HOST: http://ts-translation-service-pr-226-java/dictionary
+        TS_TRANSLATION_SERVICE_HOST: http://ts-translation-service-pr-226-java
         ELASTIC_SEARCH_FAIL_ON_IMPORT: false
         IDAM_USER_URL: https://idam-web-public.aat.platform.hmcts.net
         IDAM_S2S_URL: http://rpe-service-auth-provider-aat.service.core-compute-aat.internal
