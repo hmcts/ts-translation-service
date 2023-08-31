@@ -31,7 +31,7 @@ ccd:
     definitionImporter:
       enabled: true
     userProfileImporter:
-      enabled: true
+      enabled: false
     ras:
       enabled: false
     postgresql:
@@ -86,12 +86,8 @@ ccd:
     image: hmctspublic.azurecr.io/ccd/definition-importer:latest
     definitionFilename: https://github.com/hmcts/ccd-test-definitions/raw/master/src/main/resources/uk/gov/hmcts/ccd/test_definitions/excel/BEFTA_Master_Definition.xlsx
     redirectUri: http://${SERVICE_NAME}-ccd-admin-web/oauth2redirect
-    environment:
-    secrets:
-      IMPORTER_USERNAME: ${IMPORT_USERNAME}
-        disabled: false
-      IMPORTER_PASSWORD: ${IMPORT_PWD}
-        disabled: false
+    definitions:
+      - https://github.com/hmcts/ccd-definition-store-api/raw/master/aat/src/resource/CCD_CNP_27.xlsx
     userRoles:
       - citizen
       - citizen
