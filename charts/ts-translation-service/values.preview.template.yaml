@@ -53,7 +53,7 @@ ccd:
       enabled: true
     adminWeb:
       enabled: true
-      
+
   global:
     ccdAdminWebIngress:  ccd-admin-web-${SERVICE_FQDN}
     idamApiUrl: https://idam-api.aat.platform.hmcts.net
@@ -67,11 +67,11 @@ ccd:
         postgresUsername: hmcts
         postgresPassword: hmcts
 
-    
+
   ccd-definition-store-api:
     java:
       ingressHost: ccd-def-store-${SERVICE_FQDN}
-      image: hmctspublic.azurecr.io/ccd/definition-store-api:pr-1386-f6ed51d-20230829104932
+      image: hmctspublic.azurecr.io/ccd/definition-store-api:pr-1386-c0d38c6-20230907123030
       environment:
         TS_TRANSLATION_SERVICE_HOST: http://ts-translation-service-pr-226-java
         ELASTIC_SEARCH_FAIL_ON_IMPORT: false
@@ -439,13 +439,13 @@ ccd:
       - ia_caseflags_profile
       - ia_caseflags_readonly_profile
       - citizen-profile
-       
+
   ccd-admin-web:
     nodejs:
       ingressHost:  ccd-admin-web-${SERVICE_FQDN}
-      image: hmctspublic.azurecr.io/ccd/admin-web:pr-582-ff6134d-20230829130829
+      image: hmctspublic.azurecr.io/ccd/admin-web:pr-582-931cf90-20230905134950
       environment:
         IDAM_ADMIN_WEB_SERVICE_KEY: ${ADMIN_S2S_KEY}
         IDAM_OAUTH2_AW_CLIENT_SECRET: ${ADMIN_WEB_IDAM_SECRET}
         ADMINWEB_GET_DICTIONARY_URL: http://ts-translation-service-pr-226-java/dictionary
-   
+
