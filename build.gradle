@@ -280,7 +280,7 @@ dependencies {
   implementation group: 'commons-fileupload', name: 'commons-fileupload', version: '1.5'
   implementation group: 'commons-io', name: 'commons-io', version: '2.11.0'
 
-  testImplementation (group: 'com.github.hmcts', name: 'ccd-test-definitions', version: '7.17.0') {
+  testImplementation (group: 'com.github.hmcts', name: 'ccd-test-definitions', version: '7.19.12') {
     exclude group: 'io.rest-assured', module : 'rest-assured'
     exclude group: 'com.github.hmcts.befta-fw', module: 'befta-fw'
   }
