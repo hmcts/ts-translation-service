@@ -1,4 +1,4 @@
-insert into translation_upload values
+                                                      insert into translation_upload values
   (1, '2022-05-06 11:12:13.000000', 'IdamUser1');
 
 insert into dictionary values

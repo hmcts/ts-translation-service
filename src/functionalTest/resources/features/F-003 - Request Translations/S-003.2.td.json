@@ -20,7 +20,7 @@
     "_extends_": "Common_200_Response",
     "body": {
       "translations": {
-        "TEST-F003 English phrase with translation": "Welsh phrase one"
+        "TEST-F003 English phrase with translation": {"translation":"Welsh phrase one"}
       }
     }
   }

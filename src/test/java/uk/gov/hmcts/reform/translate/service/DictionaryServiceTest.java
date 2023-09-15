@@ -17,6 +17,7 @@ import uk.gov.hmcts.reform.translate.errorhandling.RequestErrorException;
 import uk.gov.hmcts.reform.translate.errorhandling.RoleMissingException;
 import uk.gov.hmcts.reform.translate.helper.DictionaryMapper;
 import uk.gov.hmcts.reform.translate.model.Dictionary;
+import uk.gov.hmcts.reform.translate.model.Translation;
 import uk.gov.hmcts.reform.translate.repository.DictionaryRepository;
 import uk.gov.hmcts.reform.translate.repository.TranslationUploadRepository;
 import uk.gov.hmcts.reform.translate.security.SecurityUtils;
@@ -90,14 +91,14 @@ public class DictionaryServiceTest {
 
         @Test
         void shouldReturnDictionaryContents() {
-            Map<String, String> expectedMapKeysAndValues = new HashMap<>();
+            Map<String, Translation> expectedMap = new HashMap<>();
 
-            IntStream.range(1, 3).forEach(i -> expectedMapKeysAndValues.put("english" + i, "translated" + i));
+            IntStream.range(1, 3).forEach(i -> expectedMap.put("english" + i, new Translation("translated" + i)));
 
-            var dictionaryEntities = expectedMapKeysAndValues.entrySet().stream()
+            var dictionaryEntities = expectedMap.entrySet().stream()
                 .map(es -> createDictionaryEntity(
                     es.getKey(),
-                    es.getValue()
+                    es.getValue().getTranslation()
                 ))
                 .toArray(DictionaryEntity[]::new);
 
@@ -106,19 +107,19 @@ public class DictionaryServiceTest {
             given(dictionaryRepository.findAll()).willReturn(repositoryResults);
 
             assertTrue(dictionaryService.getDictionaryContents().entrySet()
-                           .containsAll(expectedMapKeysAndValues.entrySet()));
+                           .containsAll(expectedMap.entrySet()));
         }
 
         @Test
         void shouldReturnDictionaryContentsTranslationPhraseIsNull() {
-            Map<String, String> expectedMapKeysAndValues = new HashMap<>();
+            Map<String, Translation> expectedMap = new HashMap<>();
 
-            IntStream.range(1, 3).forEach(i -> expectedMapKeysAndValues.put("english" + i, null));
+            IntStream.range(1, 3).forEach(i -> expectedMap.put("english" + i, new Translation("")));
 
-            var dictionaryEntities = expectedMapKeysAndValues.entrySet().stream()
+            var dictionaryEntities = expectedMap.entrySet().stream()
                 .map(es -> createDictionaryEntity(
                     es.getKey(),
-                    es.getValue()
+                    es.getValue().getTranslation()
                 ))
                 .toArray(DictionaryEntity[]::new);
 
@@ -126,10 +127,10 @@ public class DictionaryServiceTest {
             given(repositoryResults.spliterator()).willReturn(spliterator);
             given(dictionaryRepository.findAll()).willReturn(repositoryResults);
 
-            Map<String, String> dictionaryContents = dictionaryService.getDictionaryContents();
+            Map<String, Translation> dictionaryContents = dictionaryService.getDictionaryContents();
             assertTrue(dictionaryContents.keySet()
-                           .containsAll(expectedMapKeysAndValues.keySet()));
-            assertTrue(dictionaryContents.values()
+                           .containsAll(expectedMap.keySet()));
+            assertTrue(dictionaryContents.values().stream().map(Translation::getTranslation).toList()
                            .containsAll(List.of("", "", "")));
         }
 
@@ -151,12 +152,9 @@ public class DictionaryServiceTest {
                 () -> dictionaryService.getDictionaryContents()
             );
 
-            assertEquals(
-                String.format("Duplicate key %s (attempted merging values %s and %s)",
-                              englishPhrase, translatedPhrase, translatedPhrase
-                ),
-                illegalStateException.getMessage()
-            );
+            assertTrue(illegalStateException.getMessage().startsWith(
+                String.format("Duplicate key %s (attempted merging values", englishPhrase)
+            ));
         }
 
         @Test
@@ -195,9 +193,9 @@ public class DictionaryServiceTest {
             final DictionaryEntity dictionaryEntity = createDictionaryEntity(THE_QUICK_FOX_PHRASE, "translated");
             doReturn(Optional.of(dictionaryEntity)).when(dictionaryRepository).findByEnglishPhrase(anyString());
 
-            final String translation = dictionaryService.getTranslation(THE_QUICK_FOX_PHRASE);
+            final Translation translation = dictionaryService.getTranslation(THE_QUICK_FOX_PHRASE);
 
-            assertThat(translation)
+            assertThat(translation.getTranslation())
                 .isNotNull()
                 .isEqualTo("translated");
 
@@ -210,9 +208,9 @@ public class DictionaryServiceTest {
             final DictionaryEntity dictionaryEntity = createDictionaryEntity(THE_QUICK_FOX_PHRASE, null);
             doReturn(Optional.of(dictionaryEntity)).when(dictionaryRepository).findByEnglishPhrase(anyString());
 
-            final String translation = dictionaryService.getTranslation(THE_QUICK_FOX_PHRASE);
+            final Translation translation = dictionaryService.getTranslation(THE_QUICK_FOX_PHRASE);
 
-            assertThat(translation)
+            assertThat(translation.getTranslation())
                 .isNotNull()
                 .isEqualTo(THE_QUICK_FOX_PHRASE);
 
@@ -226,9 +224,9 @@ public class DictionaryServiceTest {
             doReturn(Optional.empty()).when(dictionaryRepository).findByEnglishPhrase(anyString());
             doReturn(dictionaryEntity).when(dictionaryRepository).saveAndFlush(dictionaryEntity);
 
-            final String translation = dictionaryService.getTranslation(THE_QUICK_FOX_PHRASE);
+            final Translation translation = dictionaryService.getTranslation(THE_QUICK_FOX_PHRASE);
 
-            assertThat(translation)
+            assertThat(translation.getTranslation())
                 .isNotNull()
                 .isEqualTo(THE_QUICK_FOX_PHRASE);
 
@@ -243,10 +241,10 @@ public class DictionaryServiceTest {
             final String englishPhraseWithNoTranslation = "English phrase with no translation";
             final String englishPhraseNotInDictionary = "English phrase not in dictionary";
 
-            final Map<String, String> expectedTranslations =
-                Map.of(englishPhrase, "Translated English phrase",
-                       englishPhraseWithNoTranslation, englishPhraseWithNoTranslation,
-                       englishPhraseNotInDictionary, englishPhraseNotInDictionary
+            final Map<String, Translation> expectedTranslations =
+                Map.of(englishPhrase, new Translation("Translated English phrase"),
+                       englishPhraseWithNoTranslation, new Translation(englishPhraseWithNoTranslation),
+                       englishPhraseNotInDictionary, new Translation(englishPhraseNotInDictionary)
                 );
 
             final DictionaryEntity entity1 = createDictionaryEntity(englishPhrase, "Translated English phrase");
@@ -260,14 +258,14 @@ public class DictionaryServiceTest {
                 .findByEnglishPhrase(englishPhraseNotInDictionary);
             doReturn(entity3).when(dictionaryRepository).saveAndFlush(entity3);
 
-            final Set<String> translationRequestPhrases = Set.of(
+            final Set<String> requestPhrases = Set.of(
                 englishPhrase,
                 englishPhraseWithNoTranslation,
                 englishPhraseNotInDictionary
             );
 
             // WHEN
-            final Map<String, String> actualTranslations = dictionaryService.getTranslations(translationRequestPhrases);
+            final Map<String, Translation> actualTranslations = dictionaryService.getTranslations(requestPhrases);
 
             // THEN
             assertThat(actualTranslations)
@@ -535,15 +533,16 @@ public class DictionaryServiceTest {
 
 
         protected static Dictionary getDictionaryRequestWithTranslationPhrases(int count) {
-            final Map<String, String> expectedMapKeysAndValues = new HashMap<>();
-            IntStream.range(1, count + 1).forEach(i -> expectedMapKeysAndValues.put("english_" + i, "translated_" + i));
-            return new Dictionary(expectedMapKeysAndValues);
+            final Map<String, Translation> expectedMap = new HashMap<>();
+            IntStream.range(1, count + 1)
+                .forEach(i -> expectedMap.put("english_" + i, new Translation("translated_" + i)));
+            return new Dictionary(expectedMap);
         }
 
         protected static Dictionary getDictionaryRequestWithoutTranslationPhrases(int count) {
-            final Map<String, String> expectedMapKeysAndValues = new HashMap<>();
-            IntStream.range(1, count + 1).forEach(i -> expectedMapKeysAndValues.put("english_" + i, null));
-            return new Dictionary(expectedMapKeysAndValues);
+            final Map<String, Translation> expectedMap = new HashMap<>();
+            IntStream.range(1, count + 1).forEach(i -> expectedMap.put("english_" + i, new Translation("")));
+            return new Dictionary(expectedMap);
         }
 
         private UserInfo getUserInfoWithManageTranslationsRole() {

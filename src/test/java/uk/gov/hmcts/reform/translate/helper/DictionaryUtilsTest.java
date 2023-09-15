@@ -4,6 +4,7 @@ import lombok.val;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import uk.gov.hmcts.reform.translate.model.Dictionary;
+import uk.gov.hmcts.reform.translate.model.Translation;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -37,13 +38,13 @@ class DictionaryUtilsTest {
         dictionaryRequest.getTranslations()
             .entrySet()
             .forEach(entry -> {
-                DictionaryUtils.hasTranslationPhrase(entry);
+                assertFalse(DictionaryUtils.hasTranslationPhrase(entry));
             });
     }
 
     private Dictionary getDictionaryRequestWithoutABody(int from, int to) {
-        final Map<String, String> expectedMapKeysAndValues = new HashMap<>();
-        IntStream.range(from, to).forEach(i -> expectedMapKeysAndValues.put("english_" + i, null));
-        return new Dictionary(expectedMapKeysAndValues);
+        final Map<String, Translation> expectedMap = new HashMap<>();
+        IntStream.range(from, to).forEach(i -> expectedMap.put("english_" + i, new Translation("")));
+        return new Dictionary(expectedMap);
     }
 }

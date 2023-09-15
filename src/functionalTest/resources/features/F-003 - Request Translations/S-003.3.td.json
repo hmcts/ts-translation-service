@@ -20,7 +20,7 @@
     "_extends_": "Common_200_Response",
     "body": {
       "translations": {
-        "TEST-F003 English phrase without translation": "TEST-F003 English phrase without translation"
+        "TEST-F003 English phrase without translation": {"translation":"TEST-F003 English phrase without translation"}
       }
     }
   }

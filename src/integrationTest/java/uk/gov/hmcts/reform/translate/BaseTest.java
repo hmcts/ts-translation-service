@@ -48,6 +48,7 @@ public abstract class BaseTest {
     public static final String GET_DICTIONARY_TEST_PHRASE_1 = "English Phrase 1";
     public static final String GET_DICTIONARY_TEST_PHRASE_2 = "English Phrase 2";
     public static final String GET_DICTIONARY_TEST_PHRASE_2_TRANSLATION = "Translated Phrase 2";
+    public static final String GET_DICTIONARY_TEST_PHRASE_3_TRANSLATION = "Translated Phrase 1";
 
     @Value("${wiremock.server.port}")
     protected Integer wiremockPort;

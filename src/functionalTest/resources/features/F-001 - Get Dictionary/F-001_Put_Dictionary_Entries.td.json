@@ -15,9 +15,9 @@
     "_extends_": "Common_Request",
     "body": {
       "translations": {
-        "TEST-F001-EnglishPhrase1": "TEST-F001-WelshPhrase1",
-        "TEST-F001-EnglishPhrase2": "TEST-F001-WelshPhrase2",
-        "TEST-F001-EnglishPhrase3": "TEST-F001-WelshPhrase3"
+        "TEST-F001-EnglishPhrase1": {"translation":"TEST-F001-WelshPhrase1"},
+        "TEST-F001-EnglishPhrase2": {"translation":"TEST-F001-WelshPhrase2"},
+        "TEST-F001-EnglishPhrase3": {"translation":"TEST-F001-WelshPhrase3"}
       }
     }
   },
