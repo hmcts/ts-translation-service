@@ -3,7 +3,6 @@ package uk.gov.hmcts.reform.translate.model;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.util.Set;
@@ -14,7 +13,6 @@ import static uk.gov.hmcts.reform.translate.errorhandling.BadRequestError.BAD_SC
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
 public class TranslationsRequest {
 
     @Schema(description = "A set of phrases for which translations may be provided.",

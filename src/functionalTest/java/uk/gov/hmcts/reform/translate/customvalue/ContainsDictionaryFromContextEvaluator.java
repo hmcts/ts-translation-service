@@ -26,8 +26,8 @@ public class ContainsDictionaryFromContextEvaluator implements CustomValueEvalua
             }
 
             @SuppressWarnings("unchecked")
-            final Map<String, String> expectedTranslations =
-                (Map<String, String>) ReflectionUtils.deepGetFieldInObject(scenarioContext, contextPath);
+            final Map<String, Object> expectedTranslations =
+                (Map<String, Object>) ReflectionUtils.deepGetFieldInObject(scenarioContext, contextPath);
 
             return EvaluatorUtils.calculateDictionaryFromActualResponseAndExpectedTranslations(
                 scenarioContext,

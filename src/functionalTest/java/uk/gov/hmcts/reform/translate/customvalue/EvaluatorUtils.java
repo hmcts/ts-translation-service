@@ -2,11 +2,16 @@ package uk.gov.hmcts.reform.translate.customvalue;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.util.CollectionUtils;
+
 import uk.gov.hmcts.befta.exception.FunctionalTestException;
 import uk.gov.hmcts.befta.player.BackEndFunctionalTestScenarioContext;
+import uk.gov.hmcts.befta.util.BeftaUtils;
 import uk.gov.hmcts.befta.util.ReflectionUtils;
+import uk.gov.hmcts.reform.translate.model.Translation;
 
+import java.util.Collections;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static uk.gov.hmcts.reform.translate.service.DictionaryService.TEST_PHRASES_START_WITH;
 
@@ -16,16 +21,17 @@ public final class EvaluatorUtils {
     private EvaluatorUtils() {
     }
 
-    public static Map<String, String> calculateDictionaryFromActualResponseAndExpectedTranslations(
+    @SuppressWarnings("unchecked")
+    public static Map<String, Object> calculateDictionaryFromActualResponseAndExpectedTranslations(
         BackEndFunctionalTestScenarioContext scenarioContext,
-        Map<String, String> expectedTranslations) {
+        Map<String, Object> expectedTranslations) {
 
         if (CollectionUtils.isEmpty(expectedTranslations)) {
             // throw a more useful error message if generated/found expected-translations list is empty
             throw new FunctionalTestException("The set of expected translations to search for cannot be empty.");
         }
 
-        final Map<String, String> actualTranslations = extractMapFromContext(
+        final Map<String, Object> actualTranslations = extractMapFromContext(
             scenarioContext,
             "testData.actualResponse.body.translations"
         );
@@ -33,18 +39,24 @@ public final class EvaluatorUtils {
         // if 'actual-response' contains all 'expected-translations':
         //    then return actual-response translations to ensure BEFTA assert passes
         //    otherwise return only expected-translations to cause befta assert failure
-        return actualTranslations.entrySet().containsAll(expectedTranslations.entrySet())
-            ? actualTranslations : expectedTranslations;
+        boolean matches = createComparableTranslation(actualTranslations).entrySet()
+            .containsAll(createComparableTranslation(expectedTranslations).entrySet());
+
+        if (matches) {
+            return actualTranslations;
+        }
+        BeftaUtils.defaultLog("Failed to match");
+        return expectedTranslations;
     }
 
-    public static Map<String, String> extractMapFromContext(
+    public static Map<String, Object> extractMapFromContext(
         BackEndFunctionalTestScenarioContext scenarioContext,
         String fieldPath) {
 
         try {
             @SuppressWarnings("unchecked")
-            final Map<String, String> extractedMap
-                = (Map<String, String>) ReflectionUtils.deepGetFieldInObject(scenarioContext, fieldPath);
+            final Map<String, Object> extractedMap
+                = (Map<String, Object>) ReflectionUtils.deepGetFieldInObject(scenarioContext, fieldPath);
 
             return extractedMap;
 
@@ -71,5 +83,22 @@ public final class EvaluatorUtils {
     public static String generateTestPhrase(String marker) {
         final int count = 10;
         return String.format("%s%s-%s", TEST_PHRASES_START_WITH, marker, RandomStringUtils.randomAlphabetic(count));
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Map<String,String> createComparableTranslation(Map<String,Object> input) {
+
+        return input.entrySet().stream().map(e -> {
+            String result = "";
+            if (e.getValue() instanceof Translation tran) {
+                result += tran.getTranslation();
+            } else if (e.getValue() instanceof String str) {
+                result += str;
+            } else if (e.getValue() instanceof Map map) {
+                result += map.getOrDefault("translation","");
+            }
+            return Collections.singletonMap(e.getKey(), result);
+        }).flatMap(m -> m.entrySet().stream())
+        .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 }

@@ -3,6 +3,7 @@ package uk.gov.hmcts.reform.translate.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.vavr.control.Either;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.assertj.vavr.api.VavrAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -21,13 +22,13 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import uk.gov.hmcts.reform.translate.BaseTest;
 import uk.gov.hmcts.reform.translate.model.Dictionary;
+import uk.gov.hmcts.reform.translate.model.Translation;
 import uk.gov.hmcts.reform.translate.repository.DictionaryRepository;
 import uk.gov.hmcts.reform.translate.repository.JpaDictionaryRepository;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -90,16 +91,18 @@ public class DictionaryControllerIT extends BaseTest {
         @Test
         @Sql(scripts = {DELETE_TRANSLATION_TABLES_SCRIPT, GET_TRANSLATION_TABLES_SCRIPT})
         void shouldReturn200WhenDictionaryReturnsResults() throws Exception {
-            var expectedDictionary = new LinkedHashMap<String, String>();
-
-            expectedDictionary.put("English Phrase 1", "");
-            expectedDictionary.put("English Phrase 2", "Translated Phrase 2");
-            expectedDictionary.put("English Phrase 3", "Translated Phrase 1");
 
             mockMvc.perform(get(DICTIONARY_URL)
                                 .contentType(APPLICATION_JSON_VALUE))
                 .andExpect(status().is(200))
-                .andExpect(jsonPath("$.translations", equalTo(expectedDictionary)))
+                .andExpect(jsonPath("$.translations['English Phrase 2'].translation",
+                                    equalTo(GET_DICTIONARY_TEST_PHRASE_2_TRANSLATION)))
+                .andExpect(jsonPath("$.translations['English Phrase 3'].translation",
+                                    equalTo(GET_DICTIONARY_TEST_PHRASE_3_TRANSLATION)))
+                .andExpect(jsonPath("$.translations['English Phrase 3'].yes",
+                                    equalTo("Yes Translation")))
+                .andExpect(jsonPath("$.translations['English Phrase 3'].no",
+                                    equalTo("No Translation")))
                 .andReturn();
         }
 
@@ -131,14 +134,18 @@ public class DictionaryControllerIT extends BaseTest {
         @Test
         @Sql(scripts = {DELETE_TRANSLATION_TABLES_SCRIPT, GET_TRANSLATION_TABLES_SCRIPT})
         void shouldReturn200WhenLegalRequestIsSubmitted() throws Exception {
-            final Map<String, String> expectedTranslations = Map.of("English Phrase 2", "Translated Phrase 2");
 
             mockMvc.perform(post(TRANSLATIONS_URL)
                                 .contentType(APPLICATION_JSON_VALUE)
                                 .accept(APPLICATION_JSON_VALUE)
-                                .content("{\"phrases\": [\"English Phrase 2\"]}"))
+                                .content("{\"phrases\": [\"English Phrase 3\"]}"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.translations", equalTo(expectedTranslations)));
+                .andExpect(jsonPath("$.translations['English Phrase 3'].translation",
+                                    equalTo(GET_DICTIONARY_TEST_PHRASE_3_TRANSLATION)))
+                .andExpect(jsonPath("$.translations['English Phrase 3'].yes",
+                                    equalTo("Yes Translation")))
+                .andExpect(jsonPath("$.translations['English Phrase 3'].no",
+                                    equalTo("No Translation")));
         }
 
         @Test
@@ -233,16 +240,56 @@ public class DictionaryControllerIT extends BaseTest {
             mockMvc.perform(put(DICTIONARY_URL)
                                 .header(SERVICE_AUTHORIZATION, serviceJwtXuiWeb)
                                 .contentType(APPLICATION_JSON_VALUE)
-                                .content(
-                                    objectMapper.writeValueAsString(getDictionaryRequestsWithTranslationPhrases(2))))
+                                .content(objectMapper.writeValueAsString(getDictionaryRequests(
+                                    2,
+                                    new Translation("translation")
+                                ))))
                 .andExpect(status().is(201))
                 .andReturn();
 
             // THEN
-            val versionResult1 = assertDictionaryEntityWithTranslationPhrases("english_1");
-            val versionResult2 = assertDictionaryEntityWithTranslationPhrases("english_2");
-            // NB: version numbers should be equal across single upload
-            assertEquals(versionResult1, versionResult2);
+            assertDictionaryEntity(
+                "english_1",
+                new Translation("translation_1"),
+                1
+            );
+            assertDictionaryEntity(
+                "english_2",
+                new Translation("translation_2"),
+                1
+            );
+        }
+
+        @Test
+        @Sql(scripts = {DELETE_TRANSLATION_TABLES_SCRIPT})
+        void shouldReturn201ForPutDictionaryForCreatingNewYesOrNoRecords() throws Exception {
+
+            // GIVEN
+            stubUserInfo(MANAGE_TRANSLATIONS_ROLE);
+
+            // WHEN / THEN
+            mockMvc.perform(put(DICTIONARY_URL)
+                                .header(SERVICE_AUTHORIZATION, serviceJwtXuiWeb)
+                                .contentType(APPLICATION_JSON_VALUE)
+                                .content(
+                                    objectMapper.writeValueAsString(getDictionaryRequests(
+                                        2,
+                                        new Translation("translation", true, "yes", "no")
+                                    ))))
+                .andExpect(status().is(201))
+                .andReturn();
+
+            // THEN
+            assertDictionaryEntity(
+                "english_1",
+                new Translation("translation_1", true, "yes_1", "no_1"),
+                1
+            );
+            assertDictionaryEntity(
+                "english_2",
+                new Translation("translation_2", true, "yes_2", "no_2"),
+                1
+            );
         }
 
         @Test
@@ -257,15 +304,99 @@ public class DictionaryControllerIT extends BaseTest {
                                 .header(SERVICE_AUTHORIZATION, serviceJwtXuiWeb)
                                 .contentType(APPLICATION_JSON_VALUE)
                                 .content(
-                                    objectMapper.writeValueAsString(getDictionaryRequestsWithTranslationPhrases(2))))
+                                    objectMapper.writeValueAsString(getDictionaryRequests(
+                                        2,
+                                            new Translation("translation")
+                                        ))))
                 .andExpect(status().is(201))
                 .andReturn();
 
             // THEN
-            val versionResult1 = assertDictionaryEntityWithTranslationPhrases("english_1");
-            val versionResult2 = assertDictionaryEntityWithTranslationPhrases("english_2");
-            // NB: version numbers should be equal across single upload
-            assertEquals(versionResult1, versionResult2);
+            assertDictionaryEntity(
+                "english_1",
+                new Translation("translation_1"),
+                2
+            );
+            assertDictionaryEntity(
+                "english_2",
+                new Translation("translation_2"),
+                2
+            );
+        }
+
+        @Test
+        @Sql(scripts = {DELETE_TRANSLATION_TABLES_SCRIPT, PUT_CREATE_ENGLISH_PHRASES_WITH_TRANSLATIONS_SCRIPT})
+        void shouldReturn201ForPutDictionaryWhenUpdatingExistingRecordsWithYesOrNo() throws Exception {
+
+            // GIVEN
+            stubUserInfo(MANAGE_TRANSLATIONS_ROLE);
+
+            // WHEN / THEN
+            mockMvc.perform(put(DICTIONARY_URL)
+                                .header(SERVICE_AUTHORIZATION, serviceJwtXuiWeb)
+                                .contentType(APPLICATION_JSON_VALUE)
+                                .content(
+                                    objectMapper.writeValueAsString(getDictionaryRequests(
+                                        2,
+                                        new Translation("translation", true, "yes", "no")
+                                    ))))
+                .andExpect(status().is(201))
+                .andReturn();
+
+            // THEN
+            assertDictionaryEntity(
+                "english_1",
+                new Translation("translation_1", true, "yes_1", "no_1"),
+                2
+            );
+            assertDictionaryEntity(
+                "english_2",
+                new Translation("translation_2", true, "yes_2", "no_2"),
+                2
+            );
+        }
+
+        @Test
+        @Sql(scripts = {DELETE_TRANSLATION_TABLES_SCRIPT, PUT_CREATE_ENGLISH_PHRASES_WITH_TRANSLATIONS_SCRIPT})
+        void shouldReturn201ForPutDictionaryForUpdatingExistingRecordsWithOnlyYesOrNo() throws Exception {
+
+            // GIVEN
+            stubUserInfo(MANAGE_TRANSLATIONS_ROLE);
+
+            // WHEN / THEN
+            mockMvc.perform(put(DICTIONARY_URL)
+                                .header(SERVICE_AUTHORIZATION, serviceJwtXuiWeb)
+                                .contentType(APPLICATION_JSON_VALUE)
+                                .content(
+                                    objectMapper.writeValueAsString(getDictionaryRequests(
+                                        4,
+                                        new Translation("", true, null, null)
+                                    ))))
+                .andExpect(status().is(201))
+                .andReturn();
+
+            // THEN // Mark existing translation as Yes Or No
+            assertDictionaryEntity(
+                "english_1",
+                new Translation("translated_1", true, null, null),
+                1
+            );
+            assertDictionaryEntity(
+                "english_2",
+                new Translation("translated_2", true, null, null),
+                1
+            );
+            // THEN // Create new Yes Or No Entries
+            assertDictionaryEntity(
+                "english_3",
+                new Translation("", true, null, null),
+                null
+            );
+            assertDictionaryEntity(
+                "english_4",
+                new Translation("", true, null, null),
+                null
+            );
         }
 
         @Test
@@ -280,19 +411,35 @@ public class DictionaryControllerIT extends BaseTest {
                                 .header(SERVICE_AUTHORIZATION, serviceJwtXuiWeb)
                                 .contentType(APPLICATION_JSON_VALUE)
                                 .content(
-                                    objectMapper.writeValueAsString(getDictionaryRequestsWithTranslationPhrases(4))))
+                                    objectMapper.writeValueAsString(getDictionaryRequests(
+                                        4,
+                                        new Translation("translation")
+                                        ))))
                 .andExpect(status().is(201))
                 .andReturn();
 
-            // THEN
-            val versionResult1 = assertDictionaryEntityWithTranslationPhrases("english_1"); // UPDATED (in SQL file)
-            val versionResult2 = assertDictionaryEntityWithTranslationPhrases("english_2"); // UPDATED (in SQL file)
-            val versionResult3 = assertDictionaryEntityWithTranslationPhrases("english_3"); // NEW
-            val versionResult4 = assertDictionaryEntityWithTranslationPhrases("english_4"); // NEW
-            // NB: version numbers should be equal across single upload
-            assertEquals(versionResult1, versionResult2);
-            assertEquals(versionResult2, versionResult3);
-            assertEquals(versionResult3, versionResult4);
+            // THEN // UPDATED (in SQL file)
+            assertDictionaryEntity(
+                "english_1",
+                new Translation("translation_1"),
+                2
+            );
+            assertDictionaryEntity(
+                "english_2",
+                new Translation("translation_2"),
+                2
+            );
+            // THEN // NEW
+            assertDictionaryEntity(
+                "english_3",
+                new Translation("translation_3"),
+                2
+            );
+            assertDictionaryEntity(
+                "english_4",
+                new Translation("translation_4"),
+                2
+            );
         }
 
         // load-translations user
@@ -308,15 +455,18 @@ public class DictionaryControllerIT extends BaseTest {
                                 .header(SERVICE_AUTHORIZATION, serviceJwtXuiWeb)
                                 .contentType(APPLICATION_JSON_VALUE)
                                 .content(objectMapper.writeValueAsString(
-                                    getDictionaryRequestsWithoutTranslationPhrases(3)))
+                                    getDictionaryRequests(
+                                        3,
+                                        new Translation("")
+                                    )))
                 )
                 .andExpect(status().is(201))
                 .andReturn();
 
             // THEN
-            assertDictionaryEntityWithOutTranslationPhrases("english_1");
-            assertDictionaryEntityWithOutTranslationPhrases("english_2");
-            assertDictionaryEntityWithOutTranslationPhrases("english_3");
+            assertDictionaryEntity("english_1", new Translation(""), null);
+            assertDictionaryEntity("english_2", new Translation(""), null);
+            assertDictionaryEntity("english_3", new Translation(""), null);
         }
 
         @Test
@@ -332,15 +482,14 @@ public class DictionaryControllerIT extends BaseTest {
                                 .contentType(APPLICATION_JSON_VALUE)
                                 .content(
                                     objectMapper.writeValueAsString(
-                                        getDictionaryRequestsWithoutTranslationPhrases(2)))
+                                        getDictionaryRequests(2, new Translation(""))))
                 )
                 .andExpect(status().is(201))
                 .andReturn();
 
-            // THEN
-            // No action taken for existing phrases, verify previous translations are preserved.
-            assertDictionaryEntityWithTranslationPhrases("english_1"); // NO CHANGE (in SQL file)
-            assertDictionaryEntityWithTranslationPhrases("english_2"); // NO CHANGE (in SQL file)
+            // THEN // No action taken for existing phrases, verify previous translations are preserved.
+            assertDictionaryEntity("english_1", new Translation("translated_1"), 1);
+            assertDictionaryEntity("english_2", new Translation("translated_2"), 1);
         }
 
         // 400 errors
@@ -356,7 +505,30 @@ public class DictionaryControllerIT extends BaseTest {
                                 .header(SERVICE_AUTHORIZATION, serviceJwtXuiWeb)
                                 .contentType(APPLICATION_JSON_VALUE)
                                 .content(
-                                    objectMapper.writeValueAsString(getDictionaryRequestsWithTranslationPhrases(1))))
+                                    objectMapper.writeValueAsString(getDictionaryRequests(
+                                        1,
+                                        new Translation("expected to fail")
+                                    ))))
+                .andExpect(status().is(400))
+                .andReturn();
+        }
+
+        @Test
+        @DisplayName("Incorrect payload: yes no not permitted without `manage-translations` role")
+        void shouldReturn400ForPutDictionaryForIdamUserWithLoadTranslationWithIncorrectYesNoPayLoad() throws Exception {
+
+            // GIVEN
+            stubUserInfo(LOAD_TRANSLATIONS_ROLE);
+
+            // WHEN / THEN
+            mockMvc.perform(put(DICTIONARY_URL)
+                                .header(SERVICE_AUTHORIZATION, serviceJwtXuiWeb)
+                                .contentType(APPLICATION_JSON_VALUE)
+                                .content(
+                                    objectMapper.writeValueAsString(getDictionaryRequests(
+                                        1,
+                                        new Translation("", true, "bad yes", "bad no")
+                                    ))))
                 .andExpect(status().is(400))
                 .andReturn();
         }
@@ -373,7 +545,10 @@ public class DictionaryControllerIT extends BaseTest {
                                 .header(SERVICE_AUTHORIZATION, serviceJwtDefinition)
                                 .contentType(APPLICATION_JSON_VALUE)
                                 .content(
-                                    objectMapper.writeValueAsString(getDictionaryRequestsWithTranslationPhrases(1))))
+                                    objectMapper.writeValueAsString(getDictionaryRequests(
+                                        1,
+                                        new Translation("expected to fail")
+                                    ))))
                 .andExpect(status().is(400))
                 .andReturn();
         }
@@ -386,7 +561,10 @@ public class DictionaryControllerIT extends BaseTest {
             mockMvc.perform(put(DICTIONARY_URL)
                                 .contentType(APPLICATION_JSON_VALUE)
                                 .content(
-                                    objectMapper.writeValueAsString(getDictionaryRequestsWithTranslationPhrases(1))))
+                                    objectMapper.writeValueAsString(getDictionaryRequests(
+                                        1,
+                                        new Translation("expected to fail")
+                                    ))))
                 .andExpect(status().is(400))
                 .andReturn();
         }
@@ -428,34 +606,39 @@ public class DictionaryControllerIT extends BaseTest {
             );
     }
 
-    private Dictionary getDictionaryRequestsWithTranslationPhrases(int count) {
-        final Map<String, String> expectedMapKeysAndValues = new HashMap<>();
-        IntStream.range(1, count + 1).forEach(i -> expectedMapKeysAndValues.put("english_" + i, "translated_" + i));
-        return new Dictionary(expectedMapKeysAndValues);
+    private Dictionary getDictionaryRequests(int count, Translation toMatch) {
+        final Map<String, Translation> expectedMap = new HashMap<>();
+        IntStream.range(1, count + 1).forEach(i -> {
+            String text = StringUtils.isBlank(toMatch.getTranslation()) ? "" : toMatch.getTranslation() + "_" + i;
+            String yesText = StringUtils.isBlank(toMatch.getYes()) ? "" : toMatch.getYes() + "_" + i;
+            String noText = StringUtils.isBlank(toMatch.getNo()) ? "" : toMatch.getNo() + "_" + i;
+            Translation translation = new Translation(text, toMatch.getYesOrNo(), yesText, noText);
+            expectedMap.put("english_" + i, translation);
+        });
+        return new Dictionary(expectedMap);
     }
 
-    private Dictionary getDictionaryRequestsWithoutTranslationPhrases(int count) {
-        final Map<String, String> expectedMapKeysAndValues = new HashMap<>();
-        IntStream.range(1, count + 1).forEach(i -> expectedMapKeysAndValues.put("english_" + i, null));
-        return new Dictionary(expectedMapKeysAndValues);
-    }
-
-    private Long assertDictionaryEntityWithTranslationPhrases(String englishPhrase) {
+    private Long assertDictionaryEntity(String englishPhrase, Translation toMatch, Integer versionMatch) {
         val dictionaryEntityOptional = dictionaryRepository.findByEnglishPhrase(englishPhrase);
         assertTrue(dictionaryEntityOptional.isPresent());
         val dictionaryEntity = dictionaryEntityOptional.get();
-        assertNotNull(dictionaryEntity.getTranslationUpload());
-        val version = dictionaryEntity.getTranslationUpload().getVersion();
-        assertNotNull(version);
-        assertNotNull(dictionaryEntity.getTranslationPhrase());
-        return version;
+        assertEquals(
+            toMatch.getTranslation(),
+            StringUtils.getIfEmpty(dictionaryEntity.getTranslationPhrase(), () -> "")
+        );
+        assertEquals(toMatch.isYesOrNo(), dictionaryEntity.isYesOrNo());
+        assertEquals(toMatch.getYes(), dictionaryEntity.getYes());
+        assertEquals(toMatch.getNo(), dictionaryEntity.getNo());
+
+        if (versionMatch != null) {
+            val version = dictionaryEntity.getTranslationUpload().getVersion();
+            assertNotNull(version);
+            assertEquals(versionMatch.intValue(), version.intValue());
+            return version;
+        } else {
+            assertNull(dictionaryEntity.getTranslationUpload());
+            return null;
+        }
     }
 
-
-    private void assertDictionaryEntityWithOutTranslationPhrases(String englishPhrase) {
-        val dictionaryEntity = dictionaryRepository.findByEnglishPhrase(englishPhrase);
-        assertTrue(dictionaryEntity.isPresent());
-        assertNull(dictionaryEntity.get().getTranslationUpload());
-        assertNull(dictionaryEntity.get().getTranslationPhrase());
-    }
 }

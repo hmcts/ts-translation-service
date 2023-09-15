@@ -33,4 +33,17 @@ public class DictionaryEntity {
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "translation_version", referencedColumnName = "version")
     private TranslationUploadEntity translationUpload;
+
+    @Column(name = "yes_or_no")
+    private Boolean yesOrNo;
+
+    @Column(name = "yes")
+    private String yes;
+
+    @Column(name = "no")
+    private String no;
+
+    public boolean isYesOrNo() {
+        return yesOrNo == null ? false : yesOrNo.booleanValue();
+    }
 }

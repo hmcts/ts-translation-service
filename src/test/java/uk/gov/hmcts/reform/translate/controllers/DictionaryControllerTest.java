@@ -9,6 +9,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import uk.gov.hmcts.reform.translate.config.SecurityConfiguration;
 import uk.gov.hmcts.reform.translate.model.Dictionary;
+import uk.gov.hmcts.reform.translate.model.Translation;
 import uk.gov.hmcts.reform.translate.model.TranslationsRequest;
 import uk.gov.hmcts.reform.translate.security.JwtGrantedAuthoritiesConverter;
 import uk.gov.hmcts.reform.translate.security.filter.PutDictionaryEndpointFilter;
@@ -83,9 +84,9 @@ class DictionaryControllerTest extends BaseControllerTest {
         }
 
         private Dictionary getDictionaryRequest(int from, int to) {
-            final Map<String, String> expectedMapKeysAndValues = new HashMap<>();
-            IntStream.range(from, to).forEach(i -> expectedMapKeysAndValues.put("english_" + i, "translated_" + i));
-            return new Dictionary(expectedMapKeysAndValues);
+            final Map<String, Translation> expectedMap = new HashMap<>();
+            IntStream.range(from, to).forEach(i -> expectedMap.put("english_" + i, new Translation("translated_" + i)));
+            return new Dictionary(expectedMap);
         }
     }
 }

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.hmcts.reform.translate.model.Dictionary;
+import uk.gov.hmcts.reform.translate.model.Translation;
 import uk.gov.hmcts.reform.translate.model.TranslationsRequest;
 import uk.gov.hmcts.reform.translate.service.DictionaryService;
 
@@ -98,13 +99,12 @@ public class DictionaryController {
         + "to Service authorization (" + SERVICE_AUTHORIZATION + " header) is still required.",
         responses = {
             @ApiResponse(responseCode = "200", description = "Translation returned successfully"),
-            @ApiResponse(responseCode = "400", description = BAD_SCHEMA,
-                content = @Content()),
+            @ApiResponse(responseCode = "400", description = BAD_SCHEMA,  content = @Content()),
             @ApiResponse(responseCode = "401", description = AUTHENTICATION_TOKEN_INVALID, content = @Content()),
             @ApiResponse(responseCode = "403", description = UNAUTHORISED_S2S_SERVICE, content = @Content())
         })
     public Dictionary getTranslation(@Valid @RequestBody final TranslationsRequest payload) {
-        final Map<String, String> translations = dictionaryService.getTranslations(payload.getPhrases());
+        final Map<String, Translation> translations = dictionaryService.getTranslations(payload.getPhrases());
         return new Dictionary(translations);
     }
 }

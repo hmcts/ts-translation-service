@@ -17,7 +17,7 @@
     "_extends_": "Common_Request",
     "body": {
       "translations": {
-        "TEST-S002.2-EnglishPhrase": "TEST-S002.2-WelshPhrase-UPDATED"
+        "TEST-S002.2-EnglishPhrase": {"translation":"TEST-S002.2-WelshPhrase-UPDATED"}
       }
     }
   },
