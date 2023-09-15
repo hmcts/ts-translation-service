@@ -443,7 +443,7 @@ ccd:
   ccd-admin-web:
     nodejs:
       ingressHost:  ccd-admin-web-${SERVICE_FQDN}
-      image: hmctspublic.azurecr.io/ccd/admin-web:pr-582-931cf90-20230905134950
+      image: hmctspublic.azurecr.io/ccd/admin-web:pr-582-77650b8-20230915122211
       environment:
         IDAM_ADMIN_WEB_SERVICE_KEY: ${ADMIN_S2S_KEY}
         IDAM_OAUTH2_AW_CLIENT_SECRET: ${ADMIN_WEB_IDAM_SECRET}
