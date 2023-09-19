@@ -71,7 +71,7 @@ ccd:
   ccd-definition-store-api:
     java:
       ingressHost: ccd-def-store-${SERVICE_FQDN}
-      image: hmctspublic.azurecr.io/ccd/definition-store-api:pr-1396-c0d38c6-20230907123030
+      image: hmctspublic.azurecr.io/ccd/definition-store-api:pr-1396-75029f9-20230919131431
       environment:
         TS_TRANSLATION_SERVICE_HOST: http://ts-translation-service-pr-248-java
         ELASTIC_SEARCH_FAIL_ON_IMPORT: false
