@@ -71,7 +71,7 @@ ccd:
   ccd-definition-store-api:
     java:
       ingressHost: ccd-def-store-${SERVICE_FQDN}
-      image: hmctspublic.azurecr.io/ccd/definition-store-api:pr-1386-c0d38c6-20230907123030
+      image: hmctspublic.azurecr.io/ccd/definition-store-api:latest
       environment:
         TS_TRANSLATION_SERVICE_HOST: http://ts-translation-service-pr-226-java
         ELASTIC_SEARCH_FAIL_ON_IMPORT: false
@@ -443,7 +443,7 @@ ccd:
   ccd-admin-web:
     nodejs:
       ingressHost:  ccd-admin-web-${SERVICE_FQDN}
-      image: hmctspublic.azurecr.io/ccd/admin-web:pr-582-77650b8-20230915122211
+      image: hmctspublic.azurecr.io/ccd/admin-web:latest
       environment:
         IDAM_ADMIN_WEB_SERVICE_KEY: ${ADMIN_S2S_KEY}
         IDAM_OAUTH2_AW_CLIENT_SECRET: ${ADMIN_WEB_IDAM_SECRET}
