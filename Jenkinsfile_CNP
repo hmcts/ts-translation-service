@@ -7,7 +7,7 @@ import uk.gov.hmcts.contino.GradleBuilder
 def type = "java"
 def product = "ts"
 def component = "translation-service"
-def branchesToSync = ['demo', 'ithc', 'perftest']
+//def branchesToSync = ['demo', 'ithc', 'perftest']
 
 GradleBuilder builder = new GradleBuilder(this, product)
 
