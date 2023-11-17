@@ -14,8 +14,6 @@ steps:
     when:
       - pull-base-image-amd64
     keep: true
-    retries: 3
-    retryDelay: 5
 
   - id: pull-base-image-arm64
     cmd: docker pull --platform linux/arm64 hmctspublic.azurecr.io/base/java:17-distroless && docker tag hmctspublic.azurecr.io/base/java:17-distroless hmctspublic.azurecr.io/base/java/linux/arm64:17-distroless
@@ -32,8 +30,6 @@ steps:
     when:
       - pull-base-image-arm64
     keep: true
-    retries: 3
-    retryDelay: 5
 
   - id: push-images
     push:
