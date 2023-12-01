@@ -9,6 +9,7 @@ def product = "ts"
 def component = "translation-service"
 def branchesToSync = ['demo', 'ithc', 'perftest']
 
+
 GradleBuilder builder = new GradleBuilder(this, product)
 
 def secrets = [
