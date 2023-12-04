@@ -331,6 +331,7 @@ ccd:
       - IDAM_SUPER_USER
       - caseworker-ia
       - caseworker-civil-admin
+      - caseworker-civil-citizen-ui-pcqextractor
       - judge-employment
       - legal-adviser
       - specific-access-group
