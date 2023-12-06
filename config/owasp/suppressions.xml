@@ -3,7 +3,6 @@
     <notes>Temporary Suppression
         CVE-2022-45688 refer [Ticket]
         CVE-2022-45047 refer [Ticket]
-        CVE-2023-20883 refer [Ticket]
         CVE-2023-34981 refer [Ticket]
         CVE-2023-34035 refer [Ticket]
         CVE-2023-34034 refer [Ticket]
@@ -15,7 +14,6 @@
         CVE-2023-44487 refer [Ticket]
         CVE-2023-5072  refer [Ticket]
         CVE-2023-4759 refer [Ticket]
-    
         CVE-2023-35887 refer [Ticket]
         CVE-2023-33202 refer [Ticket]
         CVE-2023-34055 refer [Ticket]
@@ -23,7 +21,6 @@
         CVE-2023-6378 refer [Ticket]</notes>
     <cve>CVE-2022-45688</cve>
     <cve>CVE-2022-45047</cve>
-    <cve>CVE-2023-20883</cve>
     <cve>CVE-2023-34981</cve>
     <cve>CVE-2023-34035</cve>
     <cve>CVE-2023-34034</cve>
