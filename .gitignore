@@ -4,6 +4,8 @@
 *.class
 bin/main/application.yaml
 target/
+lib/applicationinsights-agent-*.jar
+lib/applicationinsights.log
 
 ### STS ###
 .apt_generated
@@ -21,8 +23,6 @@ target/
 *.ipr
 
 .DS_Store
-
-applicationinsights-agent-*.jar
 *.log
 
 /BEFTA Report for Smoke Tests/

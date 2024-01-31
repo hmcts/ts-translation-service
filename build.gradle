@@ -46,7 +46,8 @@ def versions = [
   junit           : '5.8.2',
   junitPlatform   : '1.7.2',
   serviceAuthVersion: '4.0.3',
-  idamClientVersion : '2.0.1'
+  idamClientVersion : '2.0.1',
+  appInsightsVersion: '2.4.1'
 ]
 
 ext.libraries = [
@@ -244,6 +245,8 @@ dependencies {
   }
 
   implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: '6.0.1'
+  implementation group: 'com.microsoft.azure', name: 'applicationinsights-logging-logback', version: versions.appInsightsVersion
+  implementation group: 'com.microsoft.azure', name: 'applicationinsights-spring-boot-starter', version: versions.appInsightsVersion
 
   implementation group: 'org.apache.logging.log4j', name: 'log4j-api'
   implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j'
