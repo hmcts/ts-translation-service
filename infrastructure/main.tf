@@ -114,6 +114,7 @@ data "azurerm_key_vault" "s2s_vault" {
   resource_group_name = "rpe-service-auth-provider-${var.env}"
 }
 
+
 data "azurerm_key_vault_secret" "ts_translation_service_s2s_key" {
   name         = "microservicekey-ts-translation-service"
   key_vault_id = data.azurerm_key_vault.s2s_vault.id
