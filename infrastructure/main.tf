@@ -67,7 +67,7 @@ module "ts-translation-service-db" {
   backup_retention_days = var.backup_retention_days
   georedundant_backup   = var.georedundant_backup
   common_tags           = var.common_tags
-  count = (local.app_full_name == "ts-translation-service" && var.env == "prod") ? 1 : 0
+  count        = contains(["demo", "ithc", "perftest", "aat"], var.env) ? 0 : 1
 
 }
 
@@ -76,14 +76,15 @@ module "ts-translation-service-db" {
 ////////////////////////////////
 
 resource "azurerm_key_vault_secret" "POSTGRES-USER" {
-  count        = var.env == "prod" ? 0 : 1
-  name         = "${var.component}-POSTGRES-USER"
-  value        = module.ts-translation-service-db[0].user_name
+  count = contains(["demo", "ithc", "perftest", "aat"], var.env) ? 0 : 1
+  name  = "${var.component}-POSTGRES-USER"
+  value = module.ts-translation-service-db[0].user_name
   key_vault_id = module.key-vault.key_vault_id
 }
 
+
 resource "azurerm_key_vault_secret" "POSTGRES-PASS" {
-  count        = var.env == "prod" ? 0 : 1
+  count = contains(["demo", "ithc", "perftest", "aat"], var.env) ? 0 : 1
   name         = "${var.component}-POSTGRES-PASS"
   value        = module.ts-translation-service-db[0].postgresql_password
   key_vault_id = module.key-vault.key_vault_id
@@ -91,7 +92,7 @@ resource "azurerm_key_vault_secret" "POSTGRES-PASS" {
 
 
 resource "azurerm_key_vault_secret" "POSTGRES-HOST" {
-  count        = var.env == "prod" ? 0 : 1
+  count = contains(["demo", "ithc", "perftest", "aat"], var.env) ? 0 : 1
   name         = "${var.component}-POSTGRES-HOST"
   value        = module.ts-translation-service-db[0].host_name
   key_vault_id = module.key-vault.key_vault_id
@@ -99,14 +100,14 @@ resource "azurerm_key_vault_secret" "POSTGRES-HOST" {
 
 
 resource "azurerm_key_vault_secret" "POSTGRES-PORT" {
-  count        = var.env == "prod" ? 0 : 1
+  count = contains(["demo", "ithc", "perftest", "aat"], var.env) ? 0 : 1
   name         = "${var.component}-POSTGRES-PORT"
   value        = module.ts-translation-service-db[0].postgresql_listen_port
   key_vault_id = module.key-vault.key_vault_id
 }
 
 resource "azurerm_key_vault_secret" "POSTGRES-DATABASE" {
-  count        = var.env == "prod" ? 0 : 1
+  count = contains(["demo", "ithc", "perftest", "aat"], var.env) ? 0 : 1
   name         = "${var.component}-POSTGRES-DATABASE"
   value        = module.ts-translation-service-db[0].postgresql_database
   key_vault_id = module.key-vault.key_vault_id
