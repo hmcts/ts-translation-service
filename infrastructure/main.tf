@@ -67,7 +67,8 @@ module "ts-translation-service-db" {
   backup_retention_days = var.backup_retention_days
   georedundant_backup   = var.georedundant_backup
   common_tags           = var.common_tags
-  count               =   var.env == "prod" ? 1 : 0
+  count = (local.app_full_name == "ts-translation-service" && var.env == "prod") ? 1 : 0
+
 
 }
 
