@@ -67,7 +67,8 @@ module "ts-translation-service-db" {
   backup_retention_days = var.backup_retention_days
   georedundant_backup   = var.georedundant_backup
   common_tags           = var.common_tags
-  count                 = contains(["demo", "ithc", "perftest", "aat"], var.env) ? 0 : 1
+  count                 = var.env == "prod" ? 1 : 0
+
 }
 
 ////////////////////////////////
@@ -78,35 +79,35 @@ resource "azurerm_key_vault_secret" "POSTGRES-USER" {
   name         = "${var.component}-POSTGRES-USER"
   value        = module.ts-translation-service-db[0].user_name
   key_vault_id = module.key-vault.key_vault_id
-  count        = contains(["demo", "ithc", "perftest", "aat"], var.env) ? 0 : 1
+  count        = var.env == "prod" ? 1 : 0
 }
 
 resource "azurerm_key_vault_secret" "POSTGRES-PASS" {
   name         = "${var.component}-POSTGRES-PASS"
   value        = module.ts-translation-service-db[0].postgresql_password
   key_vault_id = module.key-vault.key_vault_id
-  count        = contains(["demo", "ithc", "perftest", "aat"], var.env) ? 0 : 1
+  count        = var.env == "prod" ? 1 : 0
 }
 
 resource "azurerm_key_vault_secret" "POSTGRES-HOST" {
   name         = "${var.component}-POSTGRES-HOST"
   value        = module.ts-translation-service-db[0].host_name
   key_vault_id = module.key-vault.key_vault_id
-  count        = contains(["demo", "ithc", "perftest", "aat"], var.env) ? 0 : 1
+  count        = var.env == "prod" ? 1 : 0
 }
 
 resource "azurerm_key_vault_secret" "POSTGRES-PORT" {
   name         = "${var.component}-POSTGRES-PORT"
   value        = module.ts-translation-service-db[0].postgresql_listen_port
   key_vault_id = module.key-vault.key_vault_id
-  count        = contains(["demo", "ithc", "perftest", "aat"], var.env) ? 0 : 1
+  count        = var.env == "prod" ? 1 : 0
 }
 
 resource "azurerm_key_vault_secret" "POSTGRES-DATABASE" {
   name         = "${var.component}-POSTGRES-DATABASE"
   value        = module.ts-translation-service-db[0].postgresql_database
   key_vault_id = module.key-vault.key_vault_id
-  count        = contains(["demo", "ithc", "perftest", "aat"], var.env) ? 0 : 1
+  count        = var.env == "prod" ? 1 : 0
 }
 
 data "azurerm_key_vault" "s2s_vault" {
