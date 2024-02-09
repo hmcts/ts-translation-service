@@ -92,7 +92,13 @@ resource "azurerm_key_vault_secret" "POSTGRES-HOST" {
 }
 resource "azurerm_key_vault_secret" "POSTGRES-PORT" {
   name         = "${var.component}-POSTGRES-PORT"
-  value        = module.ts-translation-service-db.postgresql_listen_port
+  value        = var.postgresql_flexible_server_port
+  key_vault_id = module.key-vault.key_vault_id
+
+}
+resource "azurerm_key_vault_secret" "POSTGRES-DATABASE" {
+  name         = "${var.component}-POSTGRES-DATABASE"
+  value        = var.database_name
   key_vault_id = module.key-vault.key_vault_id
 
 }

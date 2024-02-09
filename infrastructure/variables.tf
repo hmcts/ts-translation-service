@@ -26,7 +26,6 @@ variable "jenkins_AAD_objectId" {
   description = "(Required) The Azure AD object ID of a user, service principal or security group in the Azure Active Directory tenant for the vault. The object ID must be unique for the list of access policies."
 }
 
-
 ////////////////////////////////
 // Database
 ////////////////////////////////
@@ -85,4 +84,7 @@ variable "pgsql_storage_mb" {
   description = "Max storage allowed for the PGSql Flexibile instance"
   type        = number
   default     = 65536
+}
+variable "postgresql_flexible_server_port" {
+  default = "5432"
 }
