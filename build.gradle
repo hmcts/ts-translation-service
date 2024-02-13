@@ -3,7 +3,7 @@ plugins {
   id 'idea'
   id 'jacoco'
   id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-  id 'org.springframework.boot' version '2.7.10'
+  id 'org.springframework.boot' version '2.7.12'
   id 'com.github.ben-manes.versions' version '0.42.0'
   id 'org.sonarqube' version '3.3'
   id 'com.github.spacialcircumstances.gradle-cucumber-reporting' version '0.1.23'
@@ -46,7 +46,8 @@ def versions = [
   junit           : '5.8.2',
   junitPlatform   : '1.7.2',
   serviceAuthVersion: '4.0.3',
-  idamClientVersion : '2.0.1'
+  idamClientVersion : '2.0.1',
+  appInsightsVersion: '2.4.1'
 ]
 
 ext.libraries = [
@@ -217,7 +218,10 @@ jacocoTestReport {
 }
 
 dependencies {
-  implementation 'org.springframework.boot:spring-boot:2.7.10'
+  implementation 'org.springframework.boot:spring-boot:2.7.12'
+
+  implementation 'ch.qos.logback:logback-classic:1.2.13' 
+  implementation 'ch.qos.logback:logback-core:1.2.13'    
 
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
@@ -241,6 +245,8 @@ dependencies {
   }
 
   implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: '6.0.1'
+  implementation group: 'com.microsoft.azure', name: 'applicationinsights-logging-logback', version: versions.appInsightsVersion
+  implementation group: 'com.microsoft.azure', name: 'applicationinsights-spring-boot-starter', version: versions.appInsightsVersion
 
   implementation group: 'org.apache.logging.log4j', name: 'log4j-api'
   implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j'
