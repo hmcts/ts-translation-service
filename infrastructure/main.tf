@@ -104,33 +104,28 @@ resource "azurerm_key_vault_secret" "POSTGRES-USER" {
   name         = "${var.component}-POSTGRES-USER"
   value        = module.postgresql_v15.username
   key_vault_id = module.key-vault.key_vault_id
-  count        = 1
 }
 
 resource "azurerm_key_vault_secret" "POSTGRES-PASS" {
   name         = "${var.component}-POSTGRES-PASS"
   value        = module.postgresql_v15.password
   key_vault_id = module.key-vault.key_vault_id
-  count        = 1
 }
 
 resource "azurerm_key_vault_secret" "POSTGRES-HOST" {
   name         = "${var.component}-POSTGRES-HOST"
   value        = module.postgresql_v15.fqdn
   key_vault_id = module.key-vault.key_vault_id
-  count        = 1
 }
 
 resource "azurerm_key_vault_secret" "POSTGRES-PORT" {
   name         = "${var.component}-POSTGRES-PORT"
   value        = var.postgresql_flexible_server_port
   key_vault_id = module.key-vault.key_vault_id
-  count        = 1
 }
 
 resource "azurerm_key_vault_secret" "POSTGRES-DATABASE" {
   name         = "${var.component}-POSTGRES-DATABASE"
   value        = var.database_name
   key_vault_id = module.key-vault.key_vault_id
-  count        = 1
 }
