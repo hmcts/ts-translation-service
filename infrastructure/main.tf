@@ -52,73 +52,10 @@ moved {
   to   = module.application_insights.azurerm_application_insights.this
 }
 
-module "ts-translation-service-db" {
-  source                = "git@github.com:hmcts/cnp-module-postgres?ref=master"
-  product               = var.product
-  component             = var.component
-  name                  = "${local.app_full_name}-postgres-db"
-  location              = var.location
-  env                   = var.env
-  subscription          = var.subscription
-  postgresql_user       = var.postgresql_user
-  postgresql_version    = var.postgresql_version
-  database_name         = var.database_name
-  sku_name              = var.sku_name
-  sku_tier              = var.sku_tier
-  sku_capacity          = var.sku_capacity
-  ssl_enforcement       = var.ssl_enforcement
-  storage_mb            = var.storage_mb
-  backup_retention_days = var.backup_retention_days
-  georedundant_backup   = var.georedundant_backup
-  common_tags           = var.common_tags
-  count                 = var.env == "prod" ? 1 : 0
-
-}
-
-////////////////////////////////
-// Populate Vault with DB info
-////////////////////////////////
-
-resource "azurerm_key_vault_secret" "POSTGRES-USER" {
-  name         = "${var.component}-POSTGRES-USER"
-  value        = module.ts-translation-service-db[0].user_name
-  key_vault_id = module.key-vault.key_vault_id
-  count        = var.env == "prod" ? 1 : 0
-}
-
-resource "azurerm_key_vault_secret" "POSTGRES-PASS" {
-  name         = "${var.component}-POSTGRES-PASS"
-  value        = module.ts-translation-service-db[0].postgresql_password
-  key_vault_id = module.key-vault.key_vault_id
-  count        = var.env == "prod" ? 1 : 0
-}
-
-resource "azurerm_key_vault_secret" "POSTGRES-HOST" {
-  name         = "${var.component}-POSTGRES-HOST"
-  value        = module.ts-translation-service-db[0].host_name
-  key_vault_id = module.key-vault.key_vault_id
-  count        = var.env == "prod" ? 1 : 0
-}
-
-resource "azurerm_key_vault_secret" "POSTGRES-PORT" {
-  name         = "${var.component}-POSTGRES-PORT"
-  value        = module.ts-translation-service-db[0].postgresql_listen_port
-  key_vault_id = module.key-vault.key_vault_id
-  count        = var.env == "prod" ? 1 : 0
-}
-
-resource "azurerm_key_vault_secret" "POSTGRES-DATABASE" {
-  name         = "${var.component}-POSTGRES-DATABASE"
-  value        = module.ts-translation-service-db[0].postgresql_database
-  key_vault_id = module.key-vault.key_vault_id
-  count        = var.env == "prod" ? 1 : 0
-}
-
 data "azurerm_key_vault" "s2s_vault" {
   name                = "s2s-${var.env}"
   resource_group_name = "rpe-service-auth-provider-${var.env}"
 }
-
 
 data "azurerm_key_vault_secret" "ts_translation_service_s2s_key" {
   name         = "microservicekey-ts-translation-service"
@@ -130,6 +67,10 @@ resource "azurerm_key_vault_secret" "ts_translation_service_s2s_secret" {
   value        = data.azurerm_key_vault_secret.ts_translation_service_s2s_key.value
   key_vault_id = module.key-vault.key_vault_id
 }
+
+////////////////////////////////
+// Populate Vault with DB info /
+////////////////////////////////
 
 module "postgresql_v15" {
   source = "git@github.com:hmcts/terraform-module-postgresql-flexible?ref=master"
@@ -159,21 +100,32 @@ module "postgresql_v15" {
   pgsql_sku        = var.pgsql_sku
   pgsql_storage_mb = var.pgsql_storage_mb
 }
-
-resource "azurerm_key_vault_secret" "POSTGRES-USER-V15" {
-  name         = "${var.component}-POSTGRES-USER-V15"
+resource "azurerm_key_vault_secret" "POSTGRES-USER" {
+  name         = "${var.component}-POSTGRES-USER"
   value        = module.postgresql_v15.username
   key_vault_id = module.key-vault.key_vault_id
 }
 
-resource "azurerm_key_vault_secret" "POSTGRES-PASS-V15" {
-  name         = "${var.component}-POSTGRES-PASS-V15"
+resource "azurerm_key_vault_secret" "POSTGRES-PASS" {
+  name         = "${var.component}-POSTGRES-PASS"
   value        = module.postgresql_v15.password
   key_vault_id = module.key-vault.key_vault_id
 }
 
-resource "azurerm_key_vault_secret" "POSTGRES-HOST-V15" {
-  name         = "${var.component}-POSTGRES-HOST-V15"
+resource "azurerm_key_vault_secret" "POSTGRES-HOST" {
+  name         = "${var.component}-POSTGRES-HOST"
   value        = module.postgresql_v15.fqdn
+  key_vault_id = module.key-vault.key_vault_id
+}
+
+resource "azurerm_key_vault_secret" "POSTGRES-PORT" {
+  name         = "${var.component}-POSTGRES-PORT"
+  value        = var.postgresql_flexible_server_port
+  key_vault_id = module.key-vault.key_vault_id
+}
+
+resource "azurerm_key_vault_secret" "POSTGRES-DATABASE" {
+  name         = "${var.component}-POSTGRES-DATABASE"
+  value        = var.database_name
   key_vault_id = module.key-vault.key_vault_id
 }

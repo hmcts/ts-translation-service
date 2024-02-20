@@ -86,3 +86,6 @@ variable "pgsql_storage_mb" {
   type        = number
   default     = 65536
 }
+variable "postgresql_flexible_server_port" {
+  default = "5432"
+}
