@@ -18,7 +18,7 @@ ext {
   set('springCloudVersion', "2021.0.3")
 }
 
-ext['spring-security.version'] = '5.8.5'
+ext['spring-security.version'] = '5.8.11'
 ext['spring-framework.version'] = '5.3.27'
 ext['snakeyaml.version'] = '2.0'
 ext['jackson.version'] = '2.15.3'
@@ -220,8 +220,8 @@ jacocoTestReport {
 dependencies {
   implementation 'org.springframework.boot:spring-boot:2.7.12'
 
-  implementation 'ch.qos.logback:logback-classic:1.2.13' 
-  implementation 'ch.qos.logback:logback-core:1.2.13'    
+  implementation 'ch.qos.logback:logback-classic:1.2.13'
+  implementation 'ch.qos.logback:logback-core:1.2.13'
 
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
