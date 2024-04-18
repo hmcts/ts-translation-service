@@ -8,6 +8,7 @@
         CVE-2024-1597 refer [Ticket]
         CVE-2023-34042 refer [Ticket]
         CVE-2022-45047 refer [Ticket]
+        CVE-2023-48795 refer [Ticket]
         CVE-2023-35887 refer [Ticket]
         CVE-2023-46589 refer [Ticket]</notes>
     <cve>CVE-2022-45688</cve>
@@ -17,6 +18,7 @@
     <cve>CVE-2024-1597</cve>
     <cve>CVE-2023-34042</cve>
     <cve>CVE-2022-45047</cve>
+    <cve>CVE-2023-48795</cve>
     <cve>CVE-2023-35887</cve>
     <cve>CVE-2023-46589</cve>
   </suppress>
