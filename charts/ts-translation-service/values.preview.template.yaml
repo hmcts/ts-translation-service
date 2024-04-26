@@ -82,7 +82,7 @@ ccd:
 
    #Use this image to import your CCD definition. To have an image available, create a git tag and push it.
   ccd-definition-importer:
-    image: hmctspublic.azurecr.io/ccd/definition-importer:latest
+    image: hmctspublic.azurecr.io/ccd/definition-importer:db1gep8
     redirectUri: http://${SERVICE_NAME}-ccd-admin-web/oauth2redirect
     environment:
       IMPORTER_USERNAME: ${IMPORT_USERNAME}
