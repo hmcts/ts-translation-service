@@ -14,3 +14,7 @@ dependencies:
     version: 9.1.0
     repository: 'https://hmctspublic.azurecr.io/helm/v1/repo/'
     condition: ccd.enabled
+  - name: postgresql
+      version: 1.0.2
+      repository: 'https://hmctspublic.azurecr.io/helm/v1/repo/'
+      condition: postgresql.enabled
