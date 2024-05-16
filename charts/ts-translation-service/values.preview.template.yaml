@@ -433,7 +433,7 @@ ccd:
 
 postgresql:
   enabled: true
-  flexibleserver: sscs-preview
+  flexibleserver: ts-preview
   setup:
     databases:
       - name: "pr-${CHANGE_ID}-data-store"
