@@ -444,4 +444,3 @@ postgresql:
       - name: "pr-${CHANGE_ID}-annotation"
       - name: "pr-${CHANGE_ID}-role-assignment"
       - name: "pr-${CHANGE_ID}-ts_translation_service"
-      - name: "pr-${CHANGE_ID}-sscsjobscheduler"
