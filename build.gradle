@@ -15,7 +15,7 @@ group = 'uk.gov.hmcts.reform'
 version = '0.0.1'
 
 ext {
-  set('spring-cloud.version', "2021.0.8")
+  set('springCloudVersion', "2021.0.8")
   set('spring-security.version','5.8.11')
   set('spring-framework.version','5.3.27')
   set('snakeyaml.version','2.0')
@@ -304,7 +304,7 @@ dependencies {
 
 dependencyManagement {
   imports {
-    mavenBom "org.springframework.cloud:spring-cloud-dependencies:${spring-cloud.version}"
+    mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
   }
 
   dependencies {
