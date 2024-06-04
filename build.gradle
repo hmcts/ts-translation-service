@@ -15,13 +15,13 @@ group = 'uk.gov.hmcts.reform'
 version = '0.0.1'
 
 ext {
-  set('springCloudVersion', "2021.0.3")
+  set('spring-cloud.version', "2021.0.8")
+  set('spring-security.version','5.8.11')
+  set('spring-framework.version','5.3.27')
+  set('snakeyaml.version','2.0')
+  set('jackson.version','2.16.0')
 }
 
-ext['spring-security.version'] = '5.8.11'
-ext['spring-framework.version'] = '5.3.27'
-ext['snakeyaml.version'] = '2.0'
-ext['jackson.version'] = '2.16.0'
 
 java {
   toolchain {
@@ -304,7 +304,7 @@ dependencies {
 
 dependencyManagement {
   imports {
-    mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    mavenBom "org.springframework.cloud:spring-cloud-dependencies:${spring-cloud.version}"
   }
 
   dependencies {
