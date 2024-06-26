@@ -2,7 +2,6 @@ package uk.gov.hmcts.reform.translate.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.vavr.control.Either;
-import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.assertj.vavr.api.VavrAssertions;
 import org.junit.jupiter.api.DisplayName;
@@ -619,9 +618,9 @@ public class DictionaryControllerIT extends BaseTest {
     }
 
     private Long assertDictionaryEntity(String englishPhrase, Translation toMatch, Integer versionMatch) {
-        val dictionaryEntityOptional = dictionaryRepository.findByEnglishPhrase(englishPhrase);
+        final var dictionaryEntityOptional = dictionaryRepository.findByEnglishPhrase(englishPhrase);
         assertTrue(dictionaryEntityOptional.isPresent());
-        val dictionaryEntity = dictionaryEntityOptional.get();
+        final var dictionaryEntity = dictionaryEntityOptional.get();
         assertEquals(
             toMatch.getTranslation(),
             StringUtils.getIfEmpty(dictionaryEntity.getTranslationPhrase(), () -> "")
@@ -631,7 +630,7 @@ public class DictionaryControllerIT extends BaseTest {
         assertEquals(toMatch.getNo(), dictionaryEntity.getNo());
 
         if (versionMatch != null) {
-            val version = dictionaryEntity.getTranslationUpload().getVersion();
+            final var version = dictionaryEntity.getTranslationUpload().getVersion();
             assertNotNull(version);
             assertEquals(versionMatch.intValue(), version.intValue());
             return version;

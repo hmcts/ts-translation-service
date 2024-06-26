@@ -2,25 +2,26 @@ plugins {
   id 'application'
   id 'idea'
   id 'jacoco'
-  id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-  id 'org.springframework.boot' version '2.7.12'
-  id 'com.github.ben-manes.versions' version '0.42.0'
+  id 'io.spring.dependency-management' version '1.1.5'
+  id 'org.springframework.boot' version '3.0.12'
+  id 'com.github.ben-manes.versions' version '0.51.0'
   id 'org.sonarqube' version '3.3'
   id 'com.github.spacialcircumstances.gradle-cucumber-reporting' version '0.1.23'
-  id 'com.github.hmcts.rse-cft-lib' version '0.19.169'
-  id 'uk.gov.hmcts.java' version '0.12.41'
+  id 'com.github.hmcts.rse-cft-lib' version '0.19.1260'
+  id 'uk.gov.hmcts.java' version '0.12.63'
+  id 'io.freefair.lombok' version '8.6'
 }
 
 group = 'uk.gov.hmcts.reform'
 version = '0.0.1'
 
 ext {
-  set('springCloudVersion', "2021.0.3")
+  set('springCloudVersion', '2022.0.5')
 }
 
-ext['spring-security.version'] = '5.8.11'
-ext['spring-framework.version'] = '5.3.27'
-ext['snakeyaml.version'] = '2.0'
+ext['spring-security.version'] = '6.0.8'
+ext['spring-framework.version'] = '6.0.21'
+ext['snakeyaml.version'] = '2.2'
 ext['jackson.version'] = '2.16.0'
 
 configurations {
@@ -40,13 +41,11 @@ java {
 }
 
 def versions = [
-  springBoot      : '3.0',
   testcontainers  : '1.15.3',
-  lombok          : '1.18.24',
   junit           : '5.8.2',
   junitPlatform   : '1.7.2',
-  serviceAuthVersion: '4.0.3',
-  idamClientVersion : '2.0.1',
+  serviceAuthVersion: '5.1.2',
+  idamClientVersion : '3.0.3',
   appInsightsVersion: '2.4.1'
 ]
 
@@ -218,11 +217,9 @@ jacocoTestReport {
 }
 
 dependencies {
-  implementation 'org.springframework.boot:spring-boot:2.7.12'
 
-  implementation 'ch.qos.logback:logback-classic:1.2.13'
-  implementation 'ch.qos.logback:logback-core:1.2.13'
-
+  // SPRING
+  implementation group: 'org.springframework.boot', name: 'spring-boot'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-aop'
@@ -231,33 +228,34 @@ dependencies {
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-oauth2-client'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-cache'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-oauth2-resource-server'
-  implementation group: 'org.springframework.cloud', name: 'spring-cloud-config-server', version: '3.1.7'
-  implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-config', version: '3.1.7'
-  implementation group: 'org.springframework.cloud', name: 'spring-cloud-config-client', version: '3.1.7'
+  implementation group: 'org.springframework.cloud', name: 'spring-cloud-config-server'
+  implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-config'
+  implementation group: 'org.springframework.cloud', name: 'spring-cloud-config-client'
   implementation group: 'org.springframework.security', name: 'spring-security-web'
   implementation group: 'org.springframework.security', name: 'spring-security-oauth2-jose'
   implementation group: 'org.springframework.security', name: 'spring-security-config'
-  implementation group: 'org.springframework.security', name:'spring-security-rsa', version: '1.1.1'
+  implementation group: 'org.springframework.security', name:'spring-security-rsa'
   implementation group: 'org.springframework.retry', name:'spring-retry'
-  implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.6.7'
+  implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.5.0'
 
   configurations.all {
     exclude group: 'com.vaadin.external.google', module: 'android-json'
   }
 
-  implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: '6.0.1'
+  // LOGGING
+  implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: '6.1.4'
+  implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.5.6'
+  implementation group: 'ch.qos.logback', name: 'logback-core', version: '1.5.6'
+  implementation group: 'org.apache.logging.log4j', name: 'log4j-api'
+  implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j'
   implementation group: 'com.microsoft.azure', name: 'applicationinsights-logging-logback', version: versions.appInsightsVersion
   implementation group: 'com.microsoft.azure', name: 'applicationinsights-spring-boot-starter', version: versions.appInsightsVersion
 
-  implementation group: 'org.apache.logging.log4j', name: 'log4j-api'
-  implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j'
-  implementation group: 'org.flywaydb', name: 'flyway-core', version: '7.7.0'
+  implementation group: 'org.flywaydb', name: 'flyway-core', version: '9.19.1'
   implementation group: 'org.postgresql', name: 'postgresql', version: '42.5.1'
   implementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: versions.serviceAuthVersion
   implementation group: 'com.github.hmcts', name: 'idam-java-client', version: versions.idamClientVersion
-
-  annotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
-  implementation group: 'org.projectlombok', name: 'lombok', version: versions.lombok
+  implementation group: 'com.auth0', name: 'java-jwt', version: '4.4.0'
 
   testImplementation(platform('org.junit:junit-bom:5.8.2'))
   testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
@@ -272,12 +270,14 @@ dependencies {
   integrationTestImplementation sourceSets.main.runtimeClasspath
   integrationTestImplementation sourceSets.test.runtimeClasspath
   integrationTestImplementation group: 'org.testcontainers', name: 'postgresql', version: versions.testcontainers
-  integrationTestImplementation "com.github.ben-manes.caffeine:caffeine:2.7.0"
-  integrationTestImplementation group: 'com.github.tomakehurst', name: 'wiremock', version: '2.27.2'
-  integrationTestImplementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-contract-stub-runner', version: '3.1.0'
-  integrationTestImplementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
-  testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
-  integrationTestAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
+  integrationTestImplementation group: 'com.github.ben-manes.caffeine', name: 'caffeine', version: '2.7.0'
+  integrationTestImplementation group: 'org.springframework.cloud', name: 'spring-cloud-contract-wiremock', {
+    exclude group: 'com.github.tomakehurst', module: 'wiremock-standalone'
+  }
+  integrationTestImplementation group: 'com.github.tomakehurst', name: 'wiremock-standalone', version: '2.19.0'
+  integrationTestImplementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.12.6'
+  integrationTestRuntimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.12.6'
+  integrationTestRuntimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.12.6'
   integrationTestImplementation group: 'com.pivovarit', name: 'throwing-function', version: '1.5.1'
 
   functionalTestImplementation sourceSets.main.runtimeClasspath
@@ -287,7 +287,7 @@ dependencies {
   functionalTestImplementation group: 'commons-lang', name: 'commons-lang', version: '2.6'
 
   implementation group: 'commons-fileupload', name: 'commons-fileupload', version: '1.5'
-  implementation group: 'commons-io', name: 'commons-io', version: '2.11.0'
+  implementation group: 'commons-io', name: 'commons-io', version: '2.16.1'
 
   testImplementation (group: 'com.github.hmcts', name: 'ccd-test-definitions', version: '7.17.0') {
     exclude group: 'io.rest-assured', module : 'rest-assured'
@@ -309,17 +309,6 @@ dependencyManagement {
   imports {
     mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
   }
-
-  dependencies {
-    dependency group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.70'
-
-    dependencySet(group: 'org.apache.tomcat.embed', version: '9.0.82') {
-      entry 'tomcat-embed-core'
-      entry 'tomcat-embed-el'
-      entry 'tomcat-embed-websocket'
-    }
-  }
-
 }
 
 project.tasks['sonarqube'].dependsOn jacocoTestReport

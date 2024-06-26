@@ -19,7 +19,7 @@ import uk.gov.hmcts.reform.translate.model.TranslationsRequest;
 import uk.gov.hmcts.reform.translate.service.DictionaryService;
 
 import java.util.Map;
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static uk.gov.hmcts.reform.translate.controllers.ControllerConstants.DICTIONARY_URL;

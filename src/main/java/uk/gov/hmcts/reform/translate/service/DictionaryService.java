@@ -2,7 +2,6 @@ package uk.gov.hmcts.reform.translate.service;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -152,10 +151,10 @@ public class DictionaryService {
     )
     public void putDictionary(final Dictionary dictionaryRequest) {
 
-        val isManageTranslationRole = securityUtils.hasRole(MANAGE_TRANSLATIONS_ROLE);
+        final var isManageTranslationRole = securityUtils.hasRole(MANAGE_TRANSLATIONS_ROLE);
         validateDictionary(dictionaryRequest, isManageTranslationRole);
 
-        val translationUploadEntity = hasAnyTranslations(dictionaryRequest)
+        final var translationUploadEntity = hasAnyTranslations(dictionaryRequest)
             ? dictionaryMapper.createTranslationUploadEntity(securityUtils.getUserInfo().getUid())
             : null;
 
@@ -166,7 +165,7 @@ public class DictionaryService {
     private void processPhrase(Map.Entry<String, Translation> currentPhrase,
                                TranslationUploadEntity translationUploadEntity) {
 
-        val result = dictionaryRepository.findByEnglishPhrase(currentPhrase.getKey());
+        final var result = dictionaryRepository.findByEnglishPhrase(currentPhrase.getKey());
         if (result.isPresent()) {
             updatePhrase(currentPhrase, result.get(), translationUploadEntity);
         } else {
@@ -178,7 +177,7 @@ public class DictionaryService {
     private void createNewPhrase(Map.Entry<String, Translation> currentPhrase,
                                  TranslationUploadEntity translationUploadOptional) {
 
-        val newEntity = hasTranslationPhrase(currentPhrase)
+        final var newEntity = hasTranslationPhrase(currentPhrase)
             ? dictionaryMapper.modelToEntityWithTranslationUploadEntity(currentPhrase, translationUploadOptional)
             : dictionaryMapper.modelToEntityWithoutTranslationPhrase(currentPhrase);
         dictionaryRepository.saveAndFlush(newEntity);
@@ -208,7 +207,7 @@ public class DictionaryService {
     }
 
     public void putDictionaryRoleCheck(String clientS2SToken) {
-        val clientServiceName = securityUtils.getServiceNameFromS2SToken(clientS2SToken);
+        final var clientServiceName = securityUtils.getServiceNameFromS2SToken(clientS2SToken);
         if (securityUtils.isBypassAuthCheck(clientServiceName)
             || securityUtils.hasAnyOfTheseRoles(Arrays.asList(MANAGE_TRANSLATIONS_ROLE, LOAD_TRANSLATIONS_ROLE))) {
             return;

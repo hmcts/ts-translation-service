@@ -5,8 +5,8 @@ import org.springframework.http.HttpHeaders;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequestWrapper;
 
 import static java.util.Collections.emptyList;
 
