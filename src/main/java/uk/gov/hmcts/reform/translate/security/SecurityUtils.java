@@ -2,7 +2,6 @@ package uk.gov.hmcts.reform.translate.security;
 
 import com.auth0.jwt.JWT;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.GrantedAuthority;
@@ -104,7 +103,7 @@ public class SecurityUtils {
     }
 
     public boolean hasAnyOfTheseRoles(List<String> roleToMatch) {
-        val userInfo = getUserInfo();
+        final var userInfo = getUserInfo();
         return userInfo != null
             && userInfo.getRoles().stream().anyMatch(roleToMatch.stream().collect(toSet())::contains);
     }
