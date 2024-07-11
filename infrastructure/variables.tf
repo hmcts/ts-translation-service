@@ -70,10 +70,6 @@ variable "database_name" {
   default = "ts_translation_service"
 }
 
-variable "postgresql_version" {
-  default = "11"
-}
-
 variable "pgsql_sku" {
   description = "The PGSql flexible server instance sku"
   default     = "GP_Standard_D2s_v3"
