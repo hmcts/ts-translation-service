@@ -72,6 +72,7 @@ ccd:
     java:
       ingressHost: ccd-def-store-${SERVICE_FQDN}
       environment:
+        DEFINITION_STORE_DB_HOST: ${SERVICE_NAME}-postgresql
         TS_TRANSLATION_SERVICE_HOST: http://ts-translation-service-pr-297-java
         ELASTIC_SEARCH_FAIL_ON_IMPORT: false
         IDAM_USER_URL: https://idam-web-public.aat.platform.hmcts.net
