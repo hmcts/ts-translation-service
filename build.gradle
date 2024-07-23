@@ -37,7 +37,7 @@ def versions = [
   junitPlatform   : '1.7.2',
   serviceAuthVersion: '4.0.3',
   idamClientVersion : '2.0.1',
-  appInsightsVersion: '2.4.1'
+  appInsightsVersion: '2.6.4'
 ]
 
 ext.libraries = [
