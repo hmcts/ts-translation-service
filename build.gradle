@@ -15,7 +15,7 @@ group = 'uk.gov.hmcts.reform'
 version = '0.0.1'
 
 ext {
-  set('springCloudVersion', "2023.0.1")
+  set('springCloudVersion', "2021.0.8")
   set('spring-security.version','5.8.11')
   set('spring-framework.version','5.3.27')
   set('snakeyaml.version','2.0')
@@ -230,9 +230,9 @@ dependencies {
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-cache'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-oauth2-resource-server'
 
-  implementation group: 'org.springframework.cloud', name: 'spring-cloud-config-server', version: '4.0.5'
-  implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-config', version: '4.0.5'
-  implementation group: 'org.springframework.cloud', name: 'spring-cloud-config-client', version: '4.0.5'
+  implementation group: 'org.springframework.cloud', name: 'spring-cloud-config-server', version: '4.1.3'
+  implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-config', version: '4.1.3'
+  implementation group: 'org.springframework.cloud', name: 'spring-cloud-config-client', version: '4.1.3'
 
   implementation group: 'org.springframework.security', name: 'spring-security-web'
   implementation group: 'org.springframework.security', name: 'spring-security-oauth2-jose'
