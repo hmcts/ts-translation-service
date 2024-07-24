@@ -3,7 +3,7 @@ plugins {
   id 'idea'
   id 'jacoco'
   id 'io.spring.dependency-management' version '1.1.5'
-  id 'org.springframework.boot' version '2.7.18'
+  id 'org.springframework.boot' version '2.7.12'
   id 'com.github.ben-manes.versions' version '0.51.0'
   id 'org.sonarqube' version '5.0.0.4638'
   id 'com.github.spacialcircumstances.gradle-cucumber-reporting' version '0.1.25'
@@ -15,7 +15,7 @@ group = 'uk.gov.hmcts.reform'
 version = '0.0.1'
 
 ext {
-  set('springCloudVersion', "2021.0.9")
+  set('springCloudVersion', "2023.0.1")
   set('spring-security.version','5.8.11')
   set('spring-framework.version','5.3.27')
   set('snakeyaml.version','2.0')
@@ -37,7 +37,7 @@ def versions = [
   junitPlatform   : '1.7.2',
   serviceAuthVersion: '4.0.3',
   idamClientVersion : '2.0.1',
-  appInsightsVersion: '2.6.4'
+  appInsightsVersion: '2.4.1'
 ]
 
 ext.libraries = [
@@ -390,7 +390,6 @@ rootProject.tasks.named("processIntegrationTestResources") {
 }
 
 wrapper {
-  gradleVersion = '9.0'
   distributionType = Wrapper.DistributionType.ALL
 }
 
