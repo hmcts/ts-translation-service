@@ -31,7 +31,6 @@ variable "jenkins_AAD_objectId" {
 // Database
 ////////////////////////////////
 
-// Define the default values for optional parameters (see https://github.com/hmcts/cnp-module-postgres)
 variable "sku_name" {
   default = "GP_Gen5_2"
 }
@@ -59,8 +58,6 @@ variable "backup_retention_days" {
 variable "georedundant_backup" {
   default = "Enabled"
 }
-
-// Define the values for mandatory/required parameters (see https://github.com/hmcts/cnp-module-postgres)
 
 variable "postgresql_user" {
   default = "ts"
