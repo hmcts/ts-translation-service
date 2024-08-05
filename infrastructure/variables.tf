@@ -71,7 +71,7 @@ variable "database_name" {
 }
 
 variable "postgresql_version" {
-  default = "11"
+  default = "15"
 }
 
 variable "pgsql_sku" {
