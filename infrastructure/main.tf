@@ -103,12 +103,12 @@ module "postgresql_v15" {
   force_user_permissions_trigger = "1"
 
   # Sets correct DB owner after migration to fix permissions
-  enable_schema_ownership = var.enable_schema_ownership
+  enable_schema_ownership        = var.enable_schema_ownership
   force_schema_ownership_trigger = "1"
-  kv_subscription = var.kv_subscription
-  kv_name = module.key-vault.key_vault_id
-  user_secret_name = azurerm_key_vault_secret.POSTGRES-USER.name
-  pass_secret_name = azurerm_key_vault_secret.POSTGRES-PASS.name
+  kv_subscription                = var.kv_subscription
+  kv_name                        = module.key-vault.key_vault_id
+  user_secret_name               = azurerm_key_vault_secret.POSTGRES-USER.name
+  pass_secret_name               = azurerm_key_vault_secret.POSTGRES-PASS.name
 }
 resource "azurerm_key_vault_secret" "POSTGRES-USER" {
   name         = "${var.component}-POSTGRES-USER"
