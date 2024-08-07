@@ -23,6 +23,10 @@ ccd:
   enabled: true
   postgresql:
     enabled: true
+    flexibleserver: "rpe-preview"
+    setup:
+      databases:
+        - name: "pr-${CHANGE_ID}-draftstore"
   ccd:
     s2s:
       enabled: false
