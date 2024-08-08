@@ -21,7 +21,6 @@ java:
 
   postgresql:
     enabled: true
-    flexibleserver: "rpe-preview"
     setup:
       databases:
       - name: data-store
@@ -82,6 +81,7 @@ ccd:
   ccd-definition-store-api:
     java:
       ingressHost: ccd-def-store-${SERVICE_FQDN}
+      keyVaults: []
       environment:
         TS_TRANSLATION_SERVICE_HOST: http://ts-translation-service-pr-226-java
         ELASTIC_SEARCH_FAIL_ON_IMPORT: false
@@ -104,6 +104,7 @@ ccd:
       IMPORTER_USERNAME: ${IMPORT_USERNAME}
       IMPORTER_PASSWORD: ${IMPORT_PWD}
     secrets: []
+    keyVaults: []
     definitions:
       - https://github.com/hmcts/ccd-test-definitions/raw/master/src/main/resources/uk/gov/hmcts/ccd/test_definitions/excel/BEFTA_Master_Definition.xlsx
     userRoles:
@@ -458,6 +459,7 @@ ccd:
   ccd-admin-web:
     nodejs:
       ingressHost:  ccd-admin-web-${SERVICE_FQDN}
+      keyVaults: []
       environment:
         IDAM_ADMIN_WEB_SERVICE_KEY: ${ADMIN_S2S_KEY}
         IDAM_OAUTH2_AW_CLIENT_SECRET: ${ADMIN_WEB_IDAM_SECRET}
