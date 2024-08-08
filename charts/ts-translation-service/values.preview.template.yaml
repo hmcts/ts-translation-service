@@ -66,8 +66,8 @@ ccd:
     devMode: true
     postgresUsername: hmcts
     postgresPassword: hmcts
-    postgresHostname: ""
-    postgresSecret: ""
+    postgresHostname: ${SERVICE_NAME}-postgresql
+    postgresSecret: postgres
     postgresql:
       auth:
         postgresUsername: hmcts
