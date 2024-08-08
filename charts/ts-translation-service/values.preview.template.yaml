@@ -21,6 +21,11 @@ java:
 
   postgresql:
     enabled: true
+    postgresqlUsername: hmcts
+    postgresqlPassword: hmcts
+    auth:
+      postgresUsername: hmcts
+      postgresPassword: hmcts
     setup:
       databases:
       - name: data-store
@@ -63,19 +68,8 @@ ccd:
     ccdDefinitionStoreUrl: http://${SERVICE_NAME}-ccd-definition-store
     enableKeyVaults: true
     devMode: true
-    #postgresUsername: hmcts
-    #postgresPassword: hmcts
-
-    postgresHostname: ${SERVICE_NAME}-postgresql
-
     postgresUsername: hmcts
-    postgresPassword: ${POSTGRES_PASSWORD}
-    postgresSecret: postgres
-
-    #postgresql:
-    #  auth:
-    #    postgresUsername: hmcts
-    #    postgresPassword: hmcts
+    postgresPassword: hmcts
 
 
   ccd-definition-store-api:
