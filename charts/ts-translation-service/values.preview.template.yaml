@@ -64,14 +64,14 @@ ccd:
     ccdDefinitionStoreUrl: http://${SERVICE_NAME}-ccd-definition-store
     enableKeyVaults: true
     devMode: true
-    postgresUsername: hmcts
-    postgresPassword: hmcts
+    #postgresUsername: hmcts
+    #postgresPassword: hmcts
     postgresHostname: ${SERVICE_NAME}-postgresql
     postgresSecret: postgres
-    postgresql:
-      auth:
-        postgresUsername: hmcts
-        postgresPassword: hmcts
+    #postgresql:
+    #  auth:
+    #    postgresUsername: hmcts
+    #    postgresPassword: hmcts
 
 
   ccd-definition-store-api:
