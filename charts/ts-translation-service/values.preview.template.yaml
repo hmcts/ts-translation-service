@@ -22,6 +22,17 @@ java:
   postgresql:
     enabled: true
     flexibleserver: "rpe-preview"
+    setup:
+    databases:
+      - name: data-store
+      - name: definition-store
+      - name: user-profile
+      - name: draftstore
+      - name: payment
+      - name: evidence
+      - name: annotation
+      - name: role-assignment
+      - name: ts_translation_service
 
 ccd:
   enabled: true
