@@ -23,6 +23,8 @@ java:
     enabled: true
     postgresqlUsername: hmcts
     postgresqlPassword: hmcts
+    postgresHostname: ${SERVICE_NAME}-postgresql
+    postgresSecret: hmcts
     auth:
       postgresUsername: hmcts
       postgresPassword: hmcts
@@ -41,7 +43,7 @@ java:
 ccd:
   enabled: true
   postgresql:
-    enabled: true
+    enabled: false
   ccd:
     s2s:
       enabled: false
@@ -70,6 +72,8 @@ ccd:
     devMode: true
     postgresUsername: hmcts
     postgresPassword: hmcts
+    postgresHostname: ${SERVICE_NAME}-postgresql
+    postgresSecret: hmcts
 
 
   ccd-definition-store-api:
