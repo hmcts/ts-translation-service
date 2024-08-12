@@ -106,6 +106,7 @@ ccd:
     environment:
       IMPORTER_USERNAME: ${IMPORT_USERNAME}
       IMPORTER_PASSWORD: ${IMPORT_PWD}
+      CLIENT_SECRET: ${ADMIN_WEB_IDAM_SECRET}
     secrets: []
     definitions:
       - https://github.com/hmcts/ccd-test-definitions/raw/master/src/main/resources/uk/gov/hmcts/ccd/test_definitions/excel/BEFTA_Master_Definition.xlsx
