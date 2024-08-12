@@ -1,3 +1,34 @@
+postgresql:
+  enabled: true
+  releaseNameOverride: ${SERVICE_NAME}-postgresql
+  image:
+    registry: hmctspublic.azurecr.io
+    repository: imported/bitnami/postgresql
+    tag: '11.3.0'
+    pullPolicy: Always
+  resources:
+    requests:
+      cpu: 25m
+  initdbScripts:
+    init.sql: |-
+              CREATE DATABASE "data-store" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
+              CREATE DATABASE "definition-store" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
+              CREATE DATABASE "user-profile" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
+              CREATE DATABASE "draftstore" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
+              CREATE DATABASE "payment" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
+              CREATE DATABASE "evidence" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
+              CREATE DATABASE "annotation" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
+              CREATE DATABASE "role_assignment" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
+              CREATE DATABASE "ts_translation_service" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
+  postgresqlUsername: hmcts
+  postgresqlPassword: hmcts
+  persistence:
+    enabled: false
+
+
+
+
+
 java:
   # Don't modify below here
   image: ${IMAGE_NAME}
@@ -35,20 +66,7 @@ ccd:
     ras:
       enabled: false
     postgresql:
-      enabled: true
-      primary:
-        initdb:
-          scripts:
-            init.sql: |
-              CREATE DATABASE "data-store" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
-              CREATE DATABASE "definition-store" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
-              CREATE DATABASE "user-profile" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
-              CREATE DATABASE "draftstore" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
-              CREATE DATABASE "payment" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
-              CREATE DATABASE "evidence" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
-              CREATE DATABASE "annotation" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
-              CREATE DATABASE "role_assignment" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
-              CREATE DATABASE "ts_translation_service" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
+      enabled: false
     definitionStore:
       enabled: true
     adminWeb:
@@ -71,6 +89,7 @@ ccd:
   ccd-definition-store-api:
     java:
       ingressHost: ccd-def-store-${SERVICE_FQDN}
+      keyVaults: []
       environment:
         TS_TRANSLATION_SERVICE_HOST: http://ts-translation-service-pr-226-java
         ELASTIC_SEARCH_FAIL_ON_IMPORT: false
