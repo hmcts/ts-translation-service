@@ -10,15 +10,6 @@ java:
     TS_TRANSLATION_SERVICE_DB_OPTIONS: "?stringtype=unspecified"
     TS_TRANSLATION_SERVICE_DB_PORT: 5432
     TESTING_SUPPORT_ENABLED: true
-
-  keyVaults:
-    ts:
-      resourceGroup: ts-shared
-      secrets:
-        - name: app-insights-connection-string
-        - name: ts-translation-service-s2s-secret
-          alias: IDAM_KEY_TS_TRANSLATION_SERVICE
-
   postgresql:
     enabled: true
     primary:
@@ -31,15 +22,23 @@ java:
             CREATE DATABASE "definition-store" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
             CREATE DATABASE "user-profile" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
             CREATE DATABASE "draftstore" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
-            CREATE DATABASE "payment" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
             CREATE DATABASE "evidence" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
             CREATE DATABASE "annotation" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
             CREATE DATABASE "role_assignment" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
+            CREATE DATABASE "hmc-cft-hearing-service" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
             CREATE DATABASE "ts_translation_service" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
     auth:
       username: "hmcts"
       password: "hmcts"
-    postgresHostname: ${SERVICE_NAME}-postgresql
+  keyVaults:
+    ts:
+      resourceGroup: ts-shared
+      secrets:
+        - name: app-insights-connection-string
+        - name: ts-translation-service-s2s-secret
+          alias: IDAM_KEY_TS_TRANSLATION_SERVICE
+
+
 
 ccd:
   enabled: true
@@ -73,8 +72,8 @@ ccd:
     devMode: true
     postgresql:
       auth:
-        postgresUsername: hmcts
-        postgresPassword: hmcts
+        postgresUsername: "hmcts"
+        postgresPassword: "hmcts"
 
 
   ccd-definition-store-api:
