@@ -93,7 +93,7 @@ ccd:
           DEFINITION_STORE_DB_PASSWORD:
             secretRef: "{{ .Values.global.postgresSecret }}"
             key: PASSWORD
-            disabled: true
+            disabled: false
       keyVaults: [ ]
 
 
