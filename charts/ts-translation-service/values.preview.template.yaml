@@ -93,6 +93,7 @@ ccd:
             secretRef: "{{ .Values.global.postgresSecret }}"
             key: PASSWORD
             disabled: true
+      keyVaults: [ ]
 
 
    #Use this image to import your CCD definition. To have an image available, create a git tag and push it.
@@ -461,4 +462,5 @@ ccd:
         IDAM_ADMIN_WEB_SERVICE_KEY: ${ADMIN_S2S_KEY}
         IDAM_OAUTH2_AW_CLIENT_SECRET: ${ADMIN_WEB_IDAM_SECRET}
         ADMINWEB_GET_DICTIONARY_URL: http://ts-translation-service-pr-226-java/dictionary
+      keyVaults: [ ]
 
