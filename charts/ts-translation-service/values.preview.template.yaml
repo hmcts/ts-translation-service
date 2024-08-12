@@ -21,24 +21,25 @@ java:
 
   postgresql:
     enabled: true
-    postgresqlUsername: hmcts
-    postgresqlPassword: hmcts
-    postgresHostname: ${SERVICE_NAME}-postgresql
-    postgresSecret: hmcts
+    primary:
+      persistence:
+        enabled: false
+      initdb:
+        scripts:
+          init.sql: |
+            CREATE DATABASE "data-store" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
+            CREATE DATABASE "definition-store" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
+            CREATE DATABASE "user-profile" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
+            CREATE DATABASE "draftstore" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
+            CREATE DATABASE "payment" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
+            CREATE DATABASE "evidence" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
+            CREATE DATABASE "annotation" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
+            CREATE DATABASE "role_assignment" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
+            CREATE DATABASE "ts_translation_service" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
     auth:
-      postgresUsername: hmcts
-      postgresPassword: hmcts
-    setup:
-      databases:
-      - name: data-store
-      - name: definition-store
-      - name: user-profile
-      - name: draftstore
-      - name: payment
-      - name: evidence
-      - name: annotation
-      - name: role-assignment
-      - name: ts_translation_service
+      username: "hmcts"
+      password: "hmcts"
+    postgresHostname: ${SERVICE_NAME}-postgresql
 
 ccd:
   enabled: true
@@ -70,28 +71,23 @@ ccd:
     ccdDefinitionStoreUrl: http://${SERVICE_NAME}-ccd-definition-store
     enableKeyVaults: true
     devMode: true
-    postgresUsername: hmcts
-    postgresPassword: hmcts
-    postgresHostname: ${SERVICE_NAME}-postgresql
-    postgresSecret: hmcts
+    postgresql:
+      auth:
+        postgresUsername: hmcts
+        postgresPassword: hmcts
 
 
   ccd-definition-store-api:
     java:
       ingressHost: ccd-def-store-${SERVICE_FQDN}
       environment:
+        DEFINITION_STORE_DB_HOST: ${SERVICE_NAME}-postgresql
         TS_TRANSLATION_SERVICE_HOST: http://ts-translation-service-pr-226-java
         ELASTIC_SEARCH_FAIL_ON_IMPORT: false
         IDAM_USER_URL: https://idam-web-public.aat.platform.hmcts.net
         IDAM_S2S_URL: http://rpe-service-auth-provider-aat.service.core-compute-aat.internal
         USER_PROFILE_HOST: http://ccd-user-profile-api-aat.service.core-compute-aat.internal
         OIDC_ISSUER: https://forgerock-am.service.core-compute-idam-aat.internal:8443/openam/oauth2/hmcts
-      secrets:
-          DEFINITION_STORE_DB_PASSWORD:
-            secretRef: "{{ .Values.global.postgresSecret }}"
-            key: PASSWORD
-            disabled: true
-
 
    #Use this image to import your CCD definition. To have an image available, create a git tag and push it.
   ccd-definition-importer:
