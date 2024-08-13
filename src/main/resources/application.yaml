@@ -20,6 +20,8 @@ management:
 
 springdoc:
   packagesToScan: uk.gov.hmcts.reform.translate.controllers
+  swagger-ui:
+    enabled: false
 
 spring:
   main:

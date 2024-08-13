@@ -8,16 +8,16 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import uk.gov.hmcts.reform.translate.controllers.ControllerConstants;
+import uk.gov.hmcts.reform.translate.helper.HttpMethodEnum;
 import uk.gov.hmcts.reform.translate.security.HttpServletRequestWithoutAuthenticationHeader;
 
-import javax.servlet.FilterChain;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -45,10 +45,10 @@ class TranslateCyEndpointFilterTest {
     }
 
     @ParameterizedTest
-    @EnumSource(value = HttpMethod.class,
+    @EnumSource(value = HttpMethodEnum.class,
         names = {"POST"},
         mode = EnumSource.Mode.EXCLUDE)
-    void testShouldPerformAuthenticationWhenNotPostTranslateCyEndpoint(final HttpMethod param) throws Exception {
+    void testShouldPerformAuthenticationWhenNotPostTranslateCyEndpoint(final HttpMethodEnum param) throws Exception {
         doReturn(param.name()).when(request).getMethod();
         doReturn(ControllerConstants.TRANSLATIONS_URL).when(request).getServletPath();
         doNothing().when(filterChain).doFilter(request, response);
