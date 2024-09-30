@@ -4,7 +4,7 @@ java:
   ingressHost: ${SERVICE_FQDN}
   environment:
     TS_TRANSLATION_SERVICE_DB_HOST: "{{ .Release.Name }}-postgresql"
-    TS_TRANSLATION_SERVICE_DB_NAME: "ccd"
+    TS_TRANSLATION_SERVICE_DB_NAME: "ts_translation_service"
     TS_TRANSLATION_SERVICE_DB_USERNAME: "hmcts"
     TS_TRANSLATION_SERVICE_DB_PASSWORD: "hmcts"
     TS_TRANSLATION_SERVICE_DB_OPTIONS: "?stringtype=unspecified"
@@ -19,8 +19,32 @@ java:
         - name: ts-translation-service-s2s-secret
           alias: IDAM_KEY_TS_TRANSLATION_SERVICE
 
+  postgresql:
+    enabled: true
+    primary:
+      persistence:
+        enabled: false
+      initdb:
+        scripts:
+          init.sql: |
+            CREATE DATABASE "data-store" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
+            CREATE DATABASE "definition-store" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
+            CREATE DATABASE "user-profile" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
+            CREATE DATABASE "draftstore" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
+            CREATE DATABASE "payment" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
+            CREATE DATABASE "evidence" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
+            CREATE DATABASE "annotation" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
+            CREATE DATABASE "role_assignment" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
+            CREATE DATABASE "ts_translation_service" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
+    auth:
+      username: "hmcts"
+      password: "hmcts"
+    postgresHostname: ${SERVICE_NAME}-postgresql
+
 ccd:
   enabled: true
+  postgresql:
+    enabled: false
   ccd:
     s2s:
       enabled: false
@@ -34,21 +58,6 @@ ccd:
       enabled: false
     ras:
       enabled: false
-    postgresql:
-      enabled: true
-      primary:
-        initdb:
-          scripts:
-            init.sql: |
-              CREATE DATABASE "data-store" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
-              CREATE DATABASE "definition-store" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
-              CREATE DATABASE "user-profile" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
-              CREATE DATABASE "draftstore" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
-              CREATE DATABASE "payment" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
-              CREATE DATABASE "evidence" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
-              CREATE DATABASE "annotation" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
-              CREATE DATABASE "role_assignment" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
-              CREATE DATABASE "ts_translation_service" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
     definitionStore:
       enabled: true
     adminWeb:
@@ -72,12 +81,23 @@ ccd:
     java:
       ingressHost: ccd-def-store-${SERVICE_FQDN}
       environment:
+        DEFINITION_STORE_DB_HOST: ${SERVICE_NAME}-postgresql
+        DEFINITION_STORE_DB_USERNAME: hmcts
+        DEFINITION_STORE_DB_PASSWORD: hmcts
+        DEFINITION_STORE_DB_OPTIONS: "?stringtype=unspecified"
         TS_TRANSLATION_SERVICE_HOST: http://ts-translation-service-pr-226-java
         ELASTIC_SEARCH_FAIL_ON_IMPORT: false
         IDAM_USER_URL: https://idam-web-public.aat.platform.hmcts.net
         IDAM_S2S_URL: http://rpe-service-auth-provider-aat.service.core-compute-aat.internal
         USER_PROFILE_HOST: http://ccd-user-profile-api-aat.service.core-compute-aat.internal
         OIDC_ISSUER: https://forgerock-am.service.core-compute-idam-aat.internal:8443/openam/oauth2/hmcts
+        DEFINITION_STORE_IDAM_KEY: ${CCD_DEFINITION_S2S_SECRET}
+      secrets:
+          DEFINITION_STORE_DB_PASSWORD:
+            secretRef: "{{ .Values.global.postgresSecret }}"
+            key: PASSWORD
+            disabled: true
+      keyVaults: [ ]
 
 
    #Use this image to import your CCD definition. To have an image available, create a git tag and push it.
@@ -87,6 +107,7 @@ ccd:
     environment:
       IMPORTER_USERNAME: ${IMPORT_USERNAME}
       IMPORTER_PASSWORD: ${IMPORT_PWD}
+      CLIENT_SECRET: ${ADMIN_WEB_IDAM_SECRET}
     secrets: []
     definitions:
       - https://github.com/hmcts/ccd-test-definitions/raw/master/src/main/resources/uk/gov/hmcts/ccd/test_definitions/excel/BEFTA_Master_Definition.xlsx
@@ -446,4 +467,5 @@ ccd:
         IDAM_ADMIN_WEB_SERVICE_KEY: ${ADMIN_S2S_KEY}
         IDAM_OAUTH2_AW_CLIENT_SECRET: ${ADMIN_WEB_IDAM_SECRET}
         ADMINWEB_GET_DICTIONARY_URL: http://ts-translation-service-pr-226-java/dictionary
+      keyVaults: [ ]
 
