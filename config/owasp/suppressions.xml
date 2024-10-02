@@ -8,8 +8,7 @@
         CVE-2023-35887 refer [Ticket]
         CVE-2023-48795 refer [Ticket]
         CVE-2023-35887 refer [Ticket]
-        CVE-2023-46589 refer [Ticket]
-        CVE-2022-45047 refer [https://tools.hmcts.net/jira/browse/CCD-5193] </notes>
+        CVE-2023-46589 refer [Ticket]</notes>
     <cve>CVE-2022-45688</cve>
     <cve>CVE-2023-5072</cve>
     <cve>CVE-2023-4759</cve>
@@ -17,6 +16,5 @@
     <cve>CVE-2023-48795</cve>
     <cve>CVE-2023-46589</cve>
     <cve>CVE-2023-35887</cve>
-    <cve>CVE-2022-45047</cve>
   </suppress>
 </suppressions>
