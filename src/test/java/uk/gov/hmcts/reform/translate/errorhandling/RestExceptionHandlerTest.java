@@ -32,13 +32,14 @@ import uk.gov.hmcts.reform.translate.security.filter.PutDictionaryEndpointFilter
 import uk.gov.hmcts.reform.translate.service.DictionaryService;
 
 import java.lang.reflect.Method;
+
 import static org.mockito.BDDMockito.given;
 import static org.springframework.context.annotation.FilterType.ASSIGNABLE_TYPE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static uk.gov.hmcts.reform.translate.errorhandling.BadRequestError.BAD_SCHEMA;
 import static uk.gov.hmcts.reform.translate.controllers.ControllerConstants.DICTIONARY_URL;
+import static uk.gov.hmcts.reform.translate.errorhandling.BadRequestError.BAD_SCHEMA;
 
 @WebMvcTest(controllers = DictionaryController.class,
     includeFilters = @ComponentScan.Filter(type = ASSIGNABLE_TYPE, classes = MapperConfig.class),
@@ -218,7 +219,7 @@ class RestExceptionHandlerTest {
         BindingResult bindingResult = new BeanPropertyBindingResult("", "objectName");
 
         Method[] methods = RestExceptionHandlerTest.class.getMethods();
-        MethodParameter methodParameter = new MethodParameter(methods[0], 1);
+        MethodParameter methodParameter = new MethodParameter(methods[0], 0);
 
         /// WHEN
         given(service.getDictionaryContents()).willAnswer(invocation -> {

@@ -9,7 +9,7 @@ This enables Welsh Language Support for Professional Users; allowing EXUI users 
 
 ### Prerequisites
 
-- [JDK 17](https://java.com)
+- [JDK 21](https://java.com)
 - [Docker](https://www.docker.com)
 
 ## Building and deploying the application
@@ -109,7 +109,3 @@ Here are some other functionalities it provides:
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
-
-
-
-
