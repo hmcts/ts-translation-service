@@ -24,6 +24,7 @@ import uk.gov.hmcts.reform.translate.security.filter.PutDictionaryEndpointFilter
 import uk.gov.hmcts.reform.translate.security.filter.TranslateCyEndpointFilter;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
+import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
@@ -83,7 +84,7 @@ public class SecurityConfiguration {
             .logout(l -> l.disable())
             .authorizeHttpRequests(ar -> ar.anyRequest().authenticated())
             .oauth2ResourceServer(o -> o.jwt(j -> j.jwtAuthenticationConverter(jwtAuthenticationConverter)))
-            .oauth2Client()
+            .oauth2Client(withDefaults())
             ;
         return http.build();
     }
