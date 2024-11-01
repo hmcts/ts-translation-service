@@ -36,12 +36,13 @@ configurations {
 
 java {
   toolchain {
-    languageVersion = JavaLanguageVersion.of(17)
+    languageVersion = JavaLanguageVersion.of(21)
   }
 }
 
 def versions = [
-  testcontainers  : '1.15.3',
+  testcontainers  : '1.20.2',
+  lombok          : '1.18.34',
   junit           : '5.8.2',
   junitPlatform   : '1.7.2',
   serviceAuthVersion: '5.1.2',
@@ -244,6 +245,7 @@ dependencies {
   implementation group: 'org.springframework.security', name: 'spring-security-config'
   implementation group: 'org.springframework.security', name:'spring-security-rsa'
   implementation group: 'org.springframework.retry', name:'spring-retry'
+  
   implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.5.0'
 
   configurations.all {
@@ -260,7 +262,8 @@ dependencies {
   implementation group: 'com.microsoft.azure', name: 'applicationinsights-spring-boot-starter', version: versions.appInsightsVersion
 
   implementation group: 'org.flywaydb', name: 'flyway-core', version: '9.19.1'
-  implementation group: 'org.postgresql', name: 'postgresql', version: '42.5.1'
+  implementation group: 'org.postgresql', name: 'postgresql', version: '42.5.5'
+
   implementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: versions.serviceAuthVersion
   implementation group: 'com.github.hmcts', name: 'idam-java-client', version: versions.idamClientVersion
   implementation group: 'com.auth0', name: 'java-jwt', version: '4.4.0'
@@ -305,11 +308,6 @@ dependencies {
 
   cftlibImplementation group: 'org.springframework.boot', name: 'spring-boot-devtools'
 
-  //constraints {
-  //  implementation('org.springframework.cloud:3.1.7') {
-  //    because('Versions < 3.1.7 an application is vulnerable to insertion of sensitive information into a log file when it attempts to revoke a Vault batch token - CVE-2023-20859')
-  //  }
-  //}
 }
 
 dependencyManagement {
