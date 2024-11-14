@@ -48,11 +48,9 @@ class DictionaryServiceWithRetryEnabledTest {
     DictionaryRepository dictionaryRepository;
 
     @MockBean
-    @SuppressWarnings("unused")
     TranslationUploadRepository translationUploadRepository;
 
     @MockBean
-    @SuppressWarnings("unused")
     DictionaryMapper dictionaryMapper;
 
     @MockBean
