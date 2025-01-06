@@ -3,7 +3,7 @@ appVersion: "1.0"
 description: A Helm chart for ts-translation-service App
 name: ts-translation-service
 home: https://github.com/hmcts/ts-translation-service
-version: 0.1.7
+version: 0.1.8
 maintainers:
   - name: HMCTS ts team
 dependencies:
@@ -11,6 +11,6 @@ dependencies:
     version: 5.2.1
     repository: 'https://hmctspublic.azurecr.io/helm/v1/repo/'
   - name: ccd
-    version: 9.2.0
+    version: 9.2.1
     repository: 'https://hmctspublic.azurecr.io/helm/v1/repo/'
     condition: ccd.enabled
