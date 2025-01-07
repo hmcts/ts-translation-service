@@ -234,6 +234,7 @@ dependencies {
     exclude group: 'org.apache.sshd', module: 'sshd-common'
     exclude group: 'org.apache.sshd', module: 'sshd-core'
     exclude group: 'org.apache.sshd', module: 'sshd-sftp'
+    exclude group: 'org.apache.sshd', module: 'sshd-osgi'
   }
   implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-config', version: '4.1.3'
   implementation group: 'org.springframework.cloud', name: 'spring-cloud-config-client', version: '4.1.3'
