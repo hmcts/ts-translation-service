@@ -307,11 +307,11 @@ dependencies {
   implementation group: 'commons-fileupload', name: 'commons-fileupload', version: '1.5'
   implementation group: 'commons-io', name: 'commons-io', version: '2.14.0'
 
-  testImplementation (group: 'com.github.hmcts', name: 'ccd-test-definitions', version: '7.22.2') {
+  testImplementation (group: 'com.github.hmcts', name: 'ccd-test-definitions', version: '7.24.2') {
     exclude group: 'io.rest-assured', module : 'rest-assured'
   }
 
-  testImplementation group: 'com.github.hmcts', name: 'befta-fw', version: '9.0.2'
+  testImplementation group: 'com.github.hmcts', name: 'befta-fw', version: '9.2.0'
 
   cftlibImplementation group: 'org.springframework.boot', name: 'spring-boot-devtools'
 
