@@ -255,7 +255,6 @@ dependencies {
   implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.6.7'
   implementation group: 'org.json', name: 'json', version: '20240303'
 
-
   configurations.all {
     exclude group: 'com.vaadin.external.google', module: 'android-json'
   }
