@@ -85,7 +85,7 @@ ccd:
         DEFINITION_STORE_DB_USERNAME: hmcts
         DEFINITION_STORE_DB_PASSWORD: hmcts
         DEFINITION_STORE_DB_OPTIONS: "?stringtype=unspecified"
-        TS_TRANSLATION_SERVICE_HOST: http://ts-translation-service-pr-226-java
+        TS_TRANSLATION_SERVICE_HOST: http://${SERVICE_NAME}-java
         ELASTIC_SEARCH_FAIL_ON_IMPORT: false
         IDAM_USER_URL: https://idam-web-public.aat.platform.hmcts.net
         IDAM_S2S_URL: http://rpe-service-auth-provider-aat.service.core-compute-aat.internal
@@ -466,6 +466,6 @@ ccd:
       environment:
         IDAM_ADMIN_WEB_SERVICE_KEY: ${ADMIN_S2S_KEY}
         IDAM_OAUTH2_AW_CLIENT_SECRET: ${ADMIN_WEB_IDAM_SECRET}
-        ADMINWEB_GET_DICTIONARY_URL: http://ts-translation-service-pr-226-java/dictionary
+        ADMINWEB_GET_DICTIONARY_URL: http://${SERVICE_NAME}-java/dictionary
       keyVaults: [ ]
 
