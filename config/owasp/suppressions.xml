@@ -2,8 +2,8 @@
   <suppress>
     <notes>Temporary Suppression
         CVE-2023-4759 refer [Ticket]
-        CVE-2023-34055 refer [Ticket]</notes>
+        CVE-2023-48795 refer [Ticket]</notes>
     <cve>CVE-2023-4759</cve>
-    <cve>CVE-2023-34055</cve>
+    <cve>CVE-2023-48795</cve>
   </suppress>
 </suppressions>

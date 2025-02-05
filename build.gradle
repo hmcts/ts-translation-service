@@ -216,7 +216,7 @@ jacocoTestReport {
 }
 
 dependencies {
-  implementation 'org.springframework.boot:spring-boot:2.7.12'
+  implementation 'org.springframework.boot:spring-boot:2.7.18'
 
   implementation 'ch.qos.logback:logback-classic:1.2.13'
   implementation 'ch.qos.logback:logback-core:1.2.13'
