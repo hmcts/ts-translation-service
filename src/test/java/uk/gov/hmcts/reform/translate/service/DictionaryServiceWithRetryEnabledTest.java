@@ -3,14 +3,14 @@ package uk.gov.hmcts.reform.translate.service;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.retry.annotation.EnableRetry;
-import org.springframework.test.context.junit4.SpringRunner;
+
 import uk.gov.hmcts.reform.translate.data.DictionaryEntity;
 import uk.gov.hmcts.reform.translate.errorhandling.EnglishPhraseUniqueConstraintException;
 import uk.gov.hmcts.reform.translate.helper.DictionaryMapper;
@@ -32,11 +32,13 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
 import static uk.gov.hmcts.reform.translate.service.DictionaryServiceTest.PutDictionary.getDictionaryRequestWithoutTranslationPhrases;
 import static uk.gov.hmcts.reform.translate.service.DictionaryServiceTest.createDictionaryEntity;
 
 @DisplayName("DictionaryService test with RetryEnabled")
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = {DictionaryService.class, DictionaryServiceWithRetryEnabledTest.RetryConfig.class})
 class DictionaryServiceWithRetryEnabledTest {
 
