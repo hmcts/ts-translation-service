@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpStatus;
@@ -17,7 +18,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConversionException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.mock.http.client.MockClientHttpResponse;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.validation.BeanPropertyBindingResult;
@@ -57,14 +57,14 @@ class RestExceptionHandlerTest {
     @Autowired
     protected MockMvc mockMvc;
 
-    @MockitoBean
+    @MockBean
     protected DictionaryService service;
 
     @Autowired
     protected ObjectMapper objectMapper;
 
     @BeforeEach
-    protected void setUp() {
+    void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 

@@ -81,20 +81,20 @@ public final class EvaluatorUtils {
 
     public static String generateTestPhrase(String marker) {
         final int count = 10;
-        return String.format("%s%s-%s", TEST_PHRASES_START_WITH, marker, 
-            RandomStringUtils.secure().nextAlphabetic(count));
+        return String.format("%s%s-%s", TEST_PHRASES_START_WITH, marker, RandomStringUtils.randomAlphabetic(count));
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings("unchecked")
     private static Map<String,String> createComparableTranslation(Map<String,Object> input) {
 
         return input.entrySet().stream().map(e -> {
             String result = "";
-            switch (e.getValue()) {
-                case Translation tran -> result += tran.getTranslation();
-                case String str -> result += str;
-                case Map map -> result += map.getOrDefault("translation","");
-                default -> { }
+            if (e.getValue() instanceof Translation tran) {
+                result += tran.getTranslation();
+            } else if (e.getValue() instanceof String str) {
+                result += str;
+            } else if (e.getValue() instanceof Map map) {
+                result += map.getOrDefault("translation","");
             }
             return Collections.singletonMap(e.getKey(), result);
         }).flatMap(m -> m.entrySet().stream())

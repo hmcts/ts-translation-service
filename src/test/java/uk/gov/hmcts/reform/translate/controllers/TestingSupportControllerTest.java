@@ -5,9 +5,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
-
 import uk.gov.hmcts.reform.translate.config.SecurityConfiguration;
 import uk.gov.hmcts.reform.translate.security.JwtGrantedAuthoritiesConverter;
 import uk.gov.hmcts.reform.translate.security.filter.PutDictionaryEndpointFilter;
@@ -25,19 +24,19 @@ import static org.springframework.context.annotation.FilterType.ASSIGNABLE_TYPE;
 )
 class TestingSupportControllerTest extends BaseControllerTest {
 
-    @MockitoBean
+    @MockBean
     private DictionaryService dictionaryService;
 
     private TestingSupportController endpoint;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         endpoint = new TestingSupportController(dictionaryService);
     }
 
     @Nested
     @DisplayName("DeleteDictionaryTestPhrases")
-    protected class DeleteDictionaryTestPhrases {
+    class DeleteDictionaryTestPhrases {
 
         @Test
         void shouldCallDeleteTestPhrasesService() {
