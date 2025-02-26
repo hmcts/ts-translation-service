@@ -3,8 +3,7 @@ package uk.gov.hmcts.reform.translate;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
-
+import io.jsonwebtoken.impl.TextCodec;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +24,7 @@ import java.util.Date;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+
 import static org.mockito.Mockito.when;
 
 @SpringBootTest(classes = {
@@ -78,7 +78,7 @@ public abstract class BaseTest {
         "classpath:sql/put-create-Dictionary_EnglishPhrases.sql";
 
     @BeforeEach
-    void init() {
+    public void init() {
         Jwt jwt = dummyJwt();
         when(authentication.getPrincipal()).thenReturn(jwt);
         SecurityContextHolder.setContext(new SecurityContextImpl(authentication));
@@ -92,16 +92,17 @@ public abstract class BaseTest {
     }
 
     protected static void stubUserInfo(String roles) {
-        final var jsonBody = "{\n"
-            + "      \"sub\": \"user@hmcts.net\",\n"
-            + "      \"uid\": \"e8275d41-7f22-4ee7-8ed3-14644d6db096\",\n"
-            + "      \"roles\": [\n"
-            + "        \"" + roles + "\"\n"
-            + "      ],\n"
-            + "      \"name\": \"Test User\",\n"
-            + "      \"given_name\": \"Test\",\n"
-            + "      \"family_name\": \"User\"\n"
-            + "    }";
+        final var jsonBody = String.format("""
+            {
+                  "sub": "user@hmcts.net",
+                  "uid": "e8275d41-7f22-4ee7-8ed3-14644d6db096",
+                  "roles": [
+                    "%s"
+                  ],
+                  "name": "Test User",
+                  "given_name": "Test",
+                  "family_name": "User"
+                }""", roles);
         stubFor(WireMock.get(urlEqualTo("/o/userinfo")).willReturn(
             aResponse().withStatus(HttpStatus.OK.value())
                 .withHeader("Content-Type", "application/json")
@@ -112,7 +113,7 @@ public abstract class BaseTest {
         return Jwts.builder()
             .setSubject(serviceName)
             .setIssuedAt(new Date())
-            .signWith(SignatureAlgorithm.HS256, Keys.secretKeyFor(SignatureAlgorithm.HS256))
+            .signWith(SignatureAlgorithm.HS256, TextCodec.BASE64.encode("00112233445566778899aabbccddeeff"))
             .compact();
     }
 }

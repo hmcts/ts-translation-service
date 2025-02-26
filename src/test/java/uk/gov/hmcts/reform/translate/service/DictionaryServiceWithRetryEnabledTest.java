@@ -7,7 +7,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.retry.annotation.EnableRetry;
 
@@ -32,6 +31,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static uk.gov.hmcts.reform.translate.service.DictionaryServiceTest.PutDictionary.getDictionaryRequestWithoutTranslationPhrases;
@@ -45,17 +45,19 @@ class DictionaryServiceWithRetryEnabledTest {
     @Autowired
     private DictionaryService dictionaryService;
 
-    @MockBean
+    @MockitoBean
     @Qualifier(DefaultDictionaryRepository.QUALIFIER)
     DictionaryRepository dictionaryRepository;
 
-    @MockBean
+    @MockitoBean
+    @SuppressWarnings("unused")
     TranslationUploadRepository translationUploadRepository;
 
-    @MockBean
+    @MockitoBean
+    @SuppressWarnings("unused")
     DictionaryMapper dictionaryMapper;
 
-    @MockBean
+    @MockitoBean
     SecurityUtils securityUtils;
 
     @Configuration
@@ -67,7 +69,7 @@ class DictionaryServiceWithRetryEnabledTest {
     private static final String THE_QUICK_FOX_PHRASE = "the quick fox";
 
     @BeforeEach
-    void setUp() {
+    public void setUp() {
 
         final DictionaryEntity dictionaryEntity = createDictionaryEntity(THE_QUICK_FOX_PHRASE, null);
 

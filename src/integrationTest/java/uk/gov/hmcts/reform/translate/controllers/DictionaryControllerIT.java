@@ -75,7 +75,7 @@ public class DictionaryControllerIT extends BaseTest {
 
     @Nested
     @DisplayName("Get Dictionary")
-    class GetDictionary {
+    protected class GetDictionary {
 
         @Test
         @Sql(scripts = {DELETE_TRANSLATION_TABLES_SCRIPT})
@@ -117,7 +117,7 @@ public class DictionaryControllerIT extends BaseTest {
 
     @Nested
     @DisplayName("Request Translations")
-    class RequestTranslations {
+    protected class RequestTranslations {
 
         @ParameterizedTest
         @EmptySource
@@ -172,6 +172,7 @@ public class DictionaryControllerIT extends BaseTest {
         return new Callable<>() {
             final String payload = "{\"phrases\": [\"English phrase 2\"]}";
 
+            @Override
             public ResultActions call() throws Exception {
                 return mockMvc.perform(post(TRANSLATIONS_URL)
                                            .contentType(APPLICATION_JSON_VALUE)
@@ -183,7 +184,7 @@ public class DictionaryControllerIT extends BaseTest {
 
     @Nested
     @DisplayName("Put Dictionary")
-    class PutDictionary {
+    protected class PutDictionary {
         private final String serviceJwtDefinition = generateDummyS2SToken("ccd_definition");
 
         private final String serviceJwtXuiWeb = generateDummyS2SToken("xui_webapp");
@@ -214,6 +215,7 @@ public class DictionaryControllerIT extends BaseTest {
                 final String payload = "{\"translations\":{\"English phrase 2\": \"Translated Phrase 2\","
                     + " \"English Phrase 3\": \"Translated Phrase 3\"}}";
 
+                @Override
                 public ResultActions call() throws Exception {
                     final Jwt jwt = dummyJwt();
                     when(authentication.getPrincipal()).thenReturn(jwt);

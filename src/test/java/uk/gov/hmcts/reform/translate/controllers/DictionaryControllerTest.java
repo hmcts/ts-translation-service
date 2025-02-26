@@ -5,8 +5,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+
 import uk.gov.hmcts.reform.translate.config.SecurityConfiguration;
 import uk.gov.hmcts.reform.translate.model.Dictionary;
 import uk.gov.hmcts.reform.translate.model.Translation;
@@ -35,19 +36,19 @@ class DictionaryControllerTest extends BaseControllerTest {
 
     private static final String CLIENTS2S_TOKEN = "clientS2SToken";
 
-    @MockBean
+    @MockitoBean
     private DictionaryService dictionaryService;
 
     private DictionaryController dictionaryController;
 
     @BeforeEach
-    void setUp() {
+    public void setUp() {
         dictionaryController = new DictionaryController(dictionaryService);
     }
 
     @Nested
     @DisplayName("getDictionary")
-    class GetDictionary {
+    protected class GetDictionary {
         @Test
         void shouldReturn200() {
             dictionaryController.getDictionary();
@@ -57,7 +58,7 @@ class DictionaryControllerTest extends BaseControllerTest {
 
     @Nested
     @DisplayName("RequestTranslation")
-    class RequestTranslations {
+    protected class RequestTranslations {
         @Test
         void shouldReturnTranslations() {
             doReturn(Map.of("English phrase", "Translated English phrase"))
@@ -74,7 +75,7 @@ class DictionaryControllerTest extends BaseControllerTest {
 
     @Nested
     @DisplayName("putDictionary")
-    class PutDictionary {
+    protected class PutDictionary {
         @Test
         void shouldReturn200() {
             final var dictionaryController = new DictionaryController(dictionaryService);
