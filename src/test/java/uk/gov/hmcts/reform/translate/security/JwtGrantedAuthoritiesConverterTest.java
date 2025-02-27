@@ -68,7 +68,6 @@ class JwtGrantedAuthoritiesConverterTest {
 
     @Test
     @DisplayName("Should return empty authorities when token value is not matching with expected")
-    @SuppressWarnings("unchecked")
     void shouldReturnEmptyAuthoritiesWhenIdamReturnsNoUsers() {
         when(jwt.hasClaim(anyString())).thenReturn(true);
         when(jwt.getClaim(anyString())).thenReturn(ACCESS_TOKEN);
@@ -84,7 +83,6 @@ class JwtGrantedAuthoritiesConverterTest {
 
     @Test
     @DisplayName("Should return empty authorities when token value is not matching with expected")
-    @SuppressWarnings("unchecked")
     void shouldReturnAuthoritiesWhenIdamReturnsUserRoles() {
         when(jwt.hasClaim(anyString())).thenReturn(true);
         when(jwt.getClaim(anyString())).thenReturn(ACCESS_TOKEN);
