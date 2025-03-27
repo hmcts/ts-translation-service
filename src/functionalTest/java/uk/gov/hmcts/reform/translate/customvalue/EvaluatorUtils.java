@@ -21,7 +21,6 @@ public final class EvaluatorUtils {
     private EvaluatorUtils() {
     }
 
-    @SuppressWarnings("unchecked")
     public static Map<String, Object> calculateDictionaryFromActualResponseAndExpectedTranslations(
         BackEndFunctionalTestScenarioContext scenarioContext,
         Map<String, Object> expectedTranslations) {

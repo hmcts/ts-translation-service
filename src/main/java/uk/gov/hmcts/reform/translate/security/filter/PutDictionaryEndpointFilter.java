@@ -7,16 +7,17 @@ import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import uk.gov.hmcts.reform.translate.controllers.ControllerConstants;
 import uk.gov.hmcts.reform.translate.security.CustomPermitAllAuthenticationTokenBuilder;
 import uk.gov.hmcts.reform.translate.security.HttpServletRequestWithoutAuthenticationHeader;
 import uk.gov.hmcts.reform.translate.security.SecurityUtils;
 
 import java.io.IOException;
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import static uk.gov.hmcts.reform.translate.security.SecurityUtils.SERVICE_AUTHORIZATION;
 

@@ -1,6 +1,5 @@
 package uk.gov.hmcts.reform.translate.helper;
 
-import lombok.val;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import uk.gov.hmcts.reform.translate.model.Dictionary;
@@ -19,21 +18,21 @@ class DictionaryUtilsTest {
 
     @Test
     void testForIsTranslationBodyEmpty() {
-        val dictionaryRequest = new Dictionary();
-        val result = DictionaryUtils.isTranslationBodyEmpty(dictionaryRequest);
+        final var dictionaryRequest = new Dictionary();
+        final var result = DictionaryUtils.isTranslationBodyEmpty(dictionaryRequest);
         assertTrue(result);
     }
 
     @Test
     void testForHasAnyTranslations() {
-        val dictionaryRequest = getDictionaryRequestWithoutABody(1, 2);
-        val result = DictionaryUtils.hasAnyTranslations(dictionaryRequest);
+        final var dictionaryRequest = getDictionaryRequestWithoutABody(1, 2);
+        final var result = DictionaryUtils.hasAnyTranslations(dictionaryRequest);
         assertFalse(result);
     }
 
     @Test
     void testForHasTranslationPhrase() {
-        val dictionaryRequest = getDictionaryRequestWithoutABody(1, 2);
+        final var dictionaryRequest = getDictionaryRequestWithoutABody(1, 2);
 
         dictionaryRequest.getTranslations()
             .entrySet()
