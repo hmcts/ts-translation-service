@@ -21,6 +21,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: 21
+          distribution: 'temurin'
       - name: Run Swagger Publisher
         run: ./gradlew integrationTest --tests uk.gov.hmcts.reform.translate.config.SwaggerPublisherTest
       - name: Commit to repository
