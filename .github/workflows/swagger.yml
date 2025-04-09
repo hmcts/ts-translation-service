@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - CFTS-6683
 
 jobs:
   build:
