@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?><suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
   <suppress>
     <notes>Temporary Suppression
-        CVE-2023-4759 refer [Ticket]</notes>
+        CVE-2023-4759 refer [Ticket]
+        CVE-2023-52428 refer [https://tools.hmcts.net/jira/browse/CFTS-6917]
+        CVE-2024-38820 refer [https://tools.hmcts.net/jira/browse/CFTS-6915]
+        CVE-2025-24813 refer [https://tools.hmcts.net/jira/browse/CFTS-6916]
+    </notes>
     <cve>CVE-2023-4759</cve>
+    <cve>CVE-2023-52428</cve>
+    <cve>CVE-2024-38820</cve>
+    <cve>CVE-2025-24813</cve>
   </suppress>
 </suppressions>
