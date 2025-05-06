@@ -34,7 +34,7 @@ def versions = [
   testcontainers  : '1.20.2',
   lombok          : '1.18.34',
   junit           : '5.8.2',
-  junitPlatform   : '1.7.2',
+  junitPlatform   : '1.9.1',
   serviceAuthVersion: '4.0.3',
   idamClientVersion : '2.0.1',
   appInsightsVersion: '2.4.1'
