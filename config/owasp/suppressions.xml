@@ -5,10 +5,14 @@
         CVE-2023-52428 refer [https://tools.hmcts.net/jira/browse/CFTS-6917]
         CVE-2024-38820 refer [https://tools.hmcts.net/jira/browse/CFTS-6915]
         CVE-2025-24813 refer [https://tools.hmcts.net/jira/browse/CFTS-6916]
+        CVE-2025-31650 refer [https://tools.hmcts.net/jira/browse/CCD-6353]
+        CVE-2025-31651 refer [https://tools.hmcts.net/jira/browse/CCD-6353]
     </notes>
     <cve>CVE-2023-4759</cve>
     <cve>CVE-2023-52428</cve>
     <cve>CVE-2024-38820</cve>
     <cve>CVE-2025-24813</cve>
+    <cve>CVE-2025-31650</cve>
+    <cve>CVE-2025-31651</cve>
   </suppress>
 </suppressions>
