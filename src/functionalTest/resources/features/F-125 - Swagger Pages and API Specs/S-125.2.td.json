@@ -24,8 +24,8 @@
       "definitions": "[[ANYTHING_PRESENT]]",
       "swagger": "2.0",
       "info": {
-        "description": "Api Documentation",
-        "title": "Api Documentation",
+        "description": "Provides a capability for service users to maintain Welsh translations.  This enables Welsh Language Support for Professional Users; allowing EXUI users to choose to view the UI in Welsh",
+        "title": "Welsh Language Translation Service",
         "contact":"[[ANYTHING_PRESENT]]",
         "license": "[[ANYTHING_PRESENT]]",
         "version": "[[ANYTHING_PRESENT]]",
