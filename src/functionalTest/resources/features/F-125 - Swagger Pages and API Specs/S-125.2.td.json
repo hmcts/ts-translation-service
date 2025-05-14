@@ -17,8 +17,11 @@
     "responseCode" : 200,
     "responseMessage" : "OK",
     "body" : {
-      "host" : "[[ANYTHING_PRESENT]]",
-      "basePath": "/",
+      "openapi" : "[[ANYTHING_PRESENT]]",
+      "externalDocs" : "[[ANYTHING_PRESENT]]",
+      "servers" : "[[ANYTHING_PRESENT]]",
+      "security" : "[[ANYTHING_PRESENT]]",
+      "components": "[[ANYTHING_PRESENT]]",
       "tags": "[[ANYTHING_PRESENT]]",
       "paths": "[[ANYTHING_PRESENT]]",
       "definitions": "[[ANYTHING_PRESENT]]",
@@ -26,10 +29,7 @@
       "info": {
         "description": "Provides a capability for service users to maintain Welsh translations.  This enables Welsh Language Support for Professional Users; allowing EXUI users to choose to view the UI in Welsh",
         "title": "Welsh Language Translation Service",
-        "contact":"[[ANYTHING_PRESENT]]",
-        "license": "[[ANYTHING_PRESENT]]",
-        "version": "[[ANYTHING_PRESENT]]",
-        "termsOfService": "[[ANYTHING_PRESENT]]"
+        "version": "[[ANYTHING_PRESENT]]"
       }
     }
   }
