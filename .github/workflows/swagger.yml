@@ -20,7 +20,8 @@ jobs:
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
-          java-version: 21
+            java-version: 21
+            distribution: 'temurin'
       - name: Run Swagger Publisher
         run: ./gradlew integrationTest --tests uk.gov.hmcts.ccd.swagger.OpenApiPublisher
       - name: Commit to repository
