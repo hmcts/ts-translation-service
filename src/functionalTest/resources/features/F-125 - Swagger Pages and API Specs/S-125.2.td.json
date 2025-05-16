@@ -1,0 +1,33 @@
+{
+  "_guid_": "S-125.2",
+  "title": "Must return a positive appropriate response when Swagger JSON URL is accessed",
+  "_extends_": "F-125_Test_Swagger_JSON_Base_Data",
+
+  "specs": [
+    "to observe the swagger json content"
+  ],
+
+  "request" :{
+    "pathVariables" : {
+      "ts-translation-service-version": "ts-translation-service.json"
+    }
+  },
+
+  "expectedResponse": {
+    "responseCode" : 200,
+    "responseMessage" : "OK",
+    "body" : {
+      "openapi" : "[[ANYTHING_PRESENT]]",
+      "externalDocs" : "[[ANYTHING_PRESENT]]",
+      "servers" : "[[ANYTHING_PRESENT]]",
+      "security" : "[[ANYTHING_PRESENT]]",
+      "components": "[[ANYTHING_PRESENT]]",
+      "paths": "[[ANYTHING_PRESENT]]",
+      "info": {
+        "description": "Provides a capability for service users to maintain Welsh translations.  This enables Welsh Language Support for Professional Users; allowing EXUI users to choose to view the UI in Welsh",
+        "title": "Welsh Language Translation Service",
+        "version": "[[ANYTHING_PRESENT]]"
+      }
+    }
+  }
+}
