@@ -15,11 +15,15 @@ management:
       exposure:
         include: health, info, prometheus
   health:
+    ssl:
+      enabled: false
     probes:
       enabled: true
 
 springdoc:
   packagesToScan: uk.gov.hmcts.reform.translate.controllers
+  swagger-ui:
+    enabled: false
 
 spring:
   main:

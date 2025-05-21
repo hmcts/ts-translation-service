@@ -1,6 +1,5 @@
 package uk.gov.hmcts.reform.translate.helper;
 
-import lombok.val;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import uk.gov.hmcts.reform.translate.data.TranslationUploadEntity;
@@ -22,11 +21,11 @@ class DictionaryMapperTest {
 
     @Test
     void shouldMapModelToEntityWithTranslationUploadEntity() {
-        val dictionaryMapper = new DictionaryMapper();
-        val currentPhrase = getCurrentPhrase();
-        val translationUploadEntity = new TranslationUploadEntity();
+        final var dictionaryMapper = new DictionaryMapper();
+        final var currentPhrase = getCurrentPhrase();
+        final var translationUploadEntity = new TranslationUploadEntity();
         translationUploadEntity.setUserId("3333");
-        val dictionaryEntity = dictionaryMapper.modelToEntityWithTranslationUploadEntity(
+        final var dictionaryEntity = dictionaryMapper.modelToEntityWithTranslationUploadEntity(
             currentPhrase,
             translationUploadEntity
         );
@@ -40,8 +39,8 @@ class DictionaryMapperTest {
     void shouldThrowNullErrorIfModelToEntityWithTranslationUploadEntityIsPassedANullUploadEntity() {
 
         // GIVEN
-        val dictionaryMapper = new DictionaryMapper();
-        val currentPhrase = getCurrentPhrase();
+        final var dictionaryMapper = new DictionaryMapper();
+        final var currentPhrase = getCurrentPhrase();
 
         // WHEN / THEN
         assertThrows(
@@ -52,9 +51,9 @@ class DictionaryMapperTest {
 
     @Test
     void shouldMapModelToEntity() {
-        val dictionaryMapper = new DictionaryMapper();
-        val currentPhrase = getCurrentPhrase();
-        val dictionaryEntity = dictionaryMapper.modelToEntity(currentPhrase);
+        final var dictionaryMapper = new DictionaryMapper();
+        final var currentPhrase = getCurrentPhrase();
+        final var dictionaryEntity = dictionaryMapper.modelToEntity(currentPhrase);
         assertEquals(ENGLISH, dictionaryEntity.getEnglishPhrase());
         assertEquals(WELSH, dictionaryEntity.getTranslationPhrase());
         assertNull(dictionaryEntity.getTranslationUpload());
@@ -63,9 +62,9 @@ class DictionaryMapperTest {
     @Test
     void shouldMapModelToEntityWithoutTranslationPhrase() {
 
-        val dictionaryMapper = new DictionaryMapper();
-        val currentPhrase = getCurrentPhrase();
-        val dictionaryEntity = dictionaryMapper.modelToEntityWithoutTranslationPhrase(currentPhrase);
+        final var dictionaryMapper = new DictionaryMapper();
+        final var currentPhrase = getCurrentPhrase();
+        final var dictionaryEntity = dictionaryMapper.modelToEntityWithoutTranslationPhrase(currentPhrase);
         assertEquals(ENGLISH, dictionaryEntity.getEnglishPhrase());
         assertNull(dictionaryEntity.getTranslationPhrase());
         assertNull(dictionaryEntity.getTranslationUpload());
