@@ -27,6 +27,7 @@ module "key-vault" {
   product_group_name      = "dcd_ccd"
   common_tags             = var.common_tags
   create_managed_identity = true
+  additional_managed_identities_access = var.additional_managed_identities_access
 }
 
 resource "azurerm_key_vault_secret" "AZURE_APPINSIGHTS_KEY" {
