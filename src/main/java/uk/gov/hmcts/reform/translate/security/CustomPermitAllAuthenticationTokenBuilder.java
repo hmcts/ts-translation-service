@@ -3,7 +3,7 @@ package uk.gov.hmcts.reform.translate.security;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import static java.util.Collections.emptyList;
 
