@@ -2,15 +2,11 @@ package uk.gov.hmcts.reform.translate.config;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import uk.gov.hmcts.reform.translate.BaseTest;
 
+import uk.gov.hmcts.reform.translate.BaseTest;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -22,17 +18,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Built-in feature which saves service's swagger specs in temporary directory.
  * Each CI run on master should automatically save and upload (if updated) documentation.
  */
-@ExtendWith(SpringExtension.class)
 @SpringBootTest(
-    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
     properties = {
         // NB: hide testing-support endpoint from Swagger Publish
         "ts.endpoints.testing-support.enabled=false"
     }
 )
-@AutoConfigureMockMvc(addFilters = false)
-@ActiveProfiles("itest")
-class SwaggerPublisherTest extends BaseTest {
+public class SwaggerPublisherTest extends BaseTest {
 
     @Autowired
     private MockMvc mvc;
