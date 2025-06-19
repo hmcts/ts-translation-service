@@ -1,7 +1,6 @@
 package uk.gov.hmcts.reform.translate.security;
 
 import com.auth0.jwt.exceptions.JWTDecodeException;
-import lombok.val;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -250,17 +249,17 @@ class SecurityUtilsTest {
     @Test
     @DisplayName("get client from getServiceNameFromS2SToken")
     void shouldReturnAClientForGetServiceNameFromS2SToken() {
-        val clientID = underTest.getServiceNameFromS2SToken(SERVICE_JWT);
+        final var clientID = underTest.getServiceNameFromS2SToken(SERVICE_JWT);
         assertEquals(CLIENT_ID, clientID);
     }
 
     @Test
     @DisplayName("Fail get client from getServiceNameFromS2SToken")
     void shouldFailReturnAClientForGetServiceNameFromS2SToken() {
-        val jwtDecodeException =
+        final var jwtDecodeException =
             assertThrows(JWTDecodeException.class, () ->
                 underTest.getServiceNameFromS2SToken("prudaj"));
 
-        assertEquals("The token was expected to have 3 parts, but got 1.", jwtDecodeException.getMessage());
+        assertEquals("The token was expected to have 3 parts, but got 0.", jwtDecodeException.getMessage());
     }
 }
