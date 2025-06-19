@@ -216,8 +216,8 @@ dependencies {
 
   // start::CVE Vulnerability dependency overrides                                                            // MAIN PARENT DEPENDEDNCY
 
-  implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.5.16'                          // spring-*
-  implementation group: 'ch.qos.logback', name: 'logback-core', version: '1.5.16'                             // spring-*
+  implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.5.18'                          // spring-*
+  implementation group: 'ch.qos.logback', name: 'logback-core', version: '1.5.18'                             // spring-*
   implementation group: 'commons-fileupload', name: 'commons-fileupload', version: '1.5'                      // idam-java-client
   implementation group: 'commons-io', name: 'commons-io', version: '2.16.1'                                   // idam-java-client
   implementation group: 'commons-lang', name: 'commons-lang', version: '2.6'                                  // springdoc
