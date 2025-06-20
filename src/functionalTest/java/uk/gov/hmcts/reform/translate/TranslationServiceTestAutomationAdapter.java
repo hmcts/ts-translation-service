@@ -59,8 +59,13 @@ public class TranslationServiceTestAutomationAdapter extends DefaultTestAutomati
             } catch (Exception e) {
                 throw new FunctionalTestException("Problem checking acceptable response payload: ", e);
             }
+        } else {
+            return customValueEvaluators.stream()
+                .filter(candidate -> candidate.matches(CustomValueKey.getEnum(key.toString())))
+                .findFirst()
+                .map(evaluator -> evaluator.calculate(scenarioContext, key))
+                .orElseGet(() -> super.calculateCustomValue(scenarioContext, key));
         }
-        return super.calculateCustomValue(scenarioContext, key);
     }
 
     @Override
