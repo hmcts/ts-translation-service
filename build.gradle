@@ -97,7 +97,7 @@ tasks.withType(JavaExec).configureEach {
 }
 
 checkstyle {
-  toolVersion '10.3.1'
+  toolVersion '10.26.0'
 }
 
 tasks.withType(Checkstyle) {
