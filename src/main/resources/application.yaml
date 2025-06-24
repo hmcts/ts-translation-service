@@ -23,7 +23,11 @@ management:
 springdoc:
   packagesToScan: uk.gov.hmcts.reform.translate.controllers
   swagger-ui:
-    enabled: false
+    enabled: true
+  api-docs:
+    path: /v3/api-docs
+    swagger-ui:
+      path: /swagger-ui.html
 
 spring:
   main:
@@ -95,3 +99,4 @@ ts:
         bypass-role-authorise-check-for-services: ccd_definition
     testing-support:
       enabled: ${TESTING_SUPPORT_ENABLED:false}
+
