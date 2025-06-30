@@ -3,7 +3,7 @@ plugins {
   id 'idea'
   id 'jacoco'
   id 'com.github.ben-manes.versions' version '0.51.0'
-  id 'com.github.hmcts.rse-cft-lib' version '0.19.1768'
+  id 'com.github.hmcts.rse-cft-lib' version '0.19.1777'
   id 'com.github.spacialcircumstances.gradle-cucumber-reporting' version '0.1.25'
   id 'io.freefair.lombok' version '8.12'
   id 'io.spring.dependency-management' version '1.1.7'
@@ -257,7 +257,7 @@ dependencies {
   implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: '6.1.9'
 
 
-  implementation group: 'com.auth0', name: 'java-jwt', version: '4.4.0'
+  implementation group: 'com.auth0', name: 'java-jwt', version: '4.5.0'
   implementation group: 'com.microsoft.azure', name: 'applicationinsights-logging-logback', version: appInsightsVersion
   implementation group: 'com.microsoft.azure', name: 'applicationinsights-spring-boot-starter', version: appInsightsVersion
   implementation group: 'org.flywaydb', name: 'flyway-core', version: '9.19.1'
@@ -269,7 +269,7 @@ dependencies {
 
   integrationTestImplementation sourceSets.main.runtimeClasspath
   integrationTestImplementation sourceSets.test.runtimeClasspath
-  integrationTestImplementation group: 'com.github.ben-manes.caffeine', name: 'caffeine', version: '3.1.8'
+  integrationTestImplementation group: 'com.github.ben-manes.caffeine', name: 'caffeine', version: '3.2.1'
   integrationTestImplementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.12.6'
   integrationTestRuntimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.12.6'
   integrationTestRuntimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.12.6'
