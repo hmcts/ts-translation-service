@@ -280,7 +280,7 @@ dependencies {
   functionalTestImplementation sourceSets.main.runtimeClasspath
   functionalTestImplementation sourceSets.test.runtimeClasspath
   functionalTestImplementation group: 'com.github.hmcts', name: 'befta-fw', version: '9.2.1'
-  functionalTestImplementation group: 'com.github.hmcts', name: 'ccd-test-definitions', version: '7.24.2'
+  functionalTestImplementation group: 'com.github.hmcts', name: 'ccd-test-definitions', version: '7.27.7-prerelease-CME-537'
 
   cftlibImplementation group: 'org.springframework.boot', name: 'spring-boot-devtools'
 
