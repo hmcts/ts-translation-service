@@ -6,6 +6,7 @@
   ],
   "labels": ["Renovate Dependencies"],
   "prConcurrentLimit": 5,
-  "schedule": ["after 7pm"],
+  "schedule": ["* 16-19 * * 1-5"],
+  "automergeSchedule": ["* 14-18 * * 1-4"],
   "rebaseWhen": "conflicted"
 }
