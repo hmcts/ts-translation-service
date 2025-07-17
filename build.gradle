@@ -216,16 +216,8 @@ dependencies {
 
   // start::CVE Vulnerability dependency overrides                                                            // MAIN PARENT DEPENDEDNCY
 
-  implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.5.18'                          // spring-*
-  implementation group: 'ch.qos.logback', name: 'logback-core', version: '1.5.18'                             // spring-*
-  implementation group: 'commons-fileupload', name: 'commons-fileupload', version: '1.6.0'                      // idam-java-client
-  implementation group: 'commons-io', name: 'commons-io', version: '2.16.1'                                   // idam-java-client
-  implementation group: 'commons-lang', name: 'commons-lang', version: '2.6'                                  // springdoc
-  implementation group: 'org.apache.logging.log4j', name: 'log4j-api'                                         // spring-*
-  implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j'                                    // spring-*
-
-  testImplementation group: 'io.vavr', name: 'vavr', version: '0.10.6'                                        // assertj-vavr
-  functionalTestImplementation group: 'io.rest-assured', name: 'rest-assured', version: '5.5.0'               // befta-fw
+  // PUT CVE Vulnerability dependency overrides here
+  // e.g. implementation group: 'com.example', name: 'example-lib', version: '1.2.3'
 
   // end::CVE Vulnerability dependency overrides                                                              // MAIN PARENT DEPENDEDNCY
 
@@ -279,8 +271,9 @@ dependencies {
 
   functionalTestImplementation sourceSets.main.runtimeClasspath
   functionalTestImplementation sourceSets.test.runtimeClasspath
+  functionalTestImplementation group: 'io.rest-assured', name: 'rest-assured', version: '5.5.0'
   functionalTestImplementation group: 'com.github.hmcts', name: 'befta-fw', version: '9.2.4'
-  functionalTestImplementation group: 'com.github.hmcts', name: 'ccd-test-definitions', version: '7.27.7-prerelease-CME-537'
+  functionalTestImplementation group: 'com.github.hmcts', name: 'ccd-test-definitions', version: '7.25.4'
 
   cftlibImplementation group: 'org.springframework.boot', name: 'spring-boot-devtools'
 

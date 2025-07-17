@@ -1,11 +1,12 @@
 package uk.gov.hmcts.reform.translate.customvalue;
 
-import org.apache.commons.lang.StringUtils;
 import uk.gov.hmcts.befta.exception.FunctionalTestException;
 import uk.gov.hmcts.befta.player.BackEndFunctionalTestScenarioContext;
 import uk.gov.hmcts.befta.util.ReflectionUtils;
 
 import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
 
 public class ContainsDictionaryFromContextEvaluator implements CustomValueEvaluator {
 
