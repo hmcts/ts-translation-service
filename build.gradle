@@ -3,7 +3,7 @@ plugins {
   id 'idea'
   id 'jacoco'
   id 'com.github.ben-manes.versions' version '0.51.0'
-  id 'com.github.hmcts.rse-cft-lib' version '0.19.1777'
+  id 'com.github.hmcts.rse-cft-lib' version '0.19.1787'
   id 'com.github.spacialcircumstances.gradle-cucumber-reporting' version '0.1.25'
   id 'io.freefair.lombok' version '8.12'
   id 'io.spring.dependency-management' version '1.1.7'
@@ -97,7 +97,7 @@ tasks.withType(JavaExec).configureEach {
 }
 
 checkstyle {
-  toolVersion '10.26.0'
+  toolVersion '10.26.1'
 }
 
 tasks.withType(Checkstyle) {
@@ -218,13 +218,13 @@ dependencies {
 
   implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.5.18'                          // spring-*
   implementation group: 'ch.qos.logback', name: 'logback-core', version: '1.5.18'                             // spring-*
-  implementation group: 'commons-fileupload', name: 'commons-fileupload', version: '1.5'                      // idam-java-client
+  implementation group: 'commons-fileupload', name: 'commons-fileupload', version: '1.6.0'                      // idam-java-client
   implementation group: 'commons-io', name: 'commons-io', version: '2.16.1'                                   // idam-java-client
   implementation group: 'commons-lang', name: 'commons-lang', version: '2.6'                                  // springdoc
   implementation group: 'org.apache.logging.log4j', name: 'log4j-api'                                         // spring-*
   implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j'                                    // spring-*
 
-  testImplementation group: 'io.vavr', name: 'vavr', version: '0.10.5'                                        // assertj-vavr
+  testImplementation group: 'io.vavr', name: 'vavr', version: '0.10.6'                                        // assertj-vavr
   functionalTestImplementation group: 'io.rest-assured', name: 'rest-assured', version: '5.5.0'               // befta-fw
 
   // end::CVE Vulnerability dependency overrides                                                              // MAIN PARENT DEPENDEDNCY
@@ -252,8 +252,8 @@ dependencies {
   implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.8.9'
 
   // HMCTS
-  implementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '5.2.0'
-  implementation group: 'com.github.hmcts', name: 'idam-java-client', version: '3.0.3'
+  implementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '5.3.3'
+  implementation group: 'com.github.hmcts', name: 'idam-java-client', version: '3.0.4'
   implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: '6.1.9'
 
 
@@ -279,8 +279,8 @@ dependencies {
 
   functionalTestImplementation sourceSets.main.runtimeClasspath
   functionalTestImplementation sourceSets.test.runtimeClasspath
-  functionalTestImplementation group: 'com.github.hmcts', name: 'befta-fw', version: '9.2.1'
-  functionalTestImplementation group: 'com.github.hmcts', name: 'ccd-test-definitions', version: '7.24.2'
+  functionalTestImplementation group: 'com.github.hmcts', name: 'befta-fw', version: '9.2.4'
+  functionalTestImplementation group: 'com.github.hmcts', name: 'ccd-test-definitions', version: '7.27.7-prerelease-CME-537'
 
   cftlibImplementation group: 'org.springframework.boot', name: 'spring-boot-devtools'
 
