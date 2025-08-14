@@ -17,7 +17,7 @@ group = 'uk.gov.hmcts.reform'
 version = '0.0.1'
 
 ext {
-  set('springCloudVersion', '2024.0.1')
+  set('springCloudVersion', '2024.0.2')
   set('spring-framework.version', '6.2.1')
   set('spring-security.version', '6.4.2')
   set('snakeyaml.version', '2.3')
@@ -269,7 +269,7 @@ dependencies {
 
   integrationTestImplementation sourceSets.main.runtimeClasspath
   integrationTestImplementation sourceSets.test.runtimeClasspath
-  integrationTestImplementation group: 'com.github.ben-manes.caffeine', name: 'caffeine', version: '3.2.1'
+  integrationTestImplementation group: 'com.github.ben-manes.caffeine', name: 'caffeine', version: '3.2.2'
   integrationTestImplementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.12.6'
   integrationTestRuntimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.12.6'
   integrationTestRuntimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.12.6'
