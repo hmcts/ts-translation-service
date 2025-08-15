@@ -272,7 +272,7 @@ dependencies {
   integrationTestImplementation group: 'com.github.ben-manes.caffeine', name: 'caffeine', version: '3.2.2'
   integrationTestImplementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.12.6'
   integrationTestRuntimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.12.7'
-  integrationTestRuntimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.12.6'
+  integrationTestRuntimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.12.7'
   integrationTestImplementation group: 'com.pivovarit', name: 'throwing-function', version: '1.6.1'
   integrationTestImplementation group: 'org.springframework.cloud', name: 'spring-cloud-contract-wiremock'
   integrationTestImplementation group: 'org.testcontainers', name: 'postgresql', version: testcontainers
