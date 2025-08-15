@@ -358,6 +358,10 @@ wrapper {
   distributionType = Wrapper.DistributionType.ALL
 }
 
+bootRun {
+  mainClass = 'uk.gov.hmcts.reform.translate.Application'
+}
+
 bootWithCCD {
 
   authMode = uk.gov.hmcts.rse.AuthMode.Local
