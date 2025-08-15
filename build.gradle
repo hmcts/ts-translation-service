@@ -260,7 +260,7 @@ dependencies {
   implementation group: 'com.auth0', name: 'java-jwt', version: '4.5.0'
   implementation group: 'com.microsoft.azure', name: 'applicationinsights-logging-logback', version: appInsightsVersion
   implementation group: 'com.microsoft.azure', name: 'applicationinsights-spring-boot-starter', version: appInsightsVersion
-  implementation group: 'org.flywaydb', name: 'flyway-core', version: '9.19.1'
+  implementation group: 'org.flywaydb', name: 'flyway-core', version: '9.22.3'
   implementation group: 'org.postgresql', name: 'postgresql', version: '42.5.5'
 
   testImplementation libraries.junit5
