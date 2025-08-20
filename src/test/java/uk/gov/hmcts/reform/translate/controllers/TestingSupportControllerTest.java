@@ -1,16 +1,17 @@
 package uk.gov.hmcts.reform.translate.controllers;
 
+import uk.gov.hmcts.reform.translate.config.SecurityConfiguration;
+import uk.gov.hmcts.reform.translate.security.JwtGrantedAuthoritiesConverter;
+import uk.gov.hmcts.reform.translate.security.filter.PutDictionaryEndpointFilter;
+import uk.gov.hmcts.reform.translate.service.DictionaryService;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
-import uk.gov.hmcts.reform.translate.config.SecurityConfiguration;
-import uk.gov.hmcts.reform.translate.security.JwtGrantedAuthoritiesConverter;
-import uk.gov.hmcts.reform.translate.security.filter.PutDictionaryEndpointFilter;
-import uk.gov.hmcts.reform.translate.service.DictionaryService;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import static org.mockito.Mockito.verify;
 import static org.springframework.context.annotation.FilterType.ASSIGNABLE_TYPE;
@@ -24,7 +25,7 @@ import static org.springframework.context.annotation.FilterType.ASSIGNABLE_TYPE;
 )
 class TestingSupportControllerTest extends BaseControllerTest {
 
-    @MockBean
+    @MockitoBean
     private DictionaryService dictionaryService;
 
     private TestingSupportController endpoint;

@@ -1,12 +1,5 @@
 package uk.gov.hmcts.reform.translate.controllers;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.ComponentScan;
 import uk.gov.hmcts.reform.translate.config.SecurityConfiguration;
 import uk.gov.hmcts.reform.translate.model.Dictionary;
 import uk.gov.hmcts.reform.translate.model.Translation;
@@ -19,6 +12,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.IntStream;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anySet;
@@ -35,7 +36,7 @@ class DictionaryControllerTest extends BaseControllerTest {
 
     private static final String CLIENTS2S_TOKEN = "clientS2SToken";
 
-    @MockBean
+    @MockitoBean
     private DictionaryService dictionaryService;
 
     private DictionaryController dictionaryController;
