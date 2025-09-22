@@ -3,13 +3,13 @@ plugins {
   id 'idea'
   id 'jacoco'
   id 'com.github.ben-manes.versions' version '0.52.0'
-  id 'com.github.hmcts.rse-cft-lib' version '0.19.1787'
+  id 'com.github.hmcts.rse-cft-lib' version '0.19.1871'
   id 'com.github.spacialcircumstances.gradle-cucumber-reporting' version '0.1.25'
   id 'io.freefair.lombok' version '8.14.2'
   id 'io.spring.dependency-management' version '1.1.7'
-  id 'org.owasp.dependencycheck' version '11.1.1'
+  id 'org.owasp.dependencycheck' version '12.1.5'
   id 'org.sonarqube' version '6.3.1.5724'
-  id 'org.springframework.boot' version '3.4.1'
+  id 'org.springframework.boot' version '3.5.5'
   id 'uk.gov.hmcts.java' version '0.12.67'
 }
 
@@ -17,15 +17,16 @@ group = 'uk.gov.hmcts.reform'
 version = '0.0.1'
 
 ext {
-  set('springCloudVersion', '2024.0.2')
-  set('spring-framework.version', '6.2.1')
-  set('spring-security.version', '6.4.2')
+  set('springCloudVersion', '2025.0.0')
+  set('spring-framework.version', '6.2.11')
+  set('spring-security.version', '6.5.3')
   set('snakeyaml.version', '2.3')
   set('jackson.version', '2.17.0')
   appInsightsVersion  = '2.6.4'
-  junit               = '5.11.4'
-  junitPlatform       = '1.11.4'
-  lombok              = '1.18.36'
+  jjwt               = '0.13.0'
+  junit               = '5.13.4'
+  junitPlatform       = '1.13.4'
+  lombok              = '1.18.42'
   testcontainers      = '1.21.3'
 
 }
@@ -43,6 +44,7 @@ ext.libraries = [
     "org.junit.jupiter:junit-jupiter-params:${junit}",
     "org.junit.platform:junit-platform-commons:${junitPlatform}",
     "org.junit.platform:junit-platform-engine:${junitPlatform}",
+    "org.junit.platform:junit-platform-launcher:${junitPlatform}",
     "org.apiguardian:apiguardian-api:1.1.2"
   ]
 ]
@@ -216,16 +218,8 @@ dependencies {
 
   // start::CVE Vulnerability dependency overrides                                                            // MAIN PARENT DEPENDEDNCY
 
-  implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.5.18'                          // spring-*
-  implementation group: 'ch.qos.logback', name: 'logback-core', version: '1.5.18'                             // spring-*
-  implementation group: 'commons-fileupload', name: 'commons-fileupload', version: '1.6.0'                      // idam-java-client
-  implementation group: 'commons-io', name: 'commons-io', version: '2.16.1'                                   // idam-java-client
-  implementation group: 'commons-lang', name: 'commons-lang', version: '2.6'                                  // springdoc
-  implementation group: 'org.apache.logging.log4j', name: 'log4j-api'                                         // spring-*
-  implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j'                                    // spring-*
-
-  testImplementation group: 'io.vavr', name: 'vavr', version: '0.10.7'                                        // assertj-vavr
-  functionalTestImplementation group: 'io.rest-assured', name: 'rest-assured', version: '5.5.0'               // befta-fw
+  // PUT CVE Vulnerability dependency overrides here
+  // e.g. implementation group: 'com.example', name: 'example-lib', version: '1.2.3'
 
   // end::CVE Vulnerability dependency overrides                                                              // MAIN PARENT DEPENDEDNCY
 
@@ -247,9 +241,8 @@ dependencies {
   implementation group: 'org.springframework.security', name: 'spring-security-web'
   implementation group: 'org.springframework.security', name: 'spring-security-oauth2-jose'
   implementation group: 'org.springframework.security', name: 'spring-security-config'
-  implementation group: 'org.springframework.security', name: 'spring-security-rsa', version: '1.1.5'
   implementation group: 'org.springframework.retry', name:'spring-retry'
-  implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.8.12'
+  implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.8.13'
 
   // HMCTS
   implementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '5.3.3'
@@ -261,7 +254,7 @@ dependencies {
   implementation group: 'com.microsoft.azure', name: 'applicationinsights-logging-logback', version: appInsightsVersion
   implementation group: 'com.microsoft.azure', name: 'applicationinsights-spring-boot-starter', version: appInsightsVersion
   implementation group: 'org.flywaydb', name: 'flyway-core', version: '9.22.3'
-  implementation group: 'org.postgresql', name: 'postgresql', version: '42.7.7'
+  implementation group: 'org.postgresql', name: 'postgresql', version: '42.7.8'
 
   testImplementation libraries.junit5
   testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test'
@@ -270,17 +263,18 @@ dependencies {
   integrationTestImplementation sourceSets.main.runtimeClasspath
   integrationTestImplementation sourceSets.test.runtimeClasspath
   integrationTestImplementation group: 'com.github.ben-manes.caffeine', name: 'caffeine', version: '3.2.2'
-  integrationTestImplementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.13.0'
-  integrationTestRuntimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.13.0'
-  integrationTestRuntimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.13.0'
+  integrationTestImplementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: jjwt
+  integrationTestRuntimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: jjwt
+  integrationTestRuntimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: jjwt
   integrationTestImplementation group: 'com.pivovarit', name: 'throwing-function', version: '1.6.1'
   integrationTestImplementation group: 'org.springframework.cloud', name: 'spring-cloud-contract-wiremock'
   integrationTestImplementation group: 'org.testcontainers', name: 'postgresql', version: testcontainers
 
   functionalTestImplementation sourceSets.main.runtimeClasspath
   functionalTestImplementation sourceSets.test.runtimeClasspath
+  functionalTestImplementation group: 'io.rest-assured', name: 'rest-assured', version: '5.5.6'
   functionalTestImplementation group: 'com.github.hmcts', name: 'befta-fw', version: '9.2.4'
-  functionalTestImplementation group: 'com.github.hmcts', name: 'ccd-test-definitions', version: '7.27.7-prerelease-CME-537'
+  functionalTestImplementation group: 'com.github.hmcts', name: 'ccd-test-definitions', version: '7.25.4'
 
   cftlibImplementation group: 'org.springframework.boot', name: 'spring-boot-devtools'
 
