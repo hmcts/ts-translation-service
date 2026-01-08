@@ -113,7 +113,7 @@ tasks.withType(Test) {
 }
 
 test {
-  generateCucumberReports.enabled = false
+  generateCucumberReports.enabled = true
   failFast = true
 }
 
