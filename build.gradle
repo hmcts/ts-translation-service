@@ -219,7 +219,7 @@ dependencies {
   implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.5.21'                          // spring-*
   implementation group: 'ch.qos.logback', name: 'logback-core', version: '1.5.21'                             // spring-*
   implementation group: 'commons-fileupload', name: 'commons-fileupload', version: '1.6.0'                      // idam-java-client
-  implementation group: 'commons-io', name: 'commons-io', version: '2.16.1'                                   // idam-java-client
+  implementation group: 'commons-io', name: 'commons-io', version: '2.21.0'                                   // idam-java-client
   implementation group: 'commons-lang', name: 'commons-lang', version: '2.6'                                  // springdoc
   implementation group: 'org.apache.logging.log4j', name: 'log4j-api'                                         // spring-*
   implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j'                                    // spring-*
