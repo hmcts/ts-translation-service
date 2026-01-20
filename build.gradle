@@ -23,8 +23,8 @@ ext {
   set('snakeyaml.version', '2.3')
   set('jackson.version', '2.17.0')
   appInsightsVersion  = '2.6.4'
-  junit               = '5.11.4'
-  junitPlatform       = '1.11.4'
+  junit               = '5.14.2'
+  junitPlatform       = '1.14.2'
   lombok              = '1.18.36'
   testcontainers      = '1.21.3'
 
@@ -41,6 +41,7 @@ ext.libraries = [
     "org.junit.jupiter:junit-jupiter-api:${junit}",
     "org.junit.jupiter:junit-jupiter-engine:${junit}",
     "org.junit.jupiter:junit-jupiter-params:${junit}",
+    "org.junit.platform:junit-platform-launcher:${junitPlatform}",
     "org.junit.platform:junit-platform-commons:${junitPlatform}",
     "org.junit.platform:junit-platform-engine:${junitPlatform}",
     "org.apiguardian:apiguardian-api:1.1.2"
@@ -225,7 +226,7 @@ dependencies {
   implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j'                                    // spring-*
 
   testImplementation group: 'io.vavr', name: 'vavr', version: '0.10.7'                                        // assertj-vavr
-  functionalTestImplementation group: 'io.rest-assured', name: 'rest-assured', version: '5.5.5'               // befta-fw
+  functionalTestImplementation group: 'io.rest-assured', name: 'rest-assured', version: '5.5.7'               // befta-fw
 
   // end::CVE Vulnerability dependency overrides                                                              // MAIN PARENT DEPENDEDNCY
 
@@ -261,7 +262,7 @@ dependencies {
   implementation group: 'com.microsoft.azure', name: 'applicationinsights-logging-logback', version: appInsightsVersion
   implementation group: 'com.microsoft.azure', name: 'applicationinsights-spring-boot-starter', version: appInsightsVersion
   implementation group: 'org.flywaydb', name: 'flyway-core', version: '9.22.3'
-  implementation group: 'org.postgresql', name: 'postgresql', version: '42.7.8'
+  implementation group: 'org.postgresql', name: 'postgresql', version: '42.7.9'
 
   testImplementation libraries.junit5
   testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test'
