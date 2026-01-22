@@ -226,7 +226,7 @@ dependencies {
   implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j'                                    // spring-*
 
   testImplementation group: 'io.vavr', name: 'vavr', version: '0.10.7'                                        // assertj-vavr
-  functionalTestImplementation group: 'io.rest-assured', name: 'rest-assured', version: '5.5.7'               // befta-fw
+  functionalTestImplementation group: 'io.rest-assured', name: 'rest-assured', version: '5.5.5'               // befta-fw
 
   // end::CVE Vulnerability dependency overrides                                                              // MAIN PARENT DEPENDEDNCY
 
