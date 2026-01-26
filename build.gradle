@@ -3,7 +3,7 @@ plugins {
   id 'idea'
   id 'jacoco'
   id 'com.github.ben-manes.versions' version '0.53.0'
-  id 'com.github.hmcts.rse-cft-lib' version '0.19.2005'
+  id 'com.github.hmcts.rse-cft-lib' version '0.19.2009'
   id 'com.github.spacialcircumstances.gradle-cucumber-reporting' version '0.1.25'
   id 'io.freefair.lombok' version '8.14.4'
   id 'io.spring.dependency-management' version '1.1.7'
