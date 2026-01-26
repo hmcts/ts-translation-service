@@ -176,6 +176,8 @@ withPipeline(type, product, component) {
             reportName           : "Contract Tests Report"
         ]
     }
+
+  disableCleanupOfHelmReleaseOnFailure()
 }
 
 /**
