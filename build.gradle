@@ -26,7 +26,6 @@ ext {
   junitPlatform       = '1.14.2'
   lombok              = '1.18.36'
   testcontainers      = '1.21.4'
-
 }
 
 java {
