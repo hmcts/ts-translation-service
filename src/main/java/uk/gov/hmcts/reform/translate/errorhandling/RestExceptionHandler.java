@@ -79,5 +79,4 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
             .status(HttpStatus.BAD_REQUEST)
             .body(error);
     }
-    
 }
