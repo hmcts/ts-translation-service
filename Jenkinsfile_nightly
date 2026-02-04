@@ -115,6 +115,8 @@ withPipeline(type, product, component) {
   stage('Build') {
     node {
       checkout scm
+      env.JAVA_HOME = '/usr/lib/jvm/temurin-21-jdk-amd64'
+      env.PATH = "${env.JAVA_HOME}/bin:${env.PATH}"
       builder.gradle('test')
     }
   }
@@ -122,6 +124,8 @@ withPipeline(type, product, component) {
   stage('Functional Tests') {
     node {
       checkout scm
+      env.JAVA_HOME = '/usr/lib/jvm/temurin-21-jdk-amd64'
+      env.PATH = "${env.JAVA_HOME}/bin:${env.PATH}"
       builder.gradle('functional')
     }
   }
