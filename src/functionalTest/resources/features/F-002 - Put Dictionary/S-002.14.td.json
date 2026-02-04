@@ -8,21 +8,18 @@
     "add a new English phrase",
     "has the 201 Created status code"
   ],
-
   "users": {
     "_extends_": "No_Invoking_User"
   },
-
   "s2sClientId": "ccd_definition",
-
   "request": {
     "_extends_": "Common_No_Auth_Request",
     "body": {
       "translations": "${[scenarioContext][customValues][UniqueTranslationWithOnlyEnglish S002.14]}"
     }
   },
-
   "expectedResponse": {
-    "_extends_": "Common_201_Response"
+    "_extends_": "Common_201_Response",
+    "body": {}
   }
 }

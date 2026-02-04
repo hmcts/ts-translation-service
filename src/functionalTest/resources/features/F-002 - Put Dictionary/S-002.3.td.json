@@ -6,21 +6,19 @@
     "with load-translation IDAM role",
     "has the 201 Created status code"
   ],
-
   "users": {
     "invokingUser": {
       "_extends_": "LoadTranslationsUser"
     }
   },
-
   "request": {
     "_extends_": "Common_Request",
     "body": {
       "translations": "${[scenarioContext][customValues][UniqueTranslationWithOnlyEnglish S002.3]}"
     }
   },
-
   "expectedResponse": {
-    "_extends_": "Common_201_Response"
+    "_extends_": "Common_201_Response",
+    "body": {}
   }
 }
