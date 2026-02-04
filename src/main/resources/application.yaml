@@ -5,7 +5,7 @@ server:
 
 logging:
   level:
-    uk.gov.hmcts.reform.translate: ${TS_LOG_LEVEL:INFO}
+    uk.gov.hmcts.reform.translate: ${TS_LOG_LEVEL:DEBUG}
 
 management:
   endpoint:
