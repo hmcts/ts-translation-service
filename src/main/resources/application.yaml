@@ -3,6 +3,10 @@ server:
   error:
     include-stacktrace: never
 
+#logging:
+#  level:
+#    uk.gov.hmcts.reform.translate: ${TS_LOG_LEVEL:DEBUG}
+
 management:
   endpoint:
     health:
@@ -99,4 +103,3 @@ ts:
         bypass-role-authorise-check-for-services: ccd_definition
     testing-support:
       enabled: ${TESTING_SUPPORT_ENABLED:false}
-
