@@ -3,9 +3,9 @@ server:
   error:
     include-stacktrace: never
 
-#logging:
-#  level:
-#    uk.gov.hmcts.reform.translate: ${TS_LOG_LEVEL:DEBUG}
+logging:
+  level:
+    uk.gov.hmcts.reform.translate: ${TS_LOG_LEVEL:DEBUG}
 
 management:
   endpoint:

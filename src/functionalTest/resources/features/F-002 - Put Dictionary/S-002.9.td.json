@@ -6,20 +6,23 @@
     "with load-translation IDAM role with ccd-definition",
     "has the 201 Created status code"
   ],
+
   "users": {
     "invokingUser": {
       "_extends_": "LoadTranslationsUser"
     }
   },
+
   "s2sClientId": "ccd_definition",
+
   "request": {
     "_extends_": "Common_Request",
     "body": {
       "translations": "${[scenarioContext][customValues][UniqueTranslationWithOnlyEnglish S002.9]}"
     }
   },
+
   "expectedResponse": {
-    "_extends_": "Common_201_Response",
-    "body": {}
+    "_extends_": "Common_201_Response"
   }
 }

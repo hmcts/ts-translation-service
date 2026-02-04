@@ -14,11 +14,10 @@
   "request": {
     "_extends_": "Common_Request",
     "body": {
-      "translations": "${[scenarioContext][customValues][UniqueTranslationWithEnglishAndWelsh S002.13,3]}"
+        "translations": "${[scenarioContext][customValues][UniqueTranslationWithEnglishAndWelsh S002.13,3]}"
     }
   },
   "expectedResponse": {
-    "_extends_": "Common_201_Response",
-    "body": {}
+    "_extends_": "Common_201_Response"
   }
 }

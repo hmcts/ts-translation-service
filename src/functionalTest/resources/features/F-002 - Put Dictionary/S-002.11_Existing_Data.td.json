@@ -4,23 +4,23 @@
   "specs": [
     "to PUT translation phrases into the dictionary"
   ],
+
   "users": {
     "invokingUser": {
       "_extends_": "ManageTranslationsUser"
     }
   },
+
   "request": {
     "_extends_": "Common_Request",
     "body": {
       "translations": {
-        "TEST-S002.11-EnglishPhrase": {
-          "translation": ""
-        }
+        "TEST-S002.11-EnglishPhrase": {"translation":""}
       }
     }
   },
+
   "expectedResponse": {
-    "_extends_": "Common_201_Response",
-    "body": {}
+    "_extends_": "Common_201_Response"
   }
 }
