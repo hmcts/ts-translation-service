@@ -113,7 +113,9 @@ withPipeline(type, product, component) {
   disableLegacyDeployment()
 
   stage('functionalTest:aat') {
-    builder.gradle('functional')
+    node {
+      builder.gradle('functional')
+    }
   }
 
 
