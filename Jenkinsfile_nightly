@@ -112,6 +112,20 @@ withPipeline(type, product, component) {
   enableAksStagingDeployment()
   disableLegacyDeployment()
 
+  stage('Build') {
+    node {
+      checkout scm
+      builder.gradle('test')
+    }
+  }
+
+  stage('Functional Tests') {
+    node {
+      checkout scm
+      builder.gradle('functional')
+    }
+  }
+
 
   afterAlways('smoketest:preview') {
     copyIgnore('./build/reports/tests/befta/smoke/cucumber-html-reports', './BEFTA Report for Smoke Tests/')
