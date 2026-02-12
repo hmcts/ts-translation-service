@@ -118,7 +118,6 @@ withPipeline(type, product, component) {
   steps.echo "env.ENVIRONMENT=${env.ENVIRONMENT}"
   steps.echo "env.CNP_ENVIRONMENT=${env.CNP_ENVIRONMENT}"
   steps.echo "env.BRANCH_NAME=${env.BRANCH_NAME}"
-  steps.echo "environmentOfDependencies=${environmentOfDependencies}"
   steps.echo "vaultOverrides=${vaultOverrides}"
   steps.echo "secrets keys=${secrets.keySet()}"
   steps.echo "TS_TRANSLATION_SERVICE_DB_HOST=${env.TS_TRANSLATION_SERVICE_DB_HOST}"
