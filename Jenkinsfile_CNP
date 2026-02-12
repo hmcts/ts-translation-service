@@ -8,24 +8,22 @@ def type = "java"
 def product = "ts"
 def component = "translation-service"
 def branchesToSync = ['demo', 'ithc', 'perftest']
-// Force deploy/test environment to AAT for this pipeline run.
-env.ENVIRONMENT = "aat"
-env.CNP_ENVIRONMENT = "aat"
+def vaultEnv = "aat"
 
 GradleBuilder builder = new GradleBuilder(this, product)
 
 def secrets = [
-  'ts-${env}': [
+  "ts-${vaultEnv}": [
     secret('translation-service-POSTGRES-USER', 'TS_TRANSLATION_SERVICE_DB_USERNAME'),
     secret('translation-service-POSTGRES-PASS', 'TS_TRANSLATION_SERVICE_DB_PASSWORD'),
     secret('translation-service-POSTGRES-HOST', 'TS_TRANSLATION_SERVICE_DB_HOST'),
     secret('translation-service-POSTGRES-PORT', 'TS_TRANSLATION_SERVICE_DB_PORT'),
     secret('translation-service-POSTGRES-DATABASE', 'TS_TRANSLATION_SERVICE_DB_NAME')
   ],
-  'rpx-${env}': [
+  "rpx-${vaultEnv}": [
     secret('mc-idam-client-secret', 'BEFTA_OAUTH2_CLIENT_SECRET_OF_XUIWEBAPP')
   ],
-  'ccd-${env}': [
+  "ccd-${vaultEnv}": [
     secret('ccd-api-gateway-oauth2-client-secret', 'CCD_API_GATEWAY_OAUTH2_CLIENT_SECRET'),
     secret('ts-service-translation-users-pwd', 'TS_SERVICE_TRANSLATION_USERS_PWD'),
     secret('ccd-befta-caseworker-2-solicitor-2-pwd', 'CCD_BEFTA_CASEWORKER_2_SOLICITOR_2_PWD'),
@@ -35,7 +33,7 @@ def secrets = [
     secret('ccd-as-a-pr-importer-username', 'IMPORT_USERNAME'),
     secret('ccd-as-a-pr-importer-password', 'IMPORT_PWD')
   ],
-  's2s-${env}': [
+  "s2s-${vaultEnv}": [
     secret('microservicekey-xui-webapp', 'BEFTA_S2S_CLIENT_SECRET'),
     secret('microservicekey-xui-webapp', 'BEFTA_S2S_CLIENT_SECRET_OF_XUI_WEBAPP'),
     secret('microservicekey-ccd-definition', 'BEFTA_S2S_CLIENT_SECRET_OF_CCD_DEFINITION'),
@@ -74,7 +72,7 @@ def vaultOverrides = [
 ]
 
 withPipeline(type, product, component) {
-  // Force pipeline environment to AAT (overrides library defaults).
+  // Force pipeline environment to AAT (ensures ts-aat secrets are used).
   env.ENVIRONMENT = "aat"
   env.CNP_ENVIRONMENT = "aat"
 
