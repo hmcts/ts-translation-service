@@ -7,7 +7,6 @@ import uk.gov.hmcts.befta.util.ReflectionUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 public class PhrasesFromContextTranslationsEvaluator implements CustomValueEvaluator {
