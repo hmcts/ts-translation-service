@@ -8,6 +8,9 @@ def type = "java"
 def product = "ts"
 def component = "translation-service"
 def branchesToSync = ['demo', 'ithc', 'perftest']
+// Force deploy/test environment to AAT for this pipeline run.
+env.ENVIRONMENT = "aat"
+env.CNP_ENVIRONMENT = "aat"
 
 GradleBuilder builder = new GradleBuilder(this, product)
 
@@ -123,6 +126,7 @@ withPipeline(type, product, component) {
   overrideVaultEnvironments(vaultOverrides)
   loadVaultSecrets(secrets)
   enableAksStagingDeployment()
+  disableProdPromotionIfSupported()
   disableLegacyDeployment()
 
 
@@ -197,4 +201,24 @@ withPipeline(type, product, component) {
  */
 def copyIgnore(filePath, destinationDir) {
   steps.sh("cp -R '${filePath}' '${destinationDir}' || :")
+}
+
+def disableProdPromotionIfSupported() {
+  def candidates = [
+    'disableAksProductionDeployment',
+    'disableAksProdDeployment',
+    'disableProductionDeployment',
+    'disableProdDeployment',
+    'disableAutomaticProdPromotion',
+    'disableProdPromotion',
+    'disablePromotionToProd'
+  ]
+
+  def methodName = candidates.find { this.metaClass.respondsTo(this, it) }
+  if (methodName) {
+    this."${methodName}"()
+    steps.echo "Prod promotion disabled via ${methodName}()"
+  } else {
+    steps.echo "No prod-promotion disable method found in pipeline DSL."
+  }
 }
