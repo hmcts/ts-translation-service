@@ -5,6 +5,8 @@ import java.util.Arrays;
 public enum CustomValueKey {
     CONTAINS_DICTIONARY_FROM_CONTEXT("containsDictionaryFromContext"),
     CONTAINS_DICTIONARY_TRANSLATIONS("containsDictionaryTranslations"),
+    PHRASES_FROM_CONTEXT_TRANSLATIONS("phrasesFromContextTranslations"),
+    CONTAINS_TRANSLATIONS_FROM_CONTEXT_AS_TRANSLATE_RESPONSE("containsTranslationsFromContextAsTranslateResponse"),
     UNIQUE_TEST_PHRASE("UniqueTestPhrase"),
     UNIQUE_TRANSLATION_WITH_ENGLISH_AND_WELSH("UniqueTranslationWithEnglishAndWelsh"),
     UNIQUE_TRANSLATION_WITH_ONLY_ENGLISH("UniqueTranslationWithOnlyEnglish"),

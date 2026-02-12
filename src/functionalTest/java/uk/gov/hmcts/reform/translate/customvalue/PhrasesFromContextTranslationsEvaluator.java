@@ -5,37 +5,39 @@ import uk.gov.hmcts.befta.exception.FunctionalTestException;
 import uk.gov.hmcts.befta.player.BackEndFunctionalTestScenarioContext;
 import uk.gov.hmcts.befta.util.ReflectionUtils;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
-public class ContainsDictionaryFromContextEvaluator implements CustomValueEvaluator {
+public class PhrasesFromContextTranslationsEvaluator implements CustomValueEvaluator {
 
     @Override
     public Boolean matches(CustomValueKey key) {
-        return CustomValueKey.CONTAINS_DICTIONARY_FROM_CONTEXT.equals(key);
+        return CustomValueKey.PHRASES_FROM_CONTEXT_TRANSLATIONS.equals(key);
     }
 
     @Override
     public Object calculate(BackEndFunctionalTestScenarioContext scenarioContext, Object key) {
         try {
+            String contextPath = EvaluatorUtils.extractParameter(
+                key, CustomValueKey.PHRASES_FROM_CONTEXT_TRANSLATIONS
+            );
 
-            String contextPath =  EvaluatorUtils.extractParameter(key, CustomValueKey.CONTAINS_DICTIONARY_FROM_CONTEXT);
-
-            // default path to read from ParentContext if not set
             if (StringUtils.isEmpty(contextPath)) {
                 contextPath = "parentContext.testData.request.body.translations";
             }
 
             @SuppressWarnings("unchecked")
-            final Map<String, Object> expectedTranslations =
+            final Map<String, Object> translations =
                 (Map<String, Object>) ReflectionUtils.deepGetFieldInObject(scenarioContext, contextPath);
 
-            return EvaluatorUtils.calculateDictionaryFromActualResponseAndExpectedTranslations(
-                scenarioContext,
-                expectedTranslations
-            );
-
+            if (translations == null) {
+                return Collections.emptyList();
+            }
+            return new ArrayList<>(translations.keySet());
         } catch (Exception e) {
-            throw new FunctionalTestException("Problem checking acceptable response payload: ", e);
+            throw new FunctionalTestException("Problem building phrases list from context: ", e);
         }
     }
 }

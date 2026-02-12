@@ -78,7 +78,6 @@ public class DictionaryService {
     public Map<String, Translation> getDictionaryContents() {
 
         if (securityUtils.hasRole(MANAGE_TRANSLATIONS_ROLE)) {
-            long startNanos = System.nanoTime();
             final var dictionaryEntities = dictionaryRepository.findAll();
 
             final var spliterator = dictionaryEntities.spliterator();
@@ -86,7 +85,7 @@ public class DictionaryService {
             if (dictionaryEntities.spliterator() != null) {
                 Stream<DictionaryEntity> stream = StreamSupport.stream(spliterator, false);
 
-                Map<String, Translation> result = stream.collect(Collectors.toMap(
+                return stream.collect(Collectors.toMap(
                     DictionaryEntity::getEnglishPhrase,
                     dictionaryEntity -> {
                         if (dictionaryEntity.isYesOrNo()) {
@@ -100,13 +99,8 @@ public class DictionaryService {
                         return new Translation(StringUtils.defaultString(dictionaryEntity.getTranslationPhrase()));
                     }
                 ));
-                long durationMs = (System.nanoTime() - startNanos) / 1_000_000;
-                log.info("getDictionaryContents: {} entries in {} ms", result.size(), durationMs);
-                return result;
             }
 
-            long durationMs = (System.nanoTime() - startNanos) / 1_000_000;
-            log.info("getDictionaryContents: 0 entries (null spliterator) in {} ms", durationMs);
             return Collections.emptyMap();
         } else {
             throw new RoleMissingException(MANAGE_TRANSLATIONS_ROLE);

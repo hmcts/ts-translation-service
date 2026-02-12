@@ -6,9 +6,15 @@
     "to verify no change"
   ],
 
+  "request": {
+    "body": {
+      "phrases": "${[scenarioContext][customValues][phrasesFromContextTranslations siblingContexts.S-002\\.12_Existing_Data.testData.request.body.translations]}"
+    }
+  },
+
   "expectedResponse": {
     "body": {
-      "translations": "${[scenarioContext][customValues][containsDictionaryFromContext siblingContexts.S-002\\.12_Existing_Data.testData.request.body.translations]}"
+      "translations": "${[scenarioContext][customValues][containsTranslationsFromContextAsTranslateResponse siblingContexts.S-002\\.12_Existing_Data.testData.request.body.translations]}"
     }
   }
 }
