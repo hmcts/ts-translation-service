@@ -74,6 +74,10 @@ def vaultOverrides = [
 ]
 
 withPipeline(type, product, component) {
+  // Force pipeline environment to AAT (overrides library defaults).
+  env.ENVIRONMENT = "aat"
+  env.CNP_ENVIRONMENT = "aat"
+
   afterAlways('test') {
     steps.sh(label: 'Debug DB env vars', script: '''
       echo "ENVIRONMENT=$ENVIRONMENT"
