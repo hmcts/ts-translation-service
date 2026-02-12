@@ -86,7 +86,7 @@ public class DictionaryService {
         if (securityUtils.hasRole(MANAGE_TRANSLATIONS_ROLE)) {
             final var dictionaryEntities = (limit == null || limit <= 0)
                 ? dictionaryRepository.findAll()
-                : dictionaryRepository.findAll(PageRequest.of(0, limit, Sort.by("englishPhrase")));
+                : dictionaryRepository.findAll(PageRequest.of(0, limit, Sort.by("englishPhrase"))).getContent();
 
             final var spliterator = dictionaryEntities.spliterator();
 
