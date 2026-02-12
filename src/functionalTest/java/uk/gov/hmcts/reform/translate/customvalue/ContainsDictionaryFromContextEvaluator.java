@@ -3,6 +3,7 @@ package uk.gov.hmcts.reform.translate.customvalue;
 import org.apache.commons.lang.StringUtils;
 import uk.gov.hmcts.befta.exception.FunctionalTestException;
 import uk.gov.hmcts.befta.player.BackEndFunctionalTestScenarioContext;
+import uk.gov.hmcts.befta.util.BeftaUtils;
 import uk.gov.hmcts.befta.util.ReflectionUtils;
 
 import java.util.Map;
@@ -35,6 +36,18 @@ public class ContainsDictionaryFromContextEvaluator implements CustomValueEvalua
             );
 
         } catch (Exception e) {
+            try {
+                BeftaUtils.defaultLog("ContainsDictionaryFromContextEvaluator failed.");
+                BeftaUtils.defaultLog("contextPath=" + EvaluatorUtils.extractParameter(
+                    key, CustomValueKey.CONTAINS_DICTIONARY_FROM_CONTEXT
+                ));
+                Object actualBody = ReflectionUtils.deepGetFieldInObject(
+                    scenarioContext, "testData.actualResponse.body"
+                );
+                BeftaUtils.defaultLog("actualResponse.body=" + String.valueOf(actualBody));
+            } catch (Exception ignored) {
+                // best-effort logging only
+            }
             throw new FunctionalTestException("Problem checking acceptable response payload: ", e);
         }
     }
