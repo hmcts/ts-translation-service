@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.hmcts.reform.translate.model.Dictionary;
@@ -56,8 +57,8 @@ public class DictionaryController {
                 + "2. " + "User does not have '" + MANAGE_TRANSLATIONS_ROLE + "' role.",
                 content = @Content())
         })
-    public Dictionary getDictionary() {
-        return new Dictionary(dictionaryService.getDictionaryContents());
+    public Dictionary getDictionary(@RequestParam(value = "limit", required = false) Integer limit) {
+        return new Dictionary(dictionaryService.getDictionaryContents(limit));
     }
 
     @PutMapping(path = DICTIONARY_URL, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)

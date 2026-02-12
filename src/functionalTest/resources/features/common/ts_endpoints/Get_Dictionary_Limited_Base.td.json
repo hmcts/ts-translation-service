@@ -1,0 +1,9 @@
+{
+  "_guid_": "Get_Dictionary_Limited_Base",
+  "productName": "Translation Service",
+  "operationName": "GET dictionary limited",
+  "method": "GET",
+  "uri": "/dictionary?limit=100",
+
+  "s2sClientId": "xui_webapp"
+}

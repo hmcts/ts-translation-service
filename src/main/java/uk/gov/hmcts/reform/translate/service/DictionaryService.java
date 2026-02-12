@@ -30,6 +30,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 import static uk.gov.hmcts.reform.translate.errorhandling.BadRequestError.BAD_SCHEMA;
 import static uk.gov.hmcts.reform.translate.errorhandling.BadRequestError.WELSH_NOT_ALLOWED;
@@ -76,9 +78,15 @@ public class DictionaryService {
     }
 
     public Map<String, Translation> getDictionaryContents() {
+        return getDictionaryContents(null);
+    }
+
+    public Map<String, Translation> getDictionaryContents(final Integer limit) {
 
         if (securityUtils.hasRole(MANAGE_TRANSLATIONS_ROLE)) {
-            final var dictionaryEntities = dictionaryRepository.findAll();
+            final var dictionaryEntities = (limit == null || limit <= 0)
+                ? dictionaryRepository.findAll()
+                : dictionaryRepository.findAll(PageRequest.of(0, limit, Sort.by("englishPhrase")));
 
             final var spliterator = dictionaryEntities.spliterator();
 

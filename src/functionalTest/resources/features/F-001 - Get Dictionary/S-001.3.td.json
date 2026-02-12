@@ -1,0 +1,24 @@
+{
+  "_guid_": "S-001.3",
+  "_extends_": "Get_Dictionary_Limited_Base",
+  "specs": [
+    "return 200 OK containing dictionary entries (limited)"
+  ],
+
+  "users": {
+    "invokingUser": {
+      "_extends_": "ManageTranslationsUser"
+    }
+  },
+
+  "request": {
+    "_extends_": "Common_Request"
+  },
+
+  "expectedResponse": {
+    "_extends_": "Common_200_Response",
+    "body": {
+      "translations": "${[scenarioContext][customValues][containsDictionaryTranslations TEST-F001-EnglishPhrase1:TEST-F001-WelshPhrase1, TEST-F001-EnglishPhrase2:TEST-F001-WelshPhrase2, TEST-F001-EnglishPhrase3:TEST-F001-WelshPhrase3]}"
+    }
+  }
+}
