@@ -125,6 +125,12 @@ withPipeline(type, product, component) {
   syncBranchesWithMaster(branchesToSync)
   overrideVaultEnvironments(vaultOverrides)
   loadVaultSecrets(secrets)
+  steps.node {
+    def releaseName = "${product}-${component}-${env.BRANCH_NAME ?: 'unknown'}".toLowerCase()
+    steps.sh(label: 'Cleanup definition-importer job', script: """
+      kubectl delete job ${releaseName}-definition-importer -n ts --ignore-not-found
+    """.stripIndent())
+  }
   enableAksStagingDeployment()
   disableLegacyDeployment()
 
