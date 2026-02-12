@@ -115,14 +115,16 @@ withPipeline(type, product, component) {
   syncBranchesWithMaster(branchesToSync)
   overrideVaultEnvironments(vaultOverrides)
   loadVaultSecrets(secrets)
-  steps.node {
-    steps.sh(label: 'Show DB env vars (non-secret)', script: '''
-      echo "TS_TRANSLATION_SERVICE_DB_HOST=$TS_TRANSLATION_SERVICE_DB_HOST"
-      echo "TS_TRANSLATION_SERVICE_DB_PORT=$TS_TRANSLATION_SERVICE_DB_PORT"
-      echo "TS_TRANSLATION_SERVICE_DB_NAME=$TS_TRANSLATION_SERVICE_DB_NAME"
-      echo "TS_TRANSLATION_SERVICE_DB_USERNAME=$TS_TRANSLATION_SERVICE_DB_USERNAME"
-    '''.stripIndent())
-  }
+  steps.echo "env.ENVIRONMENT=${env.ENVIRONMENT}"
+  steps.echo "env.CNP_ENVIRONMENT=${env.CNP_ENVIRONMENT}"
+  steps.echo "env.BRANCH_NAME=${env.BRANCH_NAME}"
+  steps.echo "environmentOfDependencies=${environmentOfDependencies}"
+  steps.echo "vaultOverrides=${vaultOverrides}"
+  steps.echo "secrets keys=${secrets.keySet()}"
+  steps.echo "TS_TRANSLATION_SERVICE_DB_HOST=${env.TS_TRANSLATION_SERVICE_DB_HOST}"
+  steps.echo "TS_TRANSLATION_SERVICE_DB_PORT=${env.TS_TRANSLATION_SERVICE_DB_PORT}"
+  steps.echo "TS_TRANSLATION_SERVICE_DB_NAME=${env.TS_TRANSLATION_SERVICE_DB_NAME}"
+  steps.echo "TS_TRANSLATION_SERVICE_DB_USERNAME=${env.TS_TRANSLATION_SERVICE_DB_USERNAME}"
 
   enableAksStagingDeployment()
   disableLegacyDeployment()
