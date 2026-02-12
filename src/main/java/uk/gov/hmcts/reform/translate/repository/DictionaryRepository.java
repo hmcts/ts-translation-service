@@ -16,6 +16,7 @@ import java.util.Optional;
 public interface DictionaryRepository  {
 
     List<DictionaryEntity> findAll();
+
     Page<DictionaryEntity> findAll(Pageable pageable);
 
     Optional<DictionaryEntity> findByEnglishPhrase(String englishPhrase);
