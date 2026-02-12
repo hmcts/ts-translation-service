@@ -13,6 +13,7 @@ import uk.gov.hmcts.reform.translate.errorhandling.EnglishPhraseUniqueConstraint
 
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Pageable;
 
 @Qualifier(DefaultDictionaryRepository.QUALIFIER)
 @Repository
@@ -35,6 +36,11 @@ public class DefaultDictionaryRepository implements DictionaryRepository {
     @Override
     public List<DictionaryEntity> findAll() {
         return dictionaryRepository.findAll();
+    }
+
+    @Override
+    public List<DictionaryEntity> findAll(Pageable pageable) {
+        return dictionaryRepository.findAll(pageable);
     }
 
     @Override
