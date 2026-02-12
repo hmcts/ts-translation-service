@@ -8,6 +8,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import uk.gov.hmcts.reform.translate.data.DictionaryEntity;
 import uk.gov.hmcts.reform.translate.errorhandling.EnglishPhraseUniqueConstraintException;
 
@@ -49,6 +51,23 @@ class DefaultDictionaryRepositoryTest {
         // THEN
         verify(dictionaryRepository).findAll();
         assertEquals(dictionaryEntity, response.get(0));
+    }
+
+    @Test
+    @DisplayName("should call decorated operation: findAll(Pageable)")
+    void shouldCallDecoratedOperation_findAllPageable() {
+
+        // GIVEN
+        var pageable = PageRequest.of(0, 5);
+        var page = new PageImpl<>(List.of(dictionaryEntity), pageable, 1);
+        when(dictionaryRepository.findAll(pageable)).thenReturn(page);
+
+        // WHEN
+        var response = underTest.findAll(pageable);
+
+        // THEN
+        verify(dictionaryRepository).findAll(pageable);
+        assertEquals(dictionaryEntity, response.getContent().get(0));
     }
 
     @Test
