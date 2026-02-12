@@ -72,6 +72,13 @@ def vaultOverrides = [
 
 withPipeline(type, product, component) {
   afterAlways('test') {
+    steps.sh(label: 'Debug DB env vars', script: '''
+      echo "ENVIRONMENT=$ENVIRONMENT"
+      echo "CNP_ENVIRONMENT=$CNP_ENVIRONMENT"
+      echo "BRANCH_NAME=$BRANCH_NAME"
+      printenv | grep '^TS_TRANSLATION_SERVICE_DB_' || true
+    '''.stripIndent())
+
     builder.gradle('integration')
 
     // hmcts/cnp-jenkins-library may fail to copy artifacts after checkstyle error so repeat command (see /src/uk/gov/hmcts/contino/GradleBuilder.groovy)
@@ -115,16 +122,6 @@ withPipeline(type, product, component) {
   syncBranchesWithMaster(branchesToSync)
   overrideVaultEnvironments(vaultOverrides)
   loadVaultSecrets(secrets)
-  steps.echo "env.ENVIRONMENT=${env.ENVIRONMENT}"
-  steps.echo "env.CNP_ENVIRONMENT=${env.CNP_ENVIRONMENT}"
-  steps.echo "env.BRANCH_NAME=${env.BRANCH_NAME}"
-  steps.echo "vaultOverrides=${vaultOverrides}"
-  steps.echo "secrets keys=${secrets.keySet()}"
-  steps.echo "TS_TRANSLATION_SERVICE_DB_HOST=${env.TS_TRANSLATION_SERVICE_DB_HOST}"
-  steps.echo "TS_TRANSLATION_SERVICE_DB_PORT=${env.TS_TRANSLATION_SERVICE_DB_PORT}"
-  steps.echo "TS_TRANSLATION_SERVICE_DB_NAME=${env.TS_TRANSLATION_SERVICE_DB_NAME}"
-  steps.echo "TS_TRANSLATION_SERVICE_DB_USERNAME=${env.TS_TRANSLATION_SERVICE_DB_USERNAME}"
-
   enableAksStagingDeployment()
   disableLegacyDeployment()
 
