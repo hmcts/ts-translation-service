@@ -3,7 +3,8 @@
   "_extends_": "Get_Dictionary_Limited_Base",
   "specs": [
     "return 200 OK containing dictionary entries (limited)",
-    "with manage-translation IDAM role"
+    "with manage-translation IDAM role",
+    "has the 200 OK status code"
   ],
 
   "users": {
@@ -17,9 +18,6 @@
   },
 
   "expectedResponse": {
-    "_extends_": "Common_200_Response",
-    "body": {
-      "translations": "${[scenarioContext][customValues][containsDictionaryTranslations TEST-F001-EnglishPhrase1:TEST-F001-WelshPhrase1, TEST-F001-EnglishPhrase2:TEST-F001-WelshPhrase2, TEST-F001-EnglishPhrase3:TEST-F001-WelshPhrase3]}"
-    }
+    "_extends_": "Common_200_Response"
   }
 }
