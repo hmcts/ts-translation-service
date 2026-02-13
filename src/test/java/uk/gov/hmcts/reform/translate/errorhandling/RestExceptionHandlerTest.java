@@ -222,7 +222,7 @@ class RestExceptionHandlerTest {
         MethodParameter methodParameter = new MethodParameter(methods[0], 0);
 
         /// WHEN
-        given(service.getDictionaryContents()).willAnswer(invocation -> {
+        given(service.getDictionaryContents(null)).willAnswer(invocation -> {
             throw new MethodArgumentNotValidException(methodParameter, bindingResult);
         });
 
@@ -235,7 +235,7 @@ class RestExceptionHandlerTest {
 
     private void setupMockServiceToThrowException(Exception expectedException) {
         // configure chosen mock service to throw exception when controller is run
-        given(service.getDictionaryContents()).willThrow(expectedException);
+        given(service.getDictionaryContents(null)).willThrow(expectedException);
     }
 
     private void assertHttpErrorResponse(ResultActions result,
