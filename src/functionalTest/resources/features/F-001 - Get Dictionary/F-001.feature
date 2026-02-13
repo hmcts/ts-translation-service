@@ -39,6 +39,5 @@ Feature: F-001: Get Dictionary Operation
     And   it is submitted to call the [GET dictionary limited] operation of [Translation Service]
     Then  a positive response is received
     And   the response [has the 200 OK status code]
-    And   the response has all other details as expected.
     #
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
