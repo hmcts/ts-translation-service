@@ -178,7 +178,7 @@ public class DictionaryServiceTest {
                 ))
                 .toList();
 
-            var pageable = PageRequest.of(0, 2);
+            var pageable = PageRequest.of(0, 2, org.springframework.data.domain.Sort.by("englishPhrase"));
             given(dictionaryRepository.findAll(pageable))
                 .willReturn(new PageImpl<>(dictionaryEntities, pageable, dictionaryEntities.size()));
 
