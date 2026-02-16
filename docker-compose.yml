@@ -22,7 +22,7 @@ services:
       - ts-db
 
   ts-db:
-    image: postgres:15.15
+    image: postgres:15.16
     restart: always
     environment:
       - POSTGRES_DB=${TS_TRANSLATION_SERVICE_DB_NAME}
