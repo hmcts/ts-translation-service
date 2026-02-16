@@ -5,14 +5,12 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import uk.gov.hmcts.reform.translate.data.DictionaryEntity;
 import uk.gov.hmcts.reform.translate.errorhandling.EnglishPhraseUniqueConstraintException;
 
-import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,11 +35,6 @@ public class DefaultDictionaryRepository implements DictionaryRepository {
     @Override
     public List<DictionaryEntity> findAll() {
         return dictionaryRepository.findAll();
-    }
-
-    @Override
-    public Page<DictionaryEntity> findAll(Pageable pageable) {
-        return dictionaryRepository.findAll(pageable);
     }
 
     @Override

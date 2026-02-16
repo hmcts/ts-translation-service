@@ -22,8 +22,6 @@ import uk.gov.hmcts.reform.translate.repository.DictionaryRepository;
 import uk.gov.hmcts.reform.translate.repository.TranslationUploadRepository;
 import uk.gov.hmcts.reform.translate.security.SecurityUtils;
 
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -163,38 +161,6 @@ public class DictionaryServiceTest {
         void shouldReturnEmptyDictionaryContents() {
             given(dictionaryRepository.findAll()).willReturn(repositoryResults);
             assertTrue(dictionaryService.getDictionaryContents().isEmpty());
-        }
-
-        @Test
-        void shouldReturnDictionaryContentsWithLimit() {
-            Map<String, Translation> expectedMap = new HashMap<>();
-
-            IntStream.range(1, 3).forEach(i -> expectedMap.put("english" + i, new Translation("translated" + i)));
-
-            var dictionaryEntities = expectedMap.entrySet().stream()
-                .map(es -> createDictionaryEntity(
-                    es.getKey(),
-                    es.getValue().getTranslation()
-                ))
-                .toList();
-
-            var pageable = PageRequest.of(0, 2, org.springframework.data.domain.Sort.by("englishPhrase"));
-            given(dictionaryRepository.findAll(pageable))
-                .willReturn(new PageImpl<>(dictionaryEntities, pageable, dictionaryEntities.size()));
-
-            Map<String, Translation> dictionaryContents = dictionaryService.getDictionaryContents(2);
-            assertTrue(dictionaryContents.entrySet().containsAll(expectedMap.entrySet()));
-            verify(dictionaryRepository).findAll(pageable);
-        }
-
-        @Test
-        void shouldUseFindAllWhenLimitIsNonPositive() {
-            given(dictionaryRepository.findAll()).willReturn(repositoryResults);
-
-            dictionaryService.getDictionaryContents(0);
-
-            verify(dictionaryRepository).findAll();
-            verify(dictionaryRepository, never()).findAll(any());
         }
 
         @Test
@@ -645,3 +611,4 @@ public class DictionaryServiceTest {
     }
 
 }
+

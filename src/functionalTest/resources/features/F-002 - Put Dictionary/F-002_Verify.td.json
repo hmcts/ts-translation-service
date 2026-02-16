@@ -1,7 +1,7 @@
 {
   "_guid_": "F-002_Verify",
-  "_extends_": "Translation_Cy_Base",
-  "title": "must return a 200 OK containing translations for supplied phrases",
+  "_extends_": "Get_Dictionary_Base",
+  "title": "must return a 200 OK containing all dictionary entries",
   "specs": [
     "to verify translations"
   ],
@@ -13,16 +13,13 @@
   },
 
   "request": {
-    "_extends_": "Common_Request",
-    "body": {
-      "phrases": "${[scenarioContext][customValues][phrasesFromContextTranslations]}"
-    }
+    "_extends_": "Common_Request"
   },
 
   "expectedResponse": {
     "_extends_": "Common_200_Response",
     "body": {
-      "translations": "${[scenarioContext][customValues][containsTranslationsFromContextAsTranslateResponse]}"
+      "translations": "${[scenarioContext][customValues][containsDictionaryFromContext]}"
     }
   }
 }

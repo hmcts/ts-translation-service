@@ -50,8 +50,8 @@ class DictionaryControllerTest extends BaseControllerTest {
     class GetDictionary {
         @Test
         void shouldReturn200() {
-            dictionaryController.getDictionary(null);
-            verify(dictionaryService).getDictionaryContents(null);
+            dictionaryController.getDictionary();
+            verify(dictionaryService).getDictionaryContents();
         }
     }
 

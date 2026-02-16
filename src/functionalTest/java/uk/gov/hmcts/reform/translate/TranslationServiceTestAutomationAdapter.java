@@ -8,10 +8,8 @@ import uk.gov.hmcts.befta.util.ReflectionUtils;
 import uk.gov.hmcts.reform.translate.customvalue.ContainsDictionaryFromContextEvaluator;
 import uk.gov.hmcts.reform.translate.customvalue.ContainsDictionaryTranslationsEvaluator;
 import uk.gov.hmcts.reform.translate.customvalue.ContainsTestTranslationsEvaluator;
-import uk.gov.hmcts.reform.translate.customvalue.ContainsTranslationsFromContextAsTranslateResponseEvaluator;
 import uk.gov.hmcts.reform.translate.customvalue.CustomValueEvaluator;
 import uk.gov.hmcts.reform.translate.customvalue.CustomValueKey;
-import uk.gov.hmcts.reform.translate.customvalue.PhrasesFromContextTranslationsEvaluator;
 import uk.gov.hmcts.reform.translate.customvalue.UniqueTestPhraseEvaluator;
 import uk.gov.hmcts.reform.translate.customvalue.UniqueTranslationWithEnglishAndWelshEvaluator;
 import uk.gov.hmcts.reform.translate.customvalue.UniqueTranslationWithOnlyEnglishEvaluator;
@@ -23,8 +21,6 @@ public class TranslationServiceTestAutomationAdapter extends DefaultTestAutomati
     private final List<CustomValueEvaluator> customValueEvaluators = List.of(
             new ContainsDictionaryTranslationsEvaluator(),
             new ContainsDictionaryFromContextEvaluator(),
-            new PhrasesFromContextTranslationsEvaluator(),
-            new ContainsTranslationsFromContextAsTranslateResponseEvaluator(),
             new UniqueTestPhraseEvaluator(),
             new ContainsTestTranslationsEvaluator(),
             new UniqueTranslationWithEnglishAndWelshEvaluator(),
