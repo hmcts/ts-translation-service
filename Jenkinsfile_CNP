@@ -5,202 +5,179 @@
 import uk.gov.hmcts.contino.GradleBuilder
 
 def type = "java"
-def product = "ts"
-def component = "translation-service"
-def branchesToSync = ['demo', 'ithc', 'perftest']
-def vaultEnv = "aat"
+
+def product = "ccd"
+
+def app = "definition-store-api"
 
 GradleBuilder builder = new GradleBuilder(this, product)
 
+def branchesToSync = ['demo', 'ithc', 'perftest', 'develop']
+
 def secrets = [
-  "ts-${vaultEnv}": [
-    secret('translation-service-POSTGRES-USER', 'TS_TRANSLATION_SERVICE_DB_USERNAME'),
-    secret('translation-service-POSTGRES-PASS', 'TS_TRANSLATION_SERVICE_DB_PASSWORD'),
-    secret('translation-service-POSTGRES-HOST', 'TS_TRANSLATION_SERVICE_DB_HOST'),
-    secret('translation-service-POSTGRES-PORT', 'TS_TRANSLATION_SERVICE_DB_PORT'),
-    secret('translation-service-POSTGRES-DATABASE', 'TS_TRANSLATION_SERVICE_DB_NAME')
-  ],
-  "rpx-${vaultEnv}": [
-    secret('mc-idam-client-secret', 'BEFTA_OAUTH2_CLIENT_SECRET_OF_XUIWEBAPP')
-  ],
-  "ccd-${vaultEnv}": [
-    secret('ccd-api-gateway-oauth2-client-secret', 'CCD_API_GATEWAY_OAUTH2_CLIENT_SECRET'),
-    secret('ts-service-translation-users-pwd', 'TS_SERVICE_TRANSLATION_USERS_PWD'),
-    secret('ccd-befta-caseworker-2-solicitor-2-pwd', 'CCD_BEFTA_CASEWORKER_2_SOLICITOR_2_PWD'),
-    secret('ccd-admin-web-oauth2-client-secret', 'ADMIN_WEB_IDAM_SECRET'),
-    secret('microservicekey-ccd-admin', 'ADMIN_S2S_KEY'),
-    secret('ccd-definition-s2s-secret', 'CCD_DEFINITION_S2S_SECRET'),
-    secret('ccd-as-a-pr-importer-username', 'IMPORT_USERNAME'),
-    secret('ccd-as-a-pr-importer-password', 'IMPORT_PWD')
-  ],
-  "s2s-${vaultEnv}": [
-    secret('microservicekey-xui-webapp', 'BEFTA_S2S_CLIENT_SECRET'),
-    secret('microservicekey-xui-webapp', 'BEFTA_S2S_CLIENT_SECRET_OF_XUI_WEBAPP'),
-    secret('microservicekey-ccd-definition', 'BEFTA_S2S_CLIENT_SECRET_OF_CCD_DEFINITION'),
-    secret('microservicekey-ccd-data', 'BEFTA_S2S_CLIENT_SECRET_OF_CCD_DATA')
-  ]
+    'ccd-${env}': [
+        secret('ccd-caseworker-autotest-email', 'CCD_CASEWORKER_AUTOTEST_EMAIL'),
+        secret('ccd-caseworker-autotest-password', 'CCD_CASEWORKER_AUTOTEST_PASSWORD'),
+        secret('ccd-befta-caseworker-3-pwd', 'CCD_BEFTA_CASEWORKER_3_PWD'),
+        secret('ccd-befta-master-caseworker-pwd', 'CCD_BEFTA_MASTER_CASEWORKER_PWD'),
+
+        secret('ccd-api-gateway-oauth2-client-secret', 'CCD_API_GATEWAY_OAUTH2_CLIENT_SECRET'),
+        secret('definition-importer-username', 'DEFINITION_IMPORTER_USERNAME'),
+        secret('definition-importer-password', 'DEFINITION_IMPORTER_PASSWORD'),
+        secret('idam-data-store-system-user-username','ROLE_ASSIGNMENT_USER_EMAIL'),
+        secret('idam-data-store-system-user-password','ROLE_ASSIGNMENT_USER_PASSWORD')
+    ],
+    's2s-${env}': [
+        secret('microservicekey-ccd-gw', 'CCD_API_GATEWAY_S2S_KEY'),
+        secret('microservicekey-ccd-gw', 'BEFTA_S2S_CLIENT_SECRET')
+    ]
 ]
 
 static LinkedHashMap<String, Object> secret(String secretName, String envVar) {
-  [$class     : 'AzureKeyVaultSecret',
-   secretType : 'Secret',
-   name       : secretName,
-   version    : '',
-   envVariable: envVar
-  ]
+    [
+        $class: 'AzureKeyVaultSecret',
+        secretType: 'Secret',
+        name: secretName,
+        version: '',
+        envVariable: envVar
+    ]
 }
 
-// Other env variables needed for BEFTA.
-env.S2S_URL_BASE = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
-env.IDAM_API_URL_BASE = "https://idam-api.aat.platform.hmcts.net"
-env.BEFTA_S2S_CLIENT_ID = "xui_webapp"
-env.CCD_API_GATEWAY_OAUTH2_REDIRECT_URL = "https://www-ccd.aat.platform.hmcts.net/oauth2redirect"
-env.BEFTA_S2S_CLIENT_ID_OF_XUI_WEBAPP = "xui_webapp"
-env.BEFTA_S2S_CLIENT_ID_OF_CCD_DEFINITION = "ccd_definition"
-env.BEFTA_S2S_CLIENT_ID_OF_CCD_DATA = "ccd_data"
-env.BEFTA_OAUTH2_CLIENT_ID_OF_XUIWEBAPP = "xuiwebapp"
-env.BEFTA_OAUTH2_REDIRECT_URI_OF_XUIWEBAPP = "https://www-ccd.aat.platform.hmcts.net/oauth2redirect"
-env.BEFTA_OAUTH2_ACCESS_TOKEN_TYPE_OF_XUIWEBAPP = "OIDC"
-env.BEFTA_OAUTH2_SCOPE_VARIABLES_OF_XUIWEBAPP = "profile openid roles manage-user create-user search-user"
-env.CCD_API_GATEWAY_OAUTH2_CLIENT_ID = "ccd_gateway"
-
-// temporary workaround for platform changes: turn BEFTA header checks to warning mode
-env.BEFTA_RESPONSE_HEADER_CHECK_POLICY="JUST_WARN"
-
 def vaultOverrides = [
-  'preview' : 'aat'
+    'preview': 'aat',
+    'spreview': 'saat'
 ]
 
-withPipeline(type, product, component) {
-  // Force pipeline environment to AAT (ensures ts-aat secrets are used).
-  env.ENVIRONMENT = "aat"
-  env.CNP_ENVIRONMENT = "aat"
+// Vars needed for AKS functional and smoke tests
+env.BEFTA_S2S_CLIENT_ID = "ccd_gw"
+env.CCD_CASEWORKER_AUTOTEST_EMAIL = "auto.test.cnp@gmail.com"
+env.BEFTA_RESPONSE_HEADER_CHECK_POLICY="JUST_WARN"
+env.CCD_STUB_SERVICE_URI_BASE="ccd-test-stubs-service-aat.aat.platform.hmcts.net"
+// BEFTA retry env variables
+env.BEFTA_RETRY_MAX_ATTEMPTS = "3"
+env.BEFTA_RETRY_STATUS_CODES = "500,502,503,504"
+env.BEFTA_RETRY_MAX_DELAY = "1000"
 
-  afterAlways('test') {
-    steps.sh(label: 'Debug DB env vars', script: '''
-      echo "ENVIRONMENT=$ENVIRONMENT"
-      echo "CNP_ENVIRONMENT=$CNP_ENVIRONMENT"
-      echo "BRANCH_NAME=$BRANCH_NAME"
-      printenv | grep '^TS_TRANSLATION_SERVICE_DB_' || true
-    '''.stripIndent())
+env.BEFTA_RETRY_NON_RETRYABLE_HTTP_METHODS = "PUT,POST"
 
-    builder.gradle('integration')
+env.DEFAULT_COLLECTION_ASSERTION_MODE="UNORDERED"
+// Prevent Docker hub rate limit errors by ensuring that testcontainers uses images from hmctspublic ACR
+env.TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX = "hmctspublic.azurecr.io/imported/"
 
-    // hmcts/cnp-jenkins-library may fail to copy artifacts after checkstyle error so repeat command (see /src/uk/gov/hmcts/contino/GradleBuilder.groovy)
-    steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/reports/checkstyle/*.html'
-    steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/reports/pmd/*.html'
+withPipeline(type, product, app) {
+    onMaster {
+        enableSlackNotifications('#ccd-master-builds')
+    }
+    onDemo {
+        enableSlackNotifications('#ccd-demo-builds')
+    }
+    onPR {
+        enableSlackNotifications('#ccd-pr-builds')
+    }
 
-    copyIgnore('./build/reports/tests/test', './Unit Tests/')
-    copyIgnore('./build/reports/tests/integration', './Integration Tests/')
-    steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/Unit Tests/**/*'
-    steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/Integration Tests/**/*'
+    if (env.BRANCH_NAME.startsWith("PR-")) {
 
-   publishHTML target: [
+        environmentOfDependencies = env.BRANCH_NAME.toLowerCase()
+        env.DEFINITION_STORE_URL_BASE = "https://ccd-definition-store-api-${environmentOfDependencies}.preview.platform.hmcts.net"
+    }
+
+    syncBranchesWithMaster(branchesToSync)
+    overrideVaultEnvironments(vaultOverrides)
+    loadVaultSecrets(secrets)
+    enableAksStagingDeployment()
+    disableLegacyDeploymentOnAAT()
+    disableLegacyDeployment()
+    enableHighLevelDataSetup()
+
+    afterAlways('test') {
+
+        builder.gradle(':integration-tests:integration')
+
+        // hmcts/cnp-jenkins-library may fail to copy artifacts after checkstyle error so repeat command (see /src/uk/gov/hmcts/contino/GradleBuilder.groovy)
+        steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/reports/checkstyle/*.html'
+        steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/reports/pmd/*.html'
+
+        copyIgnore('./integration-tests/build/reports/tests/integration', './Integration Tests/')
+        steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/Integration Tests/**/*'
+
+
+        copyIgnore('./build/reports/tests/test', './Unit Tests/')
+        steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/Unit Tests/**/*'
+
+
+        publishHTML target: [
             allowMissing         : true,
             alwaysLinkToLastBuild: true,
             keepAll              : true,
-            reportDir            : 'Unit Tests',
+            reportDir            : "Unit Tests",
             reportFiles          : "index.html",
             reportName           : "Unit Test Report"
         ]
 
-    publishHTML target: [
-            allowMissing         : true,
-            alwaysLinkToLastBuild: true,
-            keepAll              : true,
-            reportDir            : "Integration Tests",
-            reportFiles          : "index.html",
-            reportName           : "Integration Test Report"
+        publishHTML target: [
+          allowMissing         : true,
+          alwaysLinkToLastBuild: true,
+          keepAll              : true,
+          reportDir            : "Integration Tests",
+          reportFiles          : "index.html",
+          reportName           : "Integration Test Report"
         ]
 
-  }
-
-  // Check if the build should be wired to an environment higher than 'preview'.
-  if (env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'demo' || env.BRANCH_NAME == 'perftest' || env.BRANCH_NAME == 'ithc') {
-    environmentOfDependencies = env.BRANCH_NAME
-    // use aat environment for dependencies of master and CI/CD builds.
-    if (env.BRANCH_NAME.startsWith("PR") || env.BRANCH_NAME == 'master') {
-      environmentOfDependencies = "aat"
     }
-  }
 
-  syncBranchesWithMaster(branchesToSync)
-  overrideVaultEnvironments(vaultOverrides)
-  loadVaultSecrets(secrets)
-  steps.node {
-    def releaseName = "${product}-${component}-${env.BRANCH_NAME ?: 'unknown'}".toLowerCase()
-    steps.sh(label: 'Cleanup definition-importer job', script: """
-      kubectl delete job ${releaseName}-definition-importer -n ts --ignore-not-found
-    """.stripIndent())
-  }
-  enableAksStagingDeployment()
-  disableLegacyDeployment()
+    afterAlways('smoketest:preview') {
+        steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/BEFTA Report for Smoke Tests/**/*'
+        publishHTML target: [
+       allowMissing         : true,
+       alwaysLinkToLastBuild: true,
+       keepAll              : true,
+       reportDir            : 'BEFTA Report for Smoke Tests',
+       reportFiles          : "overview-features.html",
+       reportName           : "Smoke Test Report"
+      ]
+    }
 
+    before('smoketest:aat') {
+        env.DEFINITION_STORE_URL_BASE = "https://ccd-definition-store-api-staging.aat.platform.hmcts.net"
+    }
 
-  afterAlways('smoketest:preview') {
-    copyIgnore('./build/reports/tests/befta/smoke/cucumber-html-reports', './BEFTA Report for Smoke Tests/')
-    steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/BEFTA Report for Smoke Tests/**/*'
-    publishHTML target: [
-      allowMissing         : true,
-      alwaysLinkToLastBuild: true,
-      keepAll              : true,
-      reportDir            : 'BEFTA Report for Smoke Tests',
-      reportFiles          : "overview-features.html",
-      reportName           : "Smoke Test Report"
-    ]
-  }
-
-  afterAlways('smoketest:aat') {
-    copyIgnore('./build/reports/tests/befta/smoke/cucumber-html-reports', './BEFTA Report for Smoke Tests/')
-    steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/BEFTA Report for Smoke Tests/**/*'
-    publishHTML target: [
+    afterAlways('smoketest:aat') {
+        steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/BEFTA Report for Smoke Tests/**/*'
+         publishHTML target: [
             allowMissing         : true,
             alwaysLinkToLastBuild: true,
             keepAll              : true,
             reportDir            : 'BEFTA Report for Smoke Tests',
             reportFiles          : "overview-features.html",
             reportName           : "Smoke Test Report"
-    ]
-  }
-
-  afterAlways('functionalTest:preview') {
-    copyIgnore('./build/reports/tests/befta/functional/cucumber-html-reports', './BEFTA Report for Functional Tests/')
-    steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/BEFTA Report for Functional Tests/**/*'
-    publishHTML target: [
-            allowMissing         : true,
-            alwaysLinkToLastBuild: true,
-            keepAll              : true,
-            reportDir            : 'BEFTA Report for Functional Tests',
-            reportFiles          : "overview-features.html",
-            reportName           : "Functional Test Report"
-    ]
-  }
-
-  afterAlways('functionalTest:aat') {
-    copyIgnore('./build/reports/tests/befta/functional/cucumber-html-reports', './BEFTA Report for Functional Tests/')
-    steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/BEFTA Report for Functional Tests/**/*'
-    publishHTML target: [
-            allowMissing         : true,
-            alwaysLinkToLastBuild: true,
-            keepAll              : true,
-            reportDir            : 'BEFTA Report for Functional Tests',
-            reportFiles          : "overview-features.html",
-            reportName           : "Functional Test Report"
-    ]
-  }
-
-  afterAlways('pact-provider-verification') {
-        steps.archiveArtifacts allowEmptyArchive: true, artifacts: 'build/reports/tests/**/*'
-        publishHTML target: [
-             allowMissing         : true,
-             alwaysLinkToLastBuild: true,
-             keepAll              : true,
-            reportDir            : "build/reports/tests/runProviderPactVerification",
-            reportFiles          : "index.html",
-            reportName           : "Contract Tests Report"
-        ]
+      ]
     }
-    //disableCleanupOfHelmReleaseOnFailure()
+
+    afterAlways('functionalTest:preview') {
+        steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/BEFTA Report for Functional Tests/**/*'
+        publishHTML target: [
+            allowMissing         : true,
+            alwaysLinkToLastBuild: true,
+            keepAll              : true,
+            reportDir            : 'BEFTA Report for Functional Tests',
+            reportFiles          : "overview-features.html",
+            reportName           : "Functional Test Report"
+    ]
+    }
+
+    afterAlways('functionalTest:aat') {
+        steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/BEFTA Report for Functional Tests/**/*'
+        publishHTML target: [
+            allowMissing         : true,
+            alwaysLinkToLastBuild: true,
+            keepAll              : true,
+            reportDir            : 'BEFTA Report for Functional Tests',
+            reportFiles          : "overview-features.html",
+            reportName           : "Functional Test Report"
+      ]
+    }
+
+    echo "env.DEFINITION_STORE_URL_BASE = ${env.DEFINITION_STORE_URL_BASE}"
 }
 
 /**
