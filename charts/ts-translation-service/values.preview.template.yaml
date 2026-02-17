@@ -2,6 +2,10 @@ java:
   # Don't modify below here
   image: ${IMAGE_NAME}
   ingressHost: ${SERVICE_FQDN}
+  devmemoryLimits: "4Gi"
+  devmemoryRequests: '2Gi'
+  devcpuRequests: "1000m"
+  devcpuLimits: "2000m"
   environment:
     TS_TRANSLATION_SERVICE_DB_HOST: "{{ .Release.Name }}-postgresql"
     TS_TRANSLATION_SERVICE_DB_NAME: "ts_translation_service"
@@ -468,4 +472,3 @@ ccd:
         IDAM_OAUTH2_AW_CLIENT_SECRET: ${ADMIN_WEB_IDAM_SECRET}
         ADMINWEB_GET_DICTIONARY_URL: http://${SERVICE_NAME}-java/dictionary
       keyVaults: [ ]
-
