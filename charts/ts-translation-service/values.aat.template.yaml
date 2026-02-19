@@ -2,5 +2,9 @@
 java:
   image: ${IMAGE_NAME}
   ingressHost: ${SERVICE_FQDN}
+  devmemoryLimits: "4Gi"
+  devmemoryRequests: '2Gi'
+  devcpuRequests: "1000m"
+  devcpuLimits: "2000m"
   environment:
     TESTING_SUPPORT_ENABLED: true
