@@ -273,7 +273,7 @@ dependencies {
 
   functionalTestImplementation sourceSets.main.runtimeClasspath
   functionalTestImplementation sourceSets.test.runtimeClasspath
-  functionalTestImplementation group: 'io.rest-assured', name: 'rest-assured', version: '5.5.6'
+  functionalTestImplementation group: 'io.rest-assured', name: 'rest-assured', version: '5.5.7'
   functionalTestImplementation group: 'com.github.hmcts', name: 'befta-fw', version: '9.2.4'
   functionalTestImplementation group: 'com.github.hmcts', name: 'ccd-test-definitions', version: '7.25.4'
 
