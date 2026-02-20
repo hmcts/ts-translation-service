@@ -251,7 +251,7 @@ dependencies {
   implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: '6.1.9'
 
 
-  implementation group: 'com.auth0', name: 'java-jwt', version: '4.5.0'
+  implementation group: 'com.auth0', name: 'java-jwt', version: '4.5.1'
   implementation group: 'com.microsoft.azure', name: 'applicationinsights-logging-logback', version: appInsightsVersion
   implementation group: 'com.microsoft.azure', name: 'applicationinsights-spring-boot-starter', version: appInsightsVersion
   implementation group: 'org.flywaydb', name: 'flyway-core', version: '9.22.3'
