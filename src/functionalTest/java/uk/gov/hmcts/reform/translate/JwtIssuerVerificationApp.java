@@ -6,8 +6,10 @@ import uk.gov.hmcts.befta.BeftaMain;
 import uk.gov.hmcts.befta.TestAutomationConfig;
 import uk.gov.hmcts.befta.data.UserData;
 import uk.gov.hmcts.befta.util.EnvironmentVariableUtils;
+import uk.gov.hmcts.reform.translate.security.OidcIssuerConfiguration;
 
 import java.text.ParseException;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 public final class JwtIssuerVerificationApp {
@@ -16,16 +18,21 @@ public final class JwtIssuerVerificationApp {
     }
 
     public static void main(String[] args) {
-        String expectedIssuer = EnvironmentVariableUtils.getRequiredVariable("OIDC_ISSUER");
+        Set<String> expectedIssuers = OidcIssuerConfiguration.allowedIssuers(
+            EnvironmentVariableUtils.getRequiredVariable("OIDC_ISSUER"),
+            System.getenv("OIDC_ALLOWED_ISSUERS")
+        );
         String actualIssuer = resolveIssuerFromRealToken();
 
-        if (!expectedIssuer.equals(actualIssuer)) {
+        if (!expectedIssuers.contains(actualIssuer)) {
             throw new IllegalStateException(
-                "OIDC_ISSUER mismatch: expected `" + expectedIssuer + "` but token iss was `" + actualIssuer + "`"
+                "OIDC issuer mismatch: expected one of `" + String.join("`, `", expectedIssuers)
+                    + "` but token iss was `"
+                    + actualIssuer + "`"
             );
         }
 
-        System.out.println("Verified OIDC_ISSUER matches functional test token iss: " + actualIssuer);
+        System.out.println("Verified configured OIDC issuer matches functional test token iss: " + actualIssuer);
     }
 
     private static String resolveIssuerFromRealToken() {
