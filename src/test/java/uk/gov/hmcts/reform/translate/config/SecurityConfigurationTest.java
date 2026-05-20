@@ -83,13 +83,13 @@ class SecurityConfigurationTest {
     }
 
     @Test
-    void shouldFailFastWhenNoIssuerValuesAreConfigured() {
+    void shouldFailFastWhenConfiguredIssuerIsBlank() {
         IllegalStateException exception = assertThrows(
             IllegalStateException.class,
             () -> jwtValidator("   ", " , , ")
         );
 
-        assertTrue(exception.getMessage().contains("At least one OIDC issuer must be configured"));
+        assertTrue(exception.getMessage().contains("oidc.issuer must not be blank"));
     }
 
     @Test
