@@ -32,6 +32,7 @@ import static org.mockito.Mockito.mock;
 
 class JwtDecoderIssuerValidationIT {
 
+    private static final String ADDITIONAL_ALLOWED_ISSUER = "http://additional-issuer";
     private static final String INVALID_ISSUER = "http://unexpected-issuer";
 
     private WireMockServer wireMockServer;
@@ -85,6 +86,14 @@ class JwtDecoderIssuerValidationIT {
     }
 
     @Test
+    void shouldAcceptTokenFromAdditionalAllowedIssuerWhenConfigured() throws Exception {
+        JwtDecoder jwtDecoder = jwtDecoder(ADDITIONAL_ALLOWED_ISSUER);
+
+        assertThat(jwtDecoder.decode(signedToken(ADDITIONAL_ALLOWED_ISSUER)).getIssuer().toString())
+            .isEqualTo(ADDITIONAL_ALLOWED_ISSUER);
+    }
+
+    @Test
     void shouldRejectExpiredTokenEvenWhenIssuerMatches() throws Exception {
         JwtDecoder jwtDecoder = jwtDecoder();
 
@@ -97,6 +106,10 @@ class JwtDecoderIssuerValidationIT {
     }
 
     private JwtDecoder jwtDecoder() {
+        return jwtDecoder(null);
+    }
+
+    private JwtDecoder jwtDecoder(String allowedIssuers) {
         SecurityConfiguration securityConfiguration = new SecurityConfiguration(
             mock(uk.gov.hmcts.reform.authorisation.filters.ServiceAuthFilter.class),
             mock(PutDictionaryEndpointFilter.class),
@@ -105,6 +118,7 @@ class JwtDecoderIssuerValidationIT {
         );
         ReflectionTestUtils.setField(securityConfiguration, "issuerUri", issuer());
         ReflectionTestUtils.setField(securityConfiguration, "issuerOverride", issuer());
+        ReflectionTestUtils.setField(securityConfiguration, "allowedIssuers", allowedIssuers);
         return securityConfiguration.jwtDecoder();
     }
 

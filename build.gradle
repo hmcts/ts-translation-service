@@ -169,7 +169,7 @@ task verifyFunctionalTestJwtIssuer(type: JavaExec) {
 }
 
 task verifyOidcIssuerPolicy {
-  description = 'Fails if oidc.issuer is derived from discovery configuration'
+  description = 'Fails if OIDC issuer validation config is derived from discovery configuration'
   group = 'Verification'
 
   doLast {
@@ -182,8 +182,8 @@ task verifyOidcIssuerPolicy {
       def configFile = file(path)
       configFile.exists() && configFile.readLines().any { line ->
         def normalized = line.replaceAll(/\s+/, '')
-        normalized.startsWith('issuer:${OIDC_ISSUER:${IDAM_OIDC_URL')
-          || normalized.startsWith('issuer:${OIDC_ISSUER:${idam.api.url')
+        (normalized.startsWith('issuer:') || normalized.startsWith('allowed-issuers:'))
+          && (normalized.contains('IDAM_OIDC_URL') || normalized.contains('idam.api.url'))
       }
     }
 
