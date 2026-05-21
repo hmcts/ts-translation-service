@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
 import org.springframework.security.oauth2.core.OAuth2TokenValidator;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.JwtClaimValidator;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtDecoders;
 import org.springframework.security.oauth2.jwt.JwtTimestampValidator;
@@ -20,11 +21,14 @@ import org.springframework.security.web.SecurityFilterChain;
 
 import uk.gov.hmcts.reform.authorisation.filters.ServiceAuthFilter;
 import uk.gov.hmcts.reform.translate.security.JwtGrantedAuthoritiesConverter;
+import uk.gov.hmcts.reform.translate.security.OidcIssuerConfiguration;
 import uk.gov.hmcts.reform.translate.security.filter.PutDictionaryEndpointFilter;
 import uk.gov.hmcts.reform.translate.security.filter.TranslateCyEndpointFilter;
 
-import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
+import java.util.Set;
+
 import static org.springframework.security.config.Customizer.withDefaults;
+import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 @Configuration
 @EnableWebSecurity
@@ -35,6 +39,9 @@ public class SecurityConfiguration {
 
     @Value("${oidc.issuer}")
     private String issuerOverride;
+
+    @Value("${oidc.allowed-issuers:}")
+    private String allowedIssuers;
 
     private final ServiceAuthFilter serviceAuthFilter;
     private final PutDictionaryEndpointFilter putDictionaryEndpointFilter;
@@ -92,10 +99,19 @@ public class SecurityConfiguration {
     @Bean
     JwtDecoder jwtDecoder() {
         NimbusJwtDecoder jwtDecoder = JwtDecoders.fromOidcIssuerLocation(issuerUri);
-        OAuth2TokenValidator<Jwt> withTimestamp = new JwtTimestampValidator();
-        OAuth2TokenValidator<Jwt> validator = new DelegatingOAuth2TokenValidator<>(withTimestamp);
-        jwtDecoder.setJwtValidator(validator);
+        // See docs/security/jwt-issuer-validation.md for issuer-uri discovery and oidc.issuer enforcement.
+        jwtDecoder.setJwtValidator(jwtValidator(issuerOverride, allowedIssuers));
         return jwtDecoder;
+    }
+
+    static OAuth2TokenValidator<Jwt> jwtValidator(String issuerOverride, String allowedIssuersOverride) {
+        OAuth2TokenValidator<Jwt> withTimestamp = new JwtTimestampValidator();
+        Set<String> allowedIssuers = OidcIssuerConfiguration.allowedIssuers(issuerOverride, allowedIssuersOverride);
+        OAuth2TokenValidator<Jwt> withIssuer = new JwtClaimValidator<>(
+            "iss",
+            issuer -> issuer != null && allowedIssuers.contains(issuer.toString())
+        );
+        return new DelegatingOAuth2TokenValidator<>(withTimestamp, withIssuer);
     }
 
 }

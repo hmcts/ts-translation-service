@@ -25,6 +25,27 @@ To build the project execute the following command:
   ./gradlew build
 ```
 
+### Smoke and functional JWT issuer verification
+
+To verify the live OIDC issuer locally, export:
+
+```bash
+  export VERIFY_OIDC_ISSUER=true
+  export OIDC_ISSUER=<expected-idam-issuer>
+```
+
+The verifier is skipped unless `VERIFY_OIDC_ISSUER=true`. When enabled, it fetches a real functional test token, decodes its `iss` claim, and fails if it does not exactly match `OIDC_ISSUER`, or one of the additional issuers in `OIDC_ALLOWED_ISSUERS` when that optional allow-list is set.
+
+`spring.security.oauth2.client.provider.oidc.issuer-uri` and `oidc.issuer` are intentionally separate. Discovery and JWKS retrieval use the OIDC discovery URL, while JWT validation always enforces `OIDC_ISSUER`. If this service is verified to receive tokens from more than one issuer, set `OIDC_ALLOWED_ISSUERS` to a comma-separated list of the additional issuer values; otherwise leave it unset so validation remains single-issuer.
+
+This service currently enforces the explicitly configured legacy `FORGEROCK` issuer in deployed environments. If the service is moved to `IDAM`, the prerequisite issuer-policy change will be in the upstream `idam-access-config` repository, after which this repo’s `OIDC_ISSUER` values must be updated to match the new token `iss`.
+
+To confirm the expected issuer from a failing request, decode only the JWT payload and inspect the `iss` claim. Do not commit or document full bearer tokens; record only the derived issuer value.
+
+### Codex Workflow Docs
+
+Repo-local workflow docs are indexed in `AGENTS.md`.
+
 ### Running the application
 
 The easiest way to run the application locally is to use the `bootWithCCD` Gradle task.
