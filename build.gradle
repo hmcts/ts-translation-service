@@ -259,7 +259,7 @@ dependencies {
 
   testImplementation libraries.junit5
   testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test'
-  testImplementation group: 'org.assertj', name: 'assertj-vavr', version: '0.4.3'
+  testImplementation group: 'org.assertj', name: 'assertj-vavr', version: '0.5.1'
 
   integrationTestImplementation sourceSets.main.runtimeClasspath
   integrationTestImplementation sourceSets.test.runtimeClasspath
