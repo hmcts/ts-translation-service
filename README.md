@@ -27,18 +27,49 @@ To build the project execute the following command:
 
 ### Smoke and functional JWT issuer verification
 
-To verify the live OIDC issuer locally, export:
+The smoke and functional test tasks run a verifier when `VERIFY_OIDC_ISSUER=true`. The verifier fetches a real functional test token, decodes its `iss` claim, and checks it against the configured issuer values.
+
+To enable the verifier locally, export:
 
 ```bash
   export VERIFY_OIDC_ISSUER=true
-  export OIDC_ISSUER=<expected-idam-issuer>
+  export OIDC_ISSUER=<expected-token-iss>
 ```
 
-The verifier is skipped unless `VERIFY_OIDC_ISSUER=true`. When enabled, it fetches a real functional test token, decodes its `iss` claim, and fails if it does not exactly match `OIDC_ISSUER`, or one of the additional issuers in `OIDC_ALLOWED_ISSUERS` when that optional allow-list is set.
+Example for the current deployed ForgeRock issuer:
 
-`spring.security.oauth2.client.provider.oidc.issuer-uri` and `oidc.issuer` are intentionally separate. Discovery and JWKS retrieval use the OIDC discovery URL, while JWT validation always enforces `OIDC_ISSUER`. If this service is verified to receive tokens from more than one issuer, set `OIDC_ALLOWED_ISSUERS` to a comma-separated list of the additional issuer values; otherwise leave it unset so validation remains single-issuer.
+```bash
+  export VERIFY_OIDC_ISSUER=true
+  export OIDC_ISSUER=https://forgerock-am.service.core-compute-idam-aat2.internal:8443/openam/oauth2/realms/root/realms/hmcts
+```
 
-This service currently enforces the explicitly configured legacy `FORGEROCK` issuer in deployed environments. If the service is moved to `IDAM`, the prerequisite issuer-policy change will be in the upstream `idam-access-config` repository, after which this repo’s `OIDC_ISSUER` values must be updated to match the new token `iss`.
+Required settings:
+
+| Setting | Meaning |
+| --- | --- |
+| `VERIFY_OIDC_ISSUER` | Set to `true` to run the verifier. When unset or false, the verifier is skipped. |
+| `OIDC_ISSUER` | Required when the verifier runs. Must exactly match the token `iss` claim expected for the target environment. |
+
+Optional settings:
+
+| Setting | Meaning |
+| --- | --- |
+| `OIDC_ALLOWED_ISSUERS` | Optional comma-separated list of additional accepted issuer values. Leave unset unless this service is verified to receive valid tokens from more than one issuer. |
+
+Example for a verified temporary multi-issuer migration:
+
+```bash
+  export OIDC_ISSUER=https://idam-web-public.aat.platform.hmcts.net/o
+  export OIDC_ALLOWED_ISSUERS=https://forgerock-am.service.core-compute-idam-aat2.internal:8443/openam/oauth2/realms/root/realms/hmcts
+```
+
+Configuration reference:
+
+| Setting | Meaning |
+| --- | --- |
+| `spring.security.oauth2.client.provider.oidc.issuer-uri` | OIDC discovery and JWKS lookup only. Do not use it as a shortcut for the enforced token issuer. |
+
+Current deployed environments enforce the explicitly configured legacy `FORGEROCK` issuer. If this service is moved to `IDAM`, the prerequisite issuer-policy change is in the upstream `idam-access-config` repository. After that change, this repo's `OIDC_ISSUER` values must be updated to match the new token `iss`.
 
 To confirm the expected issuer from a failing request, decode only the JWT payload and inspect the `iss` claim. Do not commit or document full bearer tokens; record only the derived issuer value.
 

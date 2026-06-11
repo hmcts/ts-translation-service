@@ -34,15 +34,9 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @EnableWebSecurity
 public class SecurityConfiguration {
 
-    @Value("${spring.security.oauth2.client.provider.oidc.issuer-uri}")
-    private String issuerUri;
-
-    @Value("${oidc.issuer}")
-    private String issuerOverride;
-
-    @Value("${oidc.allowed-issuers:}")
-    private String allowedIssuers;
-
+    private final String issuerUri;
+    private final String expectedIssuer;
+    private final String allowedIssuers;
     private final ServiceAuthFilter serviceAuthFilter;
     private final PutDictionaryEndpointFilter putDictionaryEndpointFilter;
     private final TranslateCyEndpointFilter translateCyEndpointFilter;
@@ -62,11 +56,20 @@ public class SecurityConfiguration {
     };
 
     @Autowired
-    public SecurityConfiguration(final ServiceAuthFilter serviceAuthFilter,
+    public SecurityConfiguration(@Value("${spring.security.oauth2.client.provider.oidc.issuer-uri}")
+                                 final String issuerUri,
+                                 @Value("${oidc.issuer}")
+                                 final String expectedIssuer,
+                                 @Value("${oidc.allowed-issuers:}")
+                                 final String allowedIssuers,
+                                 final ServiceAuthFilter serviceAuthFilter,
                                  final PutDictionaryEndpointFilter putDictionaryEndpointFilter,
                                  final TranslateCyEndpointFilter translateCyEndpointFilter,
                                  final JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter) {
         super();
+        this.issuerUri = issuerUri;
+        this.expectedIssuer = expectedIssuer;
+        this.allowedIssuers = allowedIssuers;
         this.serviceAuthFilter = serviceAuthFilter;
         this.putDictionaryEndpointFilter = putDictionaryEndpointFilter;
         this.translateCyEndpointFilter = translateCyEndpointFilter;
@@ -100,16 +103,16 @@ public class SecurityConfiguration {
     JwtDecoder jwtDecoder() {
         NimbusJwtDecoder jwtDecoder = JwtDecoders.fromOidcIssuerLocation(issuerUri);
         // See docs/security/jwt-issuer-validation.md for issuer-uri discovery and oidc.issuer enforcement.
-        jwtDecoder.setJwtValidator(jwtValidator(issuerOverride, allowedIssuers));
+        jwtDecoder.setJwtValidator(jwtValidator(expectedIssuer, allowedIssuers));
         return jwtDecoder;
     }
 
-    static OAuth2TokenValidator<Jwt> jwtValidator(String issuerOverride, String allowedIssuersOverride) {
+    static OAuth2TokenValidator<Jwt> jwtValidator(String expectedIssuer, String allowedIssuersOverride) {
         OAuth2TokenValidator<Jwt> withTimestamp = new JwtTimestampValidator();
-        Set<String> allowedIssuers = OidcIssuerConfiguration.allowedIssuers(issuerOverride, allowedIssuersOverride);
+        Set<String> acceptedIssuers = OidcIssuerConfiguration.allowedIssuers(expectedIssuer, allowedIssuersOverride);
         OAuth2TokenValidator<Jwt> withIssuer = new JwtClaimValidator<>(
             "iss",
-            issuer -> issuer != null && allowedIssuers.contains(issuer.toString())
+            issuer -> issuer != null && acceptedIssuers.contains(issuer.toString())
         );
         return new DelegatingOAuth2TokenValidator<>(withTimestamp, withIssuer);
     }

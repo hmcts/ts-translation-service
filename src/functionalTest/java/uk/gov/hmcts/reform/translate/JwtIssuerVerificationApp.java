@@ -1,6 +1,7 @@
 package uk.gov.hmcts.reform.translate;
 
 import com.nimbusds.jwt.SignedJWT;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import uk.gov.hmcts.befta.BeftaMain;
 import uk.gov.hmcts.befta.TestAutomationConfig;
@@ -12,6 +13,7 @@ import java.text.ParseException;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
+@Slf4j
 public final class JwtIssuerVerificationApp {
 
     private JwtIssuerVerificationApp() {
@@ -32,7 +34,7 @@ public final class JwtIssuerVerificationApp {
             );
         }
 
-        System.out.println("Verified configured OIDC issuer matches functional test token iss: " + actualIssuer);
+        log.info("Verified configured OIDC issuer matches functional test token iss: {}", actualIssuer);
     }
 
     private static String resolveIssuerFromRealToken() {

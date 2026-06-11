@@ -68,8 +68,8 @@
 
 | Area | Coverage |
 | --- | --- |
-| `src/test/java/uk/gov/hmcts/reform/translate/config/SecurityConfigurationTest.java` | Focused validator chain behaviour, including primary issuer, additional issuer, blank, duplicate, and unexpected issuer cases |
-| `src/integrationTest/java/uk/gov/hmcts/reform/translate/config/JwtDecoderIssuerValidationIT.java` | Active decoder accepts correctly signed tokens from configured issuers and rejects the same key material with an unexpected issuer |
+| `src/test/java/uk/gov/hmcts/reform/translate/security/OidcIssuerConfigurationTest.java` | Focused issuer-list parsing behaviour, including unset, blank, duplicate, and additional issuer cases |
+| `src/integrationTest/java/uk/gov/hmcts/reform/translate/config/JwtDecoder*IssuerValidationIT.java` | Spring-wired active decoder covers single-issuer and additional-issuer modes, accepting correctly signed tokens from configured issuers and rejecting the same key material with an unexpected issuer, missing issuer, or expired token |
 | `src/functionalTest/java/uk/gov/hmcts/reform/translate/JwtIssuerVerificationApp.java` | Acquires a real BEFTA test token, decodes `iss`, and verifies it matches `OIDC_ISSUER` or an additional allowed issuer when enabled |
 | `build.gradle` | Wires `verifyFunctionalTestJwtIssuer` into `smoke` and `functional`, gated by `VERIFY_OIDC_ISSUER=true` |
 
