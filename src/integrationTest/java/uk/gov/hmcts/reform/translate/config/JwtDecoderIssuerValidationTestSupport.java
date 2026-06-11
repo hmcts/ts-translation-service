@@ -9,6 +9,7 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.test.context.TestPropertySource;
 import uk.gov.hmcts.reform.translate.BaseTest;
 import uk.gov.hmcts.reform.translate.util.KeyGenerator;
 
@@ -16,6 +17,7 @@ import java.text.ParseException;
 import java.time.Instant;
 import java.util.Date;
 
+@TestPropertySource(properties = "oidc.issuer=http://localhost:${wiremock.server.port}/o")
 abstract class JwtDecoderIssuerValidationTestSupport extends BaseTest {
 
     @Autowired
