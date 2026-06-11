@@ -2,58 +2,62 @@ package uk.gov.hmcts.reform.translate.security;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
-
-import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class OidcIssuerConfigurationTest {
 
+    private static final String PRIMARY_ISSUER = "https://primary-issuer.example.com/o";
+    private static final String SECONDARY_ISSUER = "https://secondary-issuer.example.com/o";
+    private static final String TERTIARY_ISSUER = "https://tertiary-issuer.example.com/o";
+
     @Test
     void shouldOnlyHavePrimaryIssuerWhenAllowedIssuersUnset() {
-        assertThat(OidcIssuerConfiguration.allowedIssuers("primary", null))
-            .containsExactly("primary");
+        assertThat(OidcIssuerConfiguration.allowedIssuers(PRIMARY_ISSUER, null))
+            .containsExactly(PRIMARY_ISSUER);
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"", " "})
     void shouldOnlyHavePrimaryIssuerWhenAllowedIssuersBlank(String allowedIssuers) {
-        assertThat(OidcIssuerConfiguration.allowedIssuers("primary", allowedIssuers))
-            .containsExactly("primary");
+        assertThat(OidcIssuerConfiguration.allowedIssuers(PRIMARY_ISSUER, allowedIssuers))
+            .containsExactly(PRIMARY_ISSUER);
     }
 
     @Test
     void shouldIncludePrimaryAndConfiguredAllowedIssuers() {
-        assertThat(OidcIssuerConfiguration.allowedIssuers("primary", " secondary, tertiary , secondary "))
-            .containsExactly("primary", "secondary", "tertiary");
+        assertThat(OidcIssuerConfiguration.allowedIssuers(
+            PRIMARY_ISSUER,
+            " " + SECONDARY_ISSUER + ", " + TERTIARY_ISSUER + " , " + SECONDARY_ISSUER + " "
+        ))
+            .containsExactly(PRIMARY_ISSUER, SECONDARY_ISSUER, TERTIARY_ISSUER);
     }
 
     @ParameterizedTest
-    @MethodSource("allowedIssuersWithBlankEntries")
-    void shouldIgnoreBlankEntriesInAllowedIssuers(String allowedIssuers, String[] expectedIssuers) {
-        assertThat(OidcIssuerConfiguration.allowedIssuers("primary", allowedIssuers))
-            .containsExactly(expectedIssuers);
+    @ValueSource(strings = {", " + SECONDARY_ISSUER, SECONDARY_ISSUER + ","})
+    void shouldIgnoreBlankEntryBeforeOrAfterAllowedIssuer(String allowedIssuers) {
+        assertThat(OidcIssuerConfiguration.allowedIssuers(PRIMARY_ISSUER, allowedIssuers))
+            .containsExactly(PRIMARY_ISSUER, SECONDARY_ISSUER);
+    }
+
+    @Test
+    void shouldIgnoreBlankEntryBetweenAllowedIssuers() {
+        assertThat(OidcIssuerConfiguration.allowedIssuers(
+            PRIMARY_ISSUER,
+            SECONDARY_ISSUER + ",," + TERTIARY_ISSUER
+        ))
+            .containsExactly(PRIMARY_ISSUER, SECONDARY_ISSUER, TERTIARY_ISSUER);
     }
 
     @ParameterizedTest
     @NullAndEmptySource
     @ValueSource(strings = {" "})
     void shouldRejectBlankPrimaryIssuerEvenWhenAllowedIssuersAreConfigured(String primaryIssuer) {
-        assertThatThrownBy(() -> OidcIssuerConfiguration.allowedIssuers(primaryIssuer, "secondary"))
+        assertThatThrownBy(() -> OidcIssuerConfiguration.allowedIssuers(primaryIssuer, SECONDARY_ISSUER))
             .isInstanceOf(IllegalStateException.class)
             .hasMessage("oidc.issuer must not be blank");
-    }
-
-    private static Stream<Arguments> allowedIssuersWithBlankEntries() {
-        return Stream.of(
-            Arguments.of(", secondary", new String[] {"primary", "secondary"}),
-            Arguments.of("secondary,", new String[] {"primary", "secondary"}),
-            Arguments.of("secondary,,tertiary", new String[] {"primary", "secondary", "tertiary"})
-        );
     }
 }
