@@ -2,6 +2,7 @@ package uk.gov.hmcts.reform.translate.config;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.security.oauth2.jwt.BadJwtException;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.test.context.TestPropertySource;
 
 import java.time.Instant;
@@ -14,6 +15,15 @@ class JwtDecoderIssuerValidationIT extends JwtDecoderIssuerValidationTestSupport
 
     private static final String ADDITIONAL_ALLOWED_ISSUER = "http://additional-issuer";
     private static final String INVALID_ISSUER = "http://unexpected-issuer";
+
+    @Test
+    void shouldUseJwtDecoderBeanProducedBySecurityConfiguration() {
+        assertThat(applicationContext.getBean(SecurityConfiguration.class)).isNotNull();
+        assertThat(applicationContext.getBeanNamesForType(JwtDecoder.class))
+            .containsExactly("jwtDecoder");
+        assertThat(applicationContext.getBean("jwtDecoder", JwtDecoder.class))
+            .isSameAs(jwtDecoder);
+    }
 
     @Test
     void shouldAcceptTokenFromConfiguredIssuer() throws Exception {

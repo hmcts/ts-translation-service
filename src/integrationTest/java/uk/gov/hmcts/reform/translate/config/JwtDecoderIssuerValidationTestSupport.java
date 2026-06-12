@@ -8,6 +8,7 @@ import com.nimbusds.jose.crypto.RSASSASigner;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.test.context.TestPropertySource;
 import uk.gov.hmcts.reform.translate.BaseTest;
@@ -22,6 +23,9 @@ abstract class JwtDecoderIssuerValidationTestSupport extends BaseTest {
 
     @Autowired
     protected JwtDecoder jwtDecoder;
+
+    @Autowired
+    protected ApplicationContext applicationContext;
 
     protected String issuer() {
         return "http://localhost:" + wiremockPort + "/o";
