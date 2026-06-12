@@ -1,6 +1,8 @@
 package uk.gov.hmcts.reform.translate.config;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.security.oauth2.jwt.BadJwtException;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.test.context.TestPropertySource;
@@ -23,6 +25,12 @@ class JwtDecoderIssuerValidationIT extends JwtDecoderIssuerValidationTestSupport
             .containsExactly("jwtDecoder");
         assertThat(applicationContext.getBean("jwtDecoder", JwtDecoder.class))
             .isSameAs(jwtDecoder);
+
+        BeanDefinition jwtDecoderDefinition = ((ConfigurableApplicationContext) applicationContext)
+            .getBeanFactory()
+            .getBeanDefinition("jwtDecoder");
+        assertThat(jwtDecoderDefinition.getFactoryBeanName()).isEqualTo("securityConfiguration");
+        assertThat(jwtDecoderDefinition.getFactoryMethodName()).isEqualTo("jwtDecoder");
     }
 
     @Test
