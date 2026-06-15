@@ -14,15 +14,10 @@ class OidcIssuerConfigurationTest {
     private static final String SECONDARY_ISSUER = "https://secondary-issuer.example.com/o";
     private static final String TERTIARY_ISSUER = "https://tertiary-issuer.example.com/o";
 
-    @Test
-    void shouldOnlyHavePrimaryIssuerWhenAllowedIssuersUnset() {
-        assertThat(OidcIssuerConfiguration.allowedIssuers(PRIMARY_ISSUER, null))
-            .containsExactly(PRIMARY_ISSUER);
-    }
-
     @ParameterizedTest
-    @ValueSource(strings = {"", " "})
-    void shouldOnlyHavePrimaryIssuerWhenAllowedIssuersBlank(String allowedIssuers) {
+    @NullAndEmptySource
+    @ValueSource(strings = {" "})
+    void shouldOnlyHavePrimaryIssuerWhenAllowedIssuersUnsetOrBlank(String allowedIssuers) {
         assertThat(OidcIssuerConfiguration.allowedIssuers(PRIMARY_ISSUER, allowedIssuers))
             .containsExactly(PRIMARY_ISSUER);
     }
