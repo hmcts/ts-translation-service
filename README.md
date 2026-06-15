@@ -25,6 +25,58 @@ To build the project execute the following command:
   ./gradlew build
 ```
 
+### Smoke and functional JWT issuer verification
+
+The smoke and functional test tasks run a verifier when `VERIFY_OIDC_ISSUER=true`. The verifier fetches a real functional test token, decodes its `iss` claim, and checks it against the configured issuer values.
+
+To enable the verifier locally, export:
+
+```bash
+  export VERIFY_OIDC_ISSUER=true
+  export OIDC_ISSUER=<expected-token-iss>
+```
+
+Example for the current deployed ForgeRock issuer:
+
+```bash
+  export VERIFY_OIDC_ISSUER=true
+  export OIDC_ISSUER=https://forgerock-am.service.core-compute-idam-aat2.internal:8443/openam/oauth2/realms/root/realms/hmcts
+```
+
+Required settings:
+
+| Setting | Meaning |
+| --- | --- |
+| `VERIFY_OIDC_ISSUER` | Set to `true` to run the verifier. When unset or false, the verifier is skipped. |
+| `OIDC_ISSUER` | Required when the verifier runs. Must exactly match the token `iss` claim expected for the target environment. |
+
+Optional settings:
+
+| Setting | Meaning |
+| --- | --- |
+| `OIDC_ALLOWED_ISSUERS` | Optional comma-separated list of additional accepted issuer values. Leave unset unless this service is verified to receive valid tokens from more than one issuer. |
+
+Example for a verified temporary multi-issuer migration:
+
+```bash
+  export OIDC_ISSUER=https://idam-web-public.aat.platform.hmcts.net/o
+  export OIDC_ALLOWED_ISSUERS=https://forgerock-am.service.core-compute-idam-aat2.internal:8443/openam/oauth2/realms/root/realms/hmcts
+```
+
+Configuration reference:
+
+| Setting | Meaning |
+| --- | --- |
+| `spring.security.oauth2.client.provider.oidc.issuer-uri` | OIDC discovery and JWKS lookup only. Do not use it as a shortcut for the enforced token issuer. |
+
+Current deployed environments enforce the explicitly configured legacy `FORGEROCK` issuer. If this service is moved to `IDAM`, the prerequisite issuer-policy change is in the upstream `idam-access-config` repository. After that change, this repo's `OIDC_ISSUER` values must be updated to match the new token `iss`.
+
+To confirm the expected issuer from a failing request, decode only the JWT payload and inspect the `iss` claim. Do not commit or document full bearer tokens; record only the derived issuer value.
+
+### Codex Workflow Docs
+
+Repo-local workflow docs are indexed in `AGENTS.md`.
+
 ### Running the application
 
 The easiest way to run the application locally is to use the `bootWithCCD` Gradle task.
