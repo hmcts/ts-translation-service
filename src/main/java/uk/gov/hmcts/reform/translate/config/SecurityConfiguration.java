@@ -25,7 +25,6 @@ import uk.gov.hmcts.reform.translate.security.OidcIssuerConfiguration;
 import uk.gov.hmcts.reform.translate.security.filter.PutDictionaryEndpointFilter;
 import uk.gov.hmcts.reform.translate.security.filter.TranslateCyEndpointFilter;
 import java.util.Set;
-import static org.springframework.security.config.Customizer.withDefaults;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 @Configuration
