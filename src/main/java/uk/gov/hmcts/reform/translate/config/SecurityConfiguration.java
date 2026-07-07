@@ -24,9 +24,7 @@ import uk.gov.hmcts.reform.translate.security.JwtGrantedAuthoritiesConverter;
 import uk.gov.hmcts.reform.translate.security.OidcIssuerConfiguration;
 import uk.gov.hmcts.reform.translate.security.filter.PutDictionaryEndpointFilter;
 import uk.gov.hmcts.reform.translate.security.filter.TranslateCyEndpointFilter;
-
 import java.util.Set;
-
 import static org.springframework.security.config.Customizer.withDefaults;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
@@ -93,9 +91,7 @@ public class SecurityConfiguration {
             .formLogin(fl -> fl.disable())
             .logout(l -> l.disable())
             .authorizeHttpRequests(ar -> ar.anyRequest().authenticated())
-            .oauth2ResourceServer(o -> o.jwt(j -> j.jwtAuthenticationConverter(jwtAuthenticationConverter)))
-            .oauth2Client(withDefaults())
-            ;
+            .oauth2ResourceServer(o -> o.jwt(j -> j.jwtAuthenticationConverter(jwtAuthenticationConverter)));
         return http.build();
     }
 

@@ -1,6 +1,5 @@
 package uk.gov.hmcts.reform.translate.errorhandling;
 
-import uk.gov.hmcts.reform.translate.TestIdamConfiguration;
 import uk.gov.hmcts.reform.translate.config.SecurityConfiguration;
 import uk.gov.hmcts.reform.translate.controllers.DictionaryController;
 import uk.gov.hmcts.reform.translate.security.JwtGrantedAuthoritiesConverter;
@@ -16,7 +15,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.ComponentScan;
@@ -48,7 +46,6 @@ import static uk.gov.hmcts.reform.translate.errorhandling.BadRequestError.BAD_SC
         classes = {PutDictionaryEndpointFilter.class, SecurityConfiguration.class,
             JwtGrantedAuthoritiesConverter.class}))
 @AutoConfigureMockMvc(addFilters = false)
-@ImportAutoConfiguration(TestIdamConfiguration.class)
 class RestExceptionHandlerTest {
 
     private static final String ERROR_PATH_ERROR = "$.error";

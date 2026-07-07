@@ -18,7 +18,7 @@ resource "azurerm_resource_group" "rg" {
 }
 
 module "key-vault" {
-  source                               = "git@github.com:hmcts/cnp-module-key-vault?ref=master"
+  source                               = "git@github.com:hmcts/cnp-module-key-vault?ref=DTSPO-31965/remove-jenkins-ptl-access"
   product                              = var.product
   env                                  = var.env
   tenant_id                            = var.tenant_id
@@ -80,7 +80,7 @@ resource "azurerm_key_vault_secret" "ts_translation_service_s2s_secret" {
 ////////////////////////////////
 
 module "postgresql_v15" {
-  source = "git@github.com:hmcts/terraform-module-postgresql-flexible?ref=master"
+  source = "git@github.com:hmcts/terraform-module-postgresql-flexible?ref=DTSPO-30107-additional-postgres-admins"
   providers = {
     azurerm.postgres_network = azurerm.postgres_network
   }
