@@ -17,6 +17,7 @@ group = 'uk.gov.hmcts.reform'
 version = '0.0.1'
 
 ext {
+
   set('springCloudVersion', '2025.0.1')
   set('spring-framework.version', '6.2.14')
   set('spring-security.version', '6.5.7')
@@ -28,6 +29,8 @@ ext {
   junitPlatform       = '1.14.4'
   lombok              = '1.18.36'
   testcontainers      = '1.21.4'
+  set('beftaFwVersion', '9.2.6')
+  set('ccdTestDefinitionVersion','7.25.4')
 
 }
 
@@ -153,6 +156,49 @@ task smoke(type: JavaExec) {
   outputs.upToDateWhen { false }
 }
 
+task verifyFunctionalTestJwtIssuer(type: JavaExec) {
+  description = "Verifies that a real functional test token issuer matches OIDC_ISSUER"
+  group = "Verification"
+
+  mainClass = "uk.gov.hmcts.reform.translate.JwtIssuerVerificationApp"
+  classpath = sourceSets.functionalTest.runtimeClasspath + sourceSets.main.output + sourceSets.test.output
+  jvmArgs = [ '--add-opens=java.base/java.lang.reflect=ALL-UNNAMED' ]
+  onlyIf {
+    System.getenv("VERIFY_OIDC_ISSUER")?.toBoolean()
+  }
+}
+
+task verifyOidcIssuerPolicy {
+  description = 'Fails if OIDC issuer validation config is derived from discovery configuration'
+  group = 'Verification'
+
+  doLast {
+    def policyFiles = [
+      'src/main/resources/application.yaml',
+      'src/integrationTest/resources/application-itest.yml'
+    ]
+
+    def violations = policyFiles.findAll { path ->
+      def configFile = file(path)
+      configFile.exists() && configFile.readLines().any { line ->
+        def normalized = line.replaceAll(/\s+/, '')
+        (normalized.startsWith('issuer:') || normalized.startsWith('allowed-issuers:'))
+          && (normalized.contains('IDAM_OIDC_URL') || normalized.contains('idam.api.url'))
+      }
+    }
+
+    if (!violations.isEmpty()) {
+      throw new GradleException(
+        "OIDC issuer policy violation. Do not derive oidc.issuer from discovery config in: ${violations.join(', ')}"
+      )
+    }
+  }
+}
+
+tasks.named('check').configure {
+  dependsOn verifyOidcIssuerPolicy
+}
+
 task functional(type: JavaExec) {
   description = "Runs functional tests"
   group = "Verification"
@@ -184,6 +230,9 @@ task functional(type: JavaExec) {
 
   outputs.upToDateWhen { false }
 }
+
+tasks.smoke.dependsOn(tasks.verifyFunctionalTestJwtIssuer)
+tasks.functional.dependsOn(tasks.verifyFunctionalTestJwtIssuer)
 
 task integration(type: Test) {
   description = "Runs integration tests"
@@ -272,9 +321,10 @@ dependencies {
 
   functionalTestImplementation sourceSets.main.runtimeClasspath
   functionalTestImplementation sourceSets.test.runtimeClasspath
+
   functionalTestImplementation group: 'io.rest-assured', name: 'rest-assured', version: '5.5.6'
-  functionalTestImplementation group: 'com.github.hmcts', name: 'befta-fw', version: '9.2.7'
-  functionalTestImplementation group: 'com.github.hmcts', name: 'ccd-test-definitions', version: '7.25.4'
+  functionalTestImplementation group: 'com.github.hmcts', name: 'befta-fw', version:  beftaFwVersion
+  functionalTestImplementation group: 'com.github.hmcts', name: 'ccd-test-definitions', version: ccdTestDefinitionVersion
 
   cftlibImplementation group: 'org.springframework.boot', name: 'spring-boot-devtools'
 
