@@ -10,7 +10,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
 import org.springframework.security.oauth2.core.OAuth2TokenValidator;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.security.oauth2.jwt.JwtClaimValidator;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtDecoders;
 import org.springframework.security.oauth2.jwt.JwtTimestampValidator;
@@ -21,19 +20,21 @@ import org.springframework.security.web.SecurityFilterChain;
 
 import uk.gov.hmcts.reform.authorisation.filters.ServiceAuthFilter;
 import uk.gov.hmcts.reform.translate.security.JwtGrantedAuthoritiesConverter;
-import uk.gov.hmcts.reform.translate.security.OidcIssuerConfiguration;
 import uk.gov.hmcts.reform.translate.security.filter.PutDictionaryEndpointFilter;
 import uk.gov.hmcts.reform.translate.security.filter.TranslateCyEndpointFilter;
-import java.util.Set;
+
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
 
-    private final String issuerUri;
-    private final String expectedIssuer;
-    private final String allowedIssuers;
+    @Value("${spring.security.oauth2.client.provider.oidc.issuer-uri}")
+    private String issuerUri;
+
+    @Value("${oidc.issuer}")
+    private String issuerOverride;
+
     private final ServiceAuthFilter serviceAuthFilter;
     private final PutDictionaryEndpointFilter putDictionaryEndpointFilter;
     private final TranslateCyEndpointFilter translateCyEndpointFilter;
@@ -53,20 +54,11 @@ public class SecurityConfiguration {
     };
 
     @Autowired
-    public SecurityConfiguration(@Value("${spring.security.oauth2.client.provider.oidc.issuer-uri}")
-                                 final String issuerUri,
-                                 @Value("${oidc.issuer}")
-                                 final String expectedIssuer,
-                                 @Value("${oidc.allowed-issuers:}")
-                                 final String allowedIssuers,
-                                 final ServiceAuthFilter serviceAuthFilter,
+    public SecurityConfiguration(final ServiceAuthFilter serviceAuthFilter,
                                  final PutDictionaryEndpointFilter putDictionaryEndpointFilter,
                                  final TranslateCyEndpointFilter translateCyEndpointFilter,
                                  final JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter) {
         super();
-        this.issuerUri = issuerUri;
-        this.expectedIssuer = expectedIssuer;
-        this.allowedIssuers = allowedIssuers;
         this.serviceAuthFilter = serviceAuthFilter;
         this.putDictionaryEndpointFilter = putDictionaryEndpointFilter;
         this.translateCyEndpointFilter = translateCyEndpointFilter;
@@ -97,19 +89,10 @@ public class SecurityConfiguration {
     @Bean
     JwtDecoder jwtDecoder() {
         NimbusJwtDecoder jwtDecoder = JwtDecoders.fromOidcIssuerLocation(issuerUri);
-        // See docs/security/jwt-issuer-validation.md for issuer-uri discovery and oidc.issuer enforcement.
-        jwtDecoder.setJwtValidator(jwtValidator(expectedIssuer, allowedIssuers));
-        return jwtDecoder;
-    }
-
-    static OAuth2TokenValidator<Jwt> jwtValidator(String expectedIssuer, String allowedIssuersOverride) {
         OAuth2TokenValidator<Jwt> withTimestamp = new JwtTimestampValidator();
-        Set<String> acceptedIssuers = OidcIssuerConfiguration.allowedIssuers(expectedIssuer, allowedIssuersOverride);
-        OAuth2TokenValidator<Jwt> withIssuer = new JwtClaimValidator<>(
-            "iss",
-            issuer -> issuer != null && acceptedIssuers.contains(issuer.toString())
-        );
-        return new DelegatingOAuth2TokenValidator<>(withTimestamp, withIssuer);
+        OAuth2TokenValidator<Jwt> validator = new DelegatingOAuth2TokenValidator<>(withTimestamp);
+        jwtDecoder.setJwtValidator(validator);
+        return jwtDecoder;
     }
 
 }

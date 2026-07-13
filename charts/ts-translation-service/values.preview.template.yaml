@@ -13,10 +13,6 @@ java:
     TS_TRANSLATION_SERVICE_DB_PASSWORD: "hmcts"
     TS_TRANSLATION_SERVICE_DB_OPTIONS: "?stringtype=unspecified"
     TS_TRANSLATION_SERVICE_DB_PORT: 5432
-    IDAM_OIDC_URL: https://idam-web-public.aat.platform.hmcts.net
-    OIDC_ISSUER: https://forgerock-am.service.core-compute-idam-aat2.internal:8443/openam/oauth2/realms/root/realms/hmcts
-    IDAM_API_URL: https://idam-api.aat.platform.hmcts.net
-    S2S_URL: http://rpe-service-auth-provider-aat.service.core-compute-aat.internal
     TESTING_SUPPORT_ENABLED: true
 
   keyVaults:
@@ -98,14 +94,14 @@ ccd:
         IDAM_USER_URL: https://idam-web-public.aat.platform.hmcts.net
         IDAM_S2S_URL: http://rpe-service-auth-provider-aat.service.core-compute-aat.internal
         USER_PROFILE_HOST: http://ccd-user-profile-api-aat.service.core-compute-aat.internal
-        OIDC_ISSUER: https://forgerock-am.service.core-compute-idam-aat2.internal:8443/openam/oauth2/realms/root/realms/hmcts
+        OIDC_ISSUER: https://forgerock-am.service.core-compute-idam-aat.internal:8443/openam/oauth2/hmcts
         DEFINITION_STORE_IDAM_KEY: ${CCD_DEFINITION_S2S_SECRET}
       secrets:
           DEFINITION_STORE_DB_PASSWORD:
             secretRef: "{{ .Values.global.postgresSecret }}"
             key: PASSWORD
             disabled: true
-      keyVaults: {}
+      keyVaults: [ ]
 
 
    #Use this image to import your CCD definition. To have an image available, create a git tag and push it.
@@ -116,13 +112,7 @@ ccd:
       IMPORTER_USERNAME: ${IMPORT_USERNAME}
       IMPORTER_PASSWORD: ${IMPORT_PWD}
       CLIENT_SECRET: ${ADMIN_WEB_IDAM_SECRET}
-    secrets:
-      IMPORTER_USERNAME:
-        disabled: true
-      IMPORTER_PASSWORD:
-        disabled: true
-      CLIENT_SECRET:
-        disabled: true
+    secrets: []
     definitions:
       - https://github.com/hmcts/ccd-test-definitions/raw/master/src/main/resources/uk/gov/hmcts/ccd/test_definitions/excel/BEFTA_Master_Definition.xlsx
     userRoles:
@@ -481,4 +471,4 @@ ccd:
         IDAM_ADMIN_WEB_SERVICE_KEY: ${ADMIN_S2S_KEY}
         IDAM_OAUTH2_AW_CLIENT_SECRET: ${ADMIN_WEB_IDAM_SECRET}
         ADMINWEB_GET_DICTIONARY_URL: http://${SERVICE_NAME}-java/dictionary
-      keyVaults: {}
+      keyVaults: [ ]
