@@ -60,7 +60,7 @@ public class TranslationServiceTestDataLoader extends DefaultBeftaTestDataLoader
 
     private RequestSpecification asManageTranslationUser() {
 
-        UserData manageTranslationUser = loadManageTranslationUser();
+        UserData manageTranslationUser = getManageTranslationUser();
 
         try {
             TestAutomationAdapter adapter = BeftaMain.getAdapter();
@@ -80,7 +80,7 @@ public class TranslationServiceTestDataLoader extends DefaultBeftaTestDataLoader
         }
     }
 
-    public static UserData loadManageTranslationUser() {
+    private UserData getManageTranslationUser() {
 
         try {
             // reuse user from FTAs
