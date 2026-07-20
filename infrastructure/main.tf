@@ -18,16 +18,22 @@ resource "azurerm_resource_group" "rg" {
 }
 
 module "key-vault" {
-  source                  = "git@github.com:hmcts/cnp-module-key-vault?ref=master"
-  product                 = var.product
-  env                     = var.env
-  tenant_id               = var.tenant_id
-  object_id               = var.jenkins_AAD_objectId
-  resource_group_name     = azurerm_resource_group.rg.name
-  product_group_name      = "dcd_ccd"
-  common_tags             = var.common_tags
-  create_managed_identity = true
+  source                               = "git@github.com:hmcts/cnp-module-key-vault?ref=DTSPO-31965/remove-jenkins-ptl-access"
+  product                              = var.product
+  env                                  = var.env
+  tenant_id                            = var.tenant_id
+  object_id                            = var.jenkins_AAD_objectId
+  jenkins_object_id                    = data.azurerm_user_assigned_identity.jenkins.principal_id
+  resource_group_name                  = azurerm_resource_group.rg.name
+  product_group_name                   = "dcd_ccd"
+  common_tags                          = var.common_tags
+  create_managed_identity              = true
   additional_managed_identities_access = var.additional_managed_identities_access
+}
+
+data "azurerm_user_assigned_identity" "jenkins" {
+  name                = "jenkins-${var.env}-mi"
+  resource_group_name = "managed-identities-${var.env}-rg"
 }
 
 resource "azurerm_key_vault_secret" "AZURE_APPINSIGHTS_KEY" {
@@ -74,7 +80,7 @@ resource "azurerm_key_vault_secret" "ts_translation_service_s2s_secret" {
 ////////////////////////////////
 
 module "postgresql_v15" {
-  source = "git@github.com:hmcts/terraform-module-postgresql-flexible?ref=master"
+  source = "git@github.com:hmcts/terraform-module-postgresql-flexible?ref=DTSPO-30107-additional-postgres-admins"
   providers = {
     azurerm.postgres_network = azurerm.postgres_network
   }
