@@ -28,8 +28,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest(classes = {
-    Application.class,
-    TestIdamConfiguration.class
+    Application.class
 })
 @ActiveProfiles("itest")
 @AutoConfigureWireMock(port = 0, stubs = "classpath:/wiremock-stubs")
