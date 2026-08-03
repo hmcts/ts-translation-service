@@ -1,5 +1,6 @@
 # Keep the ACR build context limited to files copied by the Dockerfile.
 **
+!acb.yaml
 !Dockerfile
 !lib/
 !lib/applicationinsights.json
