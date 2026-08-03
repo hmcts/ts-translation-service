@@ -1,0 +1,8 @@
+# Keep the ACR build context limited to files copied by the Dockerfile.
+**
+!Dockerfile
+!lib/
+!lib/applicationinsights.json
+!build/
+!build/libs/
+!build/libs/ts-translation-service.jar
