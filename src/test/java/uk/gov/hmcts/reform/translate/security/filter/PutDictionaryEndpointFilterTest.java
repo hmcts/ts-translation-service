@@ -25,7 +25,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static uk.gov.hmcts.reform.translate.security.SecurityUtils.SERVICE_AUTHORIZATION;
@@ -42,10 +42,14 @@ class PutDictionaryEndpointFilterTest {
     @InjectMocks
     private PutDictionaryEndpointFilter underTest;
 
-    private final HttpServletRequest request = mock(HttpServletRequest.class);
-    private final HttpServletResponse response = mock(HttpServletResponse.class);
-    private final FilterChain filterChain = mock(FilterChain.class);
-    private final SecurityContext securityContext = mock(SecurityContext.class);
+    @Mock
+    private HttpServletRequest request;
+    @Mock
+    private HttpServletResponse response;
+    @Mock
+    private FilterChain filterChain;
+    @Mock
+    private SecurityContext securityContext;
 
     @BeforeEach
     void setUp() {
@@ -58,7 +62,7 @@ class PutDictionaryEndpointFilterTest {
         mode = EnumSource.Mode.EXCLUDE)
     void testShouldPerformAuthenticationWhenNotPutEndpoint(final HttpMethodEnum param) throws Exception {
         doReturn(param.name()).when(request).getMethod();
-        doReturn(ControllerConstants.DICTIONARY_URL).when(request).getServletPath();
+        lenient().doReturn(ControllerConstants.DICTIONARY_URL).when(request).getServletPath();
         doNothing().when(filterChain).doFilter(request, response);
 
         underTest.doFilterInternal(request, response, filterChain);

@@ -3,11 +3,11 @@ package uk.gov.hmcts.reform.translate.security.idam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import uk.gov.hmcts.reform.idam.client.IdamClient;
 import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
-@Component
+@Repository
 @Slf4j
 public class IdamRepository {
 
@@ -27,4 +27,3 @@ public class IdamRepository {
         return userInfo;
     }
 }
-

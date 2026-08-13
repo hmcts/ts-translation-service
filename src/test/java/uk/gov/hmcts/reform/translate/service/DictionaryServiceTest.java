@@ -456,6 +456,24 @@ public class DictionaryServiceTest {
         void shouldFailPutDictionaryDueToInvalidClientToken() {
 
             // GIVEN
+            given(securityUtils.getServiceNameFromS2SToken(CLIENTS2S_TOKEN))
+                .willThrow(new IllegalArgumentException("Invalid client token"));
+
+            // WHEN / THEN
+            IllegalArgumentException invalidTokenException = assertThrows(
+                IllegalArgumentException.class, () -> dictionaryService.putDictionaryRoleCheck(CLIENTS2S_TOKEN)
+            );
+
+            // THEN
+            assertEquals("Invalid client token", invalidTokenException.getMessage());
+            verify(securityUtils, never()).isBypassAuthCheck(anyString());
+            verify(securityUtils, never()).hasAnyOfTheseRoles(anyList());
+        }
+
+        @Test
+        void shouldFailPutDictionaryRoleCheckForUserMissingRequiredRoles() {
+
+            // GIVEN
             given(securityUtils.isBypassAuthCheck(XUI)).willReturn(false);
             given(securityUtils.getServiceNameFromS2SToken(CLIENTS2S_TOKEN)).willReturn(XUI);
             given(securityUtils.hasAnyOfTheseRoles(anyList())).willReturn(false);
@@ -611,4 +629,3 @@ public class DictionaryServiceTest {
     }
 
 }
-
