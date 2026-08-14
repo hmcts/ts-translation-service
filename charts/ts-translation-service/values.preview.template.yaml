@@ -9,8 +9,8 @@ java:
   environment:
     TS_TRANSLATION_SERVICE_DB_HOST: "{{ .Release.Name }}-postgresql"
     TS_TRANSLATION_SERVICE_DB_NAME: "ts_translation_service"
-    TS_TRANSLATION_SERVICE_DB_USERNAME: "{{ .Values.postgresql.auth.username }}"
-    TS_TRANSLATION_SERVICE_DB_PASSWORD: "{{ .Values.postgresql.auth.password }}"
+    TS_TRANSLATION_SERVICE_DB_USERNAME: "ts"
+    TS_TRANSLATION_SERVICE_DB_PASSWORD: "${TS_TRANSLATION_SERVICE_DB_PASSWORD}"
     TS_TRANSLATION_SERVICE_DB_OPTIONS: "?stringtype=unspecified"
     TS_TRANSLATION_SERVICE_DB_PORT: 5432
     TESTING_SUPPORT_ENABLED: true
@@ -79,8 +79,8 @@ ccd:
     devMode: true
     postgresql:
       auth:
-        postgresUsername: "{{ .Values.postgresql.auth.username }}"
-        postgresPassword: "{{ .Values.postgresql.auth.password }}"
+        postgresUsername: "ts"
+        postgresPassword: "${TS_TRANSLATION_SERVICE_DB_PASSWORD}"
 
 
   ccd-definition-store-api:
@@ -88,8 +88,8 @@ ccd:
       ingressHost: ccd-def-store-${SERVICE_FQDN}
       environment:
         DEFINITION_STORE_DB_HOST: ${SERVICE_NAME}-postgresql
-        DEFINITION_STORE_DB_USERNAME: "{{ .Values.global.postgresql.auth.postgresUsername }}"
-        DEFINITION_STORE_DB_PASSWORD: "{{ .Values.global.postgresql.auth.postgresPassword }}"
+        DEFINITION_STORE_DB_USERNAME: "ts"
+        DEFINITION_STORE_DB_PASSWORD: "${TS_TRANSLATION_SERVICE_DB_PASSWORD}"
         DEFINITION_STORE_DB_OPTIONS: "?stringtype=unspecified"
         TS_TRANSLATION_SERVICE_HOST: http://${SERVICE_NAME}-java
         ELASTIC_SEARCH_FAIL_ON_IMPORT: false
