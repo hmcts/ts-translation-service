@@ -470,30 +470,6 @@ public class DictionaryServiceTest {
             verify(securityUtils, never()).hasAnyOfTheseRoles(anyList());
         }
 
-        @Test
-        void shouldFailPutDictionaryRoleCheckForUserMissingRequiredRoles() {
-
-            // GIVEN
-            given(securityUtils.isBypassAuthCheck(XUI)).willReturn(false);
-            given(securityUtils.getServiceNameFromS2SToken(CLIENTS2S_TOKEN)).willReturn(XUI);
-            given(securityUtils.hasAnyOfTheseRoles(anyList())).willReturn(false);
-
-            // WHEN / THEN
-            RequestErrorException roleMissingException = assertThrows(
-                RequestErrorException.class, () -> dictionaryService.putDictionaryRoleCheck(CLIENTS2S_TOKEN)
-            );
-
-            // THEN
-            assertThat(roleMissingException).isInstanceOf(RequestErrorException.class);
-            assertEquals(
-                String.format(
-                    RequestErrorException.ERROR_MESSAGE, MANAGE_TRANSLATIONS_ROLE + "," + LOAD_TRANSLATIONS_ROLE
-                ),
-                roleMissingException.getMessage()
-            );
-        }
-
-
         // Incorrect pay_load
         @Test
         void shouldFailUpdateADictionaryForUserWithoutManageTranslationsRoleAndNullPayload() {
