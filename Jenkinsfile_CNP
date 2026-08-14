@@ -8,6 +8,9 @@ def component = "translation-service"
 def branchesToSync = ['demo', 'ithc', 'perftest']
 
 def secrets = [
+  'ts-${env}': [
+    secret('translation-service-POSTGRES-PASS', 'TS_TRANSLATION_SERVICE_DB_PASSWORD')
+  ],
   'rpx-${env}': [
     secret('mc-idam-client-secret', 'BEFTA_OAUTH2_CLIENT_SECRET_OF_XUIWEBAPP')
   ],
