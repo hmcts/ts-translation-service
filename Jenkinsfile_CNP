@@ -102,15 +102,15 @@ withPipeline(type, product, component) {
   syncBranchesWithMaster(branchesToSync)
   overrideVaultEnvironments(vaultOverrides)
   loadVaultSecrets(secrets)
+
+  enableAksStagingDeployment()
+  disableLegacyDeployment()
   steps.node {
     def releaseName = "${product}-${component}-${env.BRANCH_NAME ?: 'unknown'}".toLowerCase()
     steps.sh(label: 'Cleanup definition-importer job', script: """
       kubectl delete job ${releaseName}-definition-importer -n ts --ignore-not-found
     """.stripIndent())
   }
-
-  enableAksStagingDeployment()
-  disableLegacyDeployment()
 
   afterAlways('smoketest:preview') {
     copyIgnore('./build/reports/tests/befta/smoke/cucumber-html-reports', './BEFTA Report for Smoke Tests/')
