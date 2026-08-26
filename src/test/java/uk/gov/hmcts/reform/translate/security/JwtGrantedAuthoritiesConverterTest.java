@@ -98,6 +98,23 @@ class JwtGrantedAuthoritiesConverterTest {
 
     @Test
     @DisplayName("Should rethrow any exceptions as AuthenticationServiceException")
+    void shouldThrowAuthenticationServiceExceptionWhenIdamReturnsNullUserInfo() {
+        when(jwt.hasClaim(anyString())).thenReturn(true);
+        when(jwt.getClaim(anyString())).thenReturn(ACCESS_TOKEN);
+        when(jwt.getTokenValue()).thenReturn(ACCESS_TOKEN);
+        when(idamRepository.getUserInfo(anyString())).thenReturn(null);
+
+        AuthenticationServiceException authenticationServiceException = assertThrows(
+            AuthenticationServiceException.class,
+            () -> converter.convert(jwt)
+        );
+
+        assertEquals("IDAM error", authenticationServiceException.getMessage());
+        assertEquals("IDAM returned no user info", authenticationServiceException.getCause().getMessage());
+    }
+
+    @Test
+    @DisplayName("Should rethrow any exceptions as AuthenticationServiceException")
     void shouldReThrowExceptionsAsAuthenticationServiceException() {
         when(jwt.hasClaim(anyString())).thenReturn(true);
         when(jwt.getClaim(anyString())).thenReturn(ACCESS_TOKEN);
