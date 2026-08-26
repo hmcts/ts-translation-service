@@ -25,7 +25,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static uk.gov.hmcts.reform.translate.security.SecurityUtils.SERVICE_AUTHORIZATION;
@@ -62,12 +62,12 @@ class PutDictionaryEndpointFilterTest {
         mode = EnumSource.Mode.EXCLUDE)
     void testShouldPerformAuthenticationWhenNotPutEndpoint(final HttpMethodEnum param) throws Exception {
         doReturn(param.name()).when(request).getMethod();
-        lenient().doReturn(ControllerConstants.DICTIONARY_URL).when(request).getServletPath();
         doNothing().when(filterChain).doFilter(request, response);
 
         underTest.doFilterInternal(request, response, filterChain);
 
         verify(filterChain).doFilter(request, response);
+        verify(request, never()).getServletPath();
         verifyNoInteractions(securityUtils);
         verifyNoInteractions(securityContext);
     }
