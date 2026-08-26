@@ -1,5 +1,6 @@
 package uk.gov.hmcts.reform.translate.service;
 
+import com.auth0.jwt.exceptions.JWTDecodeException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -457,11 +458,11 @@ public class DictionaryServiceTest {
 
             // GIVEN
             given(securityUtils.getServiceNameFromS2SToken(CLIENTS2S_TOKEN))
-                .willThrow(new IllegalArgumentException("Invalid client token"));
+                .willThrow(new JWTDecodeException("Invalid client token"));
 
             // WHEN / THEN
-            IllegalArgumentException invalidTokenException = assertThrows(
-                IllegalArgumentException.class, () -> dictionaryService.putDictionaryRoleCheck(CLIENTS2S_TOKEN)
+            JWTDecodeException invalidTokenException = assertThrows(
+                JWTDecodeException.class, () -> dictionaryService.putDictionaryRoleCheck(CLIENTS2S_TOKEN)
             );
 
             // THEN
