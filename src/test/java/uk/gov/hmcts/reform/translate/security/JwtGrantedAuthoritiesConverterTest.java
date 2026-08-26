@@ -33,7 +33,8 @@ class JwtGrantedAuthoritiesConverterTest {
     @InjectMocks
     private JwtGrantedAuthoritiesConverter converter;
 
-    private final Jwt jwt = mock(Jwt.class);
+    @Mock
+    private Jwt jwt;
 
     @Test
     @DisplayName("Gets empty authorities")
