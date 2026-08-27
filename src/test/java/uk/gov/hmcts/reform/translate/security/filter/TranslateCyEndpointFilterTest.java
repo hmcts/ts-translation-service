@@ -23,7 +23,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 
@@ -53,12 +53,12 @@ class TranslateCyEndpointFilterTest {
         mode = EnumSource.Mode.EXCLUDE)
     void testShouldPerformAuthenticationWhenNotPostTranslateCyEndpoint(final HttpMethodEnum param) throws Exception {
         doReturn(param.name()).when(request).getMethod();
-        lenient().doReturn(ControllerConstants.TRANSLATIONS_URL).when(request).getServletPath();
         doNothing().when(filterChain).doFilter(request, response);
 
         underTest.doFilterInternal(request, response, filterChain);
 
         verify(filterChain).doFilter(request, response);
+        verify(request, never()).getServletPath();
         verifyNoInteractions(securityContext);
     }
 

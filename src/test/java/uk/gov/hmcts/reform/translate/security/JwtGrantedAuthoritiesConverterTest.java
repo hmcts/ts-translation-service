@@ -16,8 +16,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -40,8 +39,8 @@ class JwtGrantedAuthoritiesConverterTest {
     @DisplayName("Gets empty authorities")
     void shouldReturnEmptyAuthorities() {
         Collection<GrantedAuthority> authorities = converter.convert(jwt);
-        assertNotNull(authorities);
-        assertEquals(0, authorities.size());
+        assertThat(authorities).isNotNull();
+        assertThat(authorities).isEmpty();
     }
 
     @Test
@@ -49,8 +48,8 @@ class JwtGrantedAuthoritiesConverterTest {
     void shouldReturnEmptyAuthoritiesWhenClaimNotAvailable() {
         when(jwt.hasClaim(anyString())).thenReturn(false);
         Collection<GrantedAuthority> authorities = converter.convert(jwt);
-        assertNotNull(authorities);
-        assertEquals(0, authorities.size());
+        assertThat(authorities).isNotNull();
+        assertThat(authorities).isEmpty();
     }
 
     @Test
@@ -59,8 +58,8 @@ class JwtGrantedAuthoritiesConverterTest {
         when(jwt.hasClaim(anyString())).thenReturn(true);
         when(jwt.getClaim(anyString())).thenReturn("Test");
         Collection<GrantedAuthority> authorities = converter.convert(jwt);
-        assertNotNull(authorities);
-        assertEquals(0, authorities.size());
+        assertThat(authorities).isNotNull();
+        assertThat(authorities).isEmpty();
     }
 
     @Test
@@ -74,8 +73,8 @@ class JwtGrantedAuthoritiesConverterTest {
         when(userInfo.getRoles()).thenReturn(roles);
         when(idamRepository.getUserInfo(anyString())).thenReturn(userInfo);
         Collection<GrantedAuthority> authorities = converter.convert(jwt);
-        assertNotNull(authorities);
-        assertEquals(0, authorities.size());
+        assertThat(authorities).isNotNull();
+        assertThat(authorities).isEmpty();
     }
 
     @Test
@@ -89,8 +88,8 @@ class JwtGrantedAuthoritiesConverterTest {
         when(userInfo.getRoles()).thenReturn(roles);
         when(idamRepository.getUserInfo(anyString())).thenReturn(userInfo);
         Collection<GrantedAuthority> authorities = converter.convert(jwt);
-        assertNotNull(authorities);
-        assertEquals(1, authorities.size());
+        assertThat(authorities).isNotNull();
+        assertThat(authorities.size()).isEqualTo(1);
     }
 
     @Test
@@ -106,8 +105,9 @@ class JwtGrantedAuthoritiesConverterTest {
             () -> converter.convert(jwt)
         );
 
-        assertEquals("IDAM error", authenticationServiceException.getMessage());
-        assertEquals("IDAM returned no user info", authenticationServiceException.getCause().getMessage());
+        assertThat(authenticationServiceException.getMessage()).isEqualTo("IDAM error");
+        assertThat(authenticationServiceException.getCause()).isNotNull();
+        assertThat(authenticationServiceException.getCause().getMessage()).isEqualTo("IDAM returned no user info");
     }
 
     @Test
@@ -122,7 +122,8 @@ class JwtGrantedAuthoritiesConverterTest {
             () -> converter.convert(jwt)
         );
 
-        assertEquals("IDAM error", authenticationServiceException.getMessage());
-        assertEquals("Something went wrong", authenticationServiceException.getCause().getMessage());
+        assertThat(authenticationServiceException.getMessage()).isEqualTo("IDAM error");
+        assertThat(authenticationServiceException.getCause()).isNotNull();
+        assertThat(authenticationServiceException.getCause().getMessage()).isEqualTo("Something went wrong");
     }
 }
