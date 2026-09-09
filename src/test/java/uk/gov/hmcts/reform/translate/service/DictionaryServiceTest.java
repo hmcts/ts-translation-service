@@ -1,5 +1,6 @@
 package uk.gov.hmcts.reform.translate.service;
 
+import com.auth0.jwt.exceptions.JWTDecodeException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -456,25 +457,19 @@ public class DictionaryServiceTest {
         void shouldFailPutDictionaryDueToInvalidClientToken() {
 
             // GIVEN
-            given(securityUtils.isBypassAuthCheck(XUI)).willReturn(false);
-            given(securityUtils.getServiceNameFromS2SToken(CLIENTS2S_TOKEN)).willReturn(XUI);
-            given(securityUtils.hasAnyOfTheseRoles(anyList())).willReturn(false);
+            given(securityUtils.getServiceNameFromS2SToken(CLIENTS2S_TOKEN))
+                .willThrow(new JWTDecodeException("Invalid client token"));
 
             // WHEN / THEN
-            RequestErrorException roleMissingException = assertThrows(
-                RequestErrorException.class, () -> dictionaryService.putDictionaryRoleCheck(CLIENTS2S_TOKEN)
+            JWTDecodeException invalidTokenException = assertThrows(
+                JWTDecodeException.class, () -> dictionaryService.putDictionaryRoleCheck(CLIENTS2S_TOKEN)
             );
 
             // THEN
-            assertThat(roleMissingException).isInstanceOf(RequestErrorException.class);
-            assertEquals(
-                String.format(
-                    RequestErrorException.ERROR_MESSAGE, MANAGE_TRANSLATIONS_ROLE + "," + LOAD_TRANSLATIONS_ROLE
-                ),
-                roleMissingException.getMessage()
-            );
+            assertEquals("Invalid client token", invalidTokenException.getMessage());
+            verify(securityUtils, never()).isBypassAuthCheck(anyString());
+            verify(securityUtils, never()).hasAnyOfTheseRoles(anyList());
         }
-
 
         // Incorrect pay_load
         @Test
@@ -611,4 +606,3 @@ public class DictionaryServiceTest {
     }
 
 }
-

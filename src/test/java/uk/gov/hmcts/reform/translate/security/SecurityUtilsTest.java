@@ -185,6 +185,24 @@ class SecurityUtilsTest {
         }
 
         @Test
+        @DisplayName("Get user ID when IDAM returns user info")
+        void shouldReturnUserId() {
+            doReturn(JWT).when(authentication).getPrincipal();
+            doReturn(USER_INFO).when(idamRepository).getUserInfo(USER_JWT);
+
+            assertThat(underTest.getUserId()).isEqualTo(USER_ID);
+        }
+
+        @Test
+        @DisplayName("Get user ID when IDAM returns no user info")
+        void shouldReturnNullUserIdWhenIdamReturnsNoUserInfo() {
+            doReturn(JWT).when(authentication).getPrincipal();
+            doReturn(null).when(idamRepository).getUserInfo(USER_JWT);
+
+            assertThat(underTest.getUserId()).isNull();
+        }
+
+        @Test
         @DisplayName("Get user info when principal is null")
         void shouldReturnNullWhenAuthenticationPrincipalIsNull() {
             doReturn(null).when(authentication).getPrincipal();

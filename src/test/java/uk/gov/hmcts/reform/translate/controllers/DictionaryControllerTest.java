@@ -78,15 +78,14 @@ class DictionaryControllerTest extends BaseControllerTest {
     class PutDictionary {
         @Test
         void shouldReturn200() {
-            final var dictionaryController = new DictionaryController(dictionaryService);
-            final var getDictionaryRequest = getDictionaryRequest(1, 2);
+            final var getDictionaryRequest = getDictionaryRequest();
             dictionaryController.putDictionary(getDictionaryRequest, CLIENTS2S_TOKEN);
             verify(dictionaryService, times(1)).putDictionary(getDictionaryRequest);
         }
 
-        private Dictionary getDictionaryRequest(int from, int to) {
+        private Dictionary getDictionaryRequest() {
             final Map<String, Translation> expectedMap = new HashMap<>();
-            IntStream.range(from, to).forEach(i -> expectedMap.put("english_" + i, new Translation("translated_" + i)));
+            IntStream.range(1, 2).forEach(i -> expectedMap.put("english_" + i, new Translation("translated_" + i)));
             return new Dictionary(expectedMap);
         }
     }

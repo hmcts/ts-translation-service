@@ -7,6 +7,7 @@ import uk.gov.hmcts.reform.translate.data.TranslationUploadEntity;
 import uk.gov.hmcts.reform.translate.model.Translation;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Map;
 
 @Component
@@ -43,7 +44,7 @@ public class DictionaryMapper {
     public TranslationUploadEntity createTranslationUploadEntity(String currentUserId) {
         final var translationUploadEntity = new TranslationUploadEntity();
         translationUploadEntity.setUserId(currentUserId);
-        translationUploadEntity.setUploaded(LocalDateTime.now());
+        translationUploadEntity.setUploaded(LocalDateTime.now(ZoneOffset.UTC));
         return translationUploadEntity;
     }
 }
