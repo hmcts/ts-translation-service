@@ -1,11 +1,11 @@
 package uk.gov.hmcts.reform.translate.security;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -16,35 +16,33 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 class JwtGrantedAuthoritiesConverterTest {
 
     private static final String ACCESS_TOKEN = "access_token";
+
     @Mock
     private IdamRepository idamRepository;
 
     @InjectMocks
     private JwtGrantedAuthoritiesConverter converter;
 
-    private final Jwt jwt = mock(Jwt.class);
-
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
+    @Mock
+    private Jwt jwt;
 
     @Test
     @DisplayName("Gets empty authorities")
     void shouldReturnEmptyAuthorities() {
         Collection<GrantedAuthority> authorities = converter.convert(jwt);
-        assertNotNull(authorities);
-        assertEquals(0, authorities.size());
+        assertThat(authorities)
+            .isNotNull()
+            .isEmpty();
     }
 
     @Test
@@ -52,8 +50,9 @@ class JwtGrantedAuthoritiesConverterTest {
     void shouldReturnEmptyAuthoritiesWhenClaimNotAvailable() {
         when(jwt.hasClaim(anyString())).thenReturn(false);
         Collection<GrantedAuthority> authorities = converter.convert(jwt);
-        assertNotNull(authorities);
-        assertEquals(0, authorities.size());
+        assertThat(authorities)
+            .isNotNull()
+            .isEmpty();
     }
 
     @Test
@@ -62,8 +61,9 @@ class JwtGrantedAuthoritiesConverterTest {
         when(jwt.hasClaim(anyString())).thenReturn(true);
         when(jwt.getClaim(anyString())).thenReturn("Test");
         Collection<GrantedAuthority> authorities = converter.convert(jwt);
-        assertNotNull(authorities);
-        assertEquals(0, authorities.size());
+        assertThat(authorities)
+            .isNotNull()
+            .isEmpty();
     }
 
     @Test
@@ -77,8 +77,9 @@ class JwtGrantedAuthoritiesConverterTest {
         when(userInfo.getRoles()).thenReturn(roles);
         when(idamRepository.getUserInfo(anyString())).thenReturn(userInfo);
         Collection<GrantedAuthority> authorities = converter.convert(jwt);
-        assertNotNull(authorities);
-        assertEquals(0, authorities.size());
+        assertThat(authorities)
+            .isNotNull()
+            .isEmpty();
     }
 
     @Test
@@ -92,8 +93,28 @@ class JwtGrantedAuthoritiesConverterTest {
         when(userInfo.getRoles()).thenReturn(roles);
         when(idamRepository.getUserInfo(anyString())).thenReturn(userInfo);
         Collection<GrantedAuthority> authorities = converter.convert(jwt);
-        assertNotNull(authorities);
-        assertEquals(1, authorities.size());
+        assertThat(authorities)
+            .isNotNull()
+            .hasSize(1);
+    }
+
+    @Test
+    @DisplayName("Should rethrow any exceptions as AuthenticationServiceException")
+    void shouldThrowAuthenticationServiceExceptionWhenIdamReturnsNullUserInfo() {
+        when(jwt.hasClaim(anyString())).thenReturn(true);
+        when(jwt.getClaim(anyString())).thenReturn(ACCESS_TOKEN);
+        when(jwt.getTokenValue()).thenReturn(ACCESS_TOKEN);
+        when(idamRepository.getUserInfo(anyString())).thenReturn(null);
+
+        AuthenticationServiceException authenticationServiceException = assertThrows(
+            AuthenticationServiceException.class,
+            () -> converter.convert(jwt)
+        );
+
+        assertThat(authenticationServiceException)
+            .hasMessage("IDAM error")
+            .cause()
+            .hasMessage("IDAM returned no user info");
     }
 
     @Test
@@ -108,7 +129,9 @@ class JwtGrantedAuthoritiesConverterTest {
             () -> converter.convert(jwt)
         );
 
-        assertEquals("IDAM error", authenticationServiceException.getMessage());
-        assertEquals("Something went wrong", authenticationServiceException.getCause().getMessage());
+        assertThat(authenticationServiceException)
+            .hasMessage("IDAM error")
+            .cause()
+            .hasMessage("Something went wrong");
     }
 }
