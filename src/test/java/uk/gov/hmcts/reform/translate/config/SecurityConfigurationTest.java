@@ -41,7 +41,7 @@ import static uk.gov.hmcts.reform.translate.security.SecurityUtils.SERVICE_AUTHO
     controllers = SecurityConfigurationTest.SecuredController.class,
     properties = {
         "spring.security.oauth2.client.provider.oidc.issuer-uri=https://issuer.example/o",
-        "oidc.issuer=https://issuer.example/o"
+        "idam.security.allowed-issuers=http://localhost/o"
     }
 )
 @Import({

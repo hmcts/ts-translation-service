@@ -40,7 +40,6 @@ static LinkedHashMap<String, Object> secret(String secretName, String envVar) {
 
 // Other env variables needed for BEFTA.
 env.S2S_URL_BASE = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
-env.IDAM_API_URL_BASE = "https://idam-api.aat.platform.hmcts.net"
 env.BEFTA_S2S_CLIENT_ID = "xui_webapp"
 env.CCD_API_GATEWAY_OAUTH2_REDIRECT_URL = "https://www-ccd.aat.platform.hmcts.net/oauth2redirect"
 env.BEFTA_S2S_CLIENT_ID_OF_XUI_WEBAPP = "xui_webapp"
@@ -51,6 +50,8 @@ env.BEFTA_OAUTH2_REDIRECT_URI_OF_XUIWEBAPP = "https://www-ccd.aat.platform.hmcts
 env.BEFTA_OAUTH2_ACCESS_TOKEN_TYPE_OF_XUIWEBAPP = "OIDC"
 env.BEFTA_OAUTH2_SCOPE_VARIABLES_OF_XUIWEBAPP = "profile openid roles manage-user create-user search-user"
 env.CCD_API_GATEWAY_OAUTH2_CLIENT_ID = "ccd_gateway"
+env.OAUTH2_ACCESS_TOKEN_TYPE = "OIDC" // use new OIDC authentication for BEFTA tests
+env.OAUTH2_SCOPE_VARIABLES = "profile openid roles"
 
 // temporary workaround for platform changes: turn BEFTA header checks to warning mode
 env.BEFTA_RESPONSE_HEADER_CHECK_POLICY="JUST_WARN"
@@ -105,6 +106,15 @@ withPipeline(type, product, component) {
 
   enableAksStagingDeployment()
   disableLegacyDeployment()
+
+  // Set IDAM_API_URL_BASE post high-level data setup where it would have been overridden
+  before('smoketest:preview') {
+      env.IDAM_API_URL_BASE = "https://idam-web-public.aat.platform.hmcts.net"
+  }
+  
+  before('smoketest:aat') {
+      env.IDAM_API_URL_BASE = "https://idam-web-public.aat.platform.hmcts.net"
+  }
 
   afterAlways('smoketest:preview') {
     copyIgnore('./build/reports/tests/befta/smoke/cucumber-html-reports', './BEFTA Report for Smoke Tests/')
