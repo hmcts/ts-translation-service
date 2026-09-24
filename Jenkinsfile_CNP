@@ -19,7 +19,8 @@ def secrets = [
     secret('microservicekey-ccd-admin', 'ADMIN_S2S_KEY'),
     secret('ccd-definition-s2s-secret', 'CCD_DEFINITION_S2S_SECRET'),
     secret('ccd-as-a-pr-importer-username', 'IMPORT_USERNAME'),
-    secret('ccd-as-a-pr-importer-password', 'IMPORT_PWD')
+    secret('ccd-as-a-pr-importer-password', 'IMPORT_PWD'),
+    secret('session-keys', 'SESSION_KEYS')
   ],
   's2s-${env}': [
     secret('microservicekey-xui-webapp', 'BEFTA_S2S_CLIENT_SECRET'),
