@@ -98,9 +98,17 @@
     <cve>CVE-2026-71290</cve>
     <cve>CVE-2026-73180</cve>
   </suppress>
+  <suppress>
+    <cve>CVE-2026-49844</cve>
+  </suppress>
+  <suppress>
+    <notes>Temporary Suppression
+        CVE-2026-41707 refer [Ticket]</notes>
+    <cve>CVE-2026-41707</cve>
+  </suppress>
 
   <suppress>
-    <cve>CVE-2025-68161</cve>
+      <cve>CVE-2025-68161</cve>
   </suppress>
   
   <suppress>
@@ -114,5 +122,4 @@
   <suppress>
       <cve>CVE-2026-34481</cve>
   </suppress>
-  
 </suppressions>
