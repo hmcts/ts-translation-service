@@ -44,6 +44,6 @@ public class DictionaryEntity {
     private String no;
 
     public boolean isYesOrNo() {
-        return yesOrNo == null ? false : yesOrNo.booleanValue();
+        return Boolean.TRUE.equals(yesOrNo);
     }
 }

@@ -38,6 +38,9 @@ public class JwtGrantedAuthoritiesConverter implements Converter<Jwt, Collection
 
             try {
                 userInfo = idamRepository.getUserInfo(jwt.getTokenValue());
+                if (userInfo == null) {
+                    throw new AuthenticationServiceException("IDAM returned no user info");
+                }
                 log.info("JwtGrantedAuthoritiesConverter retrieved user info from idamRepository."
                              + " User Id={}. Roles={}.",
                          userInfo.getUid(), userInfo.getRoles());

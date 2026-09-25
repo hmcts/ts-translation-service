@@ -15,11 +15,10 @@ import uk.gov.hmcts.reform.translate.ApplicationParams;
 import uk.gov.hmcts.reform.translate.security.idam.IdamRepository;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.toSet;
 
 @Service
 @Slf4j
@@ -73,7 +72,9 @@ public class SecurityUtils {
     }
 
     public String getUserId() {
-        return getUserInfo().getUid();
+        return Optional.ofNullable(getUserInfo())
+            .map(UserInfo::getUid)
+            .orElse(null);
     }
 
     public String getUserToken() {
@@ -105,7 +106,7 @@ public class SecurityUtils {
     public boolean hasAnyOfTheseRoles(List<String> roleToMatch) {
         final var userInfo = getUserInfo();
         return userInfo != null
-            && userInfo.getRoles().stream().anyMatch(roleToMatch.stream().collect(toSet())::contains);
+            && userInfo.getRoles().stream().anyMatch(new HashSet<>(roleToMatch)::contains);
     }
 
     public String getServiceNameFromS2SToken(String serviceAuthenticationToken) {
@@ -122,4 +123,3 @@ public class SecurityUtils {
         return applicationParams.getPutDictionaryS2sServicesBypassRoleAuthCheck().contains(clientServiceName);
     }
 }
-

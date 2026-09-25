@@ -8,7 +8,6 @@ import uk.gov.hmcts.reform.translate.service.DictionaryService;
 
 import java.lang.reflect.Method;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.cfg.MapperConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -58,9 +57,6 @@ class RestExceptionHandlerTest {
     @MockitoBean
     protected DictionaryService service;
 
-    @Autowired
-    protected ObjectMapper objectMapper;
-
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -74,7 +70,7 @@ class RestExceptionHandlerTest {
         String myUniqueExceptionMessage = "Generic Api Exception";
         ApiException expectedException = new ApiException(myUniqueExceptionMessage);
 
-        /// WHEN
+        // WHEN
         setupMockServiceToThrowException(expectedException);
         ResultActions result = this.mockMvc.perform(get(DICTIONARY_URL)
                                                         .contentType(MediaType.APPLICATION_JSON));
@@ -91,7 +87,7 @@ class RestExceptionHandlerTest {
         RequestErrorException expectedException =
             new RequestErrorException("invalidRole");
 
-        /// WHEN
+        // WHEN
         setupMockServiceToThrowException(expectedException);
         ResultActions result = this.mockMvc.perform(get(DICTIONARY_URL)
                                                         .contentType(MediaType.APPLICATION_JSON));
@@ -111,7 +107,7 @@ class RestExceptionHandlerTest {
         UnauthorizedException expectedException =
             new UnauthorizedException("you are not authorized");
 
-        /// WHEN
+        // WHEN
         setupMockServiceToThrowException(expectedException);
         ResultActions result = this.mockMvc.perform(get(DICTIONARY_URL)
                                                         .contentType(MediaType.APPLICATION_JSON));
@@ -130,7 +126,7 @@ class RestExceptionHandlerTest {
         RoleMissingException expectedException =
             new RoleMissingException(String.format(RoleMissingException.ERROR_MESSAGE, "test-role"));
 
-        /// WHEN
+        // WHEN
         setupMockServiceToThrowException(expectedException);
         ResultActions result = this.mockMvc.perform(get(DICTIONARY_URL)
                                                         .contentType(MediaType.APPLICATION_JSON));
@@ -148,7 +144,7 @@ class RestExceptionHandlerTest {
         EnglishPhraseUniqueConstraintException expectedException =
             new EnglishPhraseUniqueConstraintException("myUniqueExceptionMessage", null);
 
-        /// WHEN
+        // WHEN
         setupMockServiceToThrowException(expectedException);
         ResultActions result = this.mockMvc.perform(get(DICTIONARY_URL)
                                                         .contentType(MediaType.APPLICATION_JSON));
@@ -165,7 +161,7 @@ class RestExceptionHandlerTest {
         BadRequestException expectedException =
             new BadRequestException("myUniqueExceptionMessage");
 
-        /// WHEN
+        // WHEN
         setupMockServiceToThrowException(expectedException);
         ResultActions result = this.mockMvc.perform(get(DICTIONARY_URL)
                                                         .contentType(MediaType.APPLICATION_JSON));
@@ -183,7 +179,7 @@ class RestExceptionHandlerTest {
         HttpMessageConversionException expectedException =
             new HttpMessageConversionException("Conversion problem");
 
-        /// WHEN
+        // WHEN
         setupMockServiceToThrowException(expectedException);
         ResultActions result = this.mockMvc.perform(get(DICTIONARY_URL)
                                                         .contentType(MediaType.APPLICATION_JSON));
@@ -201,7 +197,7 @@ class RestExceptionHandlerTest {
             new HttpMessageNotReadableException("Unreadable message",
                                                 new MockClientHttpResponse("test".getBytes(), HttpStatus.OK));
 
-        /// WHEN
+        // WHEN
         setupMockServiceToThrowException(expectedException);
         ResultActions result = this.mockMvc.perform(get(DICTIONARY_URL)
                                                         .contentType(MediaType.APPLICATION_JSON));
@@ -219,7 +215,7 @@ class RestExceptionHandlerTest {
         Method[] methods = RestExceptionHandlerTest.class.getMethods();
         MethodParameter methodParameter = new MethodParameter(methods[0], 0);
 
-        /// WHEN
+        // WHEN
         given(service.getDictionaryContents()).willAnswer(invocation -> {
             throw new MethodArgumentNotValidException(methodParameter, bindingResult);
         });
