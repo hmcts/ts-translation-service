@@ -103,8 +103,12 @@
   </suppress>
   <suppress>
     <notes>Temporary Suppression
-        CVE-2026-41707 refer [Ticket]</notes>
+        CVE-2026-41707 refer [Ticket]
+        CVE-2026-68525 refer [Ticket]
+        CVE-2026-68569 refer [Ticket]</notes>
     <cve>CVE-2026-41707</cve>
+    <cve>CVE-2026-68525</cve>
+    <cve>CVE-2026-68569</cve>
   </suppress>
   <suppress>
     <cve>CVE-2026-49844</cve>
