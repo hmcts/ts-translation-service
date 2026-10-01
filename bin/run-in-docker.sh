@@ -1,5 +1,7 @@
 #!/usr/bin/env sh
 
+set -eu
+
 print_help() {
   echo "Script to run docker containers for Spring Boot Template API service
 
@@ -10,10 +12,7 @@ print_help() {
   Options:
     --clean, -c                   Clean and install current state of source code
     --install, -i                 Install current state of source code
-    --param PARAM=, -p PARAM=     Parse script parameter
     --help, -h                    Print this help block
-
-  Available parameters:
 
   "
 }
@@ -31,7 +30,9 @@ GRADLE_INSTALL=false
 #S2S_SECRET=secret
 
 execute_script() {
-  cd $(dirname "$0")/..
+  cd "$(dirname "$0")/.."
+
+  ./bin/generate-local-env.sh
 
   if [ ${GRADLE_CLEAN} = true ]
   then
@@ -53,21 +54,17 @@ execute_script() {
 
   echo "Bringing up docker containers.."
 
-  docker-compose up
+  docker compose --env-file .env.local up
 }
 
 while true ; do
-  case "$1" in
+  case "${1-}" in
     -h|--help) print_help ; shift ; break ;;
     -c|--clean) GRADLE_CLEAN=true ; GRADLE_INSTALL=true ; shift ;;
     -i|--install) GRADLE_INSTALL=true ; shift ;;
     -p|--param)
-      case "$2" in
-#        DB_PASSWORD=*) DB_PASSWORD="${2#*=}" ; shift 2 ;;
-#        S2S_URL=*) S2S_URL="${2#*=}" ; shift 2 ;;
-#        S2S_SECRET=*) S2S_SECRET="${2#*=}" ; shift 2 ;;
-        *) shift 2 ;;
-      esac ;;
+      echo "The --param option is not supported" >&2
+      exit 2 ;;
     *) execute_script ; break ;;
   esac
 done

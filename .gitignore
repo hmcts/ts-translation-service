@@ -24,6 +24,7 @@ lib/applicationinsights.log
 
 .DS_Store
 *.log
+.env.local
 
 /BEFTA Report for Smoke Tests/
 /BEFTA Report for Functional Tests/
