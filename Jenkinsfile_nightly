@@ -15,13 +15,7 @@ def product = "ts"
 def component = "translation-service"
 
 withNightlyPipeline(type, product, component) {
-  enableFortifyScan()
-
-  afterAlways('fortify-scan') {
-    steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/Fortify Scan/**/*'
-  }
-
-  afterAlways('fortify-scan') {
+  afterAlways('DependencyCheckNightly') {
     stage('Suppress and Send Slack Notification') {
       script {
         if (env.CHANGE_ID) {
