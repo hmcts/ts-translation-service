@@ -7,25 +7,20 @@ plugins {
   id 'com.github.spacialcircumstances.gradle-cucumber-reporting' version '0.1.25'
   id 'io.freefair.lombok' version '8.14.4'
   id 'io.spring.dependency-management' version '1.1.7'
-  id 'org.owasp.dependencycheck' version '12.2.2'
+  id 'org.owasp.dependencycheck' version '13.0.0'
   id 'org.sonarqube' version '6.3.1.5724'
-  id 'org.springframework.boot' version '3.5.15'
-  id 'uk.gov.hmcts.java' version '0.12.68'
+  id 'org.springframework.boot' version '3.5.16'
+  id 'uk.gov.hmcts.java' version '0.12.70'
 }
 
 group = 'uk.gov.hmcts.reform'
 version = '0.0.1'
 
 ext {
-  set('springCloudVersion', '2025.0.1')
-  set('spring-framework.version', '6.2.14')
-  set('spring-security.version', '6.5.7')
-  set('snakeyaml.version', '2.3')
-  set('jackson.version', '2.17.0')
-  appInsightsVersion  = '2.6.4'
+  set('springCloudVersion', '2025.0.3')
+  set('jackson.version', '2.22.2')
+  set('log4j2.version', '2.26.1')
   jjwt               = '0.13.0'
-  junit               = '5.14.4'
-  junitPlatform       = '1.14.4'
   lombok              = '1.18.36'
   testcontainers      = '1.21.4'
 
@@ -36,19 +31,6 @@ java {
     languageVersion = JavaLanguageVersion.of(21)
   }
 }
-
-ext.libraries = [
-  junit5: [
-    "org.junit.jupiter:junit-jupiter-api:${junit}",
-    "org.junit.jupiter:junit-jupiter-engine:${junit}",
-    "org.junit.jupiter:junit-jupiter-params:${junit}",
-    "org.junit.platform:junit-platform-launcher:${junitPlatform}",
-    "org.junit.platform:junit-platform-commons:${junitPlatform}",
-    "org.junit.platform:junit-platform-engine:${junitPlatform}",
-    "org.junit.platform:junit-platform-launcher:${junitPlatform}",
-    "org.apiguardian:apiguardian-api:1.1.2"
-  ]
-]
 
 sourceSets {
   functionalTest {
@@ -221,6 +203,10 @@ dependencies {
 
   // PUT CVE Vulnerability dependency overrides here
   // e.g. implementation group: 'com.example', name: 'example-lib', version: '1.2.3'
+  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '10.1.60'
+  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-el', version: '10.1.60'
+  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-websocket', version: '10.1.60'
+  implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.21.0'
 
   // end::CVE Vulnerability dependency overrides                                                              // MAIN PARENT DEPENDEDNCY
 
@@ -235,9 +221,6 @@ dependencies {
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-cache'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-oauth2-resource-server'
-  implementation group: 'org.springframework.cloud', name: 'spring-cloud-config-server'
-  implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-config'
-  implementation group: 'org.springframework.cloud', name: 'spring-cloud-config-client'
   implementation group: 'org.springframework.security', name: 'spring-security-web'
   implementation group: 'org.springframework.security', name: 'spring-security-oauth2-jose'
   implementation group: 'org.springframework.security', name: 'spring-security-config'
@@ -250,13 +233,11 @@ dependencies {
   implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: '8.0.0'
 
 
-  implementation group: 'com.auth0', name: 'java-jwt', version: '4.5.2'
-  implementation group: 'com.microsoft.azure', name: 'applicationinsights-logging-logback', version: appInsightsVersion
-  implementation group: 'com.microsoft.azure', name: 'applicationinsights-spring-boot-starter', version: appInsightsVersion
-  implementation group: 'org.flywaydb', name: 'flyway-core', version: '9.22.3'
-  implementation group: 'org.postgresql', name: 'postgresql', version: '42.7.11'
+  implementation group: 'com.auth0', name: 'java-jwt', version: '4.6.1'
+  implementation group: 'org.flywaydb', name: 'flyway-core'
+  implementation group: 'org.flywaydb', name: 'flyway-database-postgresql'
+  implementation group: 'org.postgresql', name: 'postgresql', version: '42.7.13'
 
-  testImplementation libraries.junit5
   testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test'
   testImplementation group: 'org.assertj', name: 'assertj-vavr', version: '0.5.1'
 
@@ -267,7 +248,7 @@ dependencies {
   integrationTestRuntimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: jjwt
   integrationTestRuntimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: jjwt
   integrationTestImplementation group: 'com.pivovarit', name: 'throwing-function', version: '1.6.1'
-  integrationTestImplementation group: 'org.springframework.cloud', name: 'spring-cloud-contract-wiremock'
+  integrationTestImplementation group: 'org.springframework.cloud', name: 'spring-cloud-contract-wiremock', version: '4.3.4'
   integrationTestImplementation group: 'org.testcontainers', name: 'postgresql', version: testcontainers
 
   functionalTestImplementation sourceSets.main.runtimeClasspath
@@ -316,6 +297,8 @@ apply from: './gradle/suppress.gradle'
 // https://jeremylong.github.io/DependencyCheck/dependency-check-gradle/configuration.html
 dependencyCheck {
   suppressionFile = 'config/owasp/suppressions.xml'
+  scanConfigurations = ['runtimeClasspath']
+  skipTestGroups = false
 }
 
 repositories {

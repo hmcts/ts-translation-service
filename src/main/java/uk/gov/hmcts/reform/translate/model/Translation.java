@@ -6,10 +6,12 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 @AllArgsConstructor
 @RequiredArgsConstructor
+@NoArgsConstructor
 @Data
 @JsonInclude(Include.NON_NULL)
 public class Translation {
