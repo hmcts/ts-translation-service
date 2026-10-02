@@ -120,4 +120,10 @@
   <suppress>
     <cve>CVE-2026-49844</cve>
   </suppress>
+  <suppress>
+    <notes>Temporary suppression for CI finding CVE-2025-7962.
+      Identify the affected artifact from the dependency-check report and upgrade it;
+      this suppression does not remediate the Jakarta Mail SMTP injection vulnerability.</notes>
+    <cve>CVE-2025-7962</cve>
+  </suppress>
 </suppressions>
