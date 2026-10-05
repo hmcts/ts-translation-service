@@ -1,3 +1,8 @@
+import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
+import com.github.benmanes.gradle.versions.updates.resolutionstrategy.ComponentFilter
+import com.github.benmanes.gradle.versions.updates.resolutionstrategy.ComponentSelectionWithCurrent
+import uk.gov.hmcts.rse.AuthMode
+
 plugins {
   id 'application'
   id 'idea'
@@ -65,15 +70,15 @@ configurations {
 idea {
   module {
     // config to allow Intellij to mark test source and resource files correctly to help linting tools
-    testSourceDirs += project.sourceSets.functionalTest.java.srcDirs
-    testSourceDirs += project.sourceSets.integrationTest.java.srcDirs
-    testResourceDirs += project.sourceSets.functionalTest.resources.srcDirs
-    testResourceDirs += project.sourceSets.integrationTest.resources.srcDirs
+    testSources.from(
+      project.sourceSets.functionalTest.java.srcDirs,
+      project.sourceSets.integrationTest.java.srcDirs
+    )
+    testResources.from(
+      project.sourceSets.functionalTest.resources.srcDirs,
+      project.sourceSets.integrationTest.resources.srcDirs
+    )
   }
-}
-
-tasks.withType(JavaCompile) {
-  // options.compilerArgs << "-Xlint:unchecked" << "-Werror"
 }
 
 // https://github.com/gradle/gradle/issues/16791
@@ -82,14 +87,14 @@ tasks.withType(JavaExec).configureEach {
 }
 
 checkstyle {
-  toolVersion '10.26.1'
+  toolVersion = '10.26.1'
 }
 
-tasks.withType(Checkstyle) {
+tasks.withType(Checkstyle).configureEach {
   exclude '**/package-info.java'
 }
 
-tasks.withType(Test) {
+tasks.withType(Test).configureEach {
   useJUnitPlatform()
 
   testLogging {
@@ -98,11 +103,10 @@ tasks.withType(Test) {
 }
 
 test {
-  generateCucumberReports.enabled = true
   failFast = true
 }
 
-task smoke(type: JavaExec) {
+tasks.register('smoke', JavaExec) {
   description = "Runs smoke tests"
   group = "Verification"
 
@@ -112,17 +116,17 @@ task smoke(type: JavaExec) {
   args = [
     '--threads', '10',
     '--plugin', "json:${rootDir}/target/cucumber.json",
-    '--plugin', "junit:${buildDir}/test-results/smoke/cucumber.xml",
+    '--plugin', "junit:${layout.buildDirectory.file('test-results/smoke/cucumber.xml').get().asFile.absolutePath}",
     '--tags', '@Smoke and not @Ignore',
     '--glue', 'uk.gov.hmcts.befta.player', 'src/functionalTest/resources/features'
   ]
   // '--add-opens=...' added to suppress 'WARNING: An illegal reflective access operation has occurred' in uk.gov.hmcts.befta.util.CucumberStepAnnotationUtils
-  jvmArgs = [ '--add-opens=java.base/java.lang.reflect=ALL-UNNAMED' ]
+  jvmArgs = ['--add-opens=java.base/java.lang.reflect=ALL-UNNAMED']
 
   finalizedBy {
     generateCucumberReports.enabled = true
     generateCucumberReports {
-      doLast{
+      doLast {
         delete "${rootDir}/BEFTA Report for Smoke Tests/"
         new File("${rootDir}/BEFTA Report for Smoke Tests").mkdirs()
         file("${rootDir}/target/cucumber/cucumber-html-reports").renameTo(file("${rootDir}/BEFTA Report for Smoke Tests"))
@@ -135,7 +139,7 @@ task smoke(type: JavaExec) {
   outputs.upToDateWhen { false }
 }
 
-task functional(type: JavaExec) {
+tasks.register('functional', JavaExec) {
   description = "Runs functional tests"
   group = "Verification"
 
@@ -145,17 +149,17 @@ task functional(type: JavaExec) {
   args = [
     '--threads', '10',
     '--plugin', "json:${rootDir}/target/cucumber.json",
-    '--plugin', "junit:${buildDir}/test-results/functional/cucumber.xml",
+    '--plugin', "junit:${layout.buildDirectory.file('test-results/functional/cucumber.xml').get().asFile.absolutePath}",
     '--tags', 'not @Ignore',
     '--glue', 'uk.gov.hmcts.befta.player', 'src/functionalTest/resources/features'
   ]
   // '--add-opens=...' added to suppress 'WARNING: An illegal reflective access operation has occurred' in uk.gov.hmcts.befta.util.CucumberStepAnnotationUtils
-  jvmArgs = [ '--add-opens=java.base/java.lang.reflect=ALL-UNNAMED' ]
+  jvmArgs = ['--add-opens=java.base/java.lang.reflect=ALL-UNNAMED']
 
   finalizedBy {
     generateCucumberReports.enabled = true
     generateCucumberReports {
-      doLast{
+      doLast {
         delete "${rootDir}/BEFTA Report for Functional Tests/"
         new File("${rootDir}/BEFTA Report for Functional Tests").mkdirs()
         file("${rootDir}/target/cucumber/cucumber-html-reports").renameTo(file("${rootDir}/BEFTA Report for Functional Tests"))
@@ -167,7 +171,7 @@ task functional(type: JavaExec) {
   outputs.upToDateWhen { false }
 }
 
-task integration(type: Test) {
+tasks.register('integration', Test) {
   description = "Runs integration tests"
   group = "Verification"
   testClassesDirs = sourceSets.integrationTest.output.classesDirs
@@ -176,11 +180,12 @@ task integration(type: Test) {
 }
 
 cucumberReports {
+  testTasksFinalizedByReport = false
   outputDir = file("${rootDir}/target/cucumber")
   reports = files("${rootDir}/target/cucumber.json")
 }
 
-task customCleanBeftaReports(type:Delete) {
+tasks.register('customCleanBeftaReports', Delete) {
   delete "${rootDir}/BEFTA Report for Smoke Tests/"
   delete "${rootDir}/BEFTA Report for Functional Tests/"
   delete "${rootDir}/target/cucumber"
@@ -193,7 +198,7 @@ jacocoTestReport {
   reports {
     xml.required = true
     csv.required = false
-    xml.outputLocation = file("${buildDir}/reports/jacoco/test/jacocoTestReport.xml")
+    xml.outputLocation = layout.buildDirectory.file('reports/jacoco/test/jacocoTestReport.xml')
   }
 }
 
@@ -207,6 +212,7 @@ dependencies {
   implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-el', version: '10.1.60'
   implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-websocket', version: '10.1.60'
   implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.21.0'
+  implementation group: 'org.bouncycastle', name: 'bcprov-jdk18on', version: '1.86'
 
   // end::CVE Vulnerability dependency overrides                                                              // MAIN PARENT DEPENDEDNCY
 
@@ -228,8 +234,14 @@ dependencies {
   implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.8.17'
 
   // HMCTS
-  implementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '5.3.4'
-  implementation group: 'com.github.hmcts', name: 'idam-java-client', version: '3.0.5'
+  implementation('com.github.hmcts:service-auth-provider-java-client:5.3.4') {
+    exclude group: 'org.bouncycastle', module: 'bcprov-jdk18on'
+  }
+  // CVE-2026-59284 requires writable /actuator/env, which is not enabled; no Boot 3 patch is published.
+  //noinspection VulnerableLibrariesLocal
+  implementation('com.github.hmcts:idam-java-client:3.0.5') {
+    exclude group: 'org.bouncycastle', module: 'bcprov-jdk18on'
+  }
   implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: '8.0.0'
 
 
@@ -248,8 +260,22 @@ dependencies {
   integrationTestRuntimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: jjwt
   integrationTestRuntimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: jjwt
   integrationTestImplementation group: 'com.pivovarit', name: 'throwing-function', version: '1.6.1'
-  integrationTestImplementation group: 'org.springframework.cloud', name: 'spring-cloud-contract-wiremock', version: '4.3.4'
-  integrationTestImplementation group: 'org.testcontainers', name: 'postgresql', version: testcontainers
+  // Vulnerable HttpComponents transitives are excluded below and replaced with 5.6.4/5.4.4.
+  //noinspection VulnerableLibrariesLocal
+  integrationTestImplementation('org.springframework.cloud:spring-cloud-contract-wiremock:4.3.4') {
+    exclude group: 'org.apache.httpcomponents.client5', module: 'httpclient5'
+    exclude group: 'org.apache.httpcomponents.core5', module: 'httpcore5'
+    exclude group: 'org.apache.httpcomponents.core5', module: 'httpcore5-h2'
+  }
+  // Vulnerable Commons Compress 1.24.0 is excluded below and replaced with 1.28.0.
+  //noinspection VulnerableLibrariesLocal
+  integrationTestImplementation("org.testcontainers:postgresql:${testcontainers}") {
+    exclude group: 'org.apache.commons', module: 'commons-compress'
+  }
+  integrationTestImplementation group: 'org.apache.httpcomponents.client5', name: 'httpclient5', version: '5.6.4'
+  integrationTestImplementation group: 'org.apache.httpcomponents.core5', name: 'httpcore5', version: '5.4.4'
+  integrationTestImplementation group: 'org.apache.httpcomponents.core5', name: 'httpcore5-h2', version: '5.4.4'
+  integrationTestImplementation group: 'org.apache.commons', name: 'commons-compress', version: '1.28.0'
 
   functionalTestImplementation sourceSets.main.runtimeClasspath
   functionalTestImplementation sourceSets.test.runtimeClasspath
@@ -267,8 +293,12 @@ dependencyManagement {
   }
 }
 
-project.tasks['sonarqube'].dependsOn jacocoTestReport
-project.tasks['check'].dependsOn integration
+tasks.named('sonarqube') {
+  dependsOn(tasks.named('jacocoTestReport'))
+}
+tasks.named('check') {
+  dependsOn(tasks.named('integration'))
+}
 
 sonarqube {
   properties {
@@ -281,24 +311,24 @@ sonarqube {
   }
 }
 
+static boolean isNonStable(String version) {
+  def stableKeyword = ['RELEASE', 'FINAL', 'GA'].any { qualifier -> version.toUpperCase().contains(qualifier) }
+  def regex = /^[0-9,.v-]+$/
+  return !stableKeyword && !(version ==~ regex)
+}
+
 // before committing a change, make sure task still works
-dependencyUpdates {
-  def isNonStable = { String version ->
-    def stableKeyword = ['RELEASE', 'FINAL', 'GA'].any { qualifier -> version.toUpperCase().contains(qualifier) }
-    def regex = /^[0-9,.v-]+$/
-    return !stableKeyword && !(version ==~ regex)
-  }
-  rejectVersionIf { selection -> // <---- notice how the closure argument is named
+tasks.named('dependencyUpdates', DependencyUpdatesTask).configure { DependencyUpdatesTask dependencyUpdatesTask ->
+  ComponentFilter nonStableVersionFilter = { ComponentSelectionWithCurrent selection ->
     return isNonStable(selection.candidate.version) && !isNonStable(selection.currentVersion)
   }
+  dependencyUpdatesTask.rejectVersionIf(nonStableVersionFilter)
 }
 
 apply from: './gradle/suppress.gradle'
 // https://jeremylong.github.io/DependencyCheck/dependency-check-gradle/configuration.html
 dependencyCheck {
   suppressionFile = 'config/owasp/suppressions.xml'
-  scanConfigurations = ['runtimeClasspath']
-  skipTestGroups = false
 }
 
 repositories {
@@ -341,9 +371,9 @@ bootRun {
 
 bootWithCCD {
 
-  authMode = uk.gov.hmcts.rse.AuthMode.Local
+  authMode = AuthMode.Local
 
-  environment("RSE_LIB_ADDITIONAL_DATABASES", "ts_translation_service");
+  environment("RSE_LIB_ADDITIONAL_DATABASES", "ts_translation_service")
   environment("TS_TRANSLATION_SERVICE_DB_USERNAME", "postgres")
   environment("TS_TRANSLATION_SERVICE_DB_PASSWORD", "postgres")
   environment("TS_TRANSLATION_SERVICE_DB_PORT", "6432")
