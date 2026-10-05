@@ -320,7 +320,7 @@ static boolean isNonStable(String version) {
 // before committing a change, make sure task still works
 tasks.named('dependencyUpdates', DependencyUpdatesTask).configure { DependencyUpdatesTask dependencyUpdatesTask ->
   ComponentFilter nonStableVersionFilter = { ComponentSelectionWithCurrent selection ->
-    return isNonStable(selection.candidate.version) && !isNonStable(selection.currentVersion)
+    return isNonStable(selection.candidate.version) && !isNonStable(selection.currentVersion as String)
   }
   dependencyUpdatesTask.rejectVersionIf(nonStableVersionFilter)
 }
