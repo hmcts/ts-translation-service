@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
 import org.springframework.security.oauth2.core.OAuth2TokenValidator;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.JwtClaimValidator;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtDecoders;
 import org.springframework.security.oauth2.jwt.JwtTimestampValidator;
@@ -25,6 +26,11 @@ import uk.gov.hmcts.reform.translate.security.filter.TranslateCyEndpointFilter;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
@@ -32,8 +38,9 @@ public class SecurityConfiguration {
     @Value("${spring.security.oauth2.client.provider.oidc.issuer-uri}")
     private String issuerUri;
 
-    @Value("${oidc.issuer}")
-    private String issuerOverride;
+
+    @Value("#{'${idam.security.allowed-issuers}'.split(',')}")
+    private List<String> allowedIssuers = new ArrayList<>();
 
     private final ServiceAuthFilter serviceAuthFilter;
     private final PutDictionaryEndpointFilter putDictionaryEndpointFilter;
@@ -90,9 +97,14 @@ public class SecurityConfiguration {
     JwtDecoder jwtDecoder() {
         NimbusJwtDecoder jwtDecoder = JwtDecoders.fromOidcIssuerLocation(issuerUri);
         OAuth2TokenValidator<Jwt> withTimestamp = new JwtTimestampValidator();
-        OAuth2TokenValidator<Jwt> validator = new DelegatingOAuth2TokenValidator<>(withTimestamp);
+        OAuth2TokenValidator<Jwt> validator = 
+            new DelegatingOAuth2TokenValidator<>(withTimestamp, allowedIssuersValidator());
         jwtDecoder.setJwtValidator(validator);
         return jwtDecoder;
     }
 
+    OAuth2TokenValidator<Jwt> allowedIssuersValidator() {
+        Set<String> allowedIssuersSet = new HashSet<>(this.allowedIssuers);
+        return new JwtClaimValidator<>("iss", allowedIssuersSet::contains);
+    }
 }
