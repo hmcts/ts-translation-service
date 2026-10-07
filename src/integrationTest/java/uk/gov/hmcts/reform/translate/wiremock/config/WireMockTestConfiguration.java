@@ -1,18 +1,20 @@
 package uk.gov.hmcts.reform.translate.wiremock.config;
 
-
-import org.springframework.cloud.contract.wiremock.WireMockConfigurationCustomizer;
-import org.springframework.context.annotation.Bean;
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import org.springframework.context.annotation.Configuration;
+import org.wiremock.spring.ConfigureWireMock;
+import org.wiremock.spring.WireMockConfigurationCustomizer;
 import uk.gov.hmcts.reform.translate.wiremock.extensions.CustomisedResponseTransformer;
 import uk.gov.hmcts.reform.translate.wiremock.extensions.DynamicOAuthJwkSetResponseTransformer;
 
 @Configuration
-public class WireMockTestConfiguration {
+public class WireMockTestConfiguration implements WireMockConfigurationCustomizer {
 
-    @Bean
-    public WireMockConfigurationCustomizer wireMockConfigurationCustomizer() {
-        return config -> config.extensions(new CustomisedResponseTransformer(),
-                                           new DynamicOAuthJwkSetResponseTransformer());
+    @Override
+    public void customize(WireMockConfiguration config, ConfigureWireMock configureWireMock) {
+        config.extensions(
+            new CustomisedResponseTransformer(),
+            new DynamicOAuthJwkSetResponseTransformer()
+        );
     }
 }

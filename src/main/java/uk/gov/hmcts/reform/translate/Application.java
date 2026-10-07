@@ -4,7 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.retry.annotation.EnableRetry;
 
-@SpringBootApplication
+@SpringBootApplication //(excludeName = "uk.gov.hmcts.reform.authorisation.ServiceAuthAutoConfiguration")
 @EnableRetry
 @SuppressWarnings("HideUtilityClassConstructor") // Spring needs a constructor, it is not a utility class
 public class Application {
