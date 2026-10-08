@@ -15,5 +15,9 @@ idam:
   s2s-auth:
     url: http://localhost:${wiremock.server.port:5000}/s2s
 
+oidc:
+  issuer: ${OIDC_ISSUER:http://localhost:${wiremock.server.port:5000}/o}
+  allowed-issuers: ${OIDC_ALLOWED_ISSUERS:}
+
 wiremock:
   reset-mappings-after-each-test: true
