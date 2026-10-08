@@ -82,10 +82,10 @@ configurations {
 idea {
   module {
     // config to allow Intellij to mark test source and resource files correctly to help linting tools
-    testSourceDirs += project.sourceSets.functionalTest.java.srcDirs
-    testSourceDirs += project.sourceSets.integrationTest.java.srcDirs
-    testResourceDirs += project.sourceSets.functionalTest.resources.srcDirs
-    testResourceDirs += project.sourceSets.integrationTest.resources.srcDirs
+    testSources.from(fileTree(dir: 'src/functionalTest/java'))
+    testSources.from(fileTree(dir: 'src/integrationTest/java'))
+    testResources.from(fileTree(dir: 'src/functionalTest/resources'))
+    testResources.from(fileTree(dir: 'src/integrationTest/resources'))
   }
 }
 
@@ -99,7 +99,7 @@ tasks.withType(JavaExec).configureEach {
 }
 
 checkstyle {
-  toolVersion '14.3.0'
+  toolVersion = '14.3.0'
 }
 
 tasks.withType(Checkstyle) {
