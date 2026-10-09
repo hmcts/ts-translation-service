@@ -1,10 +1,10 @@
 package uk.gov.hmcts.reform.translate;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
+import tools.jackson.databind.JsonNode;
 import uk.gov.hmcts.befta.BeftaMain;
 import uk.gov.hmcts.befta.DefaultBeftaTestDataLoader;
 import uk.gov.hmcts.befta.TestAutomationAdapter;
