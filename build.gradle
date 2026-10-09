@@ -25,7 +25,6 @@ ext {
   set('springCloudVersion', '2025.0.3')
   set('jackson.version', '2.22.2')
   set('log4j2.version', '2.26.1')
-  appInsightsVersion  = '2.6.4'
   jjwt               = '0.13.0'
   lombok              = '1.18.36'
   testcontainers      = '1.21.4'
@@ -247,9 +246,8 @@ dependencies {
 
 
   implementation group: 'com.auth0', name: 'java-jwt', version: '4.6.1'
-  implementation group: 'com.microsoft.azure', name: 'applicationinsights-logging-logback', version: appInsightsVersion
-  implementation group: 'com.microsoft.azure', name: 'applicationinsights-spring-boot-starter', version: appInsightsVersion
-  implementation group: 'org.flywaydb', name: 'flyway-core', version: '9.22.3'
+  implementation group: 'org.flywaydb', name: 'flyway-core'
+  implementation group: 'org.flywaydb', name: 'flyway-database-postgresql'
   implementation group: 'org.postgresql', name: 'postgresql', version: '42.7.13'
 
   testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test'
