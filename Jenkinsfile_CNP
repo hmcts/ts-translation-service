@@ -16,6 +16,7 @@ def secrets = [
     secret('ts-service-translation-users-pwd', 'TS_SERVICE_TRANSLATION_USERS_PWD'),
     secret('ccd-befta-caseworker-2-solicitor-2-pwd', 'CCD_BEFTA_CASEWORKER_2_SOLICITOR_2_PWD'),
     secret('ccd-admin-web-oauth2-client-secret', 'ADMIN_WEB_IDAM_SECRET'),
+    secret('session-keys', 'CCD_ADMIN_WEB_SESSION_KEYS'),
     secret('microservicekey-ccd-admin', 'ADMIN_S2S_KEY'),
     secret('ccd-definition-s2s-secret', 'CCD_DEFINITION_S2S_SECRET'),
     secret('ccd-as-a-pr-importer-username', 'IMPORT_USERNAME'),
@@ -51,6 +52,8 @@ env.BEFTA_OAUTH2_REDIRECT_URI_OF_XUIWEBAPP = "https://www-ccd.aat.platform.hmcts
 env.BEFTA_OAUTH2_ACCESS_TOKEN_TYPE_OF_XUIWEBAPP = "OIDC"
 env.BEFTA_OAUTH2_SCOPE_VARIABLES_OF_XUIWEBAPP = "profile openid roles manage-user create-user search-user"
 env.CCD_API_GATEWAY_OAUTH2_CLIENT_ID = "ccd_gateway"
+env.OIDC_ISSUER = "https://forgerock-am.service.core-compute-idam-aat2.internal:8443/openam/oauth2/realms/root/realms/hmcts"
+env.VERIFY_OIDC_ISSUER = "true"
 
 // temporary workaround for platform changes: turn BEFTA header checks to warning mode
 env.BEFTA_RESPONSE_HEADER_CHECK_POLICY="JUST_WARN"
