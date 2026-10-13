@@ -1,6 +1,5 @@
 package uk.gov.hmcts.reform.translate.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.vavr.control.Either;
 import org.apache.commons.lang3.StringUtils;
 import org.assertj.vavr.api.VavrAssertions;
@@ -19,6 +18,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import tools.jackson.databind.ObjectMapper;
 import uk.gov.hmcts.reform.translate.BaseTest;
 import uk.gov.hmcts.reform.translate.model.Dictionary;
 import uk.gov.hmcts.reform.translate.model.Translation;
@@ -275,6 +275,7 @@ public class DictionaryControllerIT extends BaseTest {
                                         2,
                                         new Translation("translation", true, "yes", "no")
                                     ))))
+                .andExpect(result -> assertThat(result.getResolvedException()).isNull())
                 .andExpect(status().is(201))
                 .andReturn();
 
