@@ -79,4 +79,30 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
             .status(HttpStatus.BAD_REQUEST)
             .body(error);
     }
+
+    @ExceptionHandler(Exception.class)
+    @ResponseBody
+    public ResponseEntity<HttpError<Serializable>> handleUnexpectedException(HttpServletRequest request,
+                                                                            Exception exception) {
+        log.error("Request failed", exception);
+        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+        if (exception instanceof org.springframework.security.access.AccessDeniedException) {
+            status = HttpStatus.FORBIDDEN;
+        } else if (exception instanceof org.springframework.security.core.AuthenticationException) {
+            status = HttpStatus.UNAUTHORIZED;
+        }
+        return ResponseEntity.status(status).body(new HttpError<>(exception, request, status));
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleExceptionInternal(Exception exception, Object body,
+                                                              HttpHeaders headers, HttpStatusCode status,
+                                                              WebRequest request) {
+        log.error("Request failed", exception);
+        // Never forward Spring ProblemDetail text, rejected values or parser diagnostics.
+        final HttpError<Serializable> error = new HttpError<>(exception, request,
+            HttpStatus.valueOf(status.value()));
+        return super.handleExceptionInternal(exception, error, headers, status, request);
+    }
+
 }

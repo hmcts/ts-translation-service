@@ -22,7 +22,6 @@ public class HttpError<T extends Serializable> implements Serializable {
 
     public static final Integer DEFAULT_STATUS = HttpStatus.INTERNAL_SERVER_ERROR.value();
     public static final String DEFAULT_ERROR = "Unexpected Error";
-    private final String exception;
     private final transient LocalDateTime timestamp;
     private final Integer status;
     private final String error;
@@ -32,11 +31,10 @@ public class HttpError<T extends Serializable> implements Serializable {
     public HttpError(Exception exception, String path, HttpStatus status) {
         final var responseStatus = exception.getClass().getAnnotation(ResponseStatus.class);
 
-        this.exception = exception.getClass().getName();
         this.timestamp = LocalDateTime.now(ZoneOffset.UTC);
         this.status = getStatusFromResponseStatus(responseStatus, status);
         this.error = getErrorReason(responseStatus, status);
-        this.message = exception.getMessage();
+        this.message = this.error;
         this.path = UriUtils.encodePath(path, StandardCharsets.UTF_8);
     }
 

@@ -80,6 +80,26 @@ class SecurityConfigurationTest {
     }
 
     @Test
+    void invalidJwtDoesNotExposeDecoderDiagnostics() throws Exception {
+        when(jwtDecoder.decode(USER_TOKEN)).thenThrow(
+            new org.springframework.security.oauth2.jwt.BadJwtException("decoder at http://internal-service/jwks"));
+        mockMvc.perform(get("/secured-test")
+                .header("Authorization", "Bearer " + USER_TOKEN)
+                .header("ServiceAuthorization", "service-token"))
+            .andExpect(status().isUnauthorized())
+            .andExpect(content().string(""))
+            .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.header()
+                .string("WWW-Authenticate", "Bearer"));
+    }
+
+    @Test
+    void missingJwtStillRequiresAuthentication() throws Exception {
+        mockMvc.perform(get("/secured-test").header("ServiceAuthorization", "service-token"))
+            .andExpect(status().isUnauthorized())
+            .andExpect(content().string(""));
+    }
+
+    @Test
     void shouldAuthenticateBearerJwtWithoutOauth2ClientRegistration() throws Exception {
         mockMvc.perform(get("/secured-test")
                             .header(AUTHORIZATION, "Bearer " + USER_TOKEN)
