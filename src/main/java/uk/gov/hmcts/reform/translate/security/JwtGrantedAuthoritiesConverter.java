@@ -44,7 +44,8 @@ public class JwtGrantedAuthoritiesConverter implements Converter<Jwt, Collection
             } catch (Exception ex) {
                 // NB: catch, log and then throw a recognised spring authentication error as exception during
                 // HttpSecurity filters may fall outside of the remit of the RestExceptionHandler
-                log.error("IDAM error", ex);
+                log.error("IDAM authentication failed");
+                log.debug("Original IDAM authentication failure", ex);
                 throw new AuthenticationServiceException("IDAM error", ex);
             }
 

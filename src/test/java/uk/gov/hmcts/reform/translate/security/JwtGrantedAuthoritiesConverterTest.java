@@ -1,5 +1,10 @@
 package uk.gov.hmcts.reform.translate.security;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.read.ListAppender;
+import org.slf4j.LoggerFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,6 +21,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -110,5 +116,35 @@ class JwtGrantedAuthoritiesConverterTest {
 
         assertEquals("IDAM error", authenticationServiceException.getMessage());
         assertEquals("Something went wrong", authenticationServiceException.getCause().getMessage());
+    }
+
+    @Test
+    void idamDiagnosticsAreLoggedOnlyAtDebug() {
+        when(jwt.hasClaim(anyString())).thenReturn(true);
+        when(jwt.getClaim(anyString())).thenReturn(ACCESS_TOKEN);
+        when(jwt.getTokenValue()).thenReturn(ACCESS_TOKEN);
+        when(idamRepository.getUserInfo(anyString())).thenThrow(new IllegalStateException("Synthetic IDAM detail"));
+        Logger logger = (Logger) LoggerFactory.getLogger(JwtGrantedAuthoritiesConverter.class);
+        Level previousLevel = logger.getLevel();
+        ListAppender<ILoggingEvent> appender = new ListAppender<>();
+        appender.start();
+        logger.addAppender(appender);
+        try {
+            logger.setLevel(Level.INFO);
+            assertThrows(AuthenticationServiceException.class, () -> converter.convert(jwt));
+            assertThat(appender.list).hasSize(1);
+            assertThat(appender.list.get(0).getFormattedMessage()).isEqualTo("IDAM authentication failed");
+            assertThat(appender.list.get(0).getThrowableProxy()).isNull();
+            appender.list.clear();
+            logger.setLevel(Level.DEBUG);
+            assertThrows(AuthenticationServiceException.class, () -> converter.convert(jwt));
+            assertThat(appender.list).hasSize(2);
+            assertThat(appender.list.get(1).getLevel()).isEqualTo(Level.DEBUG);
+            assertThat(appender.list.get(1).getThrowableProxy().getMessage()).isEqualTo("Synthetic IDAM detail");
+        } finally {
+            logger.setLevel(previousLevel);
+            logger.detachAppender(appender);
+            appender.stop();
+        }
     }
 }

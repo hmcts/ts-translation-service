@@ -1,6 +1,7 @@
 package uk.gov.hmcts.reform.translate.errorhandling;
 
 import lombok.Getter;
+import uk.gov.hmcts.reform.translate.security.ErrorCode;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.ServletWebRequest;
@@ -25,6 +26,7 @@ public class HttpError<T extends Serializable> implements Serializable {
     private final transient LocalDateTime timestamp;
     private final Integer status;
     private final String error;
+    private final ErrorCode code;
     private String message;
     private final String path;
 
@@ -34,6 +36,7 @@ public class HttpError<T extends Serializable> implements Serializable {
         this.timestamp = LocalDateTime.now(ZoneOffset.UTC);
         this.status = getStatusFromResponseStatus(responseStatus, status);
         this.error = getErrorReason(responseStatus, status);
+        this.code = ErrorCode.fromStatus(this.status);
         this.message = this.error;
         this.path = UriUtils.encodePath(path, StandardCharsets.UTF_8);
     }

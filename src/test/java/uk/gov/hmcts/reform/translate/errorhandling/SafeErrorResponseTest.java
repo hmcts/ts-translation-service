@@ -1,5 +1,10 @@
 package uk.gov.hmcts.reform.translate.errorhandling;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.read.ListAppender;
+import org.slf4j.LoggerFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -14,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Map;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -39,6 +45,7 @@ class SafeErrorResponseTest {
         controller.failure = new RuntimeException(DIAGNOSTIC, new IllegalStateException(DIAGNOSTIC));
         mvc.perform(get("/error-probe/failure"))
             .andExpect(status().isInternalServerError())
+            .andExpect(jsonPath("$.code").value("INTERNAL_ERROR"))
             .andExpect(content().string(not(containsString(DIAGNOSTIC))))
             .andExpect(jsonPath("$.exception").doesNotExist())
             .andExpect(jsonPath("$.trace").doesNotExist());
@@ -48,6 +55,7 @@ class SafeErrorResponseTest {
     void hidesTypeConversionDiagnostics() throws Exception {
         mvc.perform(get("/error-probe/id/not-a-uuid"))
             .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.code").value("INVALID_REQUEST"))
             .andExpect(content().string(not(containsString("java.util.UUID"))))
             .andExpect(jsonPath("$.exception").doesNotExist())
             .andExpect(jsonPath("$.details").doesNotExist());
@@ -57,6 +65,7 @@ class SafeErrorResponseTest {
     void hidesMalformedJsonDiagnostics() throws Exception {
         mvc.perform(post("/error-probe").contentType(MediaType.APPLICATION_JSON).content("{invalid"))
             .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.code").value("INVALID_REQUEST"))
             .andExpect(content().string(not(containsString("JsonParseException"))))
             .andExpect(content().string(not(containsString("invalid"))))
             .andExpect(jsonPath("$.exception").doesNotExist());
@@ -76,6 +85,55 @@ class SafeErrorResponseTest {
     void validRequestsStillSucceed() throws Exception {
         mvc.perform(post("/error-probe").contentType(MediaType.APPLICATION_JSON).content("{\"value\":\"ok\"}"))
             .andExpect(status().isOk()).andExpect(jsonPath("$.value").value("ok"));
+    }
+
+    @Test
+    void logsSafeCodesAndKeepsOriginalExceptionsAtDebug() throws Exception {
+        Logger logger = (Logger) LoggerFactory.getLogger(RestExceptionHandler.class);
+        Level previousLevel = logger.getLevel();
+        ListAppender<ILoggingEvent> appender = new ListAppender<>();
+        appender.start();
+        logger.addAppender(appender);
+        controller.failure = new RuntimeException(DIAGNOSTIC);
+        try {
+            logger.setLevel(Level.INFO);
+            mvc.perform(get("/error-probe/failure")).andExpect(status().isInternalServerError());
+            mvc.perform(get("/error-probe/id/not-a-uuid")).andExpect(status().isBadRequest());
+            assertThat(appender.list).extracting(ILoggingEvent::getFormattedMessage).containsExactly(
+                "Request failed: code=INTERNAL_ERROR status=500",
+                "Request failed: code=INVALID_REQUEST status=400");
+            assertThat(appender.list).allSatisfy(event -> {
+                assertThat(event.getLevel()).isEqualTo(Level.ERROR);
+                assertThat(event.getThrowableProxy()).isNull();
+            });
+            appender.list.clear();
+            logger.setLevel(Level.DEBUG);
+            mvc.perform(get("/error-probe/failure")).andExpect(status().isInternalServerError());
+            assertThat(appender.list).hasSize(2);
+            ILoggingEvent diagnostic = appender.list.get(1);
+            assertThat(diagnostic.getLevel()).isEqualTo(Level.DEBUG);
+            assertThat(diagnostic.getFormattedMessage()).isEqualTo(
+                "Original request failure: code=INTERNAL_ERROR status=500");
+            assertThat(diagnostic.getThrowableProxy().getMessage()).isEqualTo(DIAGNOSTIC);
+        } finally {
+            logger.setLevel(previousLevel);
+            logger.detachAppender(appender);
+            appender.stop();
+        }
+    }
+
+    @Test
+    void returnsSafeAuthenticationCategoriesFromAdvice() throws Exception {
+        controller.failure = new org.springframework.security.authentication.BadCredentialsException(DIAGNOSTIC);
+        mvc.perform(get("/error-probe/failure"))
+            .andExpect(status().isUnauthorized())
+            .andExpect(jsonPath("$.code").value("AUTHENTICATION_REQUIRED"))
+            .andExpect(content().string(not(containsString(DIAGNOSTIC))));
+        controller.failure = new org.springframework.security.access.AccessDeniedException(DIAGNOSTIC);
+        mvc.perform(get("/error-probe/failure"))
+            .andExpect(status().isForbidden())
+            .andExpect(jsonPath("$.code").value("ACCESS_DENIED"))
+            .andExpect(content().string(not(containsString(DIAGNOSTIC))));
     }
 
     @RestController

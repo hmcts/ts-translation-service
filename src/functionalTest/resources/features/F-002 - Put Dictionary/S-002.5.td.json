@@ -23,8 +23,8 @@
   "expectedResponse": {
     "_extends_": "Common_400_Response",
     "body" : {
-      "exception": "uk.gov.hmcts.reform.translate.errorhandling.BadRequestException",
-      "message": "Bad Request (001 bad schema)",
+      "code": "INVALID_REQUEST",
+      "message": "Bad Request",
       "path": "/dictionary"
     }
   }
