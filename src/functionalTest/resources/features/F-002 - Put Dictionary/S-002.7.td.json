@@ -27,9 +27,8 @@
   "expectedResponse": {
     "_extends_": "Common_400_Response",
     "body" : {
-      "exception": "uk.gov.hmcts.reform.translate.errorhandling.BadRequestException",
-      "message": "Bad Request (002 Welsh not allowed for this user)",
-      "path": "/dictionary"
+      "code": "INVALID_REQUEST",
+      "message": "Bad Request"
     }
   }
 }

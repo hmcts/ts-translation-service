@@ -33,6 +33,8 @@ class OperationalEndpointsIT extends BaseTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/vnd.spring-boot.actuator.v3+json"))
             .andExpect(jsonPath("$.status").value("UP"))
+            .andExpect(jsonPath("$.components").doesNotExist())
+            .andExpect(jsonPath("$.details").doesNotExist())
             .andExpect(jsonPath("$.groups").isArray());
     }
 
@@ -42,7 +44,9 @@ class OperationalEndpointsIT extends BaseTest {
         mockMvc.perform(get("/health/liveness"))
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/vnd.spring-boot.actuator.v3+json"))
-            .andExpect(jsonPath("$.status").value("UP"));
+            .andExpect(jsonPath("$.status").value("UP"))
+            .andExpect(jsonPath("$.components").doesNotExist())
+            .andExpect(jsonPath("$.details").doesNotExist());
     }
 
     @Test
@@ -51,7 +55,9 @@ class OperationalEndpointsIT extends BaseTest {
         mockMvc.perform(get("/health/readiness"))
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/vnd.spring-boot.actuator.v3+json"))
-            .andExpect(jsonPath("$.status").value("UP"));
+            .andExpect(jsonPath("$.status").value("UP"))
+            .andExpect(jsonPath("$.components").doesNotExist())
+            .andExpect(jsonPath("$.details").doesNotExist());
     }
 
     @Test

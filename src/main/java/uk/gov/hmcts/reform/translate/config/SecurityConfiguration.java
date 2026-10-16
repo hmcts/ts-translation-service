@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.ObjectPostProcessor;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
@@ -17,6 +18,7 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
+import uk.gov.hmcts.reform.translate.security.SafeAuthenticationErrors;
 
 import uk.gov.hmcts.reform.authorisation.filters.ServiceAuthFilter;
 import uk.gov.hmcts.reform.translate.security.JwtGrantedAuthoritiesConverter;
@@ -75,14 +77,24 @@ public class SecurityConfiguration {
     protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .addFilterBefore(serviceAuthFilter, BearerTokenAuthenticationFilter.class)
-            .addFilterBefore(translateCyEndpointFilter, ServiceAuthFilter.class)
-            .addFilterAfter(putDictionaryEndpointFilter, ServiceAuthFilter.class)
+            .addFilterBefore(translateCyEndpointFilter, serviceAuthFilter.getClass())
+            .addFilterAfter(putDictionaryEndpointFilter, serviceAuthFilter.getClass())
             .sessionManagement(sm -> sm.sessionCreationPolicy(STATELESS))
             .csrf(csrf -> csrf.disable())
             .formLogin(fl -> fl.disable())
             .logout(l -> l.disable())
             .authorizeHttpRequests(ar -> ar.anyRequest().authenticated())
-            .oauth2ResourceServer(o -> o.jwt(j -> j.jwtAuthenticationConverter(jwtAuthenticationConverter)));
+            .oauth2ResourceServer(oauth -> oauth
+                .withObjectPostProcessor(new ObjectPostProcessor<BearerTokenAuthenticationFilter>() {
+                    @Override
+                    public <O extends BearerTokenAuthenticationFilter> O postProcess(O filter) {
+                        filter.setAuthenticationFailureHandler(new SafeAuthenticationErrors());
+                        return filter;
+                    }
+                })
+                .authenticationEntryPoint(new SafeAuthenticationErrors())
+                .accessDeniedHandler(new SafeAuthenticationErrors())
+                .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter)));
         return http.build();
     }
 
