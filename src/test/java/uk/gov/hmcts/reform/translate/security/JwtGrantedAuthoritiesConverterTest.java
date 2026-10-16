@@ -119,7 +119,7 @@ class JwtGrantedAuthoritiesConverterTest {
     }
 
     @Test
-    void idamDiagnosticsAreLoggedOnlyAtDebug() {
+    void idamFailuresAreNotLoggedBeforeTheBoundary() {
         when(jwt.hasClaim(anyString())).thenReturn(true);
         when(jwt.getClaim(anyString())).thenReturn(ACCESS_TOKEN);
         when(jwt.getTokenValue()).thenReturn(ACCESS_TOKEN);
@@ -132,15 +132,11 @@ class JwtGrantedAuthoritiesConverterTest {
         try {
             logger.setLevel(Level.INFO);
             assertThrows(AuthenticationServiceException.class, () -> converter.convert(jwt));
-            assertThat(appender.list).hasSize(1);
-            assertThat(appender.list.get(0).getFormattedMessage()).isEqualTo("IDAM authentication failed");
-            assertThat(appender.list.get(0).getThrowableProxy()).isNull();
+            assertThat(appender.list).isEmpty();
             appender.list.clear();
             logger.setLevel(Level.DEBUG);
             assertThrows(AuthenticationServiceException.class, () -> converter.convert(jwt));
-            assertThat(appender.list).hasSize(2);
-            assertThat(appender.list.get(1).getLevel()).isEqualTo(Level.DEBUG);
-            assertThat(appender.list.get(1).getThrowableProxy().getMessage()).isEqualTo("Synthetic IDAM detail");
+            assertThat(appender.list).isEmpty();
         } finally {
             logger.setLevel(previousLevel);
             logger.detachAppender(appender);

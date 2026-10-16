@@ -8,7 +8,6 @@ import org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorContro
 import org.springframework.boot.context.properties.bind.Bindable;
 import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.boot.context.properties.source.MapConfigurationPropertySource;
-import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -25,16 +24,18 @@ class ErrorPageConfigurationTest {
         yaml.setResources(new ClassPathResource("application.yaml"));
         ErrorProperties properties = new Binder(new MapConfigurationPropertySource(yaml.getObject()))
             .bind("server.error", Bindable.of(ErrorProperties.class)).get();
-        final BasicErrorController controller = new BasicErrorController(new DefaultErrorAttributes(), properties);
+        final BasicErrorController controller = new BasicErrorController(
+            new ErrorPageConfiguration().safeErrorAttributes(), properties);
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setAttribute(RequestDispatcher.ERROR_STATUS_CODE, 500);
         request.setAttribute(RequestDispatcher.ERROR_EXCEPTION, new RuntimeException("internal diagnostic"));
         request.setAttribute(RequestDispatcher.ERROR_MESSAGE, "internal diagnostic");
+        request.setAttribute(RequestDispatcher.ERROR_REQUEST_URI, "/private/SYNTHETIC_IDENTIFIER");
         request.setParameter("trace", "true");
         request.setParameter("message", "true");
         request.setParameter("errors", "true");
         assertThat(controller.error(request).getBody())
-            .doesNotContainKeys("exception", "trace", "message", "errors");
+            .doesNotContainKeys("exception", "trace", "message", "errors", "path");
         assertThat(controller.error(request).getStatusCode().value()).isEqualTo(500);
     }
 

@@ -1,6 +1,7 @@
 package uk.gov.hmcts.reform.translate.errorhandling;
 
 import lombok.Getter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import uk.gov.hmcts.reform.translate.security.ErrorCode;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -28,6 +29,7 @@ public class HttpError<T extends Serializable> implements Serializable {
     private final String error;
     private final ErrorCode code;
     private String message;
+    @JsonIgnore
     private final String path;
 
     public HttpError(Exception exception, String path, HttpStatus status) {
@@ -79,10 +81,6 @@ public class HttpError<T extends Serializable> implements Serializable {
 
     private String getErrorReason(ResponseStatus responseStatus, HttpStatus status) {
         if (null != responseStatus) {
-            if (!responseStatus.reason().isEmpty()) {
-                return responseStatus.reason();
-            }
-
             final var httpStatus = getHttpStatus(responseStatus);
             if (null != httpStatus) {
                 return httpStatus.getReasonPhrase();

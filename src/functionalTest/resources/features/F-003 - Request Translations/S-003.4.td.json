@@ -25,8 +25,7 @@
     "_extends_" : "Common_400_Response",
     "body" : {
       "code": "INVALID_REQUEST",
-      "message": "Bad Request (001 bad schema)",
-      "path": "/translation/cy"
+      "message": "Bad Request (001 bad schema)"
     }
   }
 }

@@ -9,10 +9,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConversionException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
@@ -96,9 +98,22 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @Override
+    protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(
+        HttpRequestMethodNotSupportedException exception, HttpHeaders headers,
+        HttpStatusCode status, WebRequest request) {
+        // The parent logs the original method diagnostic at WARN before delegating.
+        return handleExceptionInternal(exception, null, headers, status, request);
+    }
+
+    @Override
     protected ResponseEntity<Object> handleExceptionInternal(Exception exception, Object body,
                                                               HttpHeaders headers, HttpStatusCode status,
                                                               WebRequest request) {
+        if (request instanceof ServletWebRequest servletRequest
+            && servletRequest.getResponse() != null && servletRequest.getResponse().isCommitted()) {
+            logFailure(exception, status.value());
+            return null;
+        }
         // Never forward Spring ProblemDetail text, rejected values or parser diagnostics.
         final HttpError<Serializable> error = new HttpError<>(exception, request,
             HttpStatus.valueOf(status.value()));

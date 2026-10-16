@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.ObjectPostProcessor;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
@@ -76,14 +77,21 @@ public class SecurityConfiguration {
     protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .addFilterBefore(serviceAuthFilter, BearerTokenAuthenticationFilter.class)
-            .addFilterBefore(translateCyEndpointFilter, ServiceAuthFilter.class)
-            .addFilterAfter(putDictionaryEndpointFilter, ServiceAuthFilter.class)
+            .addFilterBefore(translateCyEndpointFilter, serviceAuthFilter.getClass())
+            .addFilterAfter(putDictionaryEndpointFilter, serviceAuthFilter.getClass())
             .sessionManagement(sm -> sm.sessionCreationPolicy(STATELESS))
             .csrf(csrf -> csrf.disable())
             .formLogin(fl -> fl.disable())
             .logout(l -> l.disable())
             .authorizeHttpRequests(ar -> ar.anyRequest().authenticated())
             .oauth2ResourceServer(oauth -> oauth
+                .withObjectPostProcessor(new ObjectPostProcessor<BearerTokenAuthenticationFilter>() {
+                    @Override
+                    public <O extends BearerTokenAuthenticationFilter> O postProcess(O filter) {
+                        filter.setAuthenticationFailureHandler(new SafeAuthenticationErrors());
+                        return filter;
+                    }
+                })
                 .authenticationEntryPoint(new SafeAuthenticationErrors())
                 .accessDeniedHandler(new SafeAuthenticationErrors())
                 .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter)));

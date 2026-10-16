@@ -4,6 +4,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
+import org.springframework.boot.web.error.ErrorAttributeOptions;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.AbstractView;
 import org.springframework.web.servlet.view.BeanNameViewResolver;
@@ -12,6 +15,19 @@ import java.util.Map;
 
 @Configuration
 public class ErrorPageConfiguration {
+
+    @Bean
+    public DefaultErrorAttributes safeErrorAttributes() {
+        return new DefaultErrorAttributes() {
+            @Override
+            public Map<String, Object> getErrorAttributes(WebRequest request, ErrorAttributeOptions options) {
+                Map<String, Object> attributes = super.getErrorAttributes(request, options);
+                // Unknown URLs can contain identifiers; do not reflect them in fallback responses.
+                attributes.remove("path");
+                return attributes;
+            }
+        };
+    }
 
     @Bean
     public BeanNameViewResolver safeErrorViewResolver() {

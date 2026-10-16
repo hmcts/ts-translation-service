@@ -189,7 +189,11 @@ class RestExceptionHandlerTest {
                                                         .contentType(MediaType.APPLICATION_JSON));
 
         // THEN
-        assertHttpErrorResponse(result, HttpStatus.BAD_REQUEST, HttpStatus.BAD_REQUEST.getReasonPhrase());
+        result.andExpect(status().isBadRequest())
+            .andExpect(jsonPath(ERROR_PATH_ERROR).value(HttpStatus.BAD_REQUEST.getReasonPhrase()))
+            .andExpect(jsonPath(ERROR_PATH_MESSAGE).value(HttpStatus.BAD_REQUEST.getReasonPhrase()))
+            .andExpect(jsonPath("$.code").value("INVALID_REQUEST"))
+            .andExpect(jsonPath("$.exception").doesNotExist());
     }
 
     @DisplayName("should return correct response when HttpMessageNotReadableException is thrown")

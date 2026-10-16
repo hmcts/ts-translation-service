@@ -40,7 +40,7 @@ class SafeAuthenticationErrorsTest {
             new SafeAuthenticationErrors().commence(new MockHttpServletRequest(), response,
                 new OAuth2AuthenticationException(BearerTokenErrors.invalidRequest("Synthetic bearer diagnostic")));
             assertThat(response.getStatus()).isEqualTo(400);
-            assertThat(response.getHeader("WWW-Authenticate")).isEqualTo("Bearer");
+            assertThat(response.getHeader("WWW-Authenticate")).isEqualTo("Bearer error=\"invalid_request\"");
             assertThat(response.getContentAsString()).isEmpty();
             assertThat(appender.list).hasSize(1);
             assertThat(appender.list.get(0).getFormattedMessage())
@@ -59,6 +59,20 @@ class SafeAuthenticationErrorsTest {
         new SafeAuthenticationErrors().handle(new MockHttpServletRequest(), response,
             new AccessDeniedException("Internal access rule details"));
         assertThat(response.getStatus()).isEqualTo(403);
+        assertThat(response.getHeader("WWW-Authenticate")).isEqualTo("Bearer");
+        assertThat(response.getContentAsString()).isEmpty();
+    }
+
+    @Test
+    void authenticatedAccessDenialRetainsTheSafeBearerChallenge() throws Exception {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setUserPrincipal(new org.springframework.security.oauth2.server.resource.authentication
+            .JwtAuthenticationToken(org.springframework.security.oauth2.jwt.Jwt.withTokenValue("private-token")
+                .header("alg", "none").claim("sub", "private-user-id").build()));
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        new SafeAuthenticationErrors().handle(request, response, new AccessDeniedException("private-rule"));
+        assertThat(response.getStatus()).isEqualTo(403);
+        assertThat(response.getHeader("WWW-Authenticate")).isEqualTo("Bearer error=\"insufficient_scope\"");
         assertThat(response.getContentAsString()).isEmpty();
     }
 

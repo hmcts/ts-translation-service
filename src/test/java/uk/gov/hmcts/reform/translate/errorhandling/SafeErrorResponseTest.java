@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
+import org.springframework.http.HttpMethod;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,9 +24,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.request;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class SafeErrorResponseTest {
@@ -56,6 +59,8 @@ class SafeErrorResponseTest {
         mvc.perform(get("/error-probe/id/not-a-uuid"))
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.code").value("INVALID_REQUEST"))
+            .andExpect(jsonPath("$.path").doesNotExist())
+            .andExpect(content().string(not(containsString("not-a-uuid"))))
             .andExpect(content().string(not(containsString("java.util.UUID"))))
             .andExpect(jsonPath("$.exception").doesNotExist())
             .andExpect(jsonPath("$.details").doesNotExist());
@@ -75,9 +80,11 @@ class SafeErrorResponseTest {
     void retainsUnsupportedMediaAndMethodStatuses() throws Exception {
         mvc.perform(post("/error-probe").contentType(MediaType.TEXT_PLAIN).content("invalid"))
             .andExpect(status().isUnsupportedMediaType())
+            .andExpect(header().string("Accept", containsString("application/json")))
             .andExpect(jsonPath("$.exception").doesNotExist());
         mvc.perform(get("/error-probe"))
             .andExpect(status().isMethodNotAllowed())
+            .andExpect(header().string("Allow", "POST"))
             .andExpect(jsonPath("$.exception").doesNotExist());
     }
 
@@ -134,6 +141,44 @@ class SafeErrorResponseTest {
             .andExpect(status().isForbidden())
             .andExpect(jsonPath("$.code").value("ACCESS_DENIED"))
             .andExpect(content().string(not(containsString(DIAGNOSTIC))));
+    }
+
+    @Test
+    void responseSerializationFailuresRetainTheExistingServerErrorStatus() throws Exception {
+        controller.failure = new org.springframework.http.converter.HttpMessageNotWritableException(DIAGNOSTIC);
+        mvc.perform(get("/error-probe/failure"))
+            .andExpect(status().isInternalServerError())
+            .andExpect(jsonPath("$.code").value("INTERNAL_ERROR"))
+            .andExpect(content().string(not(containsString(DIAGNOSTIC))));
+    }
+
+    @Test
+    void methodDiagnosticsStayOutOfNormalLogsAndResponses() throws Exception {
+        Logger logger = (Logger) LoggerFactory.getLogger(RestExceptionHandler.class);
+        Logger rootLogger = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+        Level previousLevel = logger.getLevel();
+        ListAppender<ILoggingEvent> appender = new ListAppender<>();
+        appender.start();
+        rootLogger.addAppender(appender);
+        try {
+            logger.setLevel(Level.INFO);
+            mvc.perform(request(HttpMethod.valueOf("SYNTHETIC_PRIVATE_METHOD"), "/error-probe"))
+                .andExpect(status().isMethodNotAllowed())
+                .andExpect(header().string("Allow", "POST"))
+                .andExpect(jsonPath("$.code").value("METHOD_NOT_ALLOWED"))
+                .andExpect(content().string(not(containsString("SYNTHETIC_PRIVATE_METHOD"))));
+            assertThat(appender.list).extracting(ILoggingEvent::getFormattedMessage)
+                .contains("Request failed: code=METHOD_NOT_ALLOWED status=405");
+            assertThat(appender.list).filteredOn(event -> event.getLevel().isGreaterOrEqual(Level.WARN))
+                .allSatisfy(event -> {
+                    assertThat(event.getFormattedMessage()).doesNotContain("SYNTHETIC_PRIVATE_METHOD");
+                    assertThat(event.getThrowableProxy()).isNull();
+                });
+        } finally {
+            logger.setLevel(previousLevel);
+            rootLogger.detachAppender(appender);
+            appender.stop();
+        }
     }
 
     @RestController

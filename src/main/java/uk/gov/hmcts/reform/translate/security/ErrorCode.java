@@ -23,7 +23,7 @@ public enum ErrorCode {
             case 413 -> REQUEST_TOO_LARGE;
             case 415 -> UNSUPPORTED_MEDIA_TYPE;
             case 429 -> TOO_MANY_REQUESTS;
-            default -> status >= 500 ? INTERNAL_ERROR : REQUEST_FAILED;
+            default -> status >= 500 && status < 600 ? INTERNAL_ERROR : REQUEST_FAILED;
         };
     }
 }
