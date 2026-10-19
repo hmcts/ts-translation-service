@@ -21,7 +21,7 @@
   },
 
   "expectedResponse": {
-    "_extends_": "Common_400_Response",
+    "_extends_": "Translation_400_Response",
     "body" : {
       "code": "INVALID_REQUEST",
       "message": "Bad Request"
