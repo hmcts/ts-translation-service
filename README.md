@@ -168,6 +168,13 @@ are available only for failures occurring while DEBUG is enabled; earlier detail
 Restore both logger and collection thresholds afterwards. DEBUG diagnostics can contain sensitive
 information and must remain subject to restricted log access.
 
+### Preview Admin Web startup
+
+The preview Helm values mount the CCD Key Vault's `session-keys` secret for Admin Web. Its startup
+validation requires a JSON array containing at least two non-empty signing keys at
+`secrets.ccd.session-keys`; without it, the pod exits before serving requests. Keep the secret available
+to the preview deployment and share the configured keys across replicas. Key values belong in Key Vault.
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
