@@ -56,6 +56,37 @@ class SafeDependencyDiagnosticsFilterTest {
     }
 
     @Test
+    void tomcatParserInfoEventsKeepOriginalCausesOnlyAtDebug() throws Exception {
+        capture((context, appender, output) -> {
+            Logger parser = context.getLogger("org.apache.coyote.http11.Http11Processor");
+            Level previous = parser.getLevel();
+            try {
+                parser.setLevel(Level.INFO);
+                for (Level level : List.of(Level.INFO, Level.DEBUG)) {
+                    output.setLevel(level);
+                    appender.list.clear();
+                    parser.info("Error parsing HTTP request header",
+                        new IllegalArgumentException("SYNTHETIC_PRIVATE_PROTOCOL"));
+                    assertThat(appender.list).filteredOn(event -> event.getLevel() == Level.INFO)
+                        .singleElement().satisfies(event -> {
+                            assertThat(event.getFormattedMessage())
+                                .isEqualTo("HTTP request diagnostic: code=REQUEST_FAILED");
+                            assertThat(event.getThrowableProxy()).isNull();
+                        });
+                    assertThat(appender.list).filteredOn(event -> event.getThrowableProxy() != null)
+                        .hasSize(level == Level.DEBUG ? 1 : 0);
+                }
+                parser.setLevel(Level.OFF);
+                appender.list.clear();
+                parser.info("Error parsing HTTP request header", new IllegalArgumentException("private cause"));
+                assertThat(appender.list).isEmpty();
+            } finally {
+                parser.setLevel(previous);
+            }
+        });
+    }
+
+    @Test
     void poolAndContainerDiagnosticsRetainSeverityAndCausesOnlyAtDebug() throws Exception {
         capture((context, appender, output) -> {
             for (String name : List.of("com.zaxxer.hikari.pool.PoolBase",

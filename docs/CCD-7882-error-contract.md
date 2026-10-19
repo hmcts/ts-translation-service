@@ -299,6 +299,32 @@ Java compilation passed, all 52 functional JSON files parsed, and `git diff --ch
 ./gradlew test integration --offline checkstyleMain checkstyleTest checkstyleIntegrationTest checkstyleFunctionalTest compileFunctionalTestJava --console=plain
 ```
 
+## Local HTTP verification — 19 October 2026
+
+`UnauthenticatedHttpIT` adds real random-port Tomcat and raw-socket coverage without credentials,
+using the production security configuration. Existing tests used MockMvc or mock servlet responses.
+It covers public endpoints, empty protected-route 401 responses, JSON/HTML clients, diagnostic query
+parameters, health failures and malformed HTTP targets/protocols.
+
+The HTTP test reproduced a public 405 becoming 401 for HTML clients when the advice body could not
+be serialized and the request reached the protected error dispatch. Content-negotiation changes
+(forced JSON or an empty-body fallback) were removed because they require separate contract approval.
+The HTTP regression records the existing HTML behaviour; correcting it remains an explicit gap.
+JSON error behaviour, authentication rules and required headers are unchanged by this review.
+Container malformed-request responses were already safe. Tomcat's initial parser exception at INFO
+now has a safe summary and DEBUG-only original cause.
+Normal parser startup messages and source logging thresholds remain unchanged.
+
+Validation: 174 unit tests and 57 integration tests passed, including five real HTTP tests. Main,
+unit, integration and functional Checkstyle and functional Java compilation passed. All 53 functional
+JSON fixtures parse; resolving the BEFTA inheritance confirms S-002.5/6/7 and S-003.4 have safe error
+bodies without an inherited path expectation. Existing health level/reload and duplicate logging
+regressions remain green.
+
+Deployment gaps remain: deployed BEFTA/ITHC runs, ingress/gateway error pages, actual authenticated
+upstream failures and streaming disconnects, restricted log access, and App Insights collection,
+sampling and independent exception instrumentation. Local tests do not establish those behaviours.
+
 ## Functional response inheritance correction — 19 October 2026
 
 S-002.5, S-002.6, S-002.7 and S-003.4 inherited a required `path` from BEFTA's

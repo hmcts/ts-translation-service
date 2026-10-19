@@ -156,6 +156,9 @@ Other diagnostic loggers are:
 - `uk.gov.hmcts.reform.translate.logging.SafeHealthDiagnosticsFilter` for health checks.
 - `uk.gov.hmcts.reform.translate.logging.SafeDependencyDiagnosticsFilter` for database/framework diagnostics.
 
+Tomcat can rate-limit malformed HTTP request diagnostics. For repeated parser failures, temporarily
+enable `org.apache.coyote.http11.Http11Processor: DEBUG` as well; restore its previous level afterwards.
+
 If using the Application Insights Java agent, its logging collection threshold must also allow DEBUG:
 
 ```text

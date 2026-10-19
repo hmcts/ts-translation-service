@@ -18,6 +18,8 @@ public class SafeDependencyDiagnosticsFilter extends TurboFilter {
     public FilterReply decide(Marker marker, Logger logger, Level level, String format,
                               Object[] arguments, Throwable exception) {
         String name = logger.getName();
+        boolean parserDiagnostic = level == Level.INFO && exception != null
+            && name.equals("org.apache.coyote.http11.Http11Processor");
         boolean boundaryLogsFailure = name.equals("org.hibernate.engine.jdbc.spi.SqlExceptionHelper")
             || name.startsWith("org.hibernate.orm.jdbc.batch")
             || name.startsWith("org.springframework.transaction.interceptor.")
@@ -33,7 +35,7 @@ public class SafeDependencyDiagnosticsFilter extends TurboFilter {
             || name.startsWith("org.springframework.orm.jpa.")
             || name.startsWith("org.apache.catalina.core.ContainerBase.")
             || name.startsWith("org.apache.coyote.");
-        if (format == null || !level.isGreaterOrEqual(Level.WARN) || !dependency) {
+        if (format == null || (!level.isGreaterOrEqual(Level.WARN) && !parserDiagnostic) || !dependency) {
             return FilterReply.NEUTRAL;
         }
         if (!level.isGreaterOrEqual(logger.getEffectiveLevel())) {
@@ -41,7 +43,9 @@ public class SafeDependencyDiagnosticsFilter extends TurboFilter {
         }
         // JDBC/resolver messages precede an owned boundary event; avoid duplicate failure summaries.
         if (!boundaryLogsFailure) {
-            if (level == Level.ERROR) {
+            if (parserDiagnostic) {
+                log.info("HTTP request diagnostic: code={}", ErrorCode.REQUEST_FAILED);
+            } else if (level == Level.ERROR) {
                 log.error("Dependency failure: code={}", ErrorCode.INTERNAL_ERROR);
             } else {
                 log.warn("Dependency warning: code={}", ErrorCode.INTERNAL_ERROR);
