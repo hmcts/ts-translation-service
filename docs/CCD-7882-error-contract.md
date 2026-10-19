@@ -299,6 +299,18 @@ Java compilation passed, all 52 functional JSON files parsed, and `git diff --ch
 ./gradlew test integration --offline checkstyleMain checkstyleTest checkstyleIntegrationTest checkstyleFunctionalTest compileFunctionalTestJava --console=plain
 ```
 
+## Functional response inheritance correction — 19 October 2026
+
+S-002.5, S-002.6, S-002.7 and S-003.4 inherited a required `path` from BEFTA's
+Common_400_Response body. Removing the field from each scenario did not remove that inherited
+expectation. They now extend the local Translation_400_Response, which defines the safe body
+without inheriting `path`. Status 400, INVALID_REQUEST and each scenario's existing message remain.
+
+Resolved fixture expectations were checked against the cached BEFTA definitions; all four contain
+only status, error, code, message and timestamp. Remaining 401/403 fixtures explicitly override the
+body with null. `git diff --check` passed. Reported header differences are warnings; deployed BEFTA
+must be rerun to confirm the fix. Include the new shared fixture when committing these changes.
+
 
 ## Ticket-description confirmation — 16 October 2026
 
