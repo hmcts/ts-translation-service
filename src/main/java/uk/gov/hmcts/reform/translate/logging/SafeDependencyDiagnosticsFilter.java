@@ -41,19 +41,18 @@ public class SafeDependencyDiagnosticsFilter extends TurboFilter {
         if (!level.isGreaterOrEqual(logger.getEffectiveLevel())) {
             return FilterReply.DENY;
         }
-        // JDBC/resolver messages precede an owned boundary event; avoid duplicate failure summaries.
-        if (!boundaryLogsFailure) {
-            if (parserDiagnostic) {
-                log.info("HTTP request diagnostic: code={}", ErrorCode.REQUEST_FAILED);
-            } else if (level == Level.ERROR) {
-                log.error("Dependency failure: code={}", ErrorCode.INTERNAL_ERROR);
-            } else {
-                log.warn("Dependency warning: code={}", ErrorCode.INTERNAL_ERROR);
-            }
-        }
         FormattingTuple diagnostic = MessageFormatter.arrayFormat(format, arguments);
-        log.debug("Original dependency diagnostic: logger={} message={}", name, diagnostic.getMessage(),
-            exception != null ? exception : diagnostic.getThrowable());
+        Throwable cause = exception != null ? exception : diagnostic.getThrowable();
+        if (level == Level.ERROR) {
+            log.error("Dependency diagnostic: code={} logger={} message={}",
+                ErrorCode.INTERNAL_ERROR, logger.getName(), diagnostic.getMessage(), cause);
+        } else if (level == Level.INFO) {
+            log.info("Dependency diagnostic: code={} logger={} message={}",
+                ErrorCode.REQUEST_FAILED, logger.getName(), diagnostic.getMessage(), cause);
+        } else {
+            log.warn("Dependency diagnostic: code={} logger={} message={}",
+                ErrorCode.REQUEST_FAILED, logger.getName(), diagnostic.getMessage(), cause);
+        }
         return FilterReply.DENY;
     }
 }

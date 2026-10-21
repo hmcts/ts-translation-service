@@ -37,8 +37,7 @@ public class SafeAuthenticationErrors
             }
         }
         ErrorCode code = ErrorCode.fromStatus(status.value());
-        log.warn("Authentication failed: code={} status={}", code, status.value());
-        log.debug("Original authentication failure: code={} status={}", code, status.value(), exception);
+        log.warn("Authentication failed: code={} status={}", code, status.value(), exception);
         response.setHeader(HttpHeaders.WWW_AUTHENTICATE, challenge);
         response.setStatus(status.value());
     }
@@ -47,8 +46,7 @@ public class SafeAuthenticationErrors
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
                                         AuthenticationException exception) {
         if (exception instanceof AuthenticationServiceException) {
-            log.error("Authentication service failed: code={} status=500", ErrorCode.INTERNAL_ERROR);
-            log.debug("Original authentication service failure", exception);
+            log.error("Authentication service failed: code={} status=500", ErrorCode.INTERNAL_ERROR, exception);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
         } else {
             commence(request, response, exception);
@@ -57,8 +55,7 @@ public class SafeAuthenticationErrors
 
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException exception) {
-        log.warn("Access denied: code={} status=403", ErrorCode.ACCESS_DENIED);
-        log.debug("Original access denial: code={} status=403", ErrorCode.ACCESS_DENIED, exception);
+        log.warn("Access denied: code={} status=403", ErrorCode.ACCESS_DENIED, exception);
         response.setHeader(HttpHeaders.WWW_AUTHENTICATE,
             request.getUserPrincipal() instanceof AbstractOAuth2TokenAuthenticationToken<?>
                 ? "Bearer error=\"insufficient_scope\"" : "Bearer");

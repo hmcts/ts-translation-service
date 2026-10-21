@@ -122,8 +122,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     private void logFailure(Exception exception, int status) {
-        log.error("Request failed: code={} status={}", ErrorCode.fromStatus(status), status);
-        log.debug("Original request failure: code={} status={}", ErrorCode.fromStatus(status), status, exception);
+        log.error("Request failed: code={} status={}", ErrorCode.fromStatus(status), status, exception);
     }
 
 }
