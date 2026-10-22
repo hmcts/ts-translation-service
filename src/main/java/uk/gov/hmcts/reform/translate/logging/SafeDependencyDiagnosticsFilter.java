@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Marker;
 import org.slf4j.helpers.FormattingTuple;
 import org.slf4j.helpers.MessageFormatter;
+import org.springframework.web.context.request.RequestContextHolder;
 import uk.gov.hmcts.reform.translate.security.ErrorCode;
 
 /** Controls dependency diagnostics emitted before or outside the MVC advice. */
@@ -23,7 +24,6 @@ public class SafeDependencyDiagnosticsFilter extends TurboFilter {
         boolean boundaryLogsFailure = name.equals("org.hibernate.engine.jdbc.spi.SqlExceptionHelper")
             || name.startsWith("org.hibernate.orm.jdbc.batch")
             || name.startsWith("org.springframework.transaction.interceptor.")
-            || name.equals("org.springframework.transaction.support.TransactionTemplate")
             || name.equals("org.springframework.web.servlet.PageNotFound")
             || name.startsWith("org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver")
             || name.equals("org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver");
@@ -43,6 +43,12 @@ public class SafeDependencyDiagnosticsFilter extends TurboFilter {
         }
         FormattingTuple diagnostic = MessageFormatter.arrayFormat(format, arguments);
         Throwable cause = exception != null ? exception : diagnostic.getThrowable();
+        // In MVC requests the terminal handler retains the exception once at its original failure boundary.
+        // Outside requests keep normal diagnostics; TransactionTemplate can hold an overridden cause.
+        if (boundaryLogsFailure && RequestContextHolder.getRequestAttributes() != null) {
+            log.debug("Intermediate request diagnostic: logger={} message={}", name, diagnostic.getMessage(), cause);
+            return FilterReply.DENY;
+        }
         if (level == Level.ERROR) {
             log.error("Dependency diagnostic: code={} logger={} message={}",
                 ErrorCode.INTERNAL_ERROR, logger.getName(), diagnostic.getMessage(), cause);

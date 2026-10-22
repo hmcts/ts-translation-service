@@ -87,7 +87,11 @@ class UnauthenticatedHttpIT {
                 assertThat(response.headers().firstValue("WWW-Authenticate")).isEmpty();
             }
         }
-        assertSafeWarnings();
+        assertThat(events.list).filteredOn(event -> event.getLoggerName().endsWith("SafeServiceAuthFilter"))
+            .hasSize(4).allSatisfy(event -> {
+                assertThat(event.getLevel()).isEqualTo(Level.WARN);
+                assertThat(event.getThrowableProxy()).isNotNull();
+            });
     }
 
     @Test
@@ -106,27 +110,29 @@ class UnauthenticatedHttpIT {
             assertSafeBody(missing.body());
         }
         assertThat(events.list).filteredOn(event -> event.getLevel() == Level.ERROR
-            && event.getLoggerName().endsWith("RestExceptionHandler")).hasSize(4);
-        assertSafeWarnings();
+            && event.getLoggerName().endsWith("RestExceptionHandler")).hasSize(4)
+            .allSatisfy(event -> assertThat(event.getThrowableProxy()).isNotNull());
     }
 
     @Test
-    void healthFailuresHideDetailsAndKeepOriginalCausesAtDebug() throws Exception {
+    void healthFailuresHidePublicDetailsAndRetainOneServerCauseAtNormalLevels() throws Exception {
         Logger logger = (Logger) LoggerFactory.getLogger(SafeHealthDiagnosticsFilter.class);
         Level previous = logger.getLevel();
         health.down = true;
         try {
-            logger.setLevel(Level.INFO);
-            HttpResponse<String> response = request("GET", "/health" + DIAGNOSTICS, "application/json");
-            assertThat(response.statusCode()).isEqualTo(503);
-            assertThat(response.body()).contains("DOWN").doesNotContain("details", "components");
-            assertSafeBody(response.body());
-            assertSafeWarnings();
-            events.list.clear();
-            logger.setLevel(Level.DEBUG);
-            assertThat(request("GET", "/health", "application/json").statusCode()).isEqualTo(503);
-            assertThat(events.list).filteredOn(event -> event.getLevel() == Level.DEBUG)
-                .anySatisfy(event -> assertThat(event.getThrowableProxy().getMessage()).isEqualTo(PRIVATE));
+            for (Level level : List.of(Level.INFO, Level.DEBUG)) {
+                logger.setLevel(level);
+                events.list.clear();
+                HttpResponse<String> response = request("GET", "/health" + DIAGNOSTICS, "application/json");
+                assertThat(response.statusCode()).isEqualTo(503);
+                assertThat(response.body()).contains("DOWN").doesNotContain("details", "components");
+                assertSafeBody(response.body());
+                assertThat(events.list).filteredOn(event -> event.getLoggerName().equals(logger.getName()))
+                    .singleElement().satisfies(event -> {
+                        assertThat(event.getLevel()).isEqualTo(Level.WARN);
+                        assertThat(event.getThrowableProxy().getMessage()).isEqualTo(PRIVATE);
+                    });
+            }
         } finally {
             logger.setLevel(previous);
         }
@@ -148,12 +154,11 @@ class UnauthenticatedHttpIT {
             }
         }
         assertThat(events.list).filteredOn(event -> event.getLoggerName()
-            .equals("org.apache.coyote.http11.Http11Processor") && event.getLevel() == Level.INFO)
-            .allSatisfy(event -> {
-                assertSafeBody(event.getFormattedMessage());
-                assertThat(event.getThrowableProxy()).isNull();
+            .endsWith("SafeDependencyDiagnosticsFilter") && event.getLevel() == Level.INFO)
+            .anySatisfy(event -> {
+                assertThat(event.getFormattedMessage()).contains("org.apache.coyote.http11.Http11Processor");
+                assertThat(event.getThrowableProxy().getMessage()).contains(PRIVATE);
             });
-        assertSafeWarnings();
     }
 
     private HttpResponse<String> request(String method, String path, String accept) throws Exception {
@@ -165,14 +170,6 @@ class UnauthenticatedHttpIT {
     private void assertSafeBody(String body) {
         assertThat(body).doesNotContain(PRIVATE, "java.lang", "org.apache", "Apache Tomcat", "Exception",
             "Whitelabel", "\"path\"", "\"trace\"", "\"exception\"", "/opt/app");
-    }
-
-    private void assertSafeWarnings() {
-        assertThat(events.list).filteredOn(event -> event.getLevel().isGreaterOrEqual(Level.WARN))
-            .allSatisfy(event -> {
-                assertSafeBody(event.getFormattedMessage());
-                assertThat(event.getThrowableProxy()).isNull();
-            });
     }
 
     @TestConfiguration

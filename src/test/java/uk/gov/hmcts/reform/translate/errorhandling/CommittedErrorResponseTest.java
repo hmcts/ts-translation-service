@@ -38,7 +38,8 @@ class CommittedErrorResponseTest {
             assertThat(appender.list).hasSize(1);
             assertThat(appender.list.get(0).getFormattedMessage())
                 .isEqualTo("Request failed: code=INTERNAL_ERROR status=500");
-            assertThat(appender.list.get(0).getThrowableProxy()).isNull();
+            assertThat(appender.list.get(0).getThrowableProxy().getMessage())
+                .isEqualTo("Synthetic committed diagnostic");
         } finally {
             logger.setLevel(previousLevel);
             rootLogger.detachAppender(appender);

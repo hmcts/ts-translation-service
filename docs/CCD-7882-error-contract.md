@@ -14,7 +14,15 @@ administrator-only log access, suitable retention and verification of logging/Ap
 collection. Local tests do not establish those infrastructure controls.
 
 
-API responses no longer include exception class names or raw exception messages. Standard HTTP status descriptions replace diagnostic messages. Existing fixed validation messages remain where already defined. Payment validation details contain user-facing validation messages, never exception causes. Advice error bodies include a stable category `code` derived only from the HTTP status, for example `INVALID_REQUEST` or `INTERNAL_ERROR`. Advice/security-handler error/warn logs contain the same code without exception messages or stack traces. Original exceptions are logged only at DEBUG, which can be enabled for the advice/security handler package when needed; log access must stay restricted through the existing platform controls. No existing non-identifying reference was found in these handlers, so no reference is added. Empty security responses retain their existing shapes. Advice and Spring Boot fallback JSON omit reflected request paths, which can contain identifiers.
+API responses omit exception classes, raw exception messages and reflected paths. Existing fixed
+validation messages remain. Advice JSON includes a fixed `code` derived from the HTTP status; no new
+incident reference is generated. Empty security responses retain their existing shapes. The README
+contains the current support procedure and error-code table.
+
+Repeated JDBC/MVC intermediate messages within web requests use DEBUG, with the original terminal
+exception retained once at normal levels. Outside web requests, diagnostics retain their severity.
+TransactionTemplate diagnostics are retained because rollback can replace the original application
+exception; these are distinct causes, not duplicate events.
 
 Spring Boot fallback responses explicitly exclude exception, message, binding errors and stack traces, including when a caller requests them with query parameters. HTML error responses use a fixed generic page. Invalid bearer credentials return an empty 401; OAuth invalid-request errors retain 400. Bearer challenges retain only the scheme and recognised protocol error codes (`invalid_request`, `invalid_token`, `insufficient_scope`), with no descriptions, URIs or scopes. Missing credentials use `WWW-Authenticate: Bearer`. Denied bearer access retains 403 and its safe challenge; S2S denials remain empty 401/403 without a bearer challenge. Token validation, endpoint permissions and document access checks are unchanged.
 
@@ -24,7 +32,12 @@ Local regression tests cover diagnostic redaction, malformed JSON, invalid UUID 
 
 At merge/deployment planning, assign the delivery owner, QA contact, target date and retest environment. After deployment, record the actual revision, environment, UTC timestamp and sanitised response evidence in the tracking ticket. Do not record credentials, document contents or the OFFICIAL-SENSITIVE report. Obtain detailed reproduction material from SecOps through the approved channel.
 
-## Local verification — 9 October 2026
+## Historical verification — superseded logging expectations
+
+The entries below record earlier implementations and test runs. The current support logging policy
+above supersedes their DEBUG-only statements.
+
+### Local verification — 9 October 2026
 
 Branch: `CCD-7882_Verbose_Error_Messages`, based on master `bdf53b0`. Results apply to the local working changes; they are not deployment evidence.
 
@@ -449,3 +462,23 @@ Administrator-only log access, retention and deployed collection remain environm
 ## Logging uniqueness review — 21 October 2026
 
 26 focused tests and main/test Checkstyle passed. Redundant DEBUG exception events have been removed. The regressions require one owned exception event at INFO and DEBUG.
+
+
+## Requirement-aligned review fixes — 22 October 2026
+
+The current implementation follows the ticket's generic-public-response and restricted-detailed-log
+requirements. It intentionally retains original failures at normal server logging levels. The former
+DEBUG-only requirement is not the current support policy; historical test assertions were updated
+without changing HTTP response expectations, statuses, authentication or required headers.
+
+Repeated JDBC/MVC diagnostics within web requests now defer normal logging to the terminal handler.
+Real Hibernate-to-MVC tests verify one normal error event with its SQL cause at INFO and DEBUG.
+Background SQL diagnostics remain available, and rollback tests retain both distinct application and
+rollback causes. Real local HTTP tests verify public response redaction, empty unauthenticated bodies,
+existing JSON/HTML status behaviour, health cause retention and malformed-request handling.
+
+Validation: 173 unit tests and 57 integration tests passed, with no failures, errors or skips.
+Main/unit/integration/functional Checkstyle, functional Java compilation and diff whitespace checks passed.
+Deployed BEFTA/ITHC, ingress/gateway responses, restricted administrator log access, retention and
+App Insights ingestion/correlation remain release checks. The existing HTML error dispatch returning
+401 instead of 404/405 remains unchanged and needs separate approval to alter its contract.

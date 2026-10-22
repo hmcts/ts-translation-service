@@ -76,7 +76,7 @@ class SafeServiceAuthFilterTest {
     }
 
     @Test
-    void originalDiagnosticsAreOnlyAvailableAtDebugAcrossTheLogChain() throws Exception {
+    void originalDiagnosticsRemainAvailableAtNormalLevelsAcrossTheLogChain() throws Exception {
         Logger logger = (Logger) LoggerFactory.getLogger(SafeServiceAuthFilter.class);
         Logger rootLogger = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
         Level previousLevel = logger.getLevel();

@@ -210,10 +210,11 @@ class SecurityConfigurationTest {
                 "Service authentication failed: code=AUTHENTICATION_REQUIRED status=401",
                 "Service access denied: code=ACCESS_DENIED status=403");
             assertThat(appender.list).filteredOn(event -> event.getLevel().isGreaterOrEqual(Level.WARN))
-                .allSatisfy(event -> {
-                    assertThat(event.getFormattedMessage()).doesNotContain("Synthetic", "private-service-id");
-                    assertThat(event.getThrowableProxy()).isNull();
-                });
+                .allSatisfy(event -> assertThat(event.getFormattedMessage())
+                    .doesNotContain("Synthetic", "private-service-id"));
+            assertThat(appender.list).filteredOn(event -> event.getThrowableProxy() != null)
+                .singleElement().satisfies(event -> assertThat(event.getThrowableProxy().getMessage())
+                    .isEqualTo("Synthetic internal S2S diagnostic"));
         } finally {
             logger.setLevel(previousLevel);
             rootLogger.detachAppender(appender);
@@ -253,18 +254,16 @@ class SecurityConfigurationTest {
                     .contains("Authentication service failed: code=INTERNAL_ERROR status=500");
                 assertThat(appender.list).filteredOn(event -> event.getLevel() == Level.ERROR).hasSize(1);
                 assertThat(appender.list).filteredOn(event -> event.getThrowableProxy() != null)
-                    .hasSize(level == Level.DEBUG ? 1 : 0);
+                    .hasSize(1);
                 assertThat(appender.list).filteredOn(event -> event.getLevel().isGreaterOrEqual(Level.WARN))
                     .allSatisfy(event -> {
                         assertThat(event.getFormattedMessage()).doesNotContain("Synthetic private IDAM detail");
-                        assertThat(event.getThrowableProxy()).isNull();
+                        assertThat(event.getThrowableProxy()).isNotNull();
                     });
-                if (level == Level.DEBUG) {
-                    assertThat(appender.list).filteredOn(event -> event.getLoggerName().equals(logger.getName())
-                        && event.getLevel() == Level.DEBUG).anySatisfy(event ->
-                            assertThat(event.getThrowableProxy().getCause().getMessage())
-                                .isEqualTo("Synthetic private IDAM detail"));
-                }
+                assertThat(appender.list).filteredOn(event -> event.getLoggerName().equals(logger.getName())
+                    && event.getLevel() == Level.ERROR).singleElement().satisfies(event ->
+                        assertThat(event.getThrowableProxy().getCause().getMessage())
+                            .isEqualTo("Synthetic private IDAM detail"));
             }
         } finally {
             logger.setLevel(previousLevel);

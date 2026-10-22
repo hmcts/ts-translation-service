@@ -126,7 +126,10 @@ A code describes the HTTP status; it does not identify an individual incident or
 
 Authentication and service-authentication filters return empty 401/403 bodies and record the category
 in handler logs. Controller errors can return JSON bodies. Fallback JSON and HTML error pages may
-omit the code. Normal WARN/ERROR failure logs retain exception details for administrator support; public responses remain generic.
+omit the code. Normal WARN/ERROR failure logs retain exception details for administrator support;
+public responses remain generic. Repeated JDBC/MVC intermediate messages within web requests use DEBUG;
+the terminal failure retains its cause at normal levels. Background diagnostics and distinct causes
+superseded by rollback failures remain available without DEBUG.
 
 ### Investigating a failure
 
