@@ -107,12 +107,14 @@
         CVE-2026-34478 refer [Ticket]
         CVE-2026-34480 refer [Ticket]
         CVE-2025-68161 refer [Ticket]
-        CVE-2026-34481 refer [Ticket]</notes>
+        CVE-2026-34481 refer [Ticket]
+        CVE-2025-7962 refer [Ticket]</notes>
     <cve>CVE-2026-41707</cve>
     <cve>CVE-2026-34478</cve>
     <cve>CVE-2026-34480</cve>
     <cve>CVE-2025-68161</cve>
     <cve>CVE-2026-34481</cve>
+    <cve>CVE-2025-7962</cve>
   </suppress>
   <suppress>
     <cve>CVE-2026-49844</cve>
