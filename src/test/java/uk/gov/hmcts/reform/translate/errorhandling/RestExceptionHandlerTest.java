@@ -80,7 +80,7 @@ class RestExceptionHandlerTest {
                                                         .contentType(MediaType.APPLICATION_JSON));
 
         // THEN
-        assertHttpErrorResponse(result, HttpStatus.INTERNAL_SERVER_ERROR, expectedException.getMessage());
+        assertHttpErrorResponse(result, HttpStatus.INTERNAL_SERVER_ERROR, HttpError.DEFAULT_ERROR);
     }
 
     @DisplayName("should return correct response when RequestErrorException is thrown")
@@ -154,7 +154,7 @@ class RestExceptionHandlerTest {
                                                         .contentType(MediaType.APPLICATION_JSON));
 
         // THEN
-        assertHttpErrorResponse(result, HttpStatus.CONFLICT, expectedException.getMessage());
+        assertHttpErrorResponse(result, HttpStatus.CONFLICT, "English phrase already exists");
 
     }
 
@@ -171,7 +171,7 @@ class RestExceptionHandlerTest {
                                                         .contentType(MediaType.APPLICATION_JSON));
 
         // THEN
-        assertHttpErrorResponse(result, HttpStatus.BAD_REQUEST, expectedException.getMessage());
+        assertHttpErrorResponse(result, HttpStatus.BAD_REQUEST, HttpStatus.BAD_REQUEST.getReasonPhrase());
 
     }
 
@@ -189,7 +189,11 @@ class RestExceptionHandlerTest {
                                                         .contentType(MediaType.APPLICATION_JSON));
 
         // THEN
-        assertHttpErrorResponse(result, HttpStatus.BAD_REQUEST, expectedException.getMessage());
+        result.andExpect(status().isBadRequest())
+            .andExpect(jsonPath(ERROR_PATH_ERROR).value(HttpStatus.BAD_REQUEST.getReasonPhrase()))
+            .andExpect(jsonPath(ERROR_PATH_MESSAGE).value(HttpStatus.BAD_REQUEST.getReasonPhrase()))
+            .andExpect(jsonPath("$.code").value("INVALID_REQUEST"))
+            .andExpect(jsonPath("$.exception").doesNotExist());
     }
 
     @DisplayName("should return correct response when HttpMessageNotReadableException is thrown")
@@ -243,7 +247,9 @@ class RestExceptionHandlerTest {
             .andExpect(status().is(expectedStatus.value()))
             .andExpect(jsonPath(ERROR_PATH_STATUS).value(expectedStatus.value()))
             .andExpect(jsonPath(ERROR_PATH_ERROR).value(getReasonPhrase(expectedStatus)))
-            .andExpect(jsonPath(ERROR_PATH_MESSAGE).value(expectedMessage));
+            .andExpect(jsonPath(ERROR_PATH_MESSAGE).value(expectedMessage))
+            .andExpect(jsonPath("$.exception").doesNotExist())
+            .andExpect(jsonPath("$.trace").doesNotExist());
     }
 
     private String getReasonPhrase(HttpStatus expectedStatus) {

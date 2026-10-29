@@ -24,56 +24,6 @@
     },
     "body": {
       "status": "UP",
-      "components" : {
-        "clientConfigServer": {
-          "status": "UNKNOWN",
-          "details": {
-            "error": "no property sources located"
-          }
-        },
-        "db" : {
-          "status" : "UP",
-          "details" : {
-            "database" : "PostgreSQL",
-            "validationQuery" : "isValid()"
-          }
-        },
-        "discoveryComposite" : {
-          "description" : "Discovery Client not initialized",
-          "status" : "UNKNOWN",
-          "components" : {
-            "discoveryClient" : {
-              "description" : "Discovery Client not initialized",
-              "status" : "UNKNOWN"
-            }
-          }
-        },
-        "diskSpace" : {
-          "status" : "UP",
-          "details" : {
-            "total" : "[[ANYTHING_PRESENT]]",
-            "free" : "[[ANYTHING_PRESENT]]",
-            "threshold" : "[[ANYTHING_PRESENT]]",
-            "path" : "[[ANYTHING_PRESENT]]",
-            "exists" : true
-          }
-        },
-        "livenessState" : {
-          "status" : "UP"
-        },
-        "ping": {
-          "status": "UP"
-        },
-        "readinessState" : {
-          "status" : "UP"
-        },
-        "refreshScope": {
-          "status": "UP"
-        },
-        "serviceAuth": {
-          "status": "UP"
-        }
-      },
       "groups": [
         "liveness",
         "readiness"

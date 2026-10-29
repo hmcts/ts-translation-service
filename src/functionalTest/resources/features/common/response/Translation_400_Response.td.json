@@ -1,0 +1,16 @@
+{
+  "_guid_": "Translation_400_Response",
+  "_extends_": "Common_Response",
+  "responseCode": 400,
+  "responseMessage": "Bad Request",
+  "headers": {
+    "_extends_": "Common_400_Response_Headers"
+  },
+  "body": {
+    "status": 400,
+    "error": "Bad Request",
+    "code": "INVALID_REQUEST",
+    "message": "Bad Request",
+    "timestamp": "[[ANYTHING_PRESENT]]"
+  }
+}
