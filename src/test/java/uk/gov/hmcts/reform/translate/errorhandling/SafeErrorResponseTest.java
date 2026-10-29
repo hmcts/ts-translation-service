@@ -55,6 +55,28 @@ class SafeErrorResponseTest {
     }
 
     @Test
+    void preservesOnlyAllowlistedBadRequestMessages() throws Exception {
+        for (String message : new String[] {BadRequestError.BAD_SCHEMA, BadRequestError.WELSH_NOT_ALLOWED}) {
+            controller.failure = new BadRequestException(message);
+            mvc.perform(get("/error-probe/failure"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("INVALID_REQUEST"))
+                .andExpect(jsonPath("$.message").value(message))
+                .andExpect(jsonPath("$.exception").doesNotExist())
+                .andExpect(jsonPath("$.path").doesNotExist());
+        }
+        controller.failure = new BadRequestException(DIAGNOSTIC);
+        mvc.perform(get("/error-probe/failure"))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.message").value("Bad Request"))
+            .andExpect(content().string(not(containsString(DIAGNOSTIC))));
+        controller.failure = new RuntimeException(BadRequestError.WELSH_NOT_ALLOWED);
+        mvc.perform(get("/error-probe/failure"))
+            .andExpect(status().isInternalServerError())
+            .andExpect(content().string(not(containsString(BadRequestError.WELSH_NOT_ALLOWED))));
+    }
+
+    @Test
     void hidesTypeConversionDiagnostics() throws Exception {
         mvc.perform(get("/error-probe/id/not-a-uuid"))
             .andExpect(status().isBadRequest())

@@ -154,7 +154,7 @@ class RestExceptionHandlerTest {
                                                         .contentType(MediaType.APPLICATION_JSON));
 
         // THEN
-        assertHttpErrorResponse(result, HttpStatus.CONFLICT, HttpStatus.CONFLICT.getReasonPhrase());
+        assertHttpErrorResponse(result, HttpStatus.CONFLICT, "English phrase already exists");
 
     }
 

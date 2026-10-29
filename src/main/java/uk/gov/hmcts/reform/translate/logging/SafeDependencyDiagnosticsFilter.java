@@ -23,7 +23,6 @@ public class SafeDependencyDiagnosticsFilter extends TurboFilter {
             && name.equals("org.apache.coyote.http11.Http11Processor");
         boolean boundaryLogsFailure = name.equals("org.hibernate.engine.jdbc.spi.SqlExceptionHelper")
             || name.startsWith("org.hibernate.orm.jdbc.batch")
-            || name.startsWith("org.springframework.transaction.interceptor.")
             || name.equals("org.springframework.web.servlet.PageNotFound")
             || name.startsWith("org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver")
             || name.equals("org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver");
@@ -44,7 +43,7 @@ public class SafeDependencyDiagnosticsFilter extends TurboFilter {
         FormattingTuple diagnostic = MessageFormatter.arrayFormat(format, arguments);
         Throwable cause = exception != null ? exception : diagnostic.getThrowable();
         // In MVC requests the terminal handler retains the exception once at its original failure boundary.
-        // Outside requests keep normal diagnostics; TransactionTemplate can hold an overridden cause.
+        // Transaction diagnostics stay at normal levels: rollback can replace the original cause.
         if (boundaryLogsFailure && RequestContextHolder.getRequestAttributes() != null) {
             log.debug("Intermediate request diagnostic: logger={} message={}", name, diagnostic.getMessage(), cause);
             return FilterReply.DENY;

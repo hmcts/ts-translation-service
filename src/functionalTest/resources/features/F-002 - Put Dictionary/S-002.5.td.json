@@ -24,7 +24,7 @@
     "_extends_": "Translation_400_Response",
     "body" : {
       "code": "INVALID_REQUEST",
-      "message": "Bad Request"
+      "message": "Bad Request (001 bad schema)"
     }
   }
 }

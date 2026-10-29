@@ -8,8 +8,11 @@ import ch.qos.logback.core.read.ListAppender;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
 import org.hibernate.engine.jdbc.spi.SqlExceptionHelper;
+import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.interceptor.MatchAlwaysTransactionAttributeSource;
+import org.springframework.transaction.interceptor.TransactionInterceptor;
 import org.springframework.transaction.support.SimpleTransactionStatus;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -124,6 +127,31 @@ class SafeDependencyDiagnosticsFilterTest {
     }
 
     @Test
+    void mvcInterceptorRollbackFailureKeepsBothCausesWithoutDebug() throws Exception {
+        capture((appender, output) -> {
+            output.setLevel(Level.INFO);
+            var manager = mock(PlatformTransactionManager.class);
+            when(manager.getTransaction(any())).thenReturn(new SimpleTransactionStatus());
+            doThrow(new IllegalStateException("PRIVATE rollback cause")).when(manager).rollback(any());
+            var factory = new ProxyFactory((Runnable) () -> {
+                throw new IllegalArgumentException("PRIVATE application cause");
+            });
+            factory.addAdvice(new TransactionInterceptor(manager, new MatchAlwaysTransactionAttributeSource()));
+            var mvc = standaloneSetup(new RollbackController((Runnable) factory.getProxy()))
+                .setControllerAdvice(new RestExceptionHandler()).build();
+            appender.list.clear();
+            mvc.perform(get("/rollback-probe"))
+                .andExpect(status().isInternalServerError())
+                .andExpect(jsonPath("$.code").value("INTERNAL_ERROR"))
+                .andExpect(jsonPath("$.message").value("Internal Server Error"));
+            assertThat(appender.list).filteredOn(event -> event.getLevel() == Level.ERROR
+                && event.getThrowableProxy() != null)
+                .extracting(event -> event.getThrowableProxy().getMessage())
+                .containsExactly("PRIVATE application cause", "PRIVATE rollback cause");
+        });
+    }
+
+    @Test
     void backgroundSqlDiagnosticsRemainAvailableWithoutAnMvcBoundary() throws Exception {
         capture((appender, output) -> {
             var previous = RequestContextHolder.getRequestAttributes();
@@ -167,6 +195,20 @@ class SafeDependencyDiagnosticsFilterTest {
     @FunctionalInterface
     private interface LogCheck {
         void run(ListAppender<ILoggingEvent> appender, Logger output) throws Exception;
+    }
+
+    @RestController
+    static class RollbackController {
+        private final Runnable service;
+
+        RollbackController(Runnable service) {
+            this.service = service;
+        }
+
+        @GetMapping("/rollback-probe")
+        public void fail() {
+            service.run();
+        }
     }
 
     @RestController

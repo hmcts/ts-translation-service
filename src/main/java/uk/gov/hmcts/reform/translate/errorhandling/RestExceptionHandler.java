@@ -22,6 +22,7 @@ import java.io.Serializable;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import static uk.gov.hmcts.reform.translate.errorhandling.BadRequestError.BAD_SCHEMA;
+import static uk.gov.hmcts.reform.translate.errorhandling.BadRequestError.WELSH_NOT_ALLOWED;
 
 @Slf4j
 @ControllerAdvice
@@ -32,6 +33,13 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<HttpError<Serializable>> handleApiException(final HttpServletRequest request,
                                                                       final Exception exception) {
         final HttpError<Serializable> error = new HttpError<>(exception, request);
+        // Only fixed application validation messages are safe to return to callers.
+        if (exception instanceof BadRequestException
+            && (BAD_SCHEMA.equals(exception.getMessage()) || WELSH_NOT_ALLOWED.equals(exception.getMessage()))) {
+            error.withMessage(exception.getMessage());
+        } else if (exception instanceof EnglishPhraseUniqueConstraintException) {
+            error.withMessage("English phrase already exists");
+        }
         logFailure(exception, error.getStatus());
         int status = error.getStatus();
         if (status == HttpStatus.UNAUTHORIZED.value() || status == HttpStatus.FORBIDDEN.value()) {
