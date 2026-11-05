@@ -22,7 +22,7 @@ group = 'uk.gov.hmcts.reform'
 version = '0.0.1'
 
 ext {
-  set('springCloudVersion', '2025.0.3')
+  set('springCloudVersion', '2025.1.4')
   set('jackson.version', '2.22.2')
   set('log4j2.version', '2.26.1')
   jjwt               = '0.13.0'
