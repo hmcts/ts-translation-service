@@ -23,7 +23,6 @@ class HttpErrorTest {
     @DisplayName("Should initialise HttpError with defaults")
     @MethodSource("provideHttpErrors")
     void shouldInitialiseHttpErrorWithDefaults(HttpError<String> httpError) {
-        assertEquals("Should record exception name", RuntimeException.class.getName(), httpError.getException());
         assertNotNull("Should record a date & time", httpError.getTimestamp());
         assertEquals("Should record path", DICTIONARY_URL, httpError.getPath());
         assertEquals("Should record DEFAULT status", HttpError.DEFAULT_STATUS, httpError.getStatus());
@@ -62,7 +61,6 @@ class HttpErrorTest {
         HttpError<String> httpError = new HttpError<>(ex, request, null);
 
         // THEN
-        assertEquals("Should record exception name", RuntimeException.class.getName(), httpError.getException());
         assertNotNull("Should record a date & time", httpError.getTimestamp());
         assertEquals("Should record path", DICTIONARY_URL, httpError.getPath());
         assertEquals("Should record DEFAULT status", HttpError.DEFAULT_STATUS, httpError.getStatus());
@@ -103,8 +101,8 @@ class HttpErrorTest {
     }
 
     @Test
-    @DisplayName("Should initialise HttpError from defaults and exception's ResponseStatus Reason")
-    void shouldInitialiseHttpErrorFromDefaultStatusAndExceptionsResponseStatusReason() {
+    @DisplayName("Should not expose exception's ResponseStatus Reason")
+    void shouldNotExposeExceptionsResponseStatusReason() {
 
         // GIVEN
         TestResponseStatusWithReasonException ex = new TestResponseStatusWithReasonException("test");
@@ -116,8 +114,7 @@ class HttpErrorTest {
         // THEN
         assertEquals("Should record DEFAULT status",
                      HttpError.DEFAULT_STATUS, httpError.getStatus());
-        assertEquals("Should record exception's ResponseStatus.Reason",
-                     TestResponseStatusWithReasonException.REASON, httpError.getError());
+        assertEquals("Should use generic error text", HttpError.DEFAULT_ERROR, httpError.getError());
     }
 
     @Test
