@@ -1,6 +1,6 @@
 #!groovy
 
-@Library("Infrastructure@2.12.1")
+@Library("Infrastructure@2.13.5")
 
 def type = "java"
 def product = "ts"
@@ -18,6 +18,7 @@ def secrets = [
     secret('ccd-admin-web-oauth2-client-secret', 'ADMIN_WEB_IDAM_SECRET'),
     secret('session-keys', 'CCD_ADMIN_WEB_SESSION_KEYS'),
     secret('microservicekey-ccd-admin', 'ADMIN_S2S_KEY'),
+    secret('session-keys', 'SESSION_KEYS'),
     secret('ccd-definition-s2s-secret', 'CCD_DEFINITION_S2S_SECRET'),
     secret('ccd-as-a-pr-importer-username', 'IMPORT_USERNAME'),
     secret('ccd-as-a-pr-importer-password', 'IMPORT_PWD')

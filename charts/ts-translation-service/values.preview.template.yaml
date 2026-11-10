@@ -482,4 +482,5 @@ ccd:
         IDAM_OAUTH2_AW_CLIENT_SECRET: ${ADMIN_WEB_IDAM_SECRET}
         SESSION_KEYS: '${CCD_ADMIN_WEB_SESSION_KEYS}'
         ADMINWEB_GET_DICTIONARY_URL: http://${SERVICE_NAME}-java/dictionary
-      keyVaults: {}
+        SESSION_KEYS: '${SESSION_KEYS}'
+      keyVaults: [ ]
