@@ -1,5 +1,11 @@
 # CCD-7882 error contract
 
+Related requirements: CCD-7108 and CME-984.
+
+Prevent public errors from revealing exception classes, stack traces, internal URLs, file paths
+or software details. Preserve response schemas, HTTP status mappings, approved business messages
+and public `message` fields where present, while retaining useful private diagnostics.
+
 ## Responses
 
 - Disable automatic exception messages and binding-error disclosure. Hide health details, replace
@@ -19,5 +25,20 @@ DEBUG while a count remains at WARN. Correlation context is preserved.
 
 Focused response, authentication, health and diagnostic tests cover sanitisation, native log
 categories and logging thresholds. Docker checks cover malformed requests, correlated failure
-telemetry and DEBUG ingestion with application/agent DEBUG enabled. Production configuration and
-deployed consumer contracts require environment-specific checks.
+telemetry and DEBUG ingestion with application/agent DEBUG enabled.
+
+## Support
+
+In Application Insights, filter private `failureCode` and `httpStatus` dimensions, then use
+`operation_Id` to find related requests and dependencies. Inspect exception details in restricted
+telemetry or server logs; public error messages are sanitised. Failure diagnosis should work at
+normal production logging levels without enabling DEBUG.
+
+## Deployment checks
+
+- Verify effective error/logging settings and sanitised responses in each environment. Confirm
+  `server.error.include-message=never` at runtime.
+- Confirm diagnostic logs and Application Insights are restricted to authorised personnel, with
+  suitable sampling and retention.
+- Verify failure codes and correlation IDs are searchable at normal production logging levels;
+  run deployed consumer/Pact checks.
