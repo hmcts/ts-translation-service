@@ -192,8 +192,8 @@ class RestExceptionHandlerTest {
         result.andExpect(status().isBadRequest())
             .andExpect(jsonPath(ERROR_PATH_ERROR).value(HttpStatus.BAD_REQUEST.getReasonPhrase()))
             .andExpect(jsonPath(ERROR_PATH_MESSAGE).value(HttpStatus.BAD_REQUEST.getReasonPhrase()))
-            .andExpect(jsonPath("$.code").value("INVALID_REQUEST"))
-            .andExpect(jsonPath("$.exception").doesNotExist());
+            .andExpect(jsonPath("$.code").doesNotExist())
+            .andExpect(jsonPath("$.exception").value("Exception"));
     }
 
     @DisplayName("should return correct response when HttpMessageNotReadableException is thrown")
@@ -248,7 +248,7 @@ class RestExceptionHandlerTest {
             .andExpect(jsonPath(ERROR_PATH_STATUS).value(expectedStatus.value()))
             .andExpect(jsonPath(ERROR_PATH_ERROR).value(getReasonPhrase(expectedStatus)))
             .andExpect(jsonPath(ERROR_PATH_MESSAGE).value(expectedMessage))
-            .andExpect(jsonPath("$.exception").doesNotExist())
+            .andExpect(jsonPath("$.exception").value("Exception"))
             .andExpect(jsonPath("$.trace").doesNotExist());
     }
 

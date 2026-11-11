@@ -24,7 +24,7 @@ class HttpErrorTest {
     @MethodSource("provideHttpErrors")
     void shouldInitialiseHttpErrorWithDefaults(HttpError<String> httpError) {
         assertNotNull("Should record a date & time", httpError.getTimestamp());
-        assertEquals("Should record path", DICTIONARY_URL, httpError.getPath());
+        assertEquals("Should record safe path", "/", httpError.getPath());
         assertEquals("Should record DEFAULT status", HttpError.DEFAULT_STATUS, httpError.getStatus());
         assertEquals("Should record DEFAULT error", HttpError.DEFAULT_ERROR, httpError.getError());
     }
@@ -62,7 +62,7 @@ class HttpErrorTest {
 
         // THEN
         assertNotNull("Should record a date & time", httpError.getTimestamp());
-        assertEquals("Should record path", DICTIONARY_URL, httpError.getPath());
+        assertEquals("Should record safe path", "/", httpError.getPath());
         assertEquals("Should record DEFAULT status", HttpError.DEFAULT_STATUS, httpError.getStatus());
         assertEquals("Should record DEFAULT error", HttpError.DEFAULT_ERROR, httpError.getError());
     }

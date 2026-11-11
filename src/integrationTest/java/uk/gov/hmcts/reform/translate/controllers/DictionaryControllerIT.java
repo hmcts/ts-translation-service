@@ -128,9 +128,9 @@ public class DictionaryControllerIT extends BaseTest {
                                 .accept(APPLICATION_JSON_VALUE)
                                 .content(input))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.code").value("INVALID_REQUEST"))
-                .andExpect(jsonPath("$.path").doesNotExist())
-                .andExpect(jsonPath("$.exception").doesNotExist())
+                .andExpect(jsonPath("$.code").doesNotExist())
+                .andExpect(jsonPath("$.path").value("/"))
+                .andExpect(jsonPath("$.exception").value("Exception"))
                 .andExpect(jsonPath("$.trace").doesNotExist());
         }
 

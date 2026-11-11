@@ -9,8 +9,9 @@
   "body": {
     "status": 400,
     "error": "Bad Request",
-    "code": "INVALID_REQUEST",
     "message": "Bad Request",
-    "timestamp": "[[ANYTHING_PRESENT]]"
+    "timestamp": "[[ANYTHING_PRESENT]]",
+    "exception": "Exception",
+    "path": "/"
   }
 }

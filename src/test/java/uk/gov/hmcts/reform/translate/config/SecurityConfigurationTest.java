@@ -153,9 +153,9 @@ class SecurityConfigurationTest {
                 .header(SERVICE_AUTHORIZATION, SERVICE_TOKEN)
                 .contentType("application/json").content("{SYNTHETIC_PRIVATE_INPUT"))
             .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.code").value("INVALID_REQUEST"))
-            .andExpect(jsonPath("$.path").doesNotExist())
-            .andExpect(jsonPath("$.exception").doesNotExist())
+            .andExpect(jsonPath("$.code").doesNotExist())
+            .andExpect(jsonPath("$.path").value("/"))
+            .andExpect(jsonPath("$.exception").value("Exception"))
             .andExpect(content().string(org.hamcrest.Matchers.not(
                 org.hamcrest.Matchers.containsString("SYNTHETIC_PRIVATE_INPUT"))));
         verifyNoInteractions(jwtDecoder);

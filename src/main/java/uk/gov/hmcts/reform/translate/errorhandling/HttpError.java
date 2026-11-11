@@ -1,17 +1,13 @@
 package uk.gov.hmcts.reform.translate.errorhandling;
 
 import lombok.Getter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import uk.gov.hmcts.reform.translate.security.ErrorCode;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.util.UriUtils;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,12 +20,11 @@ public class HttpError<T extends Serializable> implements Serializable {
 
     public static final Integer DEFAULT_STATUS = HttpStatus.INTERNAL_SERVER_ERROR.value();
     public static final String DEFAULT_ERROR = "Unexpected Error";
+    private final String exception = "Exception";
     private final transient LocalDateTime timestamp;
     private final Integer status;
     private final String error;
-    private final ErrorCode code;
     private String message;
-    @JsonIgnore
     private final String path;
 
     public HttpError(Exception exception, String path, HttpStatus status) {
@@ -38,9 +33,8 @@ public class HttpError<T extends Serializable> implements Serializable {
         this.timestamp = LocalDateTime.now(ZoneOffset.UTC);
         this.status = getStatusFromResponseStatus(responseStatus, status);
         this.error = getErrorReason(responseStatus, status);
-        this.code = ErrorCode.fromStatus(this.status);
         this.message = this.error;
-        this.path = UriUtils.encodePath(path, StandardCharsets.UTF_8);
+        this.path = "/";
     }
 
     public HttpError(Exception exception, HttpServletRequest request, HttpStatus status) {

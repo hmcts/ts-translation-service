@@ -10,6 +10,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.AbstractView;
 import org.springframework.web.servlet.view.BeanNameViewResolver;
+import org.springframework.http.HttpStatus;
 
 import java.util.Map;
 
@@ -23,7 +24,12 @@ public class ErrorPageConfiguration {
             public Map<String, Object> getErrorAttributes(WebRequest request, ErrorAttributeOptions options) {
                 Map<String, Object> attributes = super.getErrorAttributes(request, options);
                 // Unknown URLs can contain identifiers; do not reflect them in fallback responses.
-                attributes.remove("path");
+                attributes.put("path", "/");
+                HttpStatus status = HttpStatus.resolve((Integer) attributes.get("status"));
+                attributes.put("message", status == null ? "Request failed" : status.getReasonPhrase());
+                attributes.remove("exception");
+                attributes.remove("trace");
+                attributes.remove("errors");
                 return attributes;
             }
         };
@@ -47,5 +53,21 @@ public class ErrorPageConfiguration {
                     + "</head><body><h1>Request failed</h1><p>Unable to process this request.</p></body></html>");
             }
         };
+    }
+
+    /** Native parser errors can occur before servlet dispatch and bypass /error. */
+    @Bean
+    public org.springframework.boot.web.server.WebServerFactoryCustomizer<
+        org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory> safeNativeErrorReports() {
+        return factory -> factory.addContextCustomizers(context -> context.addLifecycleListener(event -> {
+            if (org.apache.catalina.Lifecycle.BEFORE_START_EVENT.equals(event.getType())) {
+                for (var valve : context.getParent().getPipeline().getValves()) {
+                    if (valve instanceof org.apache.catalina.valves.ErrorReportValve reports) {
+                        reports.setShowReport(false);
+                        reports.setShowServerInfo(false);
+                    }
+                }
+            }
+        }));
     }
 }

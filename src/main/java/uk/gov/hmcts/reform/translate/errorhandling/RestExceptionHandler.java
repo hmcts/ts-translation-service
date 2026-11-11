@@ -130,7 +130,9 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     private void logFailure(Exception exception, int status) {
-        log.error("Request failed: code={} status={}", ErrorCode.fromStatus(status), status, exception);
+        try (var diagnostics = uk.gov.hmcts.reform.translate.logging.FailureDiagnostics.open(exception, status)) {
+            log.error("Request failed: code={} status={}", ErrorCode.fromStatus(status), status, exception);
+        }
     }
 
 }

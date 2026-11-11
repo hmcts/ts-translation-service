@@ -19,7 +19,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import uk.gov.hmcts.reform.translate.Application;
-import uk.gov.hmcts.reform.translate.logging.SafeHealthDiagnosticsFilter;
 
 import java.net.Socket;
 import java.net.URI;
@@ -116,7 +115,7 @@ class UnauthenticatedHttpIT {
 
     @Test
     void healthFailuresHidePublicDetailsAndRetainOneServerCauseAtNormalLevels() throws Exception {
-        Logger logger = (Logger) LoggerFactory.getLogger(SafeHealthDiagnosticsFilter.class);
+        Logger logger = (Logger) LoggerFactory.getLogger(ProbeHealthIndicator.class);
         Level previous = logger.getLevel();
         health.down = true;
         try {

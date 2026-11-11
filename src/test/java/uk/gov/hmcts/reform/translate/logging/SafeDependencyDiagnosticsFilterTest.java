@@ -39,12 +39,9 @@ class SafeDependencyDiagnosticsFilterTest {
     @Test
     void retainsDetailedFailuresAtNormalLevelsAndRespectsSourceThresholds() {
         LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
-        SafeDependencyDiagnosticsFilter filter = new SafeDependencyDiagnosticsFilter();
 
-        filter.start();
-        context.addTurboFilter(filter);
         Logger source = context.getLogger("org.postgresql.supportProbe");
-        Logger output = context.getLogger(SafeDependencyDiagnosticsFilter.class);
+        Logger output = context.getLogger("application.UnrelatedDiagnostics");
         Logger root = context.getLogger(Logger.ROOT_LOGGER_NAME);
         Level previousSource = source.getLevel();
         Level previousOutput = output.getLevel();
@@ -80,13 +77,36 @@ class SafeDependencyDiagnosticsFilterTest {
             output.setLevel(previousOutput);
             root.detachAppender(appender);
             appender.stop();
-            context.getTurboFilterList().remove(filter);
-            filter.stop();
         }
     }
 
     @Test
-    void realMvcSqlFailuresRetainOneNormalBoundaryEvent() throws Exception {
+    void recoveredSqlWarningsRemainAvailableDuringRequests() throws Exception {
+        capture((appender, output) -> {
+            var previous = RequestContextHolder.getRequestAttributes();
+            var source = ((LoggerContext) LoggerFactory.getILoggerFactory())
+                .getLogger("org.hibernate.engine.jdbc.spi.SqlExceptionHelper");
+            var previousLevel = source.getLevel();
+            try {
+                source.setLevel(Level.WARN);
+                var attributes = new org.springframework.web.context.request.ServletRequestAttributes(
+                    new MockHttpServletRequest());
+                RequestContextHolder.setRequestAttributes(attributes);
+                source.warn("Recovered SQL warning", new SQLException("Original diagnostic"));
+                assertThat(appender.list).singleElement().satisfies(event -> {
+                    assertThat(event.getLevel()).isEqualTo(Level.WARN);
+                    assertThat(event.getLoggerName()).isEqualTo(source.getName());
+                    assertThat(event.getThrowableProxy().getMessage()).isEqualTo("Original diagnostic");
+                });
+            } finally {
+                source.setLevel(previousLevel);
+                RequestContextHolder.setRequestAttributes(previous);
+            }
+        });
+    }
+
+    @Test
+    void realMvcSqlFailuresRetainNativeAndBoundaryDiagnostics() throws Exception {
         capture((appender, output) -> {
             var mvc = standaloneSetup(new FailingController())
                 .setControllerAdvice(new RestExceptionHandler()).build();
@@ -95,10 +115,10 @@ class SafeDependencyDiagnosticsFilterTest {
                 appender.list.clear();
                 mvc.perform(get("/database-probe"))
                     .andExpect(status().isInternalServerError())
-                    .andExpect(jsonPath("$.code").value("INTERNAL_ERROR"))
-                    .andExpect(jsonPath("$.path").doesNotExist());
-                assertThat(appender.list).filteredOn(event -> event.getLevel().isGreaterOrEqual(Level.WARN))
-                    .singleElement().satisfies(event -> {
+                    .andExpect(jsonPath("$.code").doesNotExist())
+                    .andExpect(jsonPath("$.path").value("/"));
+                assertThat(appender.list).filteredOn(event -> event.getLoggerName().equals(
+                    RestExceptionHandler.class.getName())).singleElement().satisfies(event -> {
                         assertThat(event.getFormattedMessage())
                             .isEqualTo("Request failed: code=INTERNAL_ERROR status=500");
                         assertThat(event.getThrowableProxy().getCause().getMessage()).isEqualTo("PRIVATE SQL cause");
@@ -142,7 +162,7 @@ class SafeDependencyDiagnosticsFilterTest {
             appender.list.clear();
             mvc.perform(get("/rollback-probe"))
                 .andExpect(status().isInternalServerError())
-                .andExpect(jsonPath("$.code").value("INTERNAL_ERROR"))
+                .andExpect(jsonPath("$.code").doesNotExist())
                 .andExpect(jsonPath("$.message").value("Internal Server Error"));
             assertThat(appender.list).filteredOn(event -> event.getLevel() == Level.ERROR
                 && event.getThrowableProxy() != null)
@@ -171,12 +191,8 @@ class SafeDependencyDiagnosticsFilterTest {
 
     private void capture(LogCheck check) throws Exception {
         LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
-        Logger output = context.getLogger(SafeDependencyDiagnosticsFilter.class);
+        Logger output = context.getLogger("application.UnrelatedDiagnostics");
         Level previousLevel = output.getLevel();
-        SafeDependencyDiagnosticsFilter filter = new SafeDependencyDiagnosticsFilter();
-        filter.setContext(context);
-        filter.start();
-        context.addTurboFilter(filter);
         ListAppender<ILoggingEvent> appender = new ListAppender<>();
         appender.start();
         Logger root = context.getLogger(Logger.ROOT_LOGGER_NAME);
@@ -186,8 +202,6 @@ class SafeDependencyDiagnosticsFilterTest {
         } finally {
             root.detachAppender(appender);
             appender.stop();
-            context.getTurboFilterList().remove(filter);
-            filter.stop();
             output.setLevel(previousLevel);
         }
     }

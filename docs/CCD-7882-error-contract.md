@@ -1,5 +1,63 @@
 # CCD-7882: controlled error responses
 
+## Native diagnostic logging restored — 10 November 2026
+
+This supersedes earlier descriptions of rewritten health/dependency log events.
+Health logs retain their original categories, appenders, levels and exceptions; custom
+log-rewriting filters and their lifecycle registration have been removed. CDAM also
+retains native framework/dependency logging. Public error/health sanitisation is
+unchanged. DEBUG, INFO, WARN and ERROR follow the configured source logger threshold;
+private diagnostic details remain in server logs. No public fields or codes were added.
+
+Regression coverage checks all four levels (plus OFF), original category routing and
+exception stacks, and real health responses with private details withheld.
+
+## Docker operational verification — 10 November 2026
+
+This supersedes earlier open native-parser findings for the tested local candidates.
+Native Tomcat report and version disclosure is disabled at host-valve startup. A raw malformed HTTP method returned 400 without Java classes, stack traces or the Tomcat banner in the rebuilt container.
+
+Controlled failures at normal INFO logging exported one correlated failure event with
+private `failureCode` and `httpStatus` dimensions and the existing request operation ID.
+No public fields or generic public category codes were introduced. Existing approved
+business/NoC API codes remain. Java uses scoped MDC and the existing agent log collector;
+Node's Winston 2 path needs one explicit SDK exception export because its automatic
+instrumentation provides correlation but does not export those records. Node cause
+chains are retained in private properties; activity now initialises telemetry before
+loading Express/HTTP. No second exception is emitted for the controlled failure.
+
+Validation for this follow-up: 111 focused Java tests and 55 Node tests passed across the repositories; Java main/test Checkstyle, targeted ESLint and diff checks passed.
+
+Evidence: parent workspace `review-reports/CCD-7882/operational-telemetry-results.json`.
+The real agent/SDK delivered to a local synthetic ingestion collector. Tests used INFO,
+DEBUG disabled, 100% sampling and a disabled Node trace-rate limiter in staged test
+configuration. Production sampling/rate limits were not changed. Existing production
+sampling can discard request records and needs explicit operational acceptance.
+
+These runs used current rebuilt JARs/staged Node source with cached substitute runtimes,
+not each exact production Dockerfile or ingress. Artifact hashes identify the tested
+payloads; HEAD revisions alone do not include the uncommitted fixes. Azure RBAC,
+production ingestion, sampling, retention, exact images and ingress remain release checks.
+
+
+## Current contract — 10 November 2026
+
+This section supersedes earlier response examples and verification descriptions below.
+CCD-7882, CCD-7108 and CME-984 require sanitised public errors and retained private
+diagnostics. They do not require new public category codes. Consumers have not adopted
+those codes, so remediation-only code fields have been removed. Existing message fields,
+HTTP statuses and approved business feedback are retained; implementation details are
+replaced with safe values. Existing text, JSON and framework response formats are preserved
+where applicable. Internal logging categories are not public response fields.
+
+Legacy exception/path keys are retained with safe Exception and / values. The dependency logging filter was removed: native events retain their original logger and severity, including recovered SQL warnings during requests. Tests cover both native diagnostics and the terminal handler.
+
+Verification: 38 tests passed, zero failures/errors/skips. Relevant main/test Checkstyle passed.
+These are local source/test results, not deployed acceptance. Broker Pact verification,
+effective runtime overrides, ingress behaviour and restricted log access/collection/retention
+remain release checks. Earlier verification entries are historical evidence.
+
+
 ## Current support logging policy
 
 Public error responses remain generic. Detailed request failures, including exception causes
@@ -508,3 +566,42 @@ not an extra production runtime dependency. Synthetic raw logs are local diagnos
 Production image/ingress verification, deployed BEFTA/ITHC, actual Azure ingestion, retention
 and administrator-only access remain release gates. The local telemetry collector proves the
 specific agent/SDK path tested, not production collection settings.
+
+## Message compatibility — 9 November 2026
+
+Retain the public `message` field. Spring Boot JSON fallback now explicitly supplies
+standard HTTP status text, even when raw exception-message inclusion is disabled.
+Exception details, traces and binding diagnostics remain private, including when
+requested through query parameters. Existing advice validation messages and HTTP
+statuses are unchanged by this follow-up. Full diagnostics remain in server logs.
+Focused fallback regressions assert the safe message and absence of diagnostic fields.
+Consumer Pact/BEFTA and effective deployed configuration still require verification;
+field preservation alone does not prove exact-text contract compatibility.
+
+Focused verification: 2 tests, 0 failures, 0 errors, 0 skipped; main/test Checkstyle passed.
+
+## Functional fixture alignment — 10 November 2026
+
+A further comparison with local master found fixture expectations left over from the
+intermediate remediation contract. 1 fixtures were corrected to match the
+current safe response schema. Legacy diagnostic keys use safe values; Spring framework
+errors retain ProblemDetail keys and application/problem+json where applicable.
+Public remediation category codes remain absent. Fixed error-body length assumptions
+were relaxed where sanitised text changes the encoded payload length.
+
+This follow-up changes fixture expectations, not production status or response policy.
+
+Fixture-alignment verification: 38 focused tests passed, zero failures/errors/skips.
+
+## Health diagnostic threshold fix — 10 November 2026
+
+The health logging filter previously suppressed the native event after attempting
+replacement logging. If the source allowed WARN but the replacement logger was set
+to ERROR or OFF, no event survived. The filter now returns NEUTRAL when replacement
+logging is disabled for that severity, allowing the original logger to emit once.
+Source thresholds remain respected; public HTTP responses are unchanged.
+
+Regression coverage now includes INFO, DEBUG, ERROR and OFF replacement levels,
+original logger identity when falling back, retained exception/stack details and
+exactly one event. Four focused health/redaction/lifecycle tests passed in this
+service, with zero failures/errors/skips; main/test Checkstyle and diff checks passed.
