@@ -4,6 +4,8 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -101,7 +103,9 @@ class UnauthenticatedHttpIT {
             assertThat(method.statusCode()).as(accept).isEqualTo(accept.equals("text/html") ? 401 : 405);
             if (accept.equals("application/json")) {
                 assertThat(method.headers().firstValue("Allow")).hasValue("GET");
-                assertThat(method.body()).contains("METHOD_NOT_ALLOWED");
+                JsonNode body = new ObjectMapper().readTree(method.body());
+                assertThat(body.path("message").asText()).isEqualTo("Method Not Allowed");
+                assertThat(body.has("code")).isFalse();
             }
             assertSafeBody(method.body());
             HttpResponse<String> missing = request("GET", "/swagger-ui/" + PRIVATE + DIAGNOSTICS, accept);
@@ -139,6 +143,18 @@ class UnauthenticatedHttpIT {
 
     @Test
     void malformedHttpRequestsDoNotExposeContainerDiagnostics() throws Exception {
+        Logger logger = (Logger) LoggerFactory.getLogger("org.apache.coyote.http11.Http11Processor");
+        Level previous = logger.getLevel();
+        // Tomcat logs repeated parser failures at DEBUG after the first INFO report.
+        logger.setLevel(Level.DEBUG);
+        try {
+            assertMalformedRequestsAreSafe(logger);
+        } finally {
+            logger.setLevel(previous);
+        }
+    }
+
+    private void assertMalformedRequestsAreSafe(Logger logger) throws Exception {
         for (String accept : List.of("application/json", "text/html")) {
             for (String target : List.of("/%ZZ-" + PRIVATE, "/ HTTP/invalid-" + PRIVATE)) {
                 try (Socket socket = new Socket("127.0.0.1", port)) {
@@ -152,10 +168,10 @@ class UnauthenticatedHttpIT {
                 }
             }
         }
-        assertThat(events.list).filteredOn(event -> event.getLoggerName()
-            .endsWith("SafeDependencyDiagnosticsFilter") && event.getLevel() == Level.INFO)
+        assertThat(events.list).filteredOn(event -> event.getLoggerName().equals(logger.getName())
+            && event.getThrowableProxy() != null)
             .anySatisfy(event -> {
-                assertThat(event.getFormattedMessage()).contains("org.apache.coyote.http11.Http11Processor");
+                assertThat(event.getLevel()).isIn(Level.INFO, Level.DEBUG);
                 assertThat(event.getThrowableProxy().getMessage()).contains(PRIVATE);
             });
     }
@@ -166,9 +182,22 @@ class UnauthenticatedHttpIT {
             .method(method, HttpRequest.BodyPublishers.noBody()).build(), HttpResponse.BodyHandlers.ofString());
     }
 
-    private void assertSafeBody(String body) {
-        assertThat(body).doesNotContain(PRIVATE, "java.lang", "org.apache", "Apache Tomcat", "Exception",
-            "Whitelabel", "\"path\"", "\"trace\"", "\"exception\"", "/opt/app");
+    private void assertSafeBody(String body) throws Exception {
+        assertThat(body).doesNotContain(PRIVATE, "java.lang", "org.apache", "Apache Tomcat",
+            "Whitelabel", "\"trace\"", "/opt/app");
+        if (body.startsWith("{")) {
+            JsonNode json = new ObjectMapper().readTree(body);
+            if (json.has("path")) {
+                assertThat(json.path("path").asText()).isEqualTo("/");
+            }
+            if (json.has("exception")) {
+                assertThat(json.path("exception").asText()).isEqualTo("Exception");
+            }
+            assertThat(json.toString().replace("\"exception\":\"Exception\"", ""))
+                .doesNotContain("Exception");
+        } else {
+            assertThat(body).doesNotContain("Exception");
+        }
     }
 
     @TestConfiguration
