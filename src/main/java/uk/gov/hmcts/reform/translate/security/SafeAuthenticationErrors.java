@@ -1,5 +1,7 @@
 package uk.gov.hmcts.reform.translate.security;
 
+import uk.gov.hmcts.reform.translate.logging.FailureDiagnostics;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +39,9 @@ public class SafeAuthenticationErrors
             }
         }
         ErrorCode code = ErrorCode.fromStatus(status.value());
-        log.warn("Authentication failed: code={} status={}", code, status.value(), exception);
+        try (var diagnostics = FailureDiagnostics.open(exception, status.value())) {
+            log.warn("Authentication failed: code={} status={}", code, status.value(), exception);
+        }
         response.setHeader(HttpHeaders.WWW_AUTHENTICATE, challenge);
         response.setStatus(status.value());
     }
@@ -46,7 +50,9 @@ public class SafeAuthenticationErrors
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
                                         AuthenticationException exception) {
         if (exception instanceof AuthenticationServiceException) {
-            log.error("Authentication service failed: code={} status=500", ErrorCode.INTERNAL_ERROR, exception);
+            try (var diagnostics = FailureDiagnostics.open(exception, 500)) {
+                log.error("Authentication service failed: code={} status=500", ErrorCode.INTERNAL_ERROR, exception);
+            }
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
         } else {
             commence(request, response, exception);
@@ -55,7 +61,9 @@ public class SafeAuthenticationErrors
 
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException exception) {
-        log.warn("Access denied: code={} status=403", ErrorCode.ACCESS_DENIED, exception);
+        try (var diagnostics = FailureDiagnostics.open(exception, 403)) {
+            log.warn("Access denied: code={} status=403", ErrorCode.ACCESS_DENIED, exception);
+        }
         response.setHeader(HttpHeaders.WWW_AUTHENTICATE,
             request.getUserPrincipal() instanceof AbstractOAuth2TokenAuthenticationToken<?>
                 ? "Bearer error=\"insufficient_scope\"" : "Bearer");

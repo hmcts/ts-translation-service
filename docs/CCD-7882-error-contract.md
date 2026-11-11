@@ -17,9 +17,16 @@ and public `message` fields where present, while retaining useful private diagno
 
 ## Diagnostics
 
+`ErrorCode` labels are internal log categories; `failureCode` is the structured telemetry code.
+Neither introduces a public API error-code field.
+
 Advice logs retain original exceptions at ERROR with private `failureCode` and `httpStatus`
 dimensions. Authentication failures retain server diagnostics. Sensitive deletion details move to
 DEBUG while a count remains at WARN. Correlation context is preserved.
+
+Bearer and S2S authentication/denial logs carry private `failureCode` and `httpStatus` dimensions.
+S2S uses `AUTHENTICATION_FAILED` for 401 and `AUTHORISATION_DENIED` for 403. Scopes restore the
+caller's context after logging and do not tag successful downstream requests as failures.
 
 ## Verification
 
