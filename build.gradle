@@ -245,7 +245,7 @@ dependencies {
   implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: '8.0.0'
 
 
-  implementation group: 'com.auth0', name: 'java-jwt', version: '4.6.1'
+  implementation group: 'com.auth0', name: 'java-jwt', version: '4.6.2'
   implementation group: 'org.flywaydb', name: 'flyway-core'
   implementation group: 'org.flywaydb', name: 'flyway-database-postgresql'
   implementation group: 'org.postgresql', name: 'postgresql', version: '42.7.13'
