@@ -272,7 +272,7 @@ dependencies {
   integrationTestImplementation("org.testcontainers:postgresql:${testcontainers}") {
     exclude group: 'org.apache.commons', module: 'commons-compress'
   }
-  integrationTestImplementation group: 'org.apache.httpcomponents.client5', name: 'httpclient5', version: '5.6.4'
+  integrationTestImplementation group: 'org.apache.httpcomponents.client5', name: 'httpclient5', version: '5.6.5'
   integrationTestImplementation group: 'org.apache.httpcomponents.core5', name: 'httpcore5', version: '5.4.4'
   integrationTestImplementation group: 'org.apache.httpcomponents.core5', name: 'httpcore5-h2', version: '5.4.4'
   integrationTestImplementation group: 'org.apache.commons', name: 'commons-compress', version: '1.28.0'
