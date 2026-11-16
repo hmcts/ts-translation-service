@@ -42,6 +42,11 @@ spring:
       spec: expireAfterWrite=1800s
   config:
     import: "optional:configtree:/mnt/secrets/ts/"
+  cloud:
+    config:
+      server:
+        health:
+          enabled: false
   application:
     name: Translation Service
   datasource:
