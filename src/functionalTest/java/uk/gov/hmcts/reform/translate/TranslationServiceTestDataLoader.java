@@ -86,7 +86,9 @@ public class TranslationServiceTestDataLoader extends DefaultBeftaTestDataLoader
 
         try {
             ObjectMapper objectMapper = new ObjectMapper();
-            String filePath = BeftaUtils.getFileFromResource("features/common/users/ManageTranslationsUser.td.json").getPath();
+            String filePath = BeftaUtils
+                .getFileFromResource("features/common/users/ManageTranslationsUser.td.json")
+                .getPath();
             String fileContent = new String(Files.readAllBytes(Paths.get(filePath)));
             
             // Use readTree() to avoid JsonNode deserialization issues with abstract types in Spring Boot 4
