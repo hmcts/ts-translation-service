@@ -8,9 +8,6 @@
   ],
 
   "request" :{
-    "pathVariables" : {
-      "ts-translation-service-version": "ts-translation-service.json"
-    }
   },
 
   "expectedResponse": {

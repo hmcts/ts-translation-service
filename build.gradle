@@ -1,3 +1,8 @@
+import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
+import com.github.benmanes.gradle.versions.updates.resolutionstrategy.ComponentFilter
+import com.github.benmanes.gradle.versions.updates.resolutionstrategy.ComponentSelectionWithCurrent
+import uk.gov.hmcts.rse.AuthMode
+
 plugins {
   id 'application'
   id 'idea'
@@ -21,8 +26,6 @@ ext {
   set('snakeyaml.version', '2.6')
   appInsightsVersion  = '2.6.4'
   jjwt               = '0.13.0'
-  junit               = '6.1.3'
-  junitPlatform       = '6.1.3'
   lombok              = '1.18.48'
   testcontainers      = '1.21.4'
 
@@ -33,19 +36,6 @@ java {
     languageVersion = JavaLanguageVersion.of(21)
   }
 }
-
-ext.libraries = [
-  junit5: [
-    "org.junit.jupiter:junit-jupiter-api:${junit}",
-    "org.junit.jupiter:junit-jupiter-engine:${junit}",
-    "org.junit.jupiter:junit-jupiter-params:${junit}",
-    "org.junit.platform:junit-platform-launcher:${junitPlatform}",
-    "org.junit.platform:junit-platform-commons:${junitPlatform}",
-    "org.junit.platform:junit-platform-engine:${junitPlatform}",
-    "org.junit.platform:junit-platform-launcher:${junitPlatform}",
-    "org.apiguardian:apiguardian-api:1.1.2"
-  ]
-]
 
 sourceSets {
   functionalTest {
@@ -87,10 +77,6 @@ idea {
   }
 }
 
-tasks.withType(JavaCompile) {
-  // options.compilerArgs << "-Xlint:unchecked" << "-Werror"
-}
-
 // https://github.com/gradle/gradle/issues/16791
 tasks.withType(JavaExec).configureEach {
   javaLauncher.set(javaToolchains.launcherFor(java.toolchain))
@@ -100,11 +86,11 @@ checkstyle {
   toolVersion = '14.3.0'
 }
 
-tasks.withType(Checkstyle) {
+tasks.withType(Checkstyle).configureEach {
   exclude '**/package-info.java'
 }
 
-tasks.withType(Test) {
+tasks.withType(Test).configureEach {
   useJUnitPlatform()
 
   testLogging {
@@ -113,11 +99,10 @@ tasks.withType(Test) {
 }
 
 test {
-  generateCucumberReports.enabled = true
   failFast = true
 }
 
-task smoke(type: JavaExec) {
+tasks.register('smoke', JavaExec) {
   description = "Runs smoke tests"
   group = "Verification"
 
@@ -127,17 +112,17 @@ task smoke(type: JavaExec) {
   args = [
     '--threads', '10',
     '--plugin', "json:${rootDir}/target/cucumber.json",
-    '--plugin', "junit:${buildDir}/test-results/smoke/cucumber.xml",
+    '--plugin', "junit:${layout.buildDirectory.file('test-results/smoke/cucumber.xml').get().asFile.absolutePath}",
     '--tags', '@Smoke and not @Ignore',
     '--glue', 'uk.gov.hmcts.befta.player', 'src/functionalTest/resources/features'
   ]
   // '--add-opens=...' added to suppress 'WARNING: An illegal reflective access operation has occurred' in uk.gov.hmcts.befta.util.CucumberStepAnnotationUtils
-  jvmArgs = [ '--add-opens=java.base/java.lang.reflect=ALL-UNNAMED' ]
+  jvmArgs = ['--add-opens=java.base/java.lang.reflect=ALL-UNNAMED']
 
   finalizedBy {
     generateCucumberReports.enabled = true
     generateCucumberReports {
-      doLast{
+      doLast {
         delete "${rootDir}/BEFTA Report for Smoke Tests/"
         new File("${rootDir}/BEFTA Report for Smoke Tests").mkdirs()
         file("${rootDir}/target/cucumber/cucumber-html-reports").renameTo(file("${rootDir}/BEFTA Report for Smoke Tests"))
@@ -150,7 +135,7 @@ task smoke(type: JavaExec) {
   outputs.upToDateWhen { false }
 }
 
-task functional(type: JavaExec) {
+tasks.register('functional', JavaExec) {
   description = "Runs functional tests"
   group = "Verification"
 
@@ -160,17 +145,17 @@ task functional(type: JavaExec) {
   args = [
     '--threads', '10',
     '--plugin', "json:${rootDir}/target/cucumber.json",
-    '--plugin', "junit:${buildDir}/test-results/functional/cucumber.xml",
+    '--plugin', "junit:${layout.buildDirectory.file('test-results/functional/cucumber.xml').get().asFile.absolutePath}",
     '--tags', 'not @Ignore',
     '--glue', 'uk.gov.hmcts.befta.player', 'src/functionalTest/resources/features'
   ]
   // '--add-opens=...' added to suppress 'WARNING: An illegal reflective access operation has occurred' in uk.gov.hmcts.befta.util.CucumberStepAnnotationUtils
-  jvmArgs = [ '--add-opens=java.base/java.lang.reflect=ALL-UNNAMED' ]
+  jvmArgs = ['--add-opens=java.base/java.lang.reflect=ALL-UNNAMED']
 
   finalizedBy {
     generateCucumberReports.enabled = true
     generateCucumberReports {
-      doLast{
+      doLast {
         delete "${rootDir}/BEFTA Report for Functional Tests/"
         new File("${rootDir}/BEFTA Report for Functional Tests").mkdirs()
         file("${rootDir}/target/cucumber/cucumber-html-reports").renameTo(file("${rootDir}/BEFTA Report for Functional Tests"))
@@ -182,7 +167,7 @@ task functional(type: JavaExec) {
   outputs.upToDateWhen { false }
 }
 
-task integration(type: Test) {
+tasks.register('integration', Test) {
   description = "Runs integration tests"
   group = "Verification"
   testClassesDirs = sourceSets.integrationTest.output.classesDirs
@@ -191,11 +176,12 @@ task integration(type: Test) {
 }
 
 cucumberReports {
+  testTasksFinalizedByReport = false
   outputDir = file("${rootDir}/target/cucumber")
   reports = files("${rootDir}/target/cucumber.json")
 }
 
-task customCleanBeftaReports(type:Delete) {
+tasks.register('customCleanBeftaReports', Delete) {
   delete "${rootDir}/BEFTA Report for Smoke Tests/"
   delete "${rootDir}/BEFTA Report for Functional Tests/"
   delete "${rootDir}/target/cucumber"
@@ -208,7 +194,7 @@ jacocoTestReport {
   reports {
     xml.required = true
     csv.required = false
-    xml.outputLocation = file("${buildDir}/reports/jacoco/test/jacocoTestReport.xml")
+    xml.outputLocation = layout.buildDirectory.file('reports/jacoco/test/jacocoTestReport.xml')
   }
 }
 
@@ -247,7 +233,6 @@ dependencies {
   implementation "com.github.hmcts:idam-java-client:4.0.0"
   implementation "com.github.hmcts.java-logging:logging:8.0.0"
 
-
   implementation "com.auth0:java-jwt:4.6.1"
   implementation "com.microsoft.azure:applicationinsights-logging-logback:${appInsightsVersion}"
   implementation "com.microsoft.azure:applicationinsights-spring-boot-starter:${appInsightsVersion}"
@@ -255,7 +240,6 @@ dependencies {
   runtimeOnly "org.flywaydb:flyway-database-postgresql"
   implementation "org.postgresql:postgresql:42.7.13"
 
-  testImplementation libraries.junit5
   testImplementation "org.springframework.boot:spring-boot-starter-test"
   testImplementation "org.assertj:assertj-vavr:0.5.1"
   testImplementation "org.springframework.boot:spring-boot-starter-webmvc-test"
@@ -286,8 +270,12 @@ dependencyManagement {
   }
 }
 
-project.tasks['sonarqube'].dependsOn jacocoTestReport
-project.tasks['check'].dependsOn integration
+tasks.named('sonarqube') {
+  dependsOn(tasks.named('jacocoTestReport'))
+}
+tasks.named('check') {
+  dependsOn(tasks.named('integration'))
+}
 
 sonarqube {
   properties {
@@ -300,16 +288,18 @@ sonarqube {
   }
 }
 
+static boolean isNonStable(String version) {
+  def stableKeyword = ['RELEASE', 'FINAL', 'GA'].any { qualifier -> version.toUpperCase().contains(qualifier) }
+  def regex = /^[0-9,.v-]+$/
+  return !stableKeyword && !(version ==~ regex)
+}
+
 // before committing a change, make sure task still works
-dependencyUpdates {
-  def isNonStable = { String version ->
-    def stableKeyword = ['RELEASE', 'FINAL', 'GA'].any { qualifier -> version.toUpperCase().contains(qualifier) }
-    def regex = /^[0-9,.v-]+$/
-    return !stableKeyword && !(version ==~ regex)
+tasks.named('dependencyUpdates', DependencyUpdatesTask).configure { DependencyUpdatesTask dependencyUpdatesTask ->
+  ComponentFilter nonStableVersionFilter = { ComponentSelectionWithCurrent selection ->
+    return isNonStable(selection.candidate.version) && !isNonStable(selection.currentVersion as String)
   }
-  rejectVersionIf { selection -> // <---- notice how the closure argument is named
-    return isNonStable(selection.candidate.version) && !isNonStable(selection.currentVersion)
-  }
+  dependencyUpdatesTask.rejectVersionIf(nonStableVersionFilter)
 }
 
 apply from: './gradle/suppress.gradle'
@@ -317,6 +307,7 @@ apply from: './gradle/suppress.gradle'
 dependencyCheck {
   formats = ['HTML', 'XML']
   suppressionFile = 'config/owasp/suppressions.xml'
+  outputDirectory = layout.buildDirectory.dir('reports').get().asFile.absolutePath
 }
 
 
@@ -361,9 +352,9 @@ bootRun {
 
 bootWithCCD {
 
-  authMode = uk.gov.hmcts.rse.AuthMode.Local
+  authMode = AuthMode.Local
 
-  environment("RSE_LIB_ADDITIONAL_DATABASES", "ts_translation_service");
+  environment("RSE_LIB_ADDITIONAL_DATABASES", "ts_translation_service")
   environment("TS_TRANSLATION_SERVICE_DB_USERNAME", "postgres")
   environment("TS_TRANSLATION_SERVICE_DB_PASSWORD", "postgres")
   environment("TS_TRANSLATION_SERVICE_DB_PORT", "6432")

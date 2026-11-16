@@ -7,9 +7,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Data;
 import lombok.NonNull;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
+@NoArgsConstructor
 @Data
 @JsonInclude(Include.NON_NULL)
 public class Translation {

@@ -75,9 +75,11 @@ spring:
         provider:
           oidc:
             issuer-uri: ${IDAM_OIDC_URL:http://localhost:5000}/o
-azure:
-  application-insights:
-    instrumentation-key: ${ts.AppInsightsInstrumentationKey:00000000-0000-0000-0000-000000000000}
+
+# Believe to be obsolete
+#azure:
+#  application-insights:
+#    instrumentation-key: ${ts.AppInsightsInstrumentationKey:00000000-0000-0000-0000-000000000000}
 
 idam:
   api:
