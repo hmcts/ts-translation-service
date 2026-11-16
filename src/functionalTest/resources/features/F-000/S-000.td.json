@@ -66,6 +66,9 @@
         },
         "serviceAuth": {
           "status": "UP"
+        },
+        "clientConfigServer" : {
+          "status" : "UP"
         }
       },
       "groups": [
