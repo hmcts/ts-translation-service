@@ -208,7 +208,7 @@ dependencies {
 
   // PUT CVE Vulnerability dependency overrides here
   // e.g. implementation group: 'com.example', name: 'example-lib', version: '1.2.3'
-  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '10.1.60'
+  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '10.1.62'
   implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-el', version: '10.1.60'
   implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-websocket', version: '10.1.60'
   implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.21.0'
