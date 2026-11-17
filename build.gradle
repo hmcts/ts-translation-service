@@ -255,7 +255,7 @@ dependencies {
 
   integrationTestImplementation sourceSets.main.runtimeClasspath
   integrationTestImplementation sourceSets.test.runtimeClasspath
-  integrationTestImplementation group: 'com.github.ben-manes.caffeine', name: 'caffeine', version: '3.2.4'
+  integrationTestImplementation group: 'com.github.ben-manes.caffeine', name: 'caffeine', version: '3.3.1'
   integrationTestImplementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: jjwt
   integrationTestRuntimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: jjwt
   integrationTestRuntimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: jjwt
