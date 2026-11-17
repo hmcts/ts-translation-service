@@ -208,9 +208,9 @@ dependencies {
 
   // PUT CVE Vulnerability dependency overrides here
   // e.g. implementation group: 'com.example', name: 'example-lib', version: '1.2.3'
-  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '10.1.60'
-  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-el', version: '10.1.60'
-  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-websocket', version: '10.1.60'
+  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '10.1.62'
+  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-el', version: '10.1.62'
+  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-websocket', version: '10.1.62'
   implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.21.0'
   implementation group: 'org.bouncycastle', name: 'bcprov-jdk18on', version: '1.86'
 
@@ -245,7 +245,7 @@ dependencies {
   implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: '8.0.0'
 
 
-  implementation group: 'com.auth0', name: 'java-jwt', version: '4.6.1'
+  implementation group: 'com.auth0', name: 'java-jwt', version: '4.6.2'
   implementation group: 'org.flywaydb', name: 'flyway-core'
   implementation group: 'org.flywaydb', name: 'flyway-database-postgresql'
   implementation group: 'org.postgresql', name: 'postgresql', version: '42.7.13'
@@ -272,7 +272,7 @@ dependencies {
   integrationTestImplementation("org.testcontainers:postgresql:${testcontainers}") {
     exclude group: 'org.apache.commons', module: 'commons-compress'
   }
-  integrationTestImplementation group: 'org.apache.httpcomponents.client5', name: 'httpclient5', version: '5.6.4'
+  integrationTestImplementation group: 'org.apache.httpcomponents.client5', name: 'httpclient5', version: '5.6.5'
   integrationTestImplementation group: 'org.apache.httpcomponents.core5', name: 'httpcore5', version: '5.4.4'
   integrationTestImplementation group: 'org.apache.httpcomponents.core5', name: 'httpcore5-h2', version: '5.4.4'
   integrationTestImplementation group: 'org.apache.commons', name: 'commons-compress', version: '1.28.0'
@@ -280,7 +280,7 @@ dependencies {
   functionalTestImplementation sourceSets.main.runtimeClasspath
   functionalTestImplementation sourceSets.test.runtimeClasspath
   functionalTestImplementation group: 'io.rest-assured', name: 'rest-assured', version: '5.5.6'
-  functionalTestImplementation group: 'com.github.hmcts', name: 'befta-fw', version: '9.2.11'
+  functionalTestImplementation group: 'com.github.hmcts', name: 'befta-fw', version: '9.2.12_CCD-8388'
   functionalTestImplementation group: 'com.github.hmcts', name: 'ccd-test-definitions', version: '7.26.12'
 
   cftlibImplementation group: 'org.springframework.boot', name: 'spring-boot-devtools'
