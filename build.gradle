@@ -239,7 +239,7 @@ dependencies {
   }
   // CVE-2026-59284 requires writable /actuator/env, which is not enabled; no Boot 3 patch is published.
   //noinspection VulnerableLibrariesLocal
-  implementation('com.github.hmcts:idam-java-client:3.0.5') {
+  implementation('com.github.hmcts:idam-java-client:3.1.0') {
     exclude group: 'org.bouncycastle', module: 'bcprov-jdk18on'
   }
   implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: '8.0.0'
