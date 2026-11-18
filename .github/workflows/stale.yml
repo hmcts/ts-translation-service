@@ -1,43 +1,28 @@
-name: 'Close stale issues and PRs'
+name: Test Renovate config
+
 on:
-  schedule:
-    - cron: '0 19 * * *' # Run daily at 7pm GMT
-  workflow_dispatch: # Allow manual trigger
+  workflow_dispatch:
 
 permissions:
-  issues: write
-  pull-requests: write
-  contents: write # Required for delete-branch option
+  contents: read
+  issues: read
+  pull-requests: read
 
 jobs:
-  stale:
+  renovate-dry-run:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/stale@v10
+      - name: Check out repository
+        uses: actions/checkout@v7.0.1
+
+      - name: Run Renovate in dry-run mode
+        uses: renovatebot/github-action@v46.3.7
         with:
-          # Stale issues configuration
-          days-before-issue-stale: 90
-          days-before-issue-close: 30
-          stale-issue-message: 'This issue has been automatically marked as stale because it has not had recent activity. It will be closed in 30 days if no further activity occurs. Please comment if you believe this issue should remain open.'
-          stale-issue-label: 'stale'
-          close-issue-message: 'This issue has been automatically closed due to inactivity. Please feel free to reopen if needed.'
-          
-          # Stale PRs configuration
-          days-before-pr-stale: 90
-          days-before-pr-close: 30
-          stale-pr-message: 'This pull request has been automatically marked as stale because it has not had recent activity. It will be closed in 30 days if no further activity occurs.'
-          stale-pr-label: 'stale'
-          close-pr-message: 'This pull request has been automatically closed due to inactivity. Please feel free to reopen if needed.'
-          
-          # Exemptions
-          # Note: Renovate PRs typically have the "dependencies" label which is also excluded
-          exempt-pr-labels: 'pinned,dependencies,keep_open'
-          exempt-issue-labels: 'pinned,dependencies,keep_open'
-          exempt-all-pr-assignees: false
-          exempt-all-issue-assignees: false
-          
-          # Delete branch after closing stale PR
-          delete-branch: true
-          
-          # Operations per run
-          operations-per-run: 50
+          configurationFile: .github/renovate.json
+          token: ${{ github.token }}
+        env:
+          RENOVATE_REPOSITORIES: ${{ github.repository }}
+          RENOVATE_DRY_RUN: full
+          RENOVATE_FORCE: '{"schedule": null}'
+          LOG_LEVEL: debug

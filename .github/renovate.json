@@ -5,19 +5,33 @@
     "local>hmcts/.github//renovate/automerge-minor"
   ],
   "labels": ["Renovate Dependencies"],
-  "schedule": ["* 16-19 * * 1-5"],
+  "schedule": ["* 11 * * 1-5"],
   "automergeSchedule": ["* 14-18 * * 1-4"],
   "platformAutomerge": false,
   "packageRules": [
     {
-      "description": "Always update BEFTA dependencies to latest stable release",
+      "description": "Use stable GitHub releases for befta-fw",
       "matchManagers": ["gradle"],
-      "matchDepNames": [
-        "ccd-test-definitions",
-        "befta-fw"
-      ],
-      "matchCurrentValue": "!/^[0-9]+\\.[0-9]+\\.[0-9]+$/",
-      "enabled": false,
+      "matchDatasources": ["maven"],
+      "matchPackageNames": ["com.github.hmcts:befta-fw"],
+      "overrideDatasource": "github-releases",
+      "overridePackageName": "hmcts/befta-fw",
+      "versioning": "semver",
+      "allowedVersions": "/^[0-9]+\\.[0-9]+\\.[0-9]+$/",
+      "prPriority": 100,
+      "schedule": ["at any time"],
+      "automerge": true,
+      "dependencyDashboardApproval": false,
+      "minimumReleaseAge": null
+    },
+    {
+      "description": "Use stable GitHub releases for ccd-test-definitions",
+      "matchManagers": ["gradle"],
+      "matchDatasources": ["maven"],
+      "matchPackageNames": ["com.github.hmcts:ccd-test-definitions"],
+      "overrideDatasource": "github-releases",
+      "overridePackageName": "hmcts/ccd-test-definitions",
+      "versioning": "semver",
       "allowedVersions": "/^[0-9]+\\.[0-9]+\\.[0-9]+$/",
       "prPriority": 100,
       "schedule": ["at any time"],
