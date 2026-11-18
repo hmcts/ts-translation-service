@@ -8,15 +8,13 @@ import uk.gov.hmcts.reform.translate.service.DictionaryService;
 
 import java.lang.reflect.Method;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.cfg.MapperConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpStatus;
@@ -31,6 +29,8 @@ import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.cfg.MapperConfig;
 
 import static org.mockito.BDDMockito.given;
 import static org.springframework.context.annotation.FilterType.ASSIGNABLE_TYPE;

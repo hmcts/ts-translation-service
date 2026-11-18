@@ -24,6 +24,8 @@ management:
       exposure:
         include: health, info, prometheus
   health:
+    config:
+      enabled: false
     ssl:
       enabled: false
     probes:

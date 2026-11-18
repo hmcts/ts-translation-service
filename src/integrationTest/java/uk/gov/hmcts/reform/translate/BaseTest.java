@@ -7,18 +7,22 @@ import io.jsonwebtoken.security.Keys;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.test.context.ActiveProfiles;
+import org.wiremock.spring.ConfigureWireMock;
+import org.wiremock.spring.EnableWireMock;
+
 import uk.gov.hmcts.reform.translate.security.SecurityUtils;
+import uk.gov.hmcts.reform.translate.wiremock.config.WireMockTestConfiguration;
 
 import java.util.Date;
 
@@ -31,7 +35,12 @@ import static org.mockito.Mockito.when;
     Application.class
 })
 @ActiveProfiles("itest")
-@AutoConfigureWireMock(port = 0, stubs = "classpath:/wiremock-stubs")
+@EnableWireMock({
+    @ConfigureWireMock(
+        filesUnderClasspath = "wiremock-stubs",
+        configurationCustomizers = WireMockTestConfiguration.class
+    )
+})
 @AutoConfigureMockMvc(addFilters = false)
 @SuppressWarnings({"HideUtilityClassConstructor"})
 public abstract class BaseTest {
@@ -78,6 +87,7 @@ public abstract class BaseTest {
 
     @BeforeEach
     void init() {
+        MockitoAnnotations.openMocks(this);
         Jwt jwt = dummyJwt();
         when(authentication.getPrincipal()).thenReturn(jwt);
         SecurityContextHolder.setContext(new SecurityContextImpl(authentication));
