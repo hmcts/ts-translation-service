@@ -258,7 +258,7 @@ dependencies {
   functionalTestImplementation sourceSets.test.runtimeClasspath
   functionalTestImplementation "io.rest-assured:rest-assured:6.0.1"
   functionalTestImplementation "com.github.hmcts:befta-fw:9.2.11"
-  functionalTestImplementation "com.github.hmcts:ccd-test-definitions:7.26.12"
+  functionalTestImplementation "com.github.hmcts:ccd-test-definitions:7.27.7-prerelease-CME-537"
 
   cftlibImplementation "org.springframework.boot:spring-boot-devtools"
 
