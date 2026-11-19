@@ -2,6 +2,7 @@ package uk.gov.hmcts.reform.translate.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -66,6 +67,29 @@ public class SecurityConfiguration {
         this.translateCyEndpointFilter = translateCyEndpointFilter;
         jwtAuthenticationConverter = new JwtAuthenticationConverter();
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
+    }
+
+    @Bean
+    public FilterRegistrationBean<ServiceAuthFilter> serviceAuthFilterRegistration() {
+        FilterRegistrationBean<ServiceAuthFilter> registration = new FilterRegistrationBean<>(serviceAuthFilter);
+        registration.setEnabled(false);
+        return registration;
+    }
+
+    @Bean
+    public FilterRegistrationBean<TranslateCyEndpointFilter> translateCyEndpointFilterRegistration() {
+        FilterRegistrationBean<TranslateCyEndpointFilter> registration =
+            new FilterRegistrationBean<>(translateCyEndpointFilter);
+        registration.setEnabled(false);
+        return registration;
+    }
+
+    @Bean
+    public FilterRegistrationBean<PutDictionaryEndpointFilter> putDictionaryEndpointFilterRegistration() {
+        FilterRegistrationBean<PutDictionaryEndpointFilter> registration =
+            new FilterRegistrationBean<>(putDictionaryEndpointFilter);
+        registration.setEnabled(false);
+        return registration;
     }
 
     @Bean

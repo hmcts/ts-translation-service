@@ -63,7 +63,8 @@ class HealthDiagnosticRedactionTest {
         for (boolean nested : new boolean[] {false, true}) {
             new WebApplicationContextRunner()
                 .withConfiguration(AutoConfigurations.of(EndpointAutoConfiguration.class,
-                    WebEndpointAutoConfiguration.class, HealthEndpointAutoConfiguration.class, HealthContributorRegistryAutoConfiguration.class))
+                    WebEndpointAutoConfiguration.class, HealthEndpointAutoConfiguration.class,
+                    HealthContributorRegistryAutoConfiguration.class))
                 .withInitializer(context -> context.getEnvironment().getPropertySources().addLast(
                     new PropertiesPropertySource("application-yaml", yaml.getObject())))
                 .withBean("diagnostic", org.springframework.boot.health.contributor.HealthContributor.class,

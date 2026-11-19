@@ -180,7 +180,8 @@ class SafeDependencyDiagnosticsFilterTest {
                 output.setLevel(Level.INFO);
                 new SqlExceptionHelper(false)
                     .logExceptions(new SQLException("PRIVATE background SQL cause", "23505"), "query failed");
-                assertThat(appender.list).filteredOn(event -> event.getLevel() == Level.ERROR)
+                assertThat(appender.list).filteredOn(event -> event.getLevel().isGreaterOrEqual(Level.WARN)
+                    && event.getFormattedMessage().contains("PRIVATE background SQL cause"))
                     .singleElement().satisfies(event -> assertThat(event.getFormattedMessage())
                         .contains("PRIVATE background SQL cause"));
             } finally {

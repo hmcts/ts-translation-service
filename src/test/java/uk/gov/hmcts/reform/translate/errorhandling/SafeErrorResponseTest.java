@@ -119,7 +119,7 @@ class SafeErrorResponseTest {
     @Test
     void logsSafeCodesAndRetainsOriginalExceptionsAtInfo() throws Exception {
         Logger logger = (Logger) LoggerFactory.getLogger(RestExceptionHandler.class);
-        Level previousLevel = logger.getLevel();
+        final Level previousLevel = logger.getLevel();
         ListAppender<ILoggingEvent> appender = new ListAppender<>();
         appender.start();
         logger.addAppender(appender);
