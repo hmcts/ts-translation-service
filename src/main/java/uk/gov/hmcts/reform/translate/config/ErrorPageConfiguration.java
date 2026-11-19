@@ -4,7 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
+import org.springframework.boot.webmvc.error.DefaultErrorAttributes;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.View;
@@ -58,7 +58,7 @@ public class ErrorPageConfiguration {
     /** Native parser errors can occur before servlet dispatch and bypass /error. */
     @Bean
     public org.springframework.boot.web.server.WebServerFactoryCustomizer<
-        org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory> safeNativeErrorReports() {
+        org.springframework.boot.tomcat.servlet.TomcatServletWebServerFactory> safeNativeErrorReports() {
         return factory -> factory.addContextCustomizers(context -> context.addLifecycleListener(event -> {
             if (org.apache.catalina.Lifecycle.BEFORE_START_EVENT.equals(event.getType())) {
                 for (var valve : context.getParent().getPipeline().getValves()) {

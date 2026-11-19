@@ -7,20 +7,21 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
 import org.slf4j.LoggerFactory;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.actuate.health.AbstractHealthIndicator;
-import org.springframework.boot.actuate.health.CompositeHealthContributor;
+import org.springframework.boot.health.contributor.AbstractHealthIndicator;
+import org.springframework.boot.health.contributor.CompositeHealthContributor;
 
 import java.util.Map;
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
 import org.springframework.boot.actuate.autoconfigure.endpoint.EndpointAutoConfiguration;
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointAutoConfiguration;
-import org.springframework.boot.actuate.autoconfigure.health.HealthEndpointAutoConfiguration;
+import org.springframework.boot.health.autoconfigure.actuate.endpoint.HealthEndpointAutoConfiguration;
+import org.springframework.boot.health.autoconfigure.registry.HealthContributorRegistryAutoConfiguration;
 import org.springframework.boot.actuate.endpoint.ApiVersion;
 import org.springframework.boot.actuate.endpoint.SecurityContext;
 import org.springframework.boot.actuate.endpoint.web.WebServerNamespace;
-import org.springframework.boot.actuate.health.Health;
-import org.springframework.boot.actuate.health.HealthEndpointWebExtension;
-import org.springframework.boot.actuate.health.HealthIndicator;
+import org.springframework.boot.health.contributor.Health;
+import org.springframework.boot.health.actuate.endpoint.HealthEndpointWebExtension;
+import org.springframework.boot.health.contributor.HealthIndicator;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.WebApplicationContextRunner;
 import org.springframework.core.env.PropertiesPropertySource;
@@ -38,7 +39,7 @@ class HealthDiagnosticRedactionTest {
             new WebApplicationContextRunner()
                 .withConfiguration(AutoConfigurations.of(
                 EndpointAutoConfiguration.class, WebEndpointAutoConfiguration.class,
-                HealthEndpointAutoConfiguration.class))
+                HealthEndpointAutoConfiguration.class, HealthContributorRegistryAutoConfiguration.class))
                 .withInitializer(context -> context.getEnvironment().getPropertySources().addLast(
                     new PropertiesPropertySource("application-yaml", yaml.getObject())))
                 .withBean("diagnosticHealthIndicator", HealthIndicator.class,
@@ -62,10 +63,10 @@ class HealthDiagnosticRedactionTest {
         for (boolean nested : new boolean[] {false, true}) {
             new WebApplicationContextRunner()
                 .withConfiguration(AutoConfigurations.of(EndpointAutoConfiguration.class,
-                    WebEndpointAutoConfiguration.class, HealthEndpointAutoConfiguration.class))
+                    WebEndpointAutoConfiguration.class, HealthEndpointAutoConfiguration.class, HealthContributorRegistryAutoConfiguration.class))
                 .withInitializer(context -> context.getEnvironment().getPropertySources().addLast(
                     new PropertiesPropertySource("application-yaml", yaml.getObject())))
-                .withBean("diagnostic", org.springframework.boot.actuate.health.HealthContributor.class,
+                .withBean("diagnostic", org.springframework.boot.health.contributor.HealthContributor.class,
                     () -> nested ? CompositeHealthContributor.fromMap(Map.of("nested", new NestedIndicator()))
                         : new DiagnosticHealthIndicator(true))
                 .run(context -> {
