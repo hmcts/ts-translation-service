@@ -43,7 +43,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @EnableWireMock(@ConfigureWireMock(
     filesUnderClasspath = "wiremock-stubs",
     configurationCustomizers = WireMockTestConfiguration.class
-))
+    ))
 @Import(UnauthenticatedHttpIT.ProbeConfiguration.class)
 class UnauthenticatedHttpIT {
 
