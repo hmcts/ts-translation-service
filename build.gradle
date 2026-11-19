@@ -233,7 +233,7 @@ dependencies {
   implementation "com.github.hmcts:idam-java-client:4.0.0"
   implementation "com.github.hmcts.java-logging:logging:8.0.0"
 
-  implementation "com.auth0:java-jwt:4.6.1"
+  implementation "com.auth0:java-jwt:4.6.2"
   implementation "com.microsoft.azure:applicationinsights-logging-logback:${appInsightsVersion}"
   implementation "com.microsoft.azure:applicationinsights-spring-boot-starter:${appInsightsVersion}"
   implementation "org.springframework.boot:spring-boot-starter-flyway"
