@@ -11,16 +11,18 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.health.AbstractHealthIndicator;
-import org.springframework.boot.actuate.health.Health;
+import org.springframework.boot.health.contributor.AbstractHealthIndicator;
+import org.springframework.boot.health.contributor.Health;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
+import org.wiremock.spring.ConfigureWireMock;
+import org.wiremock.spring.EnableWireMock;
 import uk.gov.hmcts.reform.translate.Application;
+import uk.gov.hmcts.reform.translate.wiremock.config.WireMockTestConfiguration;
 
 import java.net.Socket;
 import java.net.URI;
@@ -38,7 +40,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
     properties = {"server.address=127.0.0.1", "management.endpoint.health.cache.time-to-live=0ms"})
 @ActiveProfiles("itest")
-@AutoConfigureWireMock(port = 0, stubs = "classpath:/wiremock-stubs")
+@EnableWireMock(@ConfigureWireMock(
+    filesUnderClasspath = "wiremock-stubs",
+    configurationCustomizers = WireMockTestConfiguration.class
+))
 @Import(UnauthenticatedHttpIT.ProbeConfiguration.class)
 class UnauthenticatedHttpIT {
 
