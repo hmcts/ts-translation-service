@@ -1,10 +1,11 @@
 package uk.gov.hmcts.reform.translate;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 import uk.gov.hmcts.befta.BeftaMain;
 import uk.gov.hmcts.befta.DefaultBeftaTestDataLoader;
 import uk.gov.hmcts.befta.TestAutomationAdapter;
@@ -13,11 +14,12 @@ import uk.gov.hmcts.befta.auth.UserTokenProviderConfig;
 import uk.gov.hmcts.befta.data.UserData;
 import uk.gov.hmcts.befta.util.BeftaUtils;
 import uk.gov.hmcts.befta.util.EnvironmentVariableUtils;
-import uk.gov.hmcts.befta.util.JsonUtils;
 import uk.gov.hmcts.reform.translate.controllers.ControllerConstants;
 import uk.gov.hmcts.reform.translate.security.SecurityUtils;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.concurrent.ExecutionException;
 
 public class TranslationServiceTestDataLoader extends DefaultBeftaTestDataLoader {
@@ -83,11 +85,14 @@ public class TranslationServiceTestDataLoader extends DefaultBeftaTestDataLoader
     public static UserData loadManageTranslationUser() {
 
         try {
-            // reuse user from FTAs
-            JsonNode userJson = JsonUtils.readObjectFromJsonFile(
-                BeftaUtils.getFileFromResource("features/common/users/ManageTranslationsUser.td.json").getPath(),
-                JsonNode.class
-            );
+            ObjectMapper objectMapper = new ObjectMapper();
+            String filePath = BeftaUtils
+                .getFileFromResource("features/common/users/ManageTranslationsUser.td.json")
+                .getPath();
+            String fileContent = new String(Files.readAllBytes(Paths.get(filePath)));
+            
+            // Use readTree() to avoid JsonNode deserialization issues with abstract types in Spring Boot 4
+            JsonNode userJson = objectMapper.readTree(fileContent);
 
             return new UserData(
                 EnvironmentVariableUtils.resolvePossibleVariable(userJson.findValue("username").asText()),
