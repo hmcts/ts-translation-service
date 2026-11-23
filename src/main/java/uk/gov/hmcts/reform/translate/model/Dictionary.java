@@ -1,15 +1,15 @@
 package uk.gov.hmcts.reform.translate.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class Dictionary {
 
     @Schema(description = "A map of phrases and corresponding translation object "
@@ -26,4 +26,9 @@ public class Dictionary {
                 + "}"
     )
     Map<String, Translation> translations;
+
+    @JsonCreator
+    public Dictionary(Map<String, Translation> translations) {
+        this.translations = translations;
+    }
 }
