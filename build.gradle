@@ -25,10 +25,7 @@ ext {
 
   set('springCloudVersion', '2025.1.4')
   set('snakeyaml.version', '2.6')
-  set('jackson.version', '2.22.2')
   set('log4j2.version', '2.26.1')
-  set('spring-framework.version', '6.2.14')
-  set('spring-security.version', '6.5.7')
   appInsightsVersion  = '2.6.4'
   jjwt               = '0.13.0'
   lombok              = '1.18.48'
