@@ -251,7 +251,7 @@ dependencies {
   integrationTestRuntimeOnly "io.jsonwebtoken:jjwt-impl:${jjwt}"
   integrationTestRuntimeOnly "io.jsonwebtoken:jjwt-jackson:${jjwt}"
   integrationTestImplementation "com.pivovarit:throwing-function:1.6.1"
-  integrationTestImplementation "org.wiremock.integrations:wiremock-spring-boot:4.4.2"
+  integrationTestImplementation "org.wiremock.integrations:wiremock-spring-boot:4.4.3"
   integrationTestImplementation "org.testcontainers:postgresql:${testcontainers}"
 
   functionalTestImplementation sourceSets.main.runtimeClasspath
