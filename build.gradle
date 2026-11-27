@@ -288,7 +288,7 @@ dependencies {
   implementation "com.microsoft.azure:applicationinsights-spring-boot-starter:${appInsightsVersion}"
   implementation "org.springframework.boot:spring-boot-starter-flyway"
   runtimeOnly "org.flywaydb:flyway-database-postgresql"
-  implementation "org.postgresql:postgresql:42.7.13"
+  implementation "org.postgresql:postgresql:42.7.15"
 
   testImplementation "org.springframework.boot:spring-boot-starter-test"
   testImplementation "org.assertj:assertj-vavr:0.5.1"
