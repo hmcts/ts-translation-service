@@ -2,7 +2,6 @@ package uk.gov.hmcts.reform.translate.config;
 
 import io.jsonwebtoken.Jwts;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Disabled;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,7 +22,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static uk.gov.hmcts.reform.translate.util.KeyGenerator.getRsaJwk;
 
 @SpringBootTest(classes = Application.class, properties = {
-    "idam.security.allowed-issuers=http://localhost:${wiremock.server.port}/o,http://alternate.issuer/o"
+    "oidc.allowed-issuers=http://localhost:${wiremock.server.port}/o,http://alternate.issuer/o"
 })
 @ActiveProfiles("itest")
 @EnableWireMock({
@@ -63,7 +62,6 @@ class SecurityConfigurationIT {
     }
 
     @Test
-    @Disabled("Temporarily disabled until issuer validation is implemented")
     void shouldRejectJwtWhenIssuerIsNotAllowed() throws Exception {
         String token = createToken("https://untrusted-issuer.example", Instant.now().plusSeconds(300));
 
