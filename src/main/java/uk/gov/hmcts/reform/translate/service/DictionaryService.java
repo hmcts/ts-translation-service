@@ -68,8 +68,8 @@ public class DictionaryService {
         // check manage-translations role before manipulating phrases that may contain translations.
         if (securityUtils.hasRole(MANAGE_TRANSLATIONS_ROLE)) {
             long deleteCount = dictionaryRepository.deleteByEnglishPhraseStartingWith(TEST_PHRASES_START_WITH);
-            log.warn("User {} has deleted {} test phrases matching '{}'",
-                     securityUtils.getUserId(), deleteCount, TEST_PHRASES_START_WITH);
+            log.warn("Test phrases deleted: count={}", deleteCount);
+            log.debug("User {} deleted test phrases matching '{}'", securityUtils.getUserId(), TEST_PHRASES_START_WITH);
         } else {
             throw new RoleMissingException(MANAGE_TRANSLATIONS_ROLE);
         }

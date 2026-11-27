@@ -106,6 +106,19 @@ Here are some other functionalities it provides:
  * [Request caching](https://github.com/Netflix/Hystrix/wiki/How-it-Works#request-caching), allowing
  different code paths to execute Hystrix Commands without worrying about duplicating work
 
+## Error handling and support
+
+Public error responses withhold technical diagnostics. Operational failure codes remain private.
+See the [support investigation guide](docs/CCD-7882-error-contract.md#support) for
+Application Insights → Logs steps, KQL, correlation and verification limits.
+
+### Preview Admin Web startup
+
+The preview Helm values mount the CCD Key Vault's `session-keys` secret for Admin Web. Its startup
+validation requires a JSON array containing at least two non-empty signing keys at
+`secrets.ccd.session-keys`; without it, the pod exits before serving requests. Keep the secret available
+to the preview deployment and share the configured keys across replicas. Key values belong in Key Vault.
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
